@@ -3,17 +3,45 @@
     <div v-if="loading" class="text-center py-8">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
     </div>
+    <div v-else-if="error" class="text-center py-8">
+      <div class="bg-red-50 rounded-lg p-6 max-w-md mx-auto">
+        <h3 class="text-red-800 font-medium mb-2">{{ $t('common.error') }}</h3>
+        <p class="text-red-600">{{ error }}</p>
+      </div>
+    </div>
     <div v-else-if="narrative">
       <!-- Header -->
       <div class="mb-6">
-        <button
-          @click="$router.back()"
-          class="mb-4 text-indigo-600 hover:text-indigo-800 flex items-center"
-        >
-          ← {{ $t('common.back') }}
-        </button>
+
         <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
         <p class="mt-2 text-gray-600">{{ narrative.description }}</p>
+        
+        <!-- Topics -->
+        <div v-if="narrative.topics && narrative.topics.length > 0" class="mt-4">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-medium text-gray-700">{{ $t('narratives.topics') }}:</span>
+            <span 
+              v-for="topic in narrative.topics" 
+              :key="topic.id"
+              class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm cursor-pointer hover:bg-indigo-200"
+              @click="goToTopic(topic.id)"
+            >
+              {{ topic.name }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Metadata -->
+        <div class="mt-4 flex items-center gap-4 text-sm text-gray-500">
+          <div v-if="narrative.created_at">
+            <span class="font-medium">{{ $t('narratives.created') }}:</span>
+            {{ formatDate(narrative.created_at) }}
+          </div>
+          <div v-if="narrative.updated_at">
+            <span class="font-medium">{{ $t('narratives.lastUpdated') }}:</span>
+            {{ formatDate(narrative.updated_at) }}
+          </div>
+        </div>
       </div>
 
       <!-- Timeline Tabs -->
@@ -54,20 +82,20 @@
           </div>
 
           <!-- Statistics Grid -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="text-center">
+          <div v-if="narrative.views_count || narrative.comments_count || narrative.related_content_count" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div v-if="narrative.views_count" class="text-center">
               <div class="text-2xl font-bold text-gray-900">{{ formatNumber(narrative.views_count) }}</div>
               <div class="text-sm text-gray-500">{{ $t('narratives.views') }}</div>
             </div>
-            <div class="text-center">
+            <div v-if="narrative.comments_count" class="text-center">
               <div class="text-2xl font-bold text-gray-900">{{ formatNumber(narrative.comments_count) }}</div>
               <div class="text-sm text-gray-500">{{ $t('narratives.comments') }}</div>
             </div>
-            <div class="text-center">
+            <div v-if="narrative.related_content_count !== undefined" class="text-center">
               <div class="text-2xl font-bold text-gray-900">{{ narrative.related_content_count }}</div>
               <div class="text-sm text-gray-500">{{ $t('narratives.relatedContent') }}</div>
             </div>
-            <div class="text-center">
+            <div v-if="narrative.platform_breakdown" class="text-center">
               <div class="flex justify-center space-x-2">
                 <span v-if="narrative.platform_breakdown.instagram > 0" class="text-pink-600">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -93,7 +121,7 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">
               {{ $t('narratives.timelineContentRecurrences') }}
             </h3>
-            <div class="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
+            <div class="bg-stone-100 rounded-lg p-4 h-64 flex items-center justify-center">
               <span class="text-gray-500">{{ $t('common.chartPlaceholder') }}</span>
             </div>
           </div>
@@ -117,7 +145,7 @@
                   :alt="actor.name"
                   class="w-10 h-10 rounded-full object-cover"
                 >
-                <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
                   <span class="text-sm text-gray-500">{{ actor.name.charAt(0) }}</span>
                 </div>
                 <div>
@@ -147,7 +175,7 @@
                   :alt="entity.name"
                   class="w-10 h-10 rounded-full object-cover"
                 >
-                <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
                   <span class="text-sm text-gray-500">{{ entity.name.charAt(0) }}</span>
                 </div>
                 <div>
@@ -164,7 +192,7 @@
       <!-- Evolution of the narrative -->
       <div class="bg-white shadow rounded-lg p-6 mb-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
-        <div class="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
+        <div class="bg-stone-100 rounded-lg p-4 h-64 flex items-center justify-center">
           <span class="text-gray-500">{{ $t('common.chartPlaceholder') }}</span>
         </div>
       </div>
@@ -174,7 +202,7 @@
         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.associatedContent') }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div v-for="i in 4" :key="i" class="bg-white shadow rounded-lg overflow-hidden">
-            <div class="bg-gray-200 h-48"></div>
+            <div class="bg-stone-200 h-48"></div>
             <div class="p-4">
               <h4 class="font-medium text-gray-900 mb-2">{{ $t('narratives.associatedContent') }} {{ i }}</h4>
               <p class="text-sm text-gray-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
@@ -207,6 +235,7 @@ const router = useRouter();
 // State
 const narrative = ref<Narrative | null>(null);
 const loading = ref(true);
+const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 
@@ -222,9 +251,9 @@ onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
     narrative.value = await apiService.getNarrative(narrativeId);
-  } catch (error) {
-    console.error('Failed to load narrative:', error);
-    router.push('/narratives');
+  } catch (err) {
+    console.error('Failed to load narrative:', err);
+    error.value = $i18n.t('narratives.loadError');
   } finally {
     loading.value = false;
   }
@@ -238,5 +267,17 @@ const formatNumber = (num: number): string => {
     return (num / 1000).toFixed(1) + 'K';
   }
   return num.toString();
+};
+
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString($i18n.locale.value, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+const goToTopic = (topicId: string) => {
+  router.push(`/topics/${topicId}`);
 };
 </script>

@@ -1,5 +1,17 @@
 <template>
   <div>
+      <!-- Topic Context Banner -->
+      <div v-if="currentTopicName" class="mb-6 p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-800">
+          {{ $t('narratives.showingNarrativesFor') }} <span class="font-semibold">{{ currentTopicName }}</span>
+          <button 
+            @click="clearTopicFilter"
+            class="ml-2 text-blue-600 hover:text-blue-800 underline"
+          >
+            {{ $t('narratives.clearFilter') }}
+          </button>
+        </p>
+      </div>
 
       <!-- Filters -->
       <Card class="mb-6">
@@ -54,33 +66,26 @@
               </div>
             </div>
 
-            <!-- Date Filter -->
+            <!-- Topic Filter -->
             <div>
               <Label class="mb-2">
-                {{ $t('narratives.dateRange') }}
+                {{ $t('narratives.topic') }}
               </Label>
-              <Popover>
-                <PopoverTrigger as-child>
-                  <Button variant="outline" class="w-full justify-start text-left font-normal mb-2">
-                    <CalendarIcon class="mr-2 h-4 w-4" />
-                    {{ filters.dateFrom ? formatDate(filters.dateFrom) : $t('narratives.selectStartDate') }}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0">
-                  <Calendar v-model="dateFromValue" />
-                </PopoverContent>
-              </Popover>
-              <Popover>
-                <PopoverTrigger as-child>
-                  <Button variant="outline" class="w-full justify-start text-left font-normal">
-                    <CalendarIcon class="mr-2 h-4 w-4" />
-                    {{ filters.dateTo ? formatDate(filters.dateTo) : $t('narratives.selectEndDate') }}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0">
-                  <Calendar v-model="dateToValue" />
-                </PopoverContent>
-              </Popover>
+              <Select v-model="filters.topic_id">
+                <SelectTrigger>
+                  <SelectValue :placeholder="$t('narratives.selectTopic')" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem :value="null">{{ $t('narratives.allTopics') }}</SelectItem>
+                  <SelectItem
+                    v-for="topic in topicsStore.topics"
+                    :key="topic.id"
+                    :value="topic.id"
+                  >
+                    {{ topic.topic }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <!-- Keywords Filter -->
@@ -137,33 +142,45 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="narratives.length > 0" class="mt-6 flex justify-center">
-        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-          <button
-            @click="previousPage"
-            :disabled="currentPage === 1"
-            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-          >
-            {{ $t('common.previous') }}
-          </button>
-          <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-            {{ currentPage }} / {{ totalPages }}
-          </span>
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-          >
-            {{ $t('common.next') }}
-          </button>
-        </nav>
-      </div>
+      <Pagination 
+        v-if="totalNarratives > itemsPerPage" 
+        v-slot="{ page }"
+        :total="totalNarratives"
+        :items-per-page="itemsPerPage"
+        :sibling-count="1"
+        show-edges
+        :default-page="currentPage"
+        @update:page="(newPage) => { currentPage = newPage; loadNarratives(); }"
+        class="mt-6"
+      >
+        <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <PaginationPrevious />
+
+          <template v-for="(item, index) in items">
+            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button 
+                :variant="item.value === page ? 'default' : 'outline'" 
+                size="sm"
+                @click="() => { currentPage = item.value; loadNarratives(); }"
+              >
+                {{ item.value }}
+              </Button>
+            </PaginationItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+
+          <PaginationNext />
+          <PaginationLast />
+        </PaginationContent>
+      </Pagination>
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Narrative } from '~/types/api';
+import { useTopicsStore } from '~/stores/topics';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -171,7 +188,9 @@ import { Label } from '~/components/ui/label';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { CalendarIcon } from 'lucide-vue-next';
+import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 
 definePageMeta({
   layout: 'default',
@@ -180,28 +199,32 @@ definePageMeta({
 
 const { $i18n } = useNuxtApp();
 const router = useRouter();
+const route = useRoute();
+const topicsStore = useTopicsStore();
+const { setPageHeader, clearPageHeader } = usePageHeader();
 
 
 // State
 const narratives = ref<Narrative[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
-const totalPages = ref(1);
-const itemsPerPage = 12;
+const totalNarratives = ref(0);
+const itemsPerPage = 20;
 
 // Filters
 const filters = ref({
-  platform: [],
-  language: [],
+  platform: [] as string[],
+  language: [] as string[],
   dateFrom: '',
   dateTo: '',
-  actors: [],
-  entities: [],
-  topics: [],
-  keywords: []
+  actors: [] as string[],
+  entities: [] as string[],
+  topic_id: null as string | null,
+  keywords: [] as string[]
 });
 
 const keywordsInput = ref('');
+const currentTopicName = ref('');
 
 // Individual checkbox states for platforms
 const platformYoutube = computed({
@@ -322,11 +345,54 @@ const formatDate = (dateStr: string) => {
 const loadNarratives = async () => {
   loading.value = true;
   try {
-    const result = await apiService.getNarratives(filters.value);
-    narratives.value = result.data.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage);
-    totalPages.value = Math.ceil(result.total / itemsPerPage);
+    let result;
+    
+    // If we have a topic filter, use the topic-specific endpoint
+    if (filters.value.topic_id) {
+      result = await apiService.getTopicNarratives(
+        filters.value.topic_id,
+        {
+          limit: itemsPerPage,
+          offset: (currentPage.value - 1) * itemsPerPage
+        }
+      );
+    } else {
+      // Use the general narratives endpoint
+      result = await apiService.getNarratives({
+        limit: itemsPerPage,
+        offset: (currentPage.value - 1) * itemsPerPage
+      });
+    }
+    
+    // Apply client-side filters if needed
+    let filteredData = result.data;
+    
+    // Filter by keywords if any
+    if (filters.value.keywords.length > 0) {
+      const keywordsLower = filters.value.keywords.map(k => k.toLowerCase());
+      filteredData = filteredData.filter(narrative => {
+        const textToSearch = `${narrative.title} ${narrative.description}`.toLowerCase();
+        return keywordsLower.some(keyword => textToSearch.includes(keyword));
+      });
+    }
+    
+    // Set default values for UI fields if not present
+    narratives.value = filteredData.map(narrative => ({
+      ...narrative,
+      actors: narrative.actors || [],
+      entities: narrative.entities || [],
+      topics: narrative.topics || [],
+      related_content_count: narrative.claim_ids?.length || 0,
+      is_active: true, // Default to active since API doesn't provide this
+      first_seen: narrative.created_at || new Date().toISOString(),
+      last_seen: narrative.updated_at || new Date().toISOString()
+    }));
+    
+    totalNarratives.value = result.total;
   } catch (error) {
     console.error('Failed to load narratives:', error);
+    narratives.value = [];
+    totalNarratives.value = 0;
   } finally {
     loading.value = false;
   }
@@ -345,11 +411,32 @@ const resetFilters = () => {
     dateTo: '',
     actors: [],
     entities: [],
-    topics: [],
+    topic_id: null,
     keywords: []
   };
+  currentTopicName.value = '';
   currentPage.value = 1;
   loadNarratives();
+};
+
+const clearTopicFilter = () => {
+  filters.value.topic_id = null;
+  currentTopicName.value = '';
+  currentPage.value = 1;
+  updatePageHeader();
+  loadNarratives();
+};
+
+const updatePageHeader = () => {
+  if (currentTopicName.value) {
+    setPageHeader({ 
+      title: `${currentTopicName.value}: ${$i18n.t('narratives.title')}`
+    });
+  } else {
+    setPageHeader({ 
+      title: $i18n.t('narratives.title')
+    });
+  }
 };
 
 const addKeyword = () => {
@@ -367,22 +454,41 @@ const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
 };
 
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    loadNarratives();
-  }
-};
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-    loadNarratives();
+// Watch for topic filter changes
+watch(() => filters.value.topic_id, (newTopicId) => {
+  if (newTopicId) {
+    const topic = topicsStore.getTopicById(newTopicId);
+    currentTopicName.value = topic?.topic || '';
+  } else {
+    currentTopicName.value = '';
   }
-};
+  updatePageHeader();
+});
 
 // Load initial data
-onMounted(() => {
+onMounted(async () => {
+  // Load available topics for filter
+  await topicsStore.fetchTopics();
+  
+  // Check if we have a topic filter from query params
+  const topicId = route.query.topic as string;
+  if (topicId) {
+    // Load topic from store
+    const topic = await topicsStore.ensureTopicLoaded(topicId);
+    if (topic) {
+      filters.value.topic_id = topicId;
+      currentTopicName.value = topic.topic;
+    }
+  }
+  
+  // Update page header
+  updatePageHeader();
+  
   loadNarratives();
+});
+
+onBeforeUnmount(() => {
+  clearPageHeader();
 });
 </script>

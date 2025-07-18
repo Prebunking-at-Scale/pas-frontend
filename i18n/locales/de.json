@@ -17,15 +17,19 @@
     "logout": "Abmelden",
     "views": "Aufrufe",
     "comments": "Kommentare",
+    "likes": "Gefällt mir",
     "mentions": "Erwähnungen",
     "actors": "Akteure",
     "entities": "Entitäten",
-    "chartPlaceholder": "Diagrammvisualisierung wird hier angezeigt"
+    "chartPlaceholder": "Diagrammvisualisierung wird hier angezeigt",
+    "error": "Fehler"
   },
   "nav": {
     "overview": "Übersicht",
     "dashboard": "Dashboard",
     "narratives": "Narrative",
+    "claims": "Behauptungen",
+    "videos": "Videos",
     "messages": "Nachrichten",
     "authentication": "Authentifizierung",
     "docs": "Dokumentation",
@@ -33,6 +37,28 @@
     "help": "Hilfe",
     "alerts": "Benachrichtigungen",
     "profile": "Profil"
+  },
+  "videos": {
+    "title": "Videos",
+    "subtitle": "Videoinhalte durchsuchen und analysieren",
+    "filters": "Filter",
+    "channel": "Kanal",
+    "channelPlaceholder": "Nach Kanalname filtern...",
+    "platform": "Plattform",
+    "selectPlatform": "Plattform wählen",
+    "allPlatforms": "Alle Plattformen",
+    "clearFilters": "Filter löschen",
+    "applyFilters": "Filter anwenden",
+    "showingResults": "{count} Videos werden angezeigt",
+    "noVideosFound": "Keine Videos gefunden",
+    "views": "Aufrufe",
+    "comments": "Kommentare",
+    "viewDetails": "Details anzeigen",
+    "search": "Suche",
+    "searchPlaceholder": "In Videotiteln suchen...",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram Reels"
   },
   "login": {
     "title": "Bei Ihrem Konto anmelden",
@@ -51,7 +77,11 @@
     "actors": "Akteure",
     "viralNarratives": "Virale Narrative",
     "prevalentNarratives": "Verbreitete Narrative",
-    "last24h": "Letzte 24h"
+    "last24h": "Letzte 24h",
+    "narratives": "Narrative",
+    "claims": "Behauptungen",
+    "narrativesCount": "Anzahl der Narrative",
+    "claimsCount": "Anzahl der Behauptungen"
   },
   "narratives": {
     "title": "Narrative",
@@ -75,7 +105,38 @@
     "actors": "Akteure",
     "entities": "Entitäten",
     "timelineContentRecurrences": "Zeitleiste, Inhalt und Wiederholungen",
-    "evolutionOfNarrative": "Entwicklung des Narrativs"
+    "evolutionOfNarrative": "Entwicklung des Narrativs",
+    "showingNarrativesFor": "Zeige Narrative für Thema:",
+    "clearFilter": "Filter löschen",
+    "topic": "Thema",
+    "selectTopic": "Thema auswählen",
+    "allTopics": "Alle Themen",
+    "topics": "Themen",
+    "created": "Erstellt",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "loadError": "Fehler beim Laden des Narrativs"
+  },
+  "claims": {
+    "title": "Behauptungen",
+    "subtitle": "Durchsuchen und filtern Sie Behauptungen aus analysierten Inhalten",
+    "filters": "Filter",
+    "topic": "Thema",
+    "selectTopic": "Thema auswählen",
+    "allTopics": "Alle Themen",
+    "minConfidence": "Mindestvertrauen",
+    "confidencePlaceholder": "0-100",
+    "search": "Suchen",
+    "searchPlaceholder": "In Behauptungen suchen...",
+    "clearFilters": "Filter zurücksetzen",
+    "applyFilters": "Filter anwenden",
+    "showingClaimsFor": "Zeige Behauptungen für Thema:",
+    "showingResults": "Zeige {count} Behauptungen",
+    "noClaimsFound": "Keine Behauptungen gefunden",
+    "timestamp": "Zeitstempel",
+    "viewSource": "Quelle anzeigen",
+    "confidence": "Vertrauen",
+    "topics": "Themen",
+    "viewVideo": "Video anzeigen"
   },
   "alerts": {
     "title": "Benachrichtigungen",
@@ -133,6 +194,16 @@
     "trendOverTime": "Trend im Zeitverlauf",
     "topActors": "Top Akteure",
     "topEntities": "Top Entitäten",
-    "recentVideos": "Aktuelle Videos"
+    "recentVideos": "Aktuelle Videos",
+    "overview": "Übersicht",
+    "narratives": "Narrative",
+    "claims": "Behauptungen",
+    "relatedClaims": "Verwandte Behauptungen",
+    "noNarrativesFound": "Keine Narrative für dieses Thema gefunden",
+    "noClaimsFound": "Keine Behauptungen für dieses Thema gefunden",
+    "confidence": "Vertrauenswürdigkeit",
+    "timestamp": "Zeitstempel",
+    "topic": "Thema",
+    "viewAll": "Alle anzeigen"
   }
 }

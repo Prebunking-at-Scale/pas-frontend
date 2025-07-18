@@ -7,7 +7,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const token = localStorage.getItem('auth-token');
     
     if (!token) {
-      return navigateTo('/login');
+      // Use client-side navigation to avoid hydration mismatch
+      return navigateTo('/login', { replace: true });
     }
   }
+  
+  // For SSR, we can't check localStorage, so we'll let the page render
+  // and handle auth check on client side mount
 });

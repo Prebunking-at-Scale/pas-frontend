@@ -5,6 +5,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    public: {
+      backendEndpoint: process.env.BACKEND_ENDPOINT || 'http://localhost:8000',
+      apiKey: process.env.API_KEY || ''
+    }
+  },
+
   vite: {
     server: {
       allowedHosts: true,
@@ -22,6 +29,12 @@ export default defineNuxtConfig({
       { code: 'fr', name: 'Français', file: 'fr.json'},
     ],
     defaultLocale: 'en',
+  },
+
+  googleFonts: {
+    families: {
+      'Archivo': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+    },
   },
 
   shadcn: {
@@ -45,6 +58,8 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui',
     '@nuxtjs/i18n',
-    'shadcn-nuxt'
+    'shadcn-nuxt',
+    '@pinia/nuxt',
+    '@nuxtjs/google-fonts'
   ]
 })

@@ -17,15 +17,19 @@
     "logout": "Logout",
     "views": "views",
     "comments": "comments",
+    "likes": "likes",
     "mentions": "mentions",
     "actors": "Actors",
     "entities": "Entities",
-    "chartPlaceholder": "Chart visualization will be displayed here"
+    "chartPlaceholder": "Chart visualization will be displayed here",
+    "error": "Error"
   },
   "nav": {
     "overview": "Overview",
     "dashboard": "Dashboard",
     "narratives": "Narratives",
+    "claims": "Claims",
+    "videos": "Videos",
     "messages": "Messages",
     "authentication": "Authentication",
     "docs": "Docs",
@@ -33,6 +37,28 @@
     "help": "Help",
     "alerts": "Alerts",
     "profile": "Profile"
+  },
+  "videos": {
+    "title": "Videos",
+    "subtitle": "Browse and analyze video content",
+    "filters": "Filters",
+    "channel": "Channel",
+    "channelPlaceholder": "Filter by channel name...",
+    "platform": "Platform",
+    "selectPlatform": "Select platform",
+    "allPlatforms": "All platforms",
+    "clearFilters": "Clear Filters",
+    "applyFilters": "Apply Filters",
+    "showingResults": "Showing {count} videos",
+    "noVideosFound": "No videos found",
+    "views": "Views",
+    "comments": "Comments",
+    "viewDetails": "View details",
+    "search": "Search",
+    "searchPlaceholder": "Search in video titles...",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram Reels"
   },
   "login": {
     "title": "Sign in to your account",
@@ -51,7 +77,11 @@
     "actors": "Actors",
     "viralNarratives": "Viral Narratives",
     "prevalentNarratives": "Prevalent Narratives",
-    "last24h": "Last 24h"
+    "last24h": "Last 24h",
+    "narratives": "Narratives",
+    "claims": "Claims",
+    "narrativesCount": "Number of narratives",
+    "claimsCount": "Number of claims"
   },
   "narratives": {
     "title": "Narratives",
@@ -75,7 +105,38 @@
     "actors": "Actors",
     "entities": "Entities",
     "timelineContentRecurrences": "Timeline, content and recurrences",
-    "evolutionOfNarrative": "Evolution of the narrative"
+    "evolutionOfNarrative": "Evolution of the narrative",
+    "showingNarrativesFor": "Showing narratives for topic:",
+    "clearFilter": "Clear filter",
+    "topic": "Topic",
+    "selectTopic": "Select a topic",
+    "allTopics": "All topics",
+    "topics": "Topics",
+    "created": "Created",
+    "lastUpdated": "Last updated",
+    "loadError": "Failed to load narrative"
+  },
+  "claims": {
+    "title": "Claims",
+    "subtitle": "Browse and filter claims extracted from analyzed content",
+    "filters": "Filters",
+    "topic": "Topic",
+    "selectTopic": "Select a topic",
+    "allTopics": "All topics",
+    "minConfidence": "Minimum Confidence",
+    "confidencePlaceholder": "0-100",
+    "search": "Search",
+    "searchPlaceholder": "Search in claims...",
+    "clearFilters": "Clear Filters",
+    "applyFilters": "Apply Filters",
+    "showingClaimsFor": "Showing claims for topic:",
+    "showingResults": "Showing {count} claims",
+    "noClaimsFound": "No claims found",
+    "timestamp": "Timestamp",
+    "viewSource": "View source",
+    "confidence": "Confidence",
+    "topics": "Topics",
+    "viewVideo": "View Video"
   },
   "alerts": {
     "title": "Alerts",
@@ -133,6 +194,16 @@
     "trendOverTime": "Trend Over Time",
     "topActors": "Top Actors",
     "topEntities": "Top Entities",
-    "recentVideos": "Recent Videos"
+    "recentVideos": "Recent Videos",
+    "overview": "Overview",
+    "narratives": "Narratives",
+    "claims": "Claims",
+    "relatedClaims": "Related Claims",
+    "noNarrativesFound": "No narratives found for this topic",
+    "noClaimsFound": "No claims found for this topic",
+    "confidence": "Confidence",
+    "timestamp": "Timestamp",
+    "topic": "Topic",
+    "viewAll": "View all"
   }
 }

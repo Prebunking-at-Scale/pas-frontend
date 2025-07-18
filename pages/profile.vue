@@ -1,128 +1,129 @@
 <template>
   <div>
 
-      <div class="bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">{{ $t('profile.personalInfo') }}</h3>
-        </div>
-        <div class="p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{{ $t('profile.personalInfo') }}</CardTitle>
+        </CardHeader>
+        <CardContent>
           <form @submit.prevent="updateProfile" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.name') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="name">{{ $t('profile.name') }}</Label>
+              <Input 
+                id="name"
                 v-model="user.name"
                 type="text" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-              >
+              />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.email') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="email">{{ $t('profile.email') }}</Label>
+              <Input 
+                id="email"
                 v-model="user.email"
                 type="email" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                 disabled
-              >
+              />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.role') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="role">{{ $t('profile.role') }}</Label>
+              <Input 
+                id="role"
                 v-model="user.role"
                 type="text" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50"
                 disabled
-              >
+              />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.memberSince') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="memberSince">{{ $t('profile.memberSince') }}</Label>
+              <Input 
+                id="memberSince"
                 :value="formatDate(user.created_at)"
                 type="text" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50"
                 disabled
-              >
+              />
             </div>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div class="mt-6 bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">{{ $t('profile.changePassword') }}</h3>
-        </div>
-        <div class="p-6">
+      <Card class="mt-6">
+        <CardHeader>
+          <CardTitle>{{ $t('profile.changePassword') }}</CardTitle>
+        </CardHeader>
+        <CardContent>
           <form @submit.prevent="changePassword" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.currentPassword') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="currentPassword">{{ $t('profile.currentPassword') }}</Label>
+              <Input 
+                id="currentPassword"
                 v-model="passwordForm.current"
                 type="password" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-              >
+              />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.newPassword') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="newPassword">{{ $t('profile.newPassword') }}</Label>
+              <Input 
+                id="newPassword"
                 v-model="passwordForm.new"
                 type="password" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-              >
+              />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">{{ $t('profile.confirmPassword') }}</label>
-              <input 
+            <div class="space-y-2">
+              <Label for="confirmPassword">{{ $t('profile.confirmPassword') }}</Label>
+              <Input 
+                id="confirmPassword"
                 v-model="passwordForm.confirm"
                 type="password" 
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-              >
+              />
             </div>
             <div class="flex justify-end">
-              <button 
-                type="submit"
-                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-              >
+              <Button type="submit">
                 {{ $t('profile.updatePassword') }}
-              </button>
+              </Button>
             </div>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div class="mt-6 bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-red-900">{{ $t('profile.dangerZone') }}</h3>
-        </div>
-        <div class="p-6">
-          <p class="text-sm text-gray-600 mb-4">{{ $t('profile.deleteAccountWarning') }}</p>
-          <button 
+      <Card class="mt-6">
+        <CardHeader>
+          <CardTitle class="text-destructive">{{ $t('profile.dangerZone') }}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground mb-4">{{ $t('profile.deleteAccountWarning') }}</p>
+          <Button 
             @click="showDeleteConfirm = true"
-            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+            variant="destructive"
           >
             {{ $t('profile.deleteAccount') }}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardContent>
+      </Card>
 
       <!-- Delete Confirmation Modal -->
-      <div v-if="showDeleteConfirm" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('profile.confirmDelete') }}</h3>
-          <p class="text-sm text-gray-600 mb-6">{{ $t('profile.deleteConfirmMessage') }}</p>
-          <div class="flex justify-end space-x-3">
-            <button 
+      <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <Card class="max-w-md w-full">
+          <CardHeader>
+            <CardTitle>{{ $t('profile.confirmDelete') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">{{ $t('profile.deleteConfirmMessage') }}</p>
+          </CardContent>
+          <CardFooter class="flex justify-end gap-2">
+            <Button 
               @click="showDeleteConfirm = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              variant="outline"
             >
               {{ $t('common.cancel') }}
-            </button>
-            <button 
+            </Button>
+            <Button 
               @click="deleteAccount"
-              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              variant="destructive"
             >
               {{ $t('common.delete') }}
-            </button>
-          </div>
-        </div>
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
   </div>
 </template>
@@ -130,6 +131,10 @@
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { User } from '~/types/api';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
 
 definePageMeta({
   layout: 'default',

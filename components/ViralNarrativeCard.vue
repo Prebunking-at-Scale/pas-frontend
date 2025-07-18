@@ -3,10 +3,10 @@
     @click="$emit('click')"
     class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer p-4"
   >
-    <div class="aspect-video bg-gray-200 rounded mb-3 relative">
+    <div class="aspect-video bg-stone-200 rounded mb-3 relative">
       <div class="absolute top-2 right-2 flex space-x-1">
         <span v-if="narrative.platform_breakdown.youtube > 0" class="bg-red-600 text-white text-xs px-1.5 py-0.5 rounded">YT</span>
-        <span v-if="narrative.platform_breakdown.tiktok > 0" class="bg-gray-900 text-white text-xs px-1.5 py-0.5 rounded">TT</span>
+        <span v-if="narrative.platform_breakdown.tiktok > 0" class="bg-stone-900 text-white text-xs px-1.5 py-0.5 rounded">TT</span>
         <span v-if="narrative.platform_breakdown.instagram > 0" class="bg-pink-600 text-white text-xs px-1.5 py-0.5 rounded">IG</span>
       </div>
     </div>

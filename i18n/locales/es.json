@@ -17,15 +17,19 @@
     "logout": "Cerrar sesión",
     "views": "vistas",
     "comments": "comentarios",
+    "likes": "me gusta",
     "mentions": "menciones",
     "actors": "Actores",
     "entities": "Entidades",
-    "chartPlaceholder": "La visualización del gráfico se mostrará aquí"
+    "chartPlaceholder": "La visualización del gráfico se mostrará aquí",
+    "error": "Error"
   },
   "nav": {
     "overview": "Vista general",
     "dashboard": "Panel",
     "narratives": "Narrativas",
+    "claims": "Claims",
+    "videos": "Vídeos",
     "messages": "Mensajes",
     "authentication": "Autenticación",
     "docs": "Documentación",
@@ -33,6 +37,28 @@
     "help": "Ayuda",
     "alerts": "Alertas",
     "profile": "Perfil"
+  },
+  "videos": {
+    "title": "Vídeos",
+    "subtitle": "Explorar y analizar contenido de vídeo",
+    "filters": "Filtros",
+    "channel": "Canal",
+    "channelPlaceholder": "Filtrar por nombre de canal...",
+    "platform": "Plataforma",
+    "selectPlatform": "Seleccionar plataforma",
+    "allPlatforms": "Todas las plataformas",
+    "clearFilters": "Limpiar filtros",
+    "applyFilters": "Aplicar filtros",
+    "showingResults": "Mostrando {count} vídeos",
+    "noVideosFound": "No se encontraron vídeos",
+    "views": "Vistas",
+    "comments": "Comentarios",
+    "viewDetails": "Ver detalles",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar en títulos de vídeos...",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram Reels"
   },
   "login": {
     "title": "Inicie sesión en su cuenta",
@@ -51,7 +77,11 @@
     "actors": "Actores",
     "viralNarratives": "Narrativas Virales",
     "prevalentNarratives": "Narrativas Prevalentes",
-    "last24h": "Últimas 24h"
+    "last24h": "Últimas 24h",
+    "narratives": "Narrativas",
+    "claims": "Claims",
+    "narrativesCount": "Número de narrativas",
+    "claimsCount": "Número de claims"
   },
   "narratives": {
     "title": "Narrativas",
@@ -75,7 +105,38 @@
     "actors": "Actores",
     "entities": "Entidades",
     "timelineContentRecurrences": "Línea de tiempo, contenido y recurrencias",
-    "evolutionOfNarrative": "Evolución de la narrativa"
+    "evolutionOfNarrative": "Evolución de la narrativa",
+    "showingNarrativesFor": "Mostrando narrativas para el tema:",
+    "clearFilter": "Limpiar filtro",
+    "topic": "Tema",
+    "selectTopic": "Seleccionar un tema",
+    "allTopics": "Todos los temas",
+    "topics": "Temas",
+    "created": "Creado",
+    "lastUpdated": "Última actualización",
+    "loadError": "Error al cargar la narrativa"
+  },
+  "claims": {
+    "title": "Claims",
+    "subtitle": "Explorar y filtrar claims extraídas del contenido analizado",
+    "filters": "Filtros",
+    "topic": "Tema",
+    "selectTopic": "Seleccionar un tema",
+    "allTopics": "Todos los temas",
+    "minConfidence": "Confianza mínima",
+    "confidencePlaceholder": "0-100",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar en claims...",
+    "clearFilters": "Limpiar filtros",
+    "applyFilters": "Aplicar filtros",
+    "showingClaimsFor": "Mostrando claims para el tema:",
+    "showingResults": "Mostrando {count} claims",
+    "noClaimsFound": "No se encontraron claims",
+    "timestamp": "Marca de tiempo",
+    "viewSource": "Ver fuente",
+    "confidence": "Confianza",
+    "topics": "Temas",
+    "viewVideo": "Ver vídeo"
   },
   "alerts": {
     "title": "Alertas",
@@ -111,7 +172,7 @@
   "entities": {
     "mentions": "Menciones",
     "relatedNarratives": "Narrativas relacionadas",
-    "relatedVideos": "Videos relacionados",
+    "relatedVídeos": "Vídeos relacionados",
     "relatedActors": "Actores relacionados",
     "relatedTopics": "Temas relacionados",
     "frequency": "Frecuencia"
@@ -119,7 +180,7 @@
   "actors": {
     "mentions": "Menciones",
     "relatedNarratives": "Narrativas relacionadas",
-    "relatedVideos": "Videos relacionados",
+    "relatedVídeos": "Vídeos relacionados",
     "relatedEntities": "Entidades relacionadas",
     "relatedTopics": "Temas relacionados",
     "frequency": "Frecuencia"
@@ -128,11 +189,21 @@
     "topicAnalysis": "Análisis de temas",
     "totalMentions": "Menciones totales",
     "relatedNarratives": "Narrativas relacionadas",
-    "relatedVideos": "Videos relacionados",
+    "relatedVídeos": "Vídeos relacionados",
     "relatedActorsEntities": "Actores y entidades relacionados",
     "trendOverTime": "Tendencia a lo largo del tiempo",
     "topActors": "Actores principales",
     "topEntities": "Entidades principales",
-    "recentVideos": "Videos recientes"
+    "recentVídeos": "Vídeos recientes",
+    "overview": "Visión general",
+    "narratives": "Narrativas",
+    "claims": "Claims",
+    "relatedClaims": "Claims relacionadas",
+    "noNarrativesFound": "No se encontraron narrativas para este tema",
+    "noClaimsFound": "No se encontraron claims para este tema",
+    "confidence": "Confianza",
+    "timestamp": "Marca de tiempo",
+    "topic": "Tema",
+    "viewAll": "Ver todo"
   }
 }

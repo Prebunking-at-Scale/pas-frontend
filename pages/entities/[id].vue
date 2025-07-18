@@ -44,7 +44,7 @@
               v-for="actor in entity.related_actors" 
               :key="actor.id"
               @click="goToActor(actor.id)"
-              class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+              class="flex items-center space-x-3 p-3 rounded-lg hover:bg-stone-50 cursor-pointer"
             >
               <img 
                 v-if="actor.image_url" 
@@ -52,7 +52,7 @@
                 :alt="actor.name"
                 class="w-12 h-12 rounded-full object-cover"
               >
-              <div v-else class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+              <div v-else class="w-12 h-12 rounded-full bg-stone-200 flex items-center justify-center">
                 <span class="text-sm text-gray-500">{{ actor.name.charAt(0) }}</span>
               </div>
               <div class="flex-1">
@@ -109,9 +109,9 @@
             <div 
               v-for="video in entity.videos.slice(0, 5)" 
               :key="video.id"
-              class="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50"
+              class="flex items-center space-x-4 p-3 rounded-lg hover:bg-stone-50"
             >
-              <div class="w-24 h-16 bg-gray-200 rounded flex-shrink-0"></div>
+              <div class="w-24 h-16 bg-stone-200 rounded flex-shrink-0"></div>
               <div class="flex-1">
                 <h4 class="font-medium text-gray-900 line-clamp-1">{{ video.title }}</h4>
                 <p class="text-sm text-gray-600 line-clamp-2">{{ video.description }}</p>
@@ -167,7 +167,7 @@ watchEffect(() => {
       <div class="flex items-center space-x-4 my-4">
         ${entity.value.image_url ? 
           `<img src="${entity.value.image_url}" alt="${entity.value.name}" class="w-16 h-16 rounded-full object-cover">` : 
-          `<div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+          `<div class="w-16 h-16 rounded-full bg-stone-300 flex items-center justify-center">
             <span class="text-xl text-gray-600">${entity.value.name.charAt(0)}</span>
           </div>`
         }

@@ -29,7 +29,7 @@
                       'px-2 py-1 text-xs font-medium rounded-full',
                       alert.is_active 
                         ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-800'
+                        : 'bg-stone-100 text-gray-800'
                     ]"
                   >
                     {{ alert.is_active ? $t('common.active') : $t('common.inactive') }}
@@ -57,7 +57,7 @@
       </div>
 
       <!-- Create Alert Modal (Mock) -->
-      <div v-if="showCreateModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+      <div v-if="showCreateModal" class="fixed inset-0 bg-stone-500 bg-opacity-75 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('alerts.createNew') }}</h3>
           <div class="space-y-4">
@@ -90,7 +90,7 @@
           <div class="mt-6 flex justify-end space-x-3">
             <button 
               @click="showCreateModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-stone-50"
             >
               {{ $t('common.cancel') }}
             </button>

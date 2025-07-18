@@ -37,22 +37,29 @@ export interface JSONResponse<T> {
   data: T;
 }
 
-// Additional types for narratives (not in API spec yet, but needed for UI)
+// Narrative type based on API spec
 export interface Narrative {
   id: string;
   title: string;
   description: string;
-  first_seen: string;
-  last_seen: string;
-  is_active: boolean;
-  related_content_count: number;
-  actors: Actor[];
-  entities: Entity[];
-  topics: Topic[];
-  views_count: number;
-  comments_count: number;
-  platform_breakdown: PlatformBreakdown;
-  evolution_data: EvolutionDataPoint[];
+  claims?: Claim[];
+  claim_ids?: string[];
+  topics?: Topic[];
+  topic_ids?: string[];
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+  // Additional UI fields (not from API)
+  first_seen?: string;
+  last_seen?: string;
+  is_active?: boolean;
+  related_content_count?: number;
+  actors?: Actor[];
+  entities?: Entity[];
+  views_count?: number;
+  comments_count?: number;
+  platform_breakdown?: PlatformBreakdown;
+  evolution_data?: EvolutionDataPoint[];
 }
 
 export interface Actor {
@@ -80,6 +87,24 @@ export interface Topic {
   frequency: number;
 }
 
+export interface TopicWithStats {
+  id: string;
+  topic: string;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+  narrative_count: number;
+  claim_count: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  size: number;
+  pages?: number;
+}
+
 export interface PlatformBreakdown {
   instagram: number;
   tiktok: number;
@@ -94,9 +119,17 @@ export interface EvolutionDataPoint {
 
 export interface Claim {
   id: string;
-  text: string;
-  confidence: number;
-  source_video_id: string;
+  video_id: string;
+  claim: string;
+  start_time_s: number;
+  embedding?: number[];
+  topics?: Topic[];
+  created_at?: string;
+  updated_at?: string;
+  // Legacy fields for compatibility
+  text?: string;
+  confidence?: number;
+  source_video_id?: string;
   timestamp?: string;
 }
 

@@ -3,7 +3,7 @@
     @click="$emit('click')"
     class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
   >
-    <div class="aspect-[3/2] bg-gray-200 rounded-t-lg relative">
+    <div class="aspect-[3/2] bg-stone-200 rounded-t-lg relative">
       <div class="absolute bottom-2 left-2 right-2">
         <div class="bg-black bg-opacity-60 text-white rounded px-2 py-1">
           <h3 class="font-medium text-sm line-clamp-2">{{ narrative.title }}</h3>
@@ -20,7 +20,7 @@
             <span 
               v-for="actor in narrative.actors.slice(0, 3)" 
               :key="actor.id"
-              class="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded"
+              class="inline-block px-2 py-0.5 text-xs bg-stone-100 text-gray-700 rounded"
             >
               {{ actor.name }}
             </span>
@@ -56,7 +56,7 @@
             'px-2 py-0.5 rounded text-xs font-medium',
             narrative.is_active 
               ? 'bg-green-100 text-green-800' 
-              : 'bg-gray-100 text-gray-600'
+              : 'bg-stone-100 text-gray-600'
           ]"
         >
           {{ narrative.is_active ? $t('common.active') : $t('common.inactive') }}

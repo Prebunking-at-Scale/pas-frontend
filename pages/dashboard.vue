@@ -1,109 +1,110 @@
 <template>
-  <div>
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-    </div>
-    
-    <div v-else>
+  <ClientOnly>
+    <div>
+      <div v-if="loading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+      
+      <div v-else>
       
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Topics Card -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">
-                {{ $t('dashboard.topics') }}
-              </h3>
-              <span class="text-2xl font-bold text-indigo-600">{{ stats.topics.length }}</span>
-            </div>
-            <div class="space-y-2">
-              <div 
-                v-for="topic in stats.topics.slice(0, 5)" 
-                :key="topic.id"
-                @click="goToTopic(topic.id)"
-                class="flex justify-between text-sm p-2 rounded hover:bg-gray-50 cursor-pointer -mx-2"
+        <StatsCard 
+          :title="$t('dashboard.topics')" 
+          :count="stats.topics.length"
+        >
+          <div 
+            v-for="topic in stats.topics.slice(0, 5)" 
+            :key="topic.id"
+            class="flex justify-between items-center text-sm p-2 rounded hover:bg-stone-50 -mx-2"
+          >
+            <span 
+              @click="goToTopic(topic.id)"
+              class="text-gray-600 hover:text-gray-900 cursor-pointer flex-1"
+            >{{ topic.topic }}</span>
+            <div class="flex gap-2">
+              <button
+                @click.stop="goToTopicWithType(topic.id, 'narratives')"
+                class="cursor-pointer px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded hover:bg-blue-200 transition-colors"
+                :title="$t('dashboard.narrativesCount')"
               >
-                <span class="text-gray-600">{{ topic.name }}</span>
-                <span class="text-gray-900 font-medium">{{ topic.count }}</span>
-              </div>
+                {{ $t('dashboard.narratives') }}: {{ topic.narrative_count }}
+              </button>
+              <button
+                @click.stop="goToTopicWithType(topic.id, 'claims')"
+                class="cursor-pointer px-2 py-1 bg-green-100 text-green-700 text-xs rounded hover:bg-green-200 transition-colors"
+                :title="$t('dashboard.claimsCount')"
+              >
+                {{ $t('dashboard.claims') }}: {{ topic.claim_count }}
+              </button>
             </div>
           </div>
-        </div>
+        </StatsCard>
 
         <!-- Entities Card -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">
-                {{ $t('dashboard.entities') }}
-              </h3>
-              <span class="text-2xl font-bold text-indigo-600">{{ stats.entities.length }}</span>
-            </div>
-            <div class="space-y-3">
-              <div 
-                v-for="entity in stats.entities.slice(0, 5)" 
-                :key="entity.id"
-                @click="goToEntity(entity.id)"
-                class="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer -mx-2"
-              >
-                <div class="flex items-center space-x-3">
-                  <img 
-                    v-if="entity.image_url" 
-                    :src="entity.image_url" 
-                    :alt="entity.name"
-                    class="w-8 h-8 rounded-full object-cover"
-                  >
-                  <div v-else class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span class="text-xs text-gray-500">{{ entity.name.charAt(0) }}</span>
-                  </div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">{{ entity.name }}</p>
-                    <p v-if="entity.type" class="text-xs text-gray-500">{{ entity.type }}</p>
-                  </div>
+        <StatsCard 
+          :title="$t('dashboard.entities')" 
+          :count="stats.entities.length"
+        >
+          <div class="space-y-3">
+            <div 
+              v-for="entity in stats.entities.slice(0, 5)" 
+              :key="entity.id"
+              @click="goToEntity(entity.id)"
+              class="flex items-center justify-between p-2 rounded hover:bg-stone-50 cursor-pointer -mx-2"
+            >
+              <div class="flex items-center space-x-3">
+                <img 
+                  v-if="entity.image_url" 
+                  :src="entity.image_url" 
+                  :alt="entity.name"
+                  class="w-8 h-8 rounded-full object-cover"
+                >
+                <div v-else class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center">
+                  <span class="text-xs text-gray-500">{{ entity.name.charAt(0) }}</span>
                 </div>
-                <span class="text-sm text-gray-900 font-medium">{{ entity.count }}</span>
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ entity.name }}</p>
+                  <p v-if="entity.type" class="text-xs text-gray-500">{{ entity.type }}</p>
+                </div>
               </div>
+              <span class="text-sm text-gray-900 font-medium">{{ entity.count }}</span>
             </div>
           </div>
-        </div>
+        </StatsCard>
 
         <!-- Actors Card -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">
-                {{ $t('dashboard.actors') }}
-              </h3>
-              <span class="text-2xl font-bold text-indigo-600">{{ stats.actors.length }}</span>
-            </div>
-            <div class="space-y-3">
-              <div 
-                v-for="actor in stats.actors.slice(0, 5)" 
-                :key="actor.id"
-                @click="goToActor(actor.id)"
-                class="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer -mx-2"
-              >
-                <div class="flex items-center space-x-3">
-                  <img 
-                    v-if="actor.image_url" 
-                    :src="actor.image_url" 
-                    :alt="actor.name"
-                    class="w-8 h-8 rounded-full object-cover"
-                  >
-                  <div v-else class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span class="text-xs text-gray-500">{{ actor.name.charAt(0) }}</span>
-                  </div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">{{ actor.name }}</p>
-                    <p v-if="actor.role" class="text-xs text-gray-500">{{ actor.role }}</p>
-                  </div>
+        <StatsCard 
+          :title="$t('dashboard.actors')" 
+          :count="stats.actors.length"
+        >
+          <div class="space-y-3">
+            <div 
+              v-for="actor in stats.actors.slice(0, 5)" 
+              :key="actor.id"
+              @click="goToActor(actor.id)"
+              class="flex items-center justify-between p-2 rounded hover:bg-stone-50 cursor-pointer -mx-2"
+            >
+              <div class="flex items-center space-x-3">
+                <img 
+                  v-if="actor.image_url" 
+                  :src="actor.image_url" 
+                  :alt="actor.name"
+                  class="w-8 h-8 rounded-full object-cover"
+                >
+                <div v-else class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center">
+                  <span class="text-xs text-gray-500">{{ actor.name.charAt(0) }}</span>
                 </div>
-                <span class="text-sm text-gray-900 font-medium">{{ actor.count }}</span>
+                <div>
+                  <p class="text-sm font-medium text-gray-900">{{ actor.name }}</p>
+                  <p v-if="actor.role" class="text-xs text-gray-500">{{ actor.role }}</p>
+                </div>
               </div>
+              <span class="text-sm text-gray-900 font-medium">{{ actor.count }}</span>
             </div>
           </div>
-        </div>
+        </StatsCard>
       </div>
 
       <!-- Viral Narratives -->
@@ -135,11 +136,14 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
+import type { TopicWithStats } from '~/types/api';
+import { useTopicsStore } from '~/stores/topics';
 
 definePageMeta({
   layout: 'default',
@@ -147,11 +151,17 @@ definePageMeta({
 });
 
 const { $i18n } = useNuxtApp();
-
 const router = useRouter();
+const topicsStore = useTopicsStore();
 
-// Load dashboard stats
-const stats = ref({
+// Load dashboard stats with safe defaults
+const stats = ref<{
+  topics: TopicWithStats[];
+  entities: any[];
+  actors: any[];
+  viralNarratives: any[];
+  prevalentNarratives: any[];
+}>({
   topics: [],
   entities: [],
   actors: [],
@@ -169,6 +179,14 @@ const goToTopic = (id: string) => {
   router.push(`/topics/${id}`);
 };
 
+const goToTopicWithType = (id: string, type: 'narratives' | 'claims') => {
+  if (type === 'narratives') {
+    router.push(`/narratives?topic=${id}`);
+  } else {
+    router.push(`/claims?topic=${id}`);
+  }
+};
+
 const goToEntity = (id: string) => {
   router.push(`/entities/${id}`);
 };
@@ -180,9 +198,26 @@ const goToActor = (id: string) => {
 onMounted(async () => {
   // Load data
   try {
-    stats.value = await apiService.getDashboardStats();
+    const data = await apiService.getDashboardStats();
+    // Ensure all arrays exist with defaults
+    stats.value = {
+      topics: data.topics || [],
+      entities: data.entities || [],
+      actors: data.actors || [],
+      viralNarratives: data.viralNarratives || [],
+      prevalentNarratives: data.prevalentNarratives || []
+    };
+    
+    // Also populate the topics store if we got topics
+    if (data.topics && data.topics.length > 0) {
+      topicsStore.$patch({
+        topics: data.topics,
+        lastFetch: new Date()
+      });
+    }
   } catch (error) {
     console.error('Failed to load dashboard stats:', error);
+    // Keep default empty arrays on error
   } finally {
     loading.value = false;
   }
