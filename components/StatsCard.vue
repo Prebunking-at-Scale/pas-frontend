@@ -6,7 +6,7 @@
       </h3>
       <span class="text-2xl font-bold" :class="countClass">{{ count }}</span>
     </div>
-    <div>
+    <div class="pb-4">
       <div class="space-y-2">
         <slot />
       </div>

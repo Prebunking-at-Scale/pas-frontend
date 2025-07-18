@@ -1,11 +1,7 @@
 <template>
-  <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden">
-    <div class="p-4">
-      <h3 class="font-semibold text-lg text-gray-900 line-clamp-2 mb-1">{{ video.title }}</h3>
-      <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ video.description }}</p>
-      
+  <div @click="$emit('click', video.id)" class="cursor-pointer bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden hover:bg-stone-100">
       <!-- YouTube Embed -->
-      <div v-if="youtubeVideoId" class="aspect-video bg-stone-200 rounded mb-3 overflow-hidden">
+      <div v-if="youtubeVideoId" class="aspect-video bg-stone-200 rounded overflow-hidden">
         <iframe
           :src="`https://www.youtube.com/embed/${youtubeVideoId}`"
           frameborder="0"
@@ -20,18 +16,21 @@
         </svg>
       </div>
 
+      <div class="p-4">
+
       <!-- Platform and Channel Info -->
       <div class="flex items-center gap-2 mb-3 text-sm">
-        <span 
-          class="px-2 py-1 rounded text-xs font-medium"
-          :class="getPlatformClass(video.platform)"
-        >
-          {{ getPlatformLabel(video.platform) }}
-        </span>
+        <PlatformBadge :platform="video.platform" />
         <span v-if="video.channel" class="text-gray-500">
-          {{ video.channel }}
+          <span>Uploaded by {{ video.channel }}</span>
+          <span> · </span>
+          <span>{{ formatDate(video.uploaded_at, $i18n.locale.value) }}</span>
         </span>
       </div>
+
+      <h3 class="font-semibold text-lg text-gray-900 line-clamp-2 mb-1">{{ video.title }}</h3>
+      <p class="text-sm text-gray-600 line-clamp-2">{{ video.description }}</p>
+
 
       <!-- Stats -->
       <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
@@ -57,20 +56,14 @@
           </span>
         </div>
       </div>
-
-      <!-- View Details Button -->
-      <button
-        @click="$emit('click', video.id)"
-        class="w-full text-center py-2 px-4 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition-colors"
-      >
-        {{ $t('videos.viewDetails') }}
-      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Video } from '~/types/api';
+import PlatformBadge from '~/components/PlatformBadge.vue';
+import { formatDate } from '~/utils/date';
 
 interface Props {
   video: Video;
@@ -105,32 +98,6 @@ const youtubeVideoId = computed(() => {
   
   return null;
 });
-
-const getPlatformClass = (platform: string) => {
-  switch (platform.toLowerCase()) {
-    case 'tiktok':
-      return 'bg-black text-white';
-    case 'youtube':
-      return 'bg-red-600 text-white';
-    case 'instagram':
-      return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white';
-    default:
-      return 'bg-stone-500 text-white';
-  }
-};
-
-const getPlatformLabel = (platform: string) => {
-  switch (platform.toLowerCase()) {
-    case 'tiktok':
-      return $i18n.t('videos.tiktok');
-    case 'youtube':
-      return $i18n.t('videos.youtube');
-    case 'instagram':
-      return $i18n.t('videos.instagram');
-    default:
-      return platform;
-  }
-};
 
 const formatNumber = (num: number) => {
   if (num >= 1000000) {

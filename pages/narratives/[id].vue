@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="loading" class="text-center py-8">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
     </div>
     <div v-else-if="error" class="text-center py-8">
       <div class="bg-red-50 rounded-lg p-6 max-w-md mx-auto">
@@ -14,7 +14,7 @@
       <div class="mb-6">
 
         <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
-        <p class="mt-2 text-gray-600">{{ narrative.description }}</p>
+        <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
         
         <!-- Topics -->
         <div v-if="narrative.topics && narrative.topics.length > 0" class="mt-4">
@@ -23,29 +23,97 @@
             <span 
               v-for="topic in narrative.topics" 
               :key="topic.id"
-              class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm cursor-pointer hover:bg-indigo-200"
+              class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm cursor-pointer hover:bg-emerald-200"
               @click="goToTopic(topic.id)"
             >
               {{ topic.name }}
             </span>
           </div>
         </div>
-        
-        <!-- Metadata -->
-        <div class="mt-4 flex items-center gap-4 text-sm text-gray-500">
-          <div v-if="narrative.created_at">
-            <span class="font-medium">{{ $t('narratives.created') }}:</span>
-            {{ formatDate(narrative.created_at) }}
+      </div>
+
+      <!-- Total stats calculated from videos -->
+      <div class="bg-white shadow rounded-lg mb-6 p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Total Views -->
+          <div class="flex items-center justify-center">
+            <div class="flex flex-col items-center">
+              <div class="text-gray-400 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </div>
+              <div class="text-2xl font-bold text-gray-900">{{ stats.totalViews.toLocaleString() }}</div>
+              <div class="text-sm text-gray-500">{{ $t('common.views') }}</div>
+            </div>
           </div>
-          <div v-if="narrative.updated_at">
-            <span class="font-medium">{{ $t('narratives.lastUpdated') }}:</span>
-            {{ formatDate(narrative.updated_at) }}
+
+          <!-- Total Likes -->
+          <div class="flex items-center justify-center">
+            <div class="flex flex-col items-center">
+              <div class="text-gray-400 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
+              </div>
+              <div class="text-2xl font-bold text-gray-900">{{ stats.totalLikes.toLocaleString() }}</div>
+              <div class="text-sm text-gray-500">{{ $t('common.likes') }}</div>
+            </div>
+          </div>
+
+          <!-- Total Comments -->
+          <div class="flex items-center justify-center">
+            <div class="flex flex-col items-center">
+              <div class="text-gray-400 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <div class="text-2xl font-bold text-gray-900">{{ stats.totalComments.toLocaleString() }}</div>
+              <div class="text-sm text-gray-500">{{ $t('common.comments') }}</div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Timeline: Show all related video dates as a timeline, 100% width -->
+      <div class="bg-white shadow rounded-lg mb-6 p-6 flex flex-col justify-center text-sm text-gray-500 w-full" v-if="narrative.videos && narrative.videos.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Timeline of the narrative</h3>
+        <div class="flex items-center w-full">
+          <template v-for="(video, idx) in sortedVideos" :key="video.id || video.uploaded_at || idx">
+            <!-- Timeline point -->
+            <div class="flex flex-col items-center flex-shrink-0 min-w-[70px]">
+              <div class="w-4 h-4 rounded-full bg-emerald-700 border-2 border-emerald-900"></div>
+              <span class="mt-2 font-medium text-gray-700">
+                <template v-if="idx === 0">
+                  {{ $t('timeline.firstSeen') || 'First seen' }}
+                </template>
+                <template v-else-if="idx === sortedVideos.length - 1">
+                  {{ $t('timeline.lastSeen') || 'Last seen' }}
+                </template>
+                <template v-else>
+                  {{ $t('timeline.seen') || 'Seen' }}
+                </template>
+              </span>
+              <span class="text-xs mt-1" v-if="video.uploaded_at">
+                {{ formatDate(video.uploaded_at, $i18n.locale.value) }}
+              </span>
+            </div>
+            <!-- Line between points, except after last -->
+            <div
+              v-if="idx < sortedVideos.length - 1"
+              class="flex-1 h-0.5 bg-stone-400 mx-2"
+            ></div>
+          </template>
+        </div>
+      </div>
+
+      
       <!-- Timeline Tabs -->
-      <div class="bg-white shadow rounded-lg mb-6">
+      <div class="bg-white shadow rounded-lg mb-6" v-if="false">
         <div class="border-b border-gray-200">
           <nav class="-mb-px flex">
             <button
@@ -55,7 +123,7 @@
               :class="[
                 'py-2 px-6 text-sm font-medium border-b-2',
                 selectedTimeTab === tab.value
-                  ? 'border-green-900 text-indigo-600'
+                  ? 'border-green-900 text-emerald-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               ]"
             >
@@ -65,7 +133,7 @@
         </div>
 
         <!-- Content Tabs -->
-        <div class="p-4">
+        <div class="p-4" v-if="false">
           <div class="flex space-x-4 mb-4">
             <label class="flex items-center">
               <input type="radio" v-model="contentType" value="first" class="mr-2">
@@ -82,7 +150,7 @@
           </div>
 
           <!-- Statistics Grid -->
-          <div v-if="narrative.views_count || narrative.comments_count || narrative.related_content_count" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div v-if="false" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div v-if="narrative.views_count" class="text-center">
               <div class="text-2xl font-bold text-gray-900">{{ formatNumber(narrative.views_count) }}</div>
               <div class="text-sm text-gray-500">{{ $t('narratives.views') }}</div>
@@ -117,7 +185,7 @@
           </div>
 
           <!-- Content Recurrences Chart -->
-          <div class="mb-6">
+          <div class="mb-6" v-if="false">
             <h3 class="text-lg font-medium text-gray-900 mb-4">
               {{ $t('narratives.timelineContentRecurrences') }}
             </h3>
@@ -129,12 +197,12 @@
       </div>
 
       <!-- Actors and Entities -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" v-if="false">
         <!-- Actors -->
         <div class="bg-white shadow rounded-lg p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
             {{ $t('narratives.actors') }}
-            <span class="text-2xl font-bold text-indigo-600">{{ narrative.actors.length }}</span>
+            <span class="text-2xl font-bold text-emerald-600">{{ narrative.actors.length }}</span>
           </h3>
           <div class="space-y-3">
             <div v-for="actor in narrative.actors" :key="actor.id" class="flex justify-between items-center">
@@ -164,7 +232,7 @@
         <div class="bg-white shadow rounded-lg p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
             {{ $t('narratives.entities') }}
-            <span class="text-2xl font-bold text-indigo-600">{{ narrative.entities.length }}</span>
+            <span class="text-2xl font-bold text-emerald-600">{{ narrative.entities.length }}</span>
           </h3>
           <div class="space-y-3">
             <div v-for="entity in narrative.entities" :key="entity.id" class="flex justify-between items-center">
@@ -190,28 +258,35 @@
       </div>
 
       <!-- Evolution of the narrative -->
-      <div class="bg-white shadow rounded-lg p-6 mb-6">
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="false">
         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
         <div class="bg-stone-100 rounded-lg p-4 h-64 flex items-center justify-center">
           <span class="text-gray-500">{{ $t('common.chartPlaceholder') }}</span>
         </div>
       </div>
 
-      <!-- Associated Content -->
-      <div>
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.associatedContent') }}</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div v-for="i in 4" :key="i" class="bg-white shadow rounded-lg overflow-hidden">
-            <div class="bg-stone-200 h-48"></div>
-            <div class="p-4">
-              <h4 class="font-medium text-gray-900 mb-2">{{ $t('narratives.associatedContent') }} {{ i }}</h4>
-              <p class="text-sm text-gray-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-              <div class="flex justify-between text-xs text-gray-500">
-                <span>1.2M {{ $t('common.views') }}</span>
-                <span>12K {{ $t('common.comments') }}</span>
-              </div>
-            </div>
-          </div>
+      <!-- Claims supporting this narrative -->
+      <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claims && narrative.claims.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claims.length }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+          <ClaimCard 
+            v-for="claim in narrative.claims" 
+            :key="claim.id" 
+            :claim="claim"
+          />
+        </div>
+      </div>
+
+      <!-- Seen in Videos -->
+      <div class="bg-stone-100 rounded-lg p-6" v-if="narrative.videos && narrative.videos.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.seenIn') }} {{ narrative.videos.length }} <span class="lowercase">{{ $t('videos.title') }}</span></h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <VideoCard 
+            v-for="video in narrative.videos" 
+            :key="video.id" 
+            :video="video"
+            @click="goToVideo"
+          />
         </div>
       </div>
     </div>
@@ -221,6 +296,10 @@
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Narrative } from '~/types/api';
+import VideoCard from '~/components/VideoCard.vue';
+import ClaimCard from '~/components/ClaimCard.vue';
+import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
+import { formatDate } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -239,12 +318,28 @@ const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 
+// Calculate narrative stats using the helper function
+const stats = computed(() => {
+  if (!narrative.value) return { totalViews: 0, totalLikes: 0, totalComments: 0 };
+  return calculateNarrativeStats(narrative.value);
+});
+
 const timeTabs = [
   { value: '1d', label: '1 day' },
   { value: '1w', label: '1 week' },
   { value: '1m', label: '1 month' },
   { value: '1y', label: '1 year' }
 ];
+
+// Computed properties
+const sortedVideos = computed(() => {
+  if (!narrative.value?.videos) return [];
+  return [...narrative.value.videos].sort((a, b) => {
+    const dateA = new Date(a.uploaded_at || a.created_at || '').getTime();
+    const dateB = new Date(b.uploaded_at || b.created_at || '').getTime();
+    return dateA - dateB;
+  });
+});
 
 // Load narrative data
 onMounted(async () => {
@@ -269,15 +364,12 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString($i18n.locale.value, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
 
 const goToTopic = (topicId: string) => {
   router.push(`/topics/${topicId}`);
+};
+
+const goToVideo = (videoId: string) => {
+  router.push(`/videos/${videoId}`);
 };
 </script>

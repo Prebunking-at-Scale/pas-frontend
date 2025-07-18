@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse } from '~/types/api';
+import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
 
 // Get the backend endpoint and API key from runtime config
 const getApiConfig = () => {
@@ -184,11 +184,21 @@ export const apiService = {
     }
   },
 
-  async getVideo(videoId: string): Promise<JSONResponse<Video | null>> {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return {
-      data: generateMockVideo(parseInt(videoId.split('-')[1] || '1'))
-    };
+  async getVideo(videoId: string): Promise<VideoDetailResponse> {
+    try {
+      const apiConfig = getApiConfig();
+      const response = await $fetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
+        ...apiConfig,
+        method: 'GET'
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch video:', error);
+      // For now, return mock data as fallback
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return generateMockVideo(parseInt(videoId.split('-')[1] || '1'));
+    }
   },
 
   async createVideo(video: Omit<Video, 'id' | 'created_at' | 'updated_at'>): Promise<JSONResponse<Video>> {
@@ -285,6 +295,56 @@ export const apiService = {
     return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
   },
 
+  // Viral narratives with hours parameter
+  async getViralNarratives(hours: number = 168): Promise<Narrative[]> {
+    try {
+      const apiConfig = getApiConfig();
+      const response = await $fetch('/api/narratives/viral', {
+        ...apiConfig,
+        method: 'GET',
+        query: {
+          hours
+        }
+      });
+      
+      const data = response as ApiResponse<Narrative>;
+      return data.data || [];
+    } catch (error) {
+      console.error('Failed to fetch viral narratives:', error);
+      // Return mock data as fallback
+      return Array.from({ length: 6 }, (_, i) => generateMockNarrative(i + 1));
+    }
+  },
+
+  // Prevalent narratives - narratives with most videos in a time frame
+  // Endpoint: GET /api/narratives/prevalent
+  // Returns narratives sorted by video count in specified time period
+  async getPrevalentNarratives(hours: number = 168, limit: number = 10): Promise<Narrative[]> {
+    try {
+      const apiConfig = getApiConfig();
+      const response = await $fetch('/api/narratives/prevalent', {
+        ...apiConfig,
+        method: 'GET',
+        query: {
+          hours,
+          limit
+        }
+      });
+      
+      const data = response as ApiResponse<Narrative>;
+      return data.data || [];
+    } catch (error) {
+      console.error('Failed to fetch prevalent narratives:', error);
+      // Return mock data as fallback - simulate narratives with many videos
+      return Array.from({ length: 4 }, (_, i) => {
+        const narrative = generateMockNarrative(i + 10);
+        // Add more videos to simulate "prevalent" narratives
+        narrative.videos = Array.from({ length: 8 + i * 2 }, (_, j) => generateMockVideo(j + 1));
+        return narrative;
+      });
+    }
+  },
+
   // Dashboard data
   async getDashboardStats(): Promise<{
     topics: TopicWithStats[];
@@ -303,103 +363,15 @@ export const apiService = {
     } catch (error) {
       console.error('Failed to fetch topics for dashboard:', error);
       // Use fallback mock data if API fails
-      topicsData = [
-        { id: 'topic-1', topic: 'Climate Change', narrative_count: 45, claim_count: 234 },
-        { id: 'topic-2', topic: 'Economic Policy', narrative_count: 38, claim_count: 189 },
-        { id: 'topic-3', topic: 'Healthcare Reform', narrative_count: 32, claim_count: 156 },
-        { id: 'topic-4', topic: 'Technology & AI', narrative_count: 28, claim_count: 145 },
-        { id: 'topic-5', topic: 'Education Policy', narrative_count: 22, claim_count: 98 }
-      ];
+      topicsData = [];
     }
     
     return {
       topics: topicsData,
-      entities: [
-        {
-          id: 'entity-1',
-          name: 'United Nations',
-          count: 89,
-          type: 'institution',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_the_United_Nations.svg/200px-Flag_of_the_United_Nations.svg.png'
-        },
-        {
-          id: 'entity-2',
-          name: 'World Bank',
-          count: 67,
-          type: 'institution',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/The_World_Bank_logo.svg/200px-The_World_Bank_logo.svg.png'
-        },
-        {
-          id: 'entity-3',
-          name: 'WHO',
-          count: 56,
-          type: 'institution',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/WHO_logo.svg/200px-WHO_logo.svg.png'
-        },
-        {
-          id: 'entity-4',
-          name: 'NASA',
-          count: 45,
-          type: 'institution',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/200px-NASA_logo.svg.png'
-        },
-        {
-          id: 'entity-5',
-          name: 'European Union',
-          count: 34,
-          type: 'institution',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/200px-Flag_of_Europe.svg.png'
-        }
-      ],
-      actors: [
-        {
-          id: 'actor-1',
-          name: 'Joe Biden',
-          count: 156,
-          type: 'person',
-          role: 'President',
-          affiliation: 'United States',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Joe_Biden_presidential_portrait.jpg/200px-Joe_Biden_presidential_portrait.jpg'
-        },
-        {
-          id: 'actor-2',
-          name: 'Ursula von der Leyen',
-          count: 134,
-          type: 'person',
-          role: 'President',
-          affiliation: 'European Commission',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Ursula_von_der_Leyen_2019_%28cropped%29.jpg/200px-Ursula_von_der_Leyen_2019_%28cropped%29.jpg'
-        },
-        {
-          id: 'actor-3',
-          name: 'António Guterres',
-          count: 98,
-          type: 'person',
-          role: 'Secretary-General',
-          affiliation: 'United Nations',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ant%C3%B3nio_Guterres_2019_%28cropped%29.jpg/200px-Ant%C3%B3nio_Guterres_2019_%28cropped%29.jpg'
-        },
-        {
-          id: 'actor-4',
-          name: 'Christine Lagarde',
-          count: 87,
-          type: 'person',
-          role: 'President',
-          affiliation: 'European Central Bank',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Christine_Lagarde_%282020%29.jpg/200px-Christine_Lagarde_%282020%29.jpg'
-        },
-        {
-          id: 'actor-5',
-          name: 'Emmanuel Macron',
-          count: 76,
-          type: 'person',
-          role: 'President',
-          affiliation: 'France',
-          image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Emmanuel_Macron_in_2023.jpg/200px-Emmanuel_Macron_in_2023.jpg'
-        }
-      ],
-      viralNarratives: Array.from({ length: 6 }, (_, i) => generateMockNarrative(i + 1)),
-      prevalentNarratives: Array.from({ length: 4 }, (_, i) => generateMockNarrative(i + 10))
+      entities: [],
+      actors: [],
+      viralNarratives: await this.getViralNarratives(168), // 168 hours = 1 week
+      prevalentNarratives: await this.getPrevalentNarratives(168) // 168 hours = 1 week
     };
   },
 

@@ -10,13 +10,18 @@ export interface Video {
   source_url: string;
   destination_path: string;
   uploaded_at?: string | null;
+  published_at?: string | null;
   views?: number | null;
   likes?: number | null;
   comments?: number | null;
+  shares?: number | null;
   channel?: string | null;
   channel_followers?: number | null;
   scrape_topic?: string | null;
   scrape_keyword?: string | null;
+  duration?: number | null;
+  language?: string | null;
+  topics?: Topic[];
   metadata?: Record<string, any>;
 }
 
@@ -43,9 +48,8 @@ export interface Narrative {
   title: string;
   description: string;
   claims?: Claim[];
-  claim_ids?: string[];
   topics?: Topic[];
-  topic_ids?: string[];
+  videos?: Video[];
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
@@ -120,6 +124,7 @@ export interface EvolutionDataPoint {
 export interface Claim {
   id: string;
   video_id: string;
+  video: Video;
   claim: string;
   start_time_s: number;
   embedding?: number[];
@@ -149,4 +154,23 @@ export interface Alert {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// Video detail response includes video data plus related content
+export interface VideoDetailResponse extends Video {
+  transcript?: {
+    video_id: string;
+    sentences: Array<{
+      id: string;
+      source: string;
+      text: string;
+      start_time_s: number;
+      metadata: Record<string, any>;
+    }>;
+  };
+  claims?: {
+    video_id: string;
+    claims: Claim[];
+  };
+  narratives?: Narrative[];
 }

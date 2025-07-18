@@ -22,7 +22,10 @@
     "actors": "Akteure",
     "entities": "Entitäten",
     "chartPlaceholder": "Diagrammvisualisierung wird hier angezeigt",
-    "error": "Fehler"
+    "error": "Fehler",
+    "minutesAgo": "vor {count} Min.",
+    "hoursAgo": "vor {count} Std.",
+    "daysAgo": "vor {count} T."
   },
   "nav": {
     "overview": "Übersicht",
@@ -58,7 +61,19 @@
     "searchPlaceholder": "In Videotiteln suchen...",
     "tiktok": "TikTok",
     "youtube": "YouTube",
-    "instagram": "Instagram Reels"
+    "instagram": "Instagram Reels",
+    "errorLoading": "Fehler beim Laden des Videos",
+    "noEmbed": "Videovorschau nicht verfügbar",
+    "viewOriginal": "Original anzeigen",
+    "likes": "Gefällt mir",
+    "shares": "Geteilt",
+    "relatedClaims": "Verwandte Behauptungen",
+    "metadata": "Videoinformationen",
+    "duration": "Dauer",
+    "language": "Sprache",
+    "source": "Quelle",
+    "relatedNarratives": "Verwandte Narrative",
+    "topics": "Themen"
   },
   "login": {
     "title": "Bei Ihrem Konto anmelden",
@@ -77,7 +92,7 @@
     "actors": "Akteure",
     "viralNarratives": "Virale Narrative",
     "prevalentNarratives": "Verbreitete Narrative",
-    "last24h": "Letzte 24h",
+    "lastWeek": "Letzte Woche",
     "narratives": "Narrative",
     "claims": "Behauptungen",
     "narrativesCount": "Anzahl der Narrative",
@@ -114,12 +129,15 @@
     "topics": "Themen",
     "created": "Erstellt",
     "lastUpdated": "Zuletzt aktualisiert",
-    "loadError": "Fehler beim Laden des Narrativs"
+    "loadError": "Fehler beim Laden des Narrativs",
+    "seenIn": "Gesehen in",
+    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen"
   },
   "claims": {
     "title": "Behauptungen",
     "subtitle": "Durchsuchen und filtern Sie Behauptungen aus analysierten Inhalten",
     "filters": "Filter",
+    "channel": "Kanal",
     "topic": "Thema",
     "selectTopic": "Thema auswählen",
     "allTopics": "Alle Themen",
@@ -169,6 +187,11 @@
     "passwordChanged": "Passwort erfolgreich geändert",
     "passwordMismatch": "Passwörter stimmen nicht überein"
   },
+  "timeline": {
+    "firstSeen": "Erstmals gesehen",
+    "lastSeen": "Zuletzt gesehen",
+    "seen": "Gesehen"
+  },
   "entities": {
     "mentions": "Erwähnungen",
     "relatedNarratives": "Verwandte Narrative",
@@ -205,5 +228,47 @@
     "timestamp": "Zeitstempel",
     "topic": "Thema",
     "viewAll": "Alle anzeigen"
+  },
+  "filters": {
+    "clearAll": "Alle Filter löschen",
+    "clear": "Löschen",
+    "apply": "Anwenden",
+    "topic": "Thema",
+    "allTopics": "Alle Themen",
+    "search": "Suchen",
+    "searchPlaceholder": "Suchen...",
+    "platform": "Plattform",
+    "allPlatforms": "Alle Plattformen",
+    "channel": "Kanal",
+    "channelPlaceholder": "Nach Kanal filtern",
+    "allChannels": "Alle Kanäle",
+    "language": "Sprache",
+    "allLanguages": "Alle Sprachen",
+    "keywords": "Schlüsselwörter",
+    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen"
+  },
+  "footer": {
+    "about": {
+      "title": "Über Prebunking at Scale",
+      "description": "Eine umfassende Plattform zur Überwachung von Kurzvideoplattformen, Extraktion von Behauptungen und Identifizierung von Narrativen über mehrere Inhalte hinweg.",
+      "attribution": "Prebunking at Scale ist ein Projekt der European Fact-Checking Standards Network (EFCSN). Entwickelt von Full Fact und Maldita.es"
+    },
+    "quickLinks": {
+      "title": "Schnellzugriff"
+    },
+    "resources": {
+      "title": "Ressourcen",
+      "documentation": "Dokumentation",
+      "apiDocs": "API-Dokumentation",
+      "help": "Hilfezentrum"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "description": "Haben Sie Fragen oder benötigen Sie Unterstützung?",
+      "email": "contact{'@'}prebunking.com"
+    },
+    "copyright": "© {year} Prebunking at Scale. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen"
   }
 }

@@ -118,7 +118,7 @@
                 <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
                   <span>{{ video.platform }}</span>
                   <span v-if="video.views">{{ formatNumber(video.views) }} {{ $t('common.views') }}</span>
-                  <span v-if="video.uploaded_at">{{ formatDate(video.uploaded_at) }}</span>
+                  <span v-if="video.uploaded_at">{{ formatDate(video.uploaded_at, $i18n.locale.value) }}</span>
                 </div>
               </div>
             </div>
@@ -134,6 +134,7 @@ import { apiService } from '~/services/api';
 import type { Entity, Actor, Topic, Narrative, Video } from '~/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
+import { formatDate } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -219,10 +220,6 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-};
 
 onMounted(() => {
   loadEntity();

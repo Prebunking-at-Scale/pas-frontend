@@ -22,7 +22,10 @@
     "actors": "Acteurs",
     "entities": "Entités",
     "chartPlaceholder": "La visualisation du graphique sera affichée ici",
-    "error": "Erreur"
+    "error": "Erreur",
+    "minutesAgo": "il y a {count} min",
+    "hoursAgo": "il y a {count}h",
+    "daysAgo": "il y a {count}j"
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -58,7 +61,19 @@
     "searchPlaceholder": "Rechercher dans les titres de vidéos...",
     "tiktok": "TikTok",
     "youtube": "YouTube",
-    "instagram": "Instagram Reels"
+    "instagram": "Instagram Reels",
+    "errorLoading": "Erreur lors du chargement de la vidéo",
+    "noEmbed": "Aperçu vidéo non disponible",
+    "viewOriginal": "Voir l'original",
+    "likes": "J'aime",
+    "shares": "Partages",
+    "relatedClaims": "Affirmations liées",
+    "metadata": "Informations sur la vidéo",
+    "duration": "Durée",
+    "language": "Langue",
+    "source": "Source",
+    "relatedNarratives": "Récits liés",
+    "topics": "Sujets"
   },
   "login": {
     "title": "Connectez-vous à votre compte",
@@ -77,7 +92,7 @@
     "actors": "Acteurs",
     "viralNarratives": "Récits viraux",
     "prevalentNarratives": "Récits prévalents",
-    "last24h": "Dernières 24h",
+    "lastWeek": "Dernière semaine",
     "narratives": "Récits",
     "claims": "Affirmations",
     "narrativesCount": "Nombre de récits",
@@ -114,12 +129,15 @@
     "topics": "Sujets",
     "created": "Créé",
     "lastUpdated": "Dernière mise à jour",
-    "loadError": "Échec du chargement du récit"
+    "loadError": "Échec du chargement du récit",
+    "seenIn": "Vu dans",
+    "claimsSupportingNarrative": "Affirmations soutenant ce récit"
   },
   "claims": {
     "title": "Affirmations",
     "subtitle": "Parcourir et filtrer les affirmations extraites du contenu analysé",
     "filters": "Filtres",
+    "channel": "Chaîne",
     "topic": "Sujet",
     "selectTopic": "Sélectionner un sujet",
     "allTopics": "Tous les sujets",
@@ -169,6 +187,11 @@
     "passwordChanged": "Mot de passe changé avec succès",
     "passwordMismatch": "Les mots de passe ne correspondent pas"
   },
+  "timeline": {
+    "firstSeen": "Vu pour la première fois",
+    "lastSeen": "Vu pour la dernière fois",
+    "seen": "Vu"
+  },
   "entities": {
     "mentions": "Mentions",
     "relatedNarratives": "Récits liés",
@@ -205,5 +228,47 @@
     "timestamp": "Horodatage",
     "topic": "Sujet",
     "viewAll": "Voir tout"
+  },
+  "filters": {
+    "clearAll": "Effacer tous les filtres",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "topic": "Sujet",
+    "allTopics": "Tous les sujets",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher...",
+    "platform": "Plateforme",
+    "allPlatforms": "Toutes les plateformes",
+    "channel": "Chaîne",
+    "channelPlaceholder": "Filtrer par chaîne",
+    "allChannels": "Toutes les chaînes",
+    "language": "Langue",
+    "allLanguages": "Toutes les langues",
+    "keywords": "Mots-clés",
+    "keywordsPlaceholder": "Appuyez sur Entrée pour ajouter un mot-clé"
+  },
+  "footer": {
+    "about": {
+      "title": "À propos de Prebunking at Scale",
+      "description": "Une plateforme complète pour surveiller les plateformes de vidéos courtes, extraire des affirmations et identifier des récits à travers plusieurs contenus.",
+      "attribution": "Prebunking at Scale est un projet du European Fact-Checking Standards Network (EFCSN). Développé par Full Fact et Maldita.es"
+    },
+    "quickLinks": {
+      "title": "Liens Rapides"
+    },
+    "resources": {
+      "title": "Ressources",
+      "documentation": "Documentation",
+      "apiDocs": "Documentation API",
+      "help": "Centre d'Aide"
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Vous avez des questions ou besoin d'aide ?",
+      "email": "contact{'@'}prebunking.com"
+    },
+    "copyright": "© {year} Prebunking at Scale. Tous droits réservés.",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation"
   }
 }

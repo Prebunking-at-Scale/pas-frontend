@@ -1,65 +1,69 @@
 <template>
-  <div 
-    @click="$emit('click')"
-    class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-  >
-    <div class="p-4">
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex space-x-2">
-          <span 
-            v-for="(active, index) in [narrative.first_seen, narrative.last_seen, narrative.is_active]"
-            :key="index"
-            :class="[
-              'w-2 h-2 rounded-full',
-              index === 0 ? 'bg-stone-300' : index === 1 ? 'bg-stone-400' : narrative.is_active ? 'bg-green-500' : 'bg-stone-300'
-            ]"
-          />
-        </div>
-        <div class="text-xs text-gray-500">
-          <span v-if="contentType === 'first'">{{ $t('narratives.first') }}</span>
-          <span v-else-if="contentType === 'last'">{{ $t('narratives.last') }}</span>
-          <span v-else>{{ $t('narratives.active') }}</span>
+
+<Card 
+  class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
+  @click="$emit('click')"
+>
+    <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
+      <!-- Claim Text -->
+      <div class="mb-4">
+        <p class="text-gray-900 text-xl font-semibold leading-tight">
+          {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
+        </p>
+        <div 
+          class="text-gray-600 text-xs mt-2 flex items-center gap-2"
+        >
+          <span>{{ narrative.claims?.length || 0 }} claims in {{ narrative.videos?.length  || 0 }} videos</span>
+          <span> · </span>
+          <span>Seen in </span>
+          <div class="flex gap-1">
+            <PlatformBadge 
+              v-for="platform in [...new Set(narrative.videos?.map(v => v.platform) || [])]"
+              :key="platform"
+              :platform="platform as 'youtube' | 'tiktok' | 'instagram'"
+            />
+          </div>
         </div>
       </div>
 
-      <h3 class="font-medium text-gray-900 mb-1 line-clamp-2">{{ narrative.title }}</h3>
+      <div class="flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center space-x-3">
+          <span class="flex items-center">
+            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            {{ totalViews }}
+          </span>
+          <span class="flex items-center">
+            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            {{ totalComments }}
+          </span>
+          <span class="flex items-center">
+            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-2 2m0 0l-2-2m2 2V7m6 5a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{ totalLikes }}
+          </span>
+        </div>
+      </div>
       
-      <div class="text-xs text-gray-500 mb-3">
-        {{ $t('narratives.relatedContent') }}: {{ narrative.related_content_count || narrative.claims?.length || 0 }}
-      </div>
-
-      <div class="aspect-video bg-stone-200 rounded mb-3">
-        <!-- Content preview placeholder -->
-      </div>
-
-      <div class="space-y-2">
-        <div class="flex items-center text-xs">
-          <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          <span class="text-gray-600">{{ $t('common.actors') }}: {{ narrative.actors?.length || 0 }}</span>
-        </div>
-        
-        <div class="flex items-center text-xs">
-          <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-          </svg>
-          <span class="text-gray-600">{{ $t('common.entities') }}: {{ narrative.entities?.length || 0 }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup lang="ts">
 import type { Narrative } from '~/types/api';
+import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
   narrative: Narrative;
   contentType?: 'first' | 'last' | 'active';
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   contentType: 'first'
 });
 
@@ -68,4 +72,11 @@ defineEmits<{
 }>();
 
 const { $i18n } = useNuxtApp();
+
+// Calculate narrative stats using the helper function
+const stats = computed(() => calculateNarrativeStats(props.narrative));
+
+const totalViews = computed(() => formatNumber(stats.value.totalViews));
+const totalComments = computed(() => formatNumber(stats.value.totalComments));
+const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
 </script>

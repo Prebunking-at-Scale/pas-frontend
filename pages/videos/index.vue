@@ -1,68 +1,31 @@
 <template>
   <div>
     <!-- Filters -->
-    <div class="mb-6 bg-white rounded-lg shadow p-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">{{ $t('videos.filters') }}</h2>
-        <button
-          v-if="hasActiveFilters"
-          @click="clearFilters"
-          class="text-sm text-indigo-600 hover:text-indigo-800"
-        >
-          {{ $t('videos.clearFilters') }}
-        </button>
-      </div>
+    <FilterCard
+      :title="$t('videos.filters')"
+      :columns="3"
+      :has-active-filters="hasActiveFilters"
+      @apply-filters="applyFilters"
+      @clear-filters="clearFilters"
+    >
+      <PlatformFilter
+        v-model="filters.platform"
+        :label="$t('videos.platform')"
+        :placeholder="$t('videos.selectPlatform')"
+      />
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Platform Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            {{ $t('videos.platform') }}
-          </label>
-          <Select v-model="filters.platform">
-            <SelectTrigger>
-              <SelectValue :placeholder="$t('videos.selectPlatform')" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{{ $t('videos.allPlatforms') }}</SelectItem>
-              <SelectItem value="tiktok">{{ $t('videos.tiktok') }}</SelectItem>
-              <SelectItem value="youtube">{{ $t('videos.youtube') }}</SelectItem>
-              <SelectItem value="instagram">{{ $t('videos.instagram') }}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <!-- Channel Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            {{ $t('videos.channel') }}
-          </label>
-          <Input
-            v-model="filters.channel"
-            type="text"
-            :placeholder="$t('videos.channelPlaceholder')"
-          />
-        </div>
-
-        <!-- Search -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            {{ $t('videos.search') }}
-          </label>
-          <Input
-            v-model="filters.search"
-            type="text"
-            :placeholder="$t('videos.searchPlaceholder')"
-          />
-        </div>
-      </div>
-
-      <div class="mt-4 flex justify-end">
-        <Button @click="applyFilters" class="bg-indigo-600 hover:bg-indigo-700">
-          {{ $t('videos.applyFilters') }}
-        </Button>
-      </div>
-    </div>
+      <ChannelFilter
+        v-model="filters.channel"
+        :label="$t('videos.channel')"
+        :placeholder="$t('videos.channelPlaceholder')"
+      />
+      
+      <SearchFilter
+        v-model="filters.search"
+        :label="$t('videos.search')"
+        :placeholder="$t('videos.searchPlaceholder')"
+      />
+    </FilterCard>
 
     <!-- Videos List -->
     <div v-if="loading" class="flex justify-center items-center h-64">
@@ -129,12 +92,13 @@
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Video, PaginatedResponse } from '~/types/api';
-import { Card, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 import VideoCard from '~/components/VideoCard.vue';
+import FilterCard from '~/components/filters/FilterCard.vue';
+import PlatformFilter from '~/components/filters/PlatformFilter.vue';
+import ChannelFilter from '~/components/filters/ChannelFilter.vue';
+import SearchFilter from '~/components/filters/SearchFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -157,15 +121,25 @@ const videos = ref<PaginatedResponse<Video>>({
 const loading = ref(true);
 const currentPage = ref(1);
 
-// Filters
+// Filters - separate UI state from applied state
 const filters = ref({
   platform: 'all',
   channel: '',
   search: ''
 });
 
+// Applied filters - these are the filters actually being used for data fetching
+const appliedFilters = ref({
+  platform: 'all',
+  channel: '',
+  search: ''
+});
+
 const hasActiveFilters = computed(() => {
-  return (filters.value.platform && filters.value.platform !== 'all') || filters.value.channel || filters.value.search;
+  // Only show "Clear all filters" when there are APPLIED filters (not default values)
+  return (appliedFilters.value.platform && appliedFilters.value.platform !== 'all') || 
+         appliedFilters.value.channel || 
+         appliedFilters.value.search;
 });
 
 const totalPages = computed(() => {
@@ -195,19 +169,19 @@ const loadVideos = async () => {
       offset: (currentPage.value - 1) * 20
     };
     
-    // Add filters if set
-    if (filters.value.platform && filters.value.platform !== 'all') {
-      params.platform = [filters.value.platform];
+    // Add filters if set - use APPLIED filters
+    if (appliedFilters.value.platform && appliedFilters.value.platform !== 'all') {
+      params.platform = [appliedFilters.value.platform];
     }
-    if (filters.value.channel) {
-      params.channel = [filters.value.channel];
+    if (appliedFilters.value.channel) {
+      params.channel = [appliedFilters.value.channel];
     }
     
     const response = await apiService.getVideos(params);
     
-    // Apply client-side search filter if needed
-    if (filters.value.search && response.data) {
-      const searchLower = filters.value.search.toLowerCase();
+    // Apply client-side search filter if needed - use APPLIED filters
+    if (appliedFilters.value.search && response.data) {
+      const searchLower = appliedFilters.value.search.toLowerCase();
       const filteredData = response.data.filter(video => 
         video.title.toLowerCase().includes(searchLower) ||
         video.description.toLowerCase().includes(searchLower)
@@ -238,12 +212,19 @@ const loadVideos = async () => {
 };
 
 const applyFilters = () => {
+  // Copy filter values to applied filters
+  appliedFilters.value = { ...filters.value };
   currentPage.value = 1;
   loadVideos();
 };
 
 const clearFilters = () => {
   filters.value = {
+    platform: 'all',
+    channel: '',
+    search: ''
+  };
+  appliedFilters.value = {
     platform: 'all',
     channel: '',
     search: ''

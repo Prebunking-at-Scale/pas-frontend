@@ -1,6 +1,7 @@
 <script setup>
 import '~/assets/css/styles.css';
 import {faHouse, faVideo, faCircleNodes, faComment} from '@fortawesome/free-solid-svg-icons'
+import Footer from '~/components/Footer.vue';
 
 
 const route = useRoute();
@@ -60,7 +61,7 @@ const isActive = (path) => {
         />
       </a>
       <div class="border-l border-l-neutral-400">
-        <span class="text-gray-100 text-xs font-semibold uppercase ml-8" id="pretitle">Prebunking At Scale</span>
+        <span class="text-gray-100 text-xs font-light uppercase ml-8" id="pretitle">Prebunking At Scale</span>
 
         <!-- Custom header content if provided -->
         <div v-if="headerContent" class="ml-8 text-gray-50">
@@ -68,14 +69,14 @@ const isActive = (path) => {
           <component v-if="headerContent.customComponent" :is="headerContent.customComponent" />
 
           <!-- Custom HTML -->
-          <div v-else-if="headerContent.customHtml" v-html="headerContent.customHtml" class="my-4"></div>
+          <div v-else-if="headerContent.customHtml" v-html="headerContent.customHtml" class=""></div>
 
           <!-- Simple title -->
-          <h1 v-else-if="headerContent.title" class="my-4 text-gray-50 font-bold text-4xl">{{ headerContent.title }}</h1>
+          <h1 v-else-if="headerContent.title" class="text-gray-50 font-bold text-4xl">{{ headerContent.title }}</h1>
         </div>
 
         <!-- Default title -->
-        <h1 v-else class="ml-8 my-4 text-gray-50 font-bold text-4xl">{{ defaultPageTitle }}</h1>
+        <h1 v-else class="ml-8 text-gray-50 font-bold text-4xl">{{ defaultPageTitle }}</h1>
       </div>
     </header>
 
@@ -142,6 +143,8 @@ const isActive = (path) => {
     </main>
 
   </div>
+
+  <Footer />
 
 </template>
 

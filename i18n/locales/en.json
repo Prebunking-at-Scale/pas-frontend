@@ -22,7 +22,10 @@
     "actors": "Actors",
     "entities": "Entities",
     "chartPlaceholder": "Chart visualization will be displayed here",
-    "error": "Error"
+    "error": "Error",
+    "minutesAgo": "{count} min ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
   },
   "nav": {
     "overview": "Overview",
@@ -58,7 +61,19 @@
     "searchPlaceholder": "Search in video titles...",
     "tiktok": "TikTok",
     "youtube": "YouTube",
-    "instagram": "Instagram Reels"
+    "instagram": "Instagram Reels",
+    "errorLoading": "Error loading video",
+    "noEmbed": "Video preview not available",
+    "viewOriginal": "View original",
+    "likes": "Likes",
+    "shares": "Shares",
+    "relatedClaims": "Related Claims",
+    "metadata": "Video Information",
+    "duration": "Duration",
+    "language": "Language",
+    "source": "Source",
+    "relatedNarratives": "Related Narratives",
+    "topics": "Topics"
   },
   "login": {
     "title": "Sign in to your account",
@@ -77,7 +92,7 @@
     "actors": "Actors",
     "viralNarratives": "Viral Narratives",
     "prevalentNarratives": "Prevalent Narratives",
-    "last24h": "Last 24h",
+    "lastWeek": "Last week",
     "narratives": "Narratives",
     "claims": "Claims",
     "narrativesCount": "Number of narratives",
@@ -114,12 +129,15 @@
     "topics": "Topics",
     "created": "Created",
     "lastUpdated": "Last updated",
-    "loadError": "Failed to load narrative"
+    "loadError": "Failed to load narrative",
+    "seenIn": "Seen in",
+    "claimsSupportingNarrative": "Claims supporting this narrative"
   },
   "claims": {
     "title": "Claims",
     "subtitle": "Browse and filter claims extracted from analyzed content",
     "filters": "Filters",
+    "channel": "Channel",
     "topic": "Topic",
     "selectTopic": "Select a topic",
     "allTopics": "All topics",
@@ -169,6 +187,11 @@
     "passwordChanged": "Password changed successfully",
     "passwordMismatch": "Passwords do not match"
   },
+  "timeline": {
+    "firstSeen": "First seen",
+    "lastSeen": "Last seen",
+    "seen": "Seen"
+  },
   "entities": {
     "mentions": "Mentions",
     "relatedNarratives": "Related Narratives",
@@ -205,5 +228,47 @@
     "timestamp": "Timestamp",
     "topic": "Topic",
     "viewAll": "View all"
+  },
+  "filters": {
+    "clearAll": "Clear all filters",
+    "clear": "Clear",
+    "apply": "Apply",
+    "topic": "Topic",
+    "allTopics": "All topics",
+    "search": "Search",
+    "searchPlaceholder": "Search...",
+    "platform": "Platform",
+    "allPlatforms": "All platforms",
+    "channel": "Channel",
+    "channelPlaceholder": "Filter by channel",
+    "allChannels": "All channels",
+    "language": "Language",
+    "allLanguages": "All languages",
+    "keywords": "Keywords",
+    "keywordsPlaceholder": "Press Enter to add keyword"
+  },
+  "footer": {
+    "about": {
+      "title": "About Prebunking at Scale",
+      "description": "A comprehensive platform for monitoring short video platforms, extracting claims and identifying narratives across multiple contents.",
+      "attribution": "Prebunking at Scale is a project of the European Fact-Checking Standards Network (EFCSN). Developed by Full Fact and Maldita.es"
+    },
+    "quickLinks": {
+      "title": "Quick Links"
+    },
+    "resources": {
+      "title": "Resources",
+      "documentation": "Documentation",
+      "apiDocs": "API Documentation",
+      "help": "Help Center"
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Have questions or need support?",
+      "email": "contact{'@'}prebunking.com"
+    },
+    "copyright": "© {year} Prebunking at Scale. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
   }
 }

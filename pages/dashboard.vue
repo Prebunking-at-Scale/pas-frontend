@@ -17,7 +17,7 @@
           <div 
             v-for="topic in stats.topics.slice(0, 5)" 
             :key="topic.id"
-            class="flex justify-between items-center text-sm p-2 rounded hover:bg-stone-50 px-8"
+            class="flex justify-between items-center text-base p-2 rounded hover:bg-stone-50 divide-x divide-stone-200 mx-4"
           >
             <span 
               @click="goToTopic(topic.id)"
@@ -26,14 +26,14 @@
             <div class="flex gap-2">
               <button
                 @click.stop="goToTopicWithType(topic.id, 'narratives')"
-                class="cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
+                class="w-16 cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
                 :title="$t('dashboard.narrativesCount')"
               >
                 <font-awesome :icon="faCircleNodes" class="mr-2"/> {{ topic.narrative_count }}
               </button>
               <button
                 @click.stop="goToTopicWithType(topic.id, 'claims')"
-                class="cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
+                class="w-16 cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
                 :title="$t('dashboard.claimsCount')"
               >
               <font-awesome :icon="faComment" class="mr-2"/> {{ topic.claim_count }}
@@ -111,10 +111,10 @@
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.viralNarratives') }}</h2>
-          <span class="text-sm text-gray-500">{{ $t('dashboard.last24h') }}</span>
+          <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ViralNarrativeCard 
+          <NarrativeCard 
             v-for="narrative in stats.viralNarratives" 
             :key="narrative.id"
             :narrative="narrative"
@@ -125,9 +125,12 @@
 
       <!-- Prevalent Narratives -->
       <div>
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('dashboard.prevalentNarratives') }}</h2>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.prevalentNarratives') }}</h2>
+          <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <PrevalentNarrativeCard 
+          <NarrativeCard 
             v-for="narrative in stats.prevalentNarratives" 
             :key="narrative.id"
             :narrative="narrative"

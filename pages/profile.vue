@@ -37,7 +37,7 @@
               <Label for="memberSince">{{ $t('profile.memberSince') }}</Label>
               <Input 
                 id="memberSince"
-                :value="formatDate(user.created_at)"
+                :value="formatDate(user.created_at, $i18n.locale.value)"
                 type="text" 
                 disabled
               />
@@ -135,6 +135,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '~/componen
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
+import { formatDate } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -203,9 +204,4 @@ const deleteAccount = async () => {
   router.push('/login');
 };
 
-const formatDate = (dateString: string): string => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString();
-};
 </script>

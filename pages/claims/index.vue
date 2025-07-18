@@ -1,61 +1,31 @@
 <template>
   <div>
     <!-- Filters -->
-    <div class="mb-6 bg-white rounded-lg shadow p-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">{{ $t('claims.filters') }}</h2>
-        <button
-          v-if="hasActiveFilters"
-          @click="clearFilters"
-          class="text-sm text-indigo-600 hover:text-indigo-800"
-        >
-          {{ $t('claims.clearFilters') }}
-        </button>
-      </div>
+    <FilterCard
+      :title="$t('claims.filters')"
+      :columns="3"
+      :has-active-filters="hasActiveFilters"
+      @apply-filters="applyFilters"
+      @clear-filters="clearFilters"
+    >
+      <TopicFilter
+        v-model="filters.topic_id"
+        :label="$t('claims.topic')"
+        :placeholder="$t('claims.selectTopic')"
+      />
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Topic Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            {{ $t('claims.topic') }}
-          </label>
-          <Select v-model="filters.topic_id">
-            <SelectTrigger>
-              <SelectValue :placeholder="$t('claims.selectTopic')" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{{ $t('claims.allTopics') }}</SelectItem>
-              <SelectItem
-                v-for="topic in topicsStore.topics"
-                :key="topic.id"
-                :value="topic.id"
-              >
-                {{ topic.topic }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-
-        <!-- Search -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            {{ $t('claims.search') }}
-          </label>
-          <Input
-            v-model="filters.search"
-            type="text"
-            :placeholder="$t('claims.searchPlaceholder')"
-          />
-        </div>
-      </div>
-
-      <div class="mt-4 flex justify-end">
-        <Button @click="applyFilters" class="bg-indigo-600 hover:bg-indigo-700">
-          {{ $t('claims.applyFilters') }}
-        </Button>
-      </div>
-    </div>
+      <ChannelFilter
+        v-model="filters.channel"
+        :label="$t('claims.channel')"
+        :placeholder="$t('filters.channelPlaceholder')"
+      />
+      
+      <SearchFilter
+        v-model="filters.search"
+        :label="$t('claims.search')"
+        :placeholder="$t('claims.searchPlaceholder')"
+      />
+    </FilterCard>
 
     <!-- Claims List -->
     <div v-if="loading" class="flex justify-center items-center h-64">
@@ -64,8 +34,8 @@
     
     <div v-else>
       <!-- Topic Context -->
-      <div v-if="currentTopic" class="mb-6 p-4 bg-blue-50 rounded-lg">
-        <p class="text-sm text-blue-800">
+      <div v-if="currentTopic" class="mb-6 p-4 bg-stone-100 rounded-lg">
+        <p class="text-sm text-emerald-800">
           {{ $t('claims.showingClaimsFor') }} <span class="font-semibold">{{ currentTopic.topic }}</span>
         </p>
       </div>
@@ -76,7 +46,7 @@
       </div>
 
       <!-- Claims Grid -->
-      <div v-if="claims.data.length > 0" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div v-if="claims.data.length > 0" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <ClaimCard 
           v-for="claim in claims.data" 
           :key="claim.id" 
@@ -130,10 +100,12 @@ import { apiService } from '~/services/api';
 import type { Claim, PaginatedResponse, TopicWithStats } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 import ClaimCard from '~/components/ClaimCard.vue';
+import FilterCard from '~/components/filters/FilterCard.vue';
+import TopicFilter from '~/components/filters/TopicFilter.vue';
+import ChannelFilter from '~/components/filters/ChannelFilter.vue';
+import SearchFilter from '~/components/filters/SearchFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -156,19 +128,32 @@ const claims = ref<PaginatedResponse<Claim>>({
   size: 20
 });
 const loading = ref(true);
-const currentTopic = computed(() => {
-  if (!filters.value.topic_id || filters.value.topic_id === 'all') return null;
-  return topicsStore.getTopicById(filters.value.topic_id);
-});
 
-// Filters
+// Filters - separate UI state from applied state
 const filters = ref({
   topic_id: 'all',
+  channel: '',
   search: ''
 });
 
+// Applied filters - these are the filters actually being used for data fetching
+const appliedFilters = ref({
+  topic_id: 'all',
+  channel: '',
+  search: ''
+});
+
+// Current topic is based on APPLIED filters, not UI filters
+const currentTopic = computed(() => {
+  if (!appliedFilters.value.topic_id || appliedFilters.value.topic_id === 'all') return null;
+  return topicsStore.getTopicById(appliedFilters.value.topic_id);
+});
+
 const hasActiveFilters = computed(() => {
-  return (filters.value.topic_id && filters.value.topic_id !== 'all') || filters.value.search;
+  // Only show "Clear all filters" when there are APPLIED filters (not default values)
+  return (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') || 
+         appliedFilters.value.channel ||
+         appliedFilters.value.search;
 });
 
 const updatePageHeader = () => {
@@ -199,6 +184,7 @@ onMounted(async () => {
   const topicId = route.query.topic as string;
   if (topicId) {
     filters.value.topic_id = topicId;
+    appliedFilters.value.topic_id = topicId;
   }
   
   // Set page header based on whether we have a topic filter
@@ -221,16 +207,16 @@ const loadClaims = async () => {
       offset: (claims.value.page - 1) * 20
     };
     
-    // Add topic filter if set
-    if (filters.value.topic_id && filters.value.topic_id !== 'all') {
-      params.topic_id = filters.value.topic_id;
+    // Add topic filter if set - use APPLIED filters
+    if (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') {
+      params.topic_id = appliedFilters.value.topic_id;
     }
     
     const response = await apiService.getClaims(params);
     
-    // Apply client-side search filter if needed
-    if (response.data && filters.value.search) {
-      const searchLower = filters.value.search.toLowerCase();
+    // Apply client-side search filter if needed - use APPLIED filters
+    if (response.data && appliedFilters.value.search) {
+      const searchLower = appliedFilters.value.search.toLowerCase();
       const filteredData = response.data.filter(claim => {
         const claimText = (claim.claim || claim.text || '').toLowerCase();
         return claimText.includes(searchLower);
@@ -258,6 +244,8 @@ const loadClaims = async () => {
 };
 
 const applyFilters = () => {
+  // Copy filter values to applied filters
+  appliedFilters.value = { ...filters.value };
   claims.value.page = 1;
   loadClaims();
 };
@@ -265,6 +253,12 @@ const applyFilters = () => {
 const clearFilters = () => {
   filters.value = {
     topic_id: 'all',
+    channel: '',
+    search: ''
+  };
+  appliedFilters.value = {
+    topic_id: 'all',
+    channel: '',
     search: ''
   };
   claims.value.page = 1;
