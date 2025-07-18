@@ -29,11 +29,20 @@ export default defineNuxtConfig({
       { code: 'fr', name: 'Français', file: 'fr.json'},
     ],
     defaultLocale: 'en',
+    langDir: 'locales/',
   },
 
   googleFonts: {
     families: {
       'Archivo': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+    },
+  },
+
+  fontawesome: {
+    icons: {
+      solid: true,
+      regular: true,
+      brands: true,
     },
   },
 
@@ -60,6 +69,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'shadcn-nuxt',
     '@pinia/nuxt',
-    '@nuxtjs/google-fonts'
+    '@nuxtjs/google-fonts',
+    '@vesp/nuxt-fontawesome'
   ]
 })

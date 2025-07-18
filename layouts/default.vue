@@ -1,34 +1,36 @@
 <script setup>
 import '~/assets/css/styles.css';
+import {faHouse, faVideo, faCircleNodes, faComment} from '@fortawesome/free-solid-svg-icons'
+
 
 const route = useRoute();
-const { $i18n } = useNuxtApp();
+const { t } = useI18n();
 const { headerContent } = usePageHeader();
 
 const defaultPageTitle = computed(() => {
   switch (route.path) {
     case '/':
     case '/dashboard':
-      return $i18n.t('dashboard.title');
+      return t('dashboard.title');
     case '/narratives':
-      return $i18n.t('narratives.title');
+      return t('narratives.title');
     case '/claims':
-      return $i18n.t('claims.title');
+      return t('claims.title');
     case '/videos':
-      return $i18n.t('videos.title');
+      return t('videos.title');
     case '/alerts':
-      return $i18n.t('alerts.title');
+      return t('alerts.title');
     case '/profile':
-      return $i18n.t('profile.title');
+      return t('profile.title');
     default:
       if (route.path.startsWith('/narratives/')) {
-        return $i18n.t('narratives.title');
+        return t('narratives.title');
       }
       if (route.path.startsWith('/claims/')) {
-        return $i18n.t('claims.title');
+        return t('claims.title');
       }
       if (route.path.startsWith('/videos/')) {
-        return $i18n.t('videos.title');
+        return t('videos.title');
       }
       return 'Dashboard';
   }
@@ -49,7 +51,6 @@ const isActive = (path) => {
 <template>
 
   <div class="p-4 max-w-[1536px] mx-auto">
-
     <header class="from-emerald-800 to-emerald-900 bg-gradient-to-r rounded-xl p-6 flex gap-8 divider-y items-center">
       <a href="/">
         <img 
@@ -87,28 +88,28 @@ const isActive = (path) => {
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/dashboard') }]"
             :prefetch="false"
           >
-            {{ $t('nav.overview') }}
+          <font-awesome :icon="faHouse" class="mr-2"/>{{ $t('nav.overview') }}
           </NuxtLink>
           <NuxtLink
             to="/narratives"
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/narratives') }]"
             :prefetch="false"
           >
-            {{ $t('nav.narratives') }}
+          <font-awesome :icon="faCircleNodes" class="mr-2"/>{{ $t('nav.narratives') }}
           </NuxtLink>
           <NuxtLink
             to="/claims"
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/claims') }]"
             :prefetch="false"
           >
-            {{ $t('nav.claims') }}
+            <font-awesome :icon="faComment" class="mr-2"/>{{ $t('nav.claims') }}
           </NuxtLink>
           <NuxtLink
             to="/videos"
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/videos') }]"
             :prefetch="false"
           >
-            {{ $t('nav.videos') }}
+            <font-awesome :icon="faVideo" class="mr-2"/>{{ $t('nav.videos') }}
           </NuxtLink>
 
           <div class="pt-4 mt-4 border-t border-neutral-200">

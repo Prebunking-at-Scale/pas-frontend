@@ -17,26 +17,26 @@
           <div 
             v-for="topic in stats.topics.slice(0, 5)" 
             :key="topic.id"
-            class="flex justify-between items-center text-sm p-2 rounded hover:bg-stone-50 -mx-2"
+            class="flex justify-between items-center text-sm p-2 rounded hover:bg-stone-50 px-8"
           >
             <span 
               @click="goToTopic(topic.id)"
-              class="text-gray-600 hover:text-gray-900 cursor-pointer flex-1"
+              class="text-gray-600 hover:text-gray-900 cursor-pointer flex-1 grow"
             >{{ topic.topic }}</span>
             <div class="flex gap-2">
               <button
                 @click.stop="goToTopicWithType(topic.id, 'narratives')"
-                class="cursor-pointer px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded hover:bg-blue-200 transition-colors"
+                class="cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
                 :title="$t('dashboard.narrativesCount')"
               >
-                {{ $t('dashboard.narratives') }}: {{ topic.narrative_count }}
+                <font-awesome :icon="faCircleNodes" class="mr-2"/> {{ topic.narrative_count }}
               </button>
               <button
                 @click.stop="goToTopicWithType(topic.id, 'claims')"
-                class="cursor-pointer px-2 py-1 bg-green-100 text-green-700 text-xs rounded hover:bg-green-200 transition-colors"
+                class="cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
                 :title="$t('dashboard.claimsCount')"
               >
-                {{ $t('dashboard.claims') }}: {{ topic.claim_count }}
+              <font-awesome :icon="faComment" class="mr-2"/> {{ topic.claim_count }}
               </button>
             </div>
           </div>
@@ -144,6 +144,7 @@
 import { apiService } from '~/services/api';
 import type { TopicWithStats } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
+import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
 definePageMeta({
   layout: 'default',
