@@ -3,10 +3,10 @@ name: Build
 on:
   pull_request:
     branches:
-      - main
+      - master
   push:
     branches:
-      - main
+      - master
       - dev
   workflow_dispatch:
 
@@ -18,8 +18,7 @@ jobs:
   
   build:
     name: Build & Push
-    needs: test
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,7 +34,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: main
+          release_branches: master
           pre_release_branches: dev
 
       - id: auth
