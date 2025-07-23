@@ -24,6 +24,7 @@
               <!-- Video Embed -->
               <div v-if="videoEmbedUrl" class="aspect-video bg-black">
                 <iframe
+                  ref="videoPlayer"
                   :src="videoEmbedUrl"
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -91,17 +92,22 @@
                 <div v-for="claim in claims" :key="claim.id" class="border-b last:border-0 pb-4 last:pb-0">
                   <p class="text-gray-900 mb-2">"{{ claim.claim || claim.text }}"</p>
                   <div class="flex items-center gap-4 text-sm text-gray-500">
-                    <span v-if="claim.start_time_s !== undefined" class="flex items-center gap-1">
+                    
+                    <button
+                      v-if="claim.start_time_s !== undefined"
+                      @click="seekToTime(claim.start_time_s)"
+                      class="flex items-center gap-1 text-stone-900 hover:text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-md px-2 py-1 transition-colors border border-stone-200 cursor-pointer"
+                    >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       {{ formatTimestamp(claim.start_time_s) }}
-                    </span>
+                    </button>
                     <NuxtLink 
                       :to="`/claims/${claim.id}`" 
                       class="text-indigo-600 hover:text-indigo-800"
                     >
-                      {{ $t('common.viewDetails') }}
+                      <!-- {{ $t('common.viewDetails') }} -->
                     </NuxtLink>
                   </div>
                 </div>
@@ -168,7 +174,7 @@
                   :to="`/topics/${topic.id}`"
                   class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition-colors"
                 >
-                  {{ topic.topic }}
+                  {{ topic.name }}
                 </NuxtLink>
               </div>
             </CardContent>
@@ -180,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Video, Claim, Narrative, VideoDetailResponse } from '~/types/api';
+import type { Video, Claim, Narrative } from '~/types/api';
 import { apiService } from '~/services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
@@ -194,6 +200,9 @@ definePageMeta({
 
 const route = useRoute();
 const { $i18n } = useNuxtApp();
+
+// Refs
+const videoPlayer = ref<HTMLIFrameElement | null>(null);
 
 // State
 const video = ref<Video | null>(null);
@@ -228,6 +237,7 @@ const videoEmbedUrl = computed(() => {
         'controls': '1', // Show player controls
         'autoplay': '0', // Don't autoplay
         'fs': '1', // Allow fullscreen
+        'enablejsapi': '1', // Enable JavaScript API for player control
         'origin': window.location.origin // Security parameter
       });
       console.log('YouTube match found, videoId:', videoId);
@@ -291,7 +301,8 @@ const loadVideoData = async () => {
 };
 
 
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | null | undefined) => {
+  if (num === null || num === undefined) return '0';
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M';
   }
@@ -326,6 +337,40 @@ const getLanguageName = (code: string) => {
     de: 'Deutsch'
   };
   return languages[code] || code;
+};
+
+const seekToTime = (seconds: number) => {
+  if (!videoPlayer.value) return;
+  
+  const url = video.value?.source_url?.trim();
+  if (!url) return;
+  
+  // YouTube videos
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    // Use postMessage to control YouTube player
+    videoPlayer.value.contentWindow?.postMessage(
+      JSON.stringify({
+        event: 'command',
+        func: 'seekTo',
+        args: [seconds, true]
+      }),
+      '*'
+    );
+  }
+  // Vimeo videos
+  else if (url.includes('vimeo.com')) {
+    videoPlayer.value.contentWindow?.postMessage(
+      JSON.stringify({
+        method: 'seekTo',
+        value: seconds
+      }),
+      '*'
+    );
+  }
+  // TikTok doesn't support seeking via API
+  else {
+    console.warn('Seeking not supported for this video platform');
+  }
 };
 
 // Lifecycle
