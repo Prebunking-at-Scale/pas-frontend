@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: europe-west4-docker.pkg.dev/pas-shared/pas/frontend:v0.1.0
+          image: europe-west4-docker.pkg.dev/pas-shared/pas/frontend:v0.1.3
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -36,9 +36,25 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           env:
-            - name: BACKEND_ENDPOINT
+            - name: NUXT_BACKEND_ENDPOINT
               value: http://core-api:8000
-            - name: API_KEY
+            - name: NUXT_VIRAL_NARRATIVES_HOURS
+              value: "672"
+            - name: NUXT_VIRAL_NARRATIVES_LIMIT
+              value: "20"
+            - name: NUXT_PREVALENT_NARRATIVES_HOURS
+              value: "672"
+            - name: NUXT_PREVALENT_NARRATIVES_LIMIT
+              value: "20"
+            - name: VIRAL_NARRATIVES_HOURS
+              value: "672"
+            - name: VIRAL_NARRATIVES_LIMIT
+              value: "20"
+            - name: PREVALENT_NARRATIVES_HOURS
+              value: "672"
+            - name: PREVALENT_NARRATIVES_LIMIT
+              value: "20"
+            - name: NUXT_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: frontend
