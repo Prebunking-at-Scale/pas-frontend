@@ -111,7 +111,7 @@
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.viralNarratives') }}</h2>
-          <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span>
+          <!-- <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span> -->
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <NarrativeCard 
@@ -127,7 +127,7 @@
       <div>
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.prevalentNarratives') }}</h2>
-          <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span>
+          <!-- <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span> -->
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <NarrativeCard 
