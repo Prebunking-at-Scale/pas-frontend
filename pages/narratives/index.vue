@@ -1,18 +1,5 @@
 <template>
   <div>
-      <!-- Topic Context Banner - based on APPLIED filters -->
-      <div v-if="currentTopicName && appliedFilters.topic_id" class="mb-6 p-4 bg-blue-50 rounded-lg">
-        <p class="text-sm text-blue-800">
-          {{ $t('narratives.showingNarrativesFor') }} <span class="font-semibold">{{ currentTopicName }}</span>
-          <button 
-            @click="clearTopicFilter"
-            class="ml-2 text-blue-600 hover:text-blue-800 underline"
-          >
-            {{ $t('narratives.clearFilter') }}
-          </button>
-        </p>
-      </div>
-
       <!-- Filters -->
       <FilterCard
         :title="$t('narratives.filters')"
@@ -49,6 +36,13 @@
           :placeholder="$t('narratives.keywordsPlaceholder')"
         />
       </FilterCard>
+
+      <!-- Topic Context - based on APPLIED filters -->
+      <div v-if="currentTopicName && appliedFilters.topic_id" class="mb-6 p-4 bg-stone-100 rounded-lg">
+        <p class="text-sm text-emerald-800">
+          {{ $t('narratives.showingNarrativesFor') }} <span class="font-semibold">{{ currentTopicName }}</span>
+        </p>
+      </div>
 
       <!-- Narratives Grid -->
       <div v-if="loading" class="text-center py-8">

@@ -26,7 +26,7 @@
           <div v-if="loadingNarratives" class="flex justify-center py-8">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-          <div v-else-if="narratives.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div v-else-if="narratives.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             <NarrativeCard 
               v-for="narrative in narratives.data" 
               :key="narrative.id"
@@ -57,7 +57,7 @@
           <div v-if="loadingClaims" class="flex justify-center py-8">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-          <div v-else-if="claims.data.length > 0" class="space-y-4">
+          <div v-else-if="claims.data.length > 0" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             <ClaimCard 
               v-for="claim in claims.data" 
               :key="claim.id" 
