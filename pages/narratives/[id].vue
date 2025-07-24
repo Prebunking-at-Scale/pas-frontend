@@ -26,7 +26,7 @@
               class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm cursor-pointer hover:bg-emerald-200"
               @click="goToTopic(topic.id)"
             >
-              {{ topic.name }}
+              {{ topic.topic }}
             </span>
           </div>
         </div>

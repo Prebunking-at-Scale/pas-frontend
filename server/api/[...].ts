@@ -1,0 +1,51 @@
+export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
+  
+  // Get the path after /api/
+  const path = event.node.req.url?.replace(/^\/api\//, '') || '';
+  
+  // Build the backend URL
+  const backendUrl = `${config.backendEndpoint}/api/${path}`;
+  
+  // Forward the request to the backend
+  try {
+    const response = await $fetch.raw(backendUrl, {
+      method: event.node.req.method,
+      headers: {
+        'X-API-TOKEN': config.apiKey,
+        'Content-Type': 'application/json',
+      },
+      // Forward query parameters
+      query: getQuery(event),
+      // Forward body for POST/PUT/PATCH requests
+      body: event.node.req.method !== 'GET' && event.node.req.method !== 'HEAD' 
+        ? await readBody(event) 
+        : undefined,
+    });
+    
+    // Return the response with the same status code
+    setResponseStatus(event, response.status);
+    
+    // Forward response headers if needed
+    if (response.headers.get('content-type')) {
+      setHeader(event, 'content-type', response.headers.get('content-type') as string);
+    }
+    
+    return response._data;
+  } catch (error: any) {
+    // Handle errors
+    console.error('Proxy error:', error);
+    
+    // Forward error status if available
+    if (error.statusCode) {
+      setResponseStatus(event, error.statusCode);
+    } else {
+      setResponseStatus(event, 500);
+    }
+    
+    return {
+      error: error.message || 'Internal server error',
+      statusCode: error.statusCode || 500
+    };
+  }
+});

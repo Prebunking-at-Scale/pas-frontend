@@ -1,16 +1,8 @@
 // API Service with mock data
 import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
 
-// Get the backend endpoint and API key from runtime config
-const getApiConfig = () => {
-  const { $config } = useNuxtApp();
-  return {
-    baseURL: $config.public.backendEndpoint,
-    headers: {
-      'X-API-TOKEN': $config.public.apiKey
-    }
-  };
-};
+// API calls now go through our frontend proxy to hide the API key
+// The proxy handles authentication with the backend
 
 // Mock data generators
 const generateMockVideo = (index: number): Video => ({
@@ -151,7 +143,6 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const query: any = {
         limit,
         offset
@@ -166,7 +157,6 @@ export const apiService = {
       }
       
       const response = await $fetch('/api/videos', {
-        ...apiConfig,
         method: 'GET',
         query
       });
@@ -186,9 +176,7 @@ export const apiService = {
 
   async getVideo(videoId: string): Promise<VideoDetailResponse> {
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
-        ...apiConfig,
         method: 'GET'
       });
       
@@ -239,9 +227,7 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch('/api/narratives', {
-        ...apiConfig,
         method: 'GET',
         query: {
           limit,
@@ -264,9 +250,7 @@ export const apiService = {
 
   async getNarrative(narrativeId: string): Promise<Narrative> {
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch(`/api/narratives/${narrativeId}`, {
-        ...apiConfig,
         method: 'GET'
       });
       
@@ -296,19 +280,27 @@ export const apiService = {
   },
 
   // Viral narratives with hours parameter
-  async getViralNarratives(hours: number = 168): Promise<Narrative[]> {
+  async getViralNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
+    // Get config values if not provided
+    const { $config } = useNuxtApp();
+    const hoursParam = hours ?? $config.public.viralNarrativesHours ?? 168;
+    const limitParam = limit ?? $config.public.viralNarrativesLimit ?? 20;
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch('/api/narratives/viral', {
-        ...apiConfig,
         method: 'GET',
         query: {
-          hours
+          hours: hoursParam,
+          limit: limitParam
         }
       });
       
       const data = response as ApiResponse<Narrative>;
-      return data.data || [];
+      // Order by the sum of views of each video in the narrative
+      return data.data.sort((a: Narrative, b: Narrative) => {
+        const aViews = a.videos.reduce((sum, video) => sum + video.views, 0);
+        const bViews = b.videos.reduce((sum, video) => sum + video.views, 0);
+        return bViews - aViews;
+      });
     } catch (error) {
       console.error('Failed to fetch viral narratives:', error);
       // Return mock data as fallback
@@ -319,20 +311,23 @@ export const apiService = {
   // Prevalent narratives - narratives with most videos in a time frame
   // Endpoint: GET /api/narratives/prevalent
   // Returns narratives sorted by video count in specified time period
-  async getPrevalentNarratives(hours: number = 168, limit: number = 10): Promise<Narrative[]> {
+  async getPrevalentNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
+    // Get config values if not provided
+    const { $config } = useNuxtApp();
+    const hoursParam = hours ?? $config.public.prevalentNarrativesHours ?? 168;
+    const limitParam = limit ?? $config.public.prevalentNarrativesLimit ?? 10;
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch('/api/narratives/prevalent', {
-        ...apiConfig,
         method: 'GET',
         query: {
-          hours,
-          limit
+          hours: hoursParam,
+          limit: limitParam
         }
       });
       
       const data = response as ApiResponse<Narrative>;
-      return data.data || [];
+      // Order them by the count of videos in the narrative, descending
+      return data.data.sort((a: Narrative, b: Narrative) => b.videos.length - a.videos.length);
     } catch (error) {
       console.error('Failed to fetch prevalent narratives:', error);
       // Return mock data as fallback - simulate narratives with many videos
@@ -355,6 +350,11 @@ export const apiService = {
   }> {
     await new Promise(resolve => setTimeout(resolve, 600));
 
+    // Get config values
+    const { $config } = useNuxtApp();
+    const viralHours = $config.public.viralNarrativesHours || 168;
+    const prevalentHours = $config.public.prevalentNarrativesHours || 168;
+
     // Get real topics data from the API
     let topicsData: TopicWithStats[] = [];
     try {
@@ -370,8 +370,8 @@ export const apiService = {
       topics: topicsData,
       entities: [],
       actors: [],
-      viralNarratives: await this.getViralNarratives(168), // 168 hours = 1 week
-      prevalentNarratives: await this.getPrevalentNarratives(168) // 168 hours = 1 week
+      viralNarratives: await this.getViralNarratives(viralHours), 
+      prevalentNarratives: await this.getPrevalentNarratives(prevalentHours)
     };
   },
 
@@ -579,9 +579,7 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch('/api/topics/stats', {
-        ...apiConfig,
         method: 'GET',
         query: {
           limit,
@@ -608,9 +606,7 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch(`/api/topics/${topicId}/claims`, {
-        ...apiConfig,
         method: 'GET',
         query: {
           limit,
@@ -636,9 +632,7 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const response = await $fetch(`/api/topics/${topicId}/narratives`, {
-        ...apiConfig,
         method: 'GET',
         query: {
           limit,
@@ -669,7 +663,6 @@ export const apiService = {
     const offset = params?.offset || 0;
     
     try {
-      const apiConfig = getApiConfig();
       const query: any = {
         limit,
         offset
@@ -681,7 +674,6 @@ export const apiService = {
       }
       
       const response = await $fetch('/api/claims', {
-        ...apiConfig,
         method: 'GET',
         query
       });
