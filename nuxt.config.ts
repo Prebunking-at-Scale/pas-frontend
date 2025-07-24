@@ -6,9 +6,16 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
+    // Server-only config (not exposed to client)
+    apiKey: process.env.API_KEY || '',
+    backendEndpoint: process.env.BACKEND_ENDPOINT || 'http://localhost:8000',
+    
+    // Public config (exposed to client)
     public: {
-      backendEndpoint: process.env.BACKEND_ENDPOINT || 'http://localhost:8000',
-      apiKey: process.env.API_KEY || ''
+      viralNarrativesHours: process.env.VIRAL_NARRATIVES_HOURS ? parseInt(process.env.VIRAL_NARRATIVES_HOURS) : 168,
+      viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 20,
+      prevalentNarrativesHours: process.env.PREVALENT_NARRATIVES_HOURS ? parseInt(process.env.PREVALENT_NARRATIVES_HOURS) : 168,
+      prevalentNarrativesLimit: process.env.PREVALENT_NARRATIVES_LIMIT ? parseInt(process.env.PREVALENT_NARRATIVES_LIMIT) : 10
     }
   },
 
