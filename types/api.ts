@@ -53,7 +53,6 @@ export interface Narrative {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-  // Additional UI fields (not from API)
   first_seen?: string;
   last_seen?: string;
   is_active?: boolean;
@@ -87,7 +86,7 @@ export interface Entity {
 
 export interface Topic {
   id: string;
-  name: string;
+  topic: string;
   frequency: number;
 }
 
@@ -141,9 +140,50 @@ export interface Claim {
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: string;
+  display_name: string;
   created_at: string;
+  updated_at: string;
+}
+
+export interface Organization {
+  id: string;
+  display_name: string;
+  country_codes: string[];
+  language: string;
+  short_name: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  data: {
+    user: User;
+    organisations: Record<string, {
+      organisation: Organization;
+      token: string;
+      is_organisation_admin: boolean;
+    }>;
+    first_time_setup: boolean;
+  };
+}
+
+export interface IdentityResponse {
+  user: User;
+  organisation: Organization;
+  is_organisation_admin: boolean;
+}
+
+export interface PasswordUpdateRequest {
+  password: string;
+}
+
+export interface UserUpdateRequest {
+  display_name: string;
 }
 
 export interface Alert {

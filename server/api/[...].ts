@@ -7,14 +7,27 @@ export default defineEventHandler(async (event) => {
   // Build the backend URL
   const backendUrl = `${config.backendEndpoint}/api/${path}`;
   
+  // Prepare headers
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  
+  // For /auth endpoints, forward the user's Bearer token if present
+  // For other endpoints, use the API key
+  if (path.startsWith('auth/')) {
+    const authHeader = event.node.req.headers.authorization;
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
+    }
+  } else {
+    headers['X-API-TOKEN'] = config.apiKey;
+  }
+  
   // Forward the request to the backend
   try {
     const response = await $fetch.raw(backendUrl, {
       method: event.node.req.method,
-      headers: {
-        'X-API-TOKEN': config.apiKey,
-        'Content-Type': 'application/json',
-      },
+      headers,
       // Forward query parameters
       query: getQuery(event),
       // Forward body for POST/PUT/PATCH requests
