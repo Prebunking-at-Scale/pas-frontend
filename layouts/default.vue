@@ -1,6 +1,6 @@
 <script setup>
 import '~/assets/css/styles.css';
-import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
+import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser} from '@fortawesome/free-solid-svg-icons'
 import Footer from '~/components/Footer.vue';
 import { authService } from '~/services/auth';
 
@@ -133,7 +133,7 @@ const handleLogout = () => {
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/profile') }]"
               :prefetch="false"
             >
-              {{ $t('nav.profile') }}
+              <font-awesome :icon="faUser" class="mr-2"/>{{ $t('nav.profile') }}
             </NuxtLink>
           </div>
 

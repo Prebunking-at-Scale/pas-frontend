@@ -170,10 +170,9 @@ const handleLogin = async () => {
     // Store user information
     authService.setUser(response.data.user);
 
-    // Handle the actual API response structure with 'organisations' field
     const orgs = response.data.organisations;
     if (orgs && Object.keys(orgs).length > 0) {
-      // Get the first organization
+      // TODO: handle multiple organizations (check with the FF team)
       const orgId = Object.keys(orgs)[0];
       const orgData = orgs[orgId];
       
@@ -186,7 +185,6 @@ const handleLogin = async () => {
       error.value = $i18n.t('login.noOrganizations');
     }
   } catch (err: any) {
-    // Handle specific error cases
     if (err.status === 401 || err.statusCode === 401) {
       error.value = $i18n.t('login.invalidCredentials');
     } else if (err.status === 403 || err.statusCode === 403) {

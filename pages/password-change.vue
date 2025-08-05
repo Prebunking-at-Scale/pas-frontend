@@ -145,7 +145,6 @@ const passwordLength = ref(0);
 const isPasswordReset = computed(() => !!route.query.token);
 const isFirstTimeSetup = computed(() => route.query.firstTimeSetup === 'true');
 
-// Check if password meets all requirements
 const isPasswordValid = computed(() => 
   passwordLength.value >= 12
 );
@@ -156,7 +155,6 @@ const checkPasswordStrength = () => {
   passwordLength.value = pwd.length;
 };
 
-// Handle password change
 const handlePasswordChange = async () => {
   if (newPassword.value !== confirmPassword.value) {
     error.value = $i18n.t('passwordChange.passwordMismatch');
