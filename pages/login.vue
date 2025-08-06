@@ -1,5 +1,7 @@
 <template>
   <div class="max-w-md w-full space-y-8 mx-auto">
+    <!-- Login Form -->
+    <div v-if="!showOrganizationSelection">
       <div class="flex justify-center flex-col">
         <div class="flex justify-center">
           <img src="/assets/images/prebunking-logo.png" class="w-48">
@@ -75,6 +77,57 @@
       </form>
     </div>
 
+    <!-- Organization Selection -->
+    <div v-else class="space-y-6">
+      <div class="flex justify-center flex-col">
+        <div class="flex justify-center">
+          <img src="/assets/images/prebunking-logo.png" class="w-48">
+        </div>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          {{ $t('login.selectOrganization') }}
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          {{ $t('login.multipleOrganizations') }}
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <Card 
+          v-for="(orgData, orgId) in organizations" 
+          :key="orgId"
+          class="cursor-pointer hover:border-green-500 transition-colors"
+          @click="selectOrganization(orgId, orgData)"
+        >
+          <CardContent class="p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-semibold text-lg">{{ orgData.organisation.display_name }}</h3>
+                <p class="text-sm text-gray-500">{{ orgData.organisation.short_name }}</p>
+                <div v-if="orgData.is_organisation_admin" class="mt-1">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {{ $t('profile.admin') }}
+                  </span>
+                </div>
+              </div>
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div class="mt-6">
+        <Button
+          variant="outline"
+          class="w-full"
+          @click="resetLogin"
+        >
+          {{ $t('common.back') }}
+        </Button>
+      </div>
+    </div>
+
     <!-- Forgot Password Modal -->
     <div v-if="showForgotPassword" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <Card class="max-w-md w-full">
@@ -133,6 +186,7 @@
         </CardFooter>
       </Card>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -152,6 +206,9 @@ const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const error = ref('');
+const showOrganizationSelection = ref(false);
+const organizations = ref<Record<string, any>>({});
+const loginResponse = ref<any>(null);
 
 // Forgot password state
 const showForgotPassword = ref(false);
@@ -166,21 +223,23 @@ const handleLogin = async () => {
 
   try {
     const response = await authService.login(email.value, password.value);
+    loginResponse.value = response;
 
     // Store user information
     authService.setUser(response.data.user);
 
     const orgs = response.data.organisations;
     if (orgs && Object.keys(orgs).length > 0) {
-      // TODO: handle multiple organizations (check with the FF team)
-      const orgId = Object.keys(orgs)[0];
-      const orgData = orgs[orgId];
-      
-      authService.setToken(orgData.token);
-      authService.setOrganization(orgData.organisation.id);
-      
-      // Redirect to dashboard
-      await navigateTo('/dashboard');
+      if (Object.keys(orgs).length === 1) {
+        // Single organization - auto-select
+        const orgId = Object.keys(orgs)[0];
+        const orgData = orgs[orgId];
+        await selectOrganization(orgId, orgData);
+      } else {
+        // Multiple organizations - show selection
+        organizations.value = orgs;
+        showOrganizationSelection.value = true;
+      }
     } else {
       error.value = $i18n.t('login.noOrganizations');
     }
@@ -232,6 +291,35 @@ const closeForgotPassword = () => {
   forgotPasswordEmail.value = '';
   forgotPasswordError.value = '';
   forgotPasswordSuccess.value = false;
+};
+
+const selectOrganization = async (_orgId: string, orgData: any) => {
+  try {
+    loading.value = true;
+    authService.setToken(orgData.token);
+    authService.setOrganization(orgData.organisation.id);
+    
+    // Check if first time setup
+    if (loginResponse.value?.data?.first_time_setup) {
+      // Store flag for first time setup
+      sessionStorage.setItem('first_time_setup', 'true');
+    }
+    
+    // Redirect to dashboard
+    await navigateTo('/dashboard');
+  } catch (err: any) {
+    error.value = $i18n.t('login.genericError');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const resetLogin = () => {
+  showOrganizationSelection.value = false;
+  organizations.value = {};
+  email.value = '';
+  password.value = '';
+  error.value = '';
 };
 
 </script>
