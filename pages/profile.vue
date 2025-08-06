@@ -233,8 +233,8 @@ onMounted(async () => {
     user.value = identityData.user;
 
     if (sessionStorage.getItem('first_time_setup') === 'true') {
-      // Redirect to password change page for first time setup
-      await navigateTo('/password-change?firstTimeSetup=true');
+      // Redirect to password reset page for first time setup
+      await navigateTo('/password-reset?firstTimeSetup=true');
       return;
     }
   } catch (error: any) {

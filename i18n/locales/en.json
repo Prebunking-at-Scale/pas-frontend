@@ -17,6 +17,7 @@
     "logout": "Logout",
     "loading": "Loading...",
     "saving": "Saving...",
+    "sending": "Sending...",
     "views": "views",
     "comments": "comments",
     "likes": "likes",
@@ -41,7 +42,8 @@
     "components": "Components",
     "help": "Help",
     "alerts": "Alerts",
-    "profile": "Profile"
+    "profile": "Profile",
+    "admin": "Admin"
   },
   "videos": {
     "title": "Videos",
@@ -333,5 +335,29 @@
     "copyright": "© {year} Prebunking at Scale. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
+  },
+  "admin": {
+    "manageOrganization": "Manage organization",
+    "organizationSettings": "Organization Settings",
+    "organizationName": "Organization Name",
+    "organizationUpdated": "Organization updated successfully",
+    "updateError": "Failed to update organization",
+    "organizationUsers": "Organization Users",
+    "createUser": "Create User",
+    "displayName": "Display Name",
+    "email": "Email",
+    "role": "Role",
+    "actions": "Actions",
+    "admin": "Admin",
+    "member": "Member",
+    "makeAdmin": "Make Admin",
+    "remove": "Remove",
+    "noUsers": "No users found",
+    "confirmRemoveUser": "Are you sure you want to remove this user from the organization?",
+    "inviteUser": "Invite User",
+    "emailAddress": "Email Address",
+    "sendInvitation": "Send Invitation",
+    "invitationSent": "Invitation sent successfully",
+    "inviteError": "Failed to send invitation"
   }
 }

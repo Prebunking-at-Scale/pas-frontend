@@ -53,7 +53,9 @@
     <!-- Auto-accepting message -->
     <div v-else class="mt-8 text-center">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-900 mx-auto"></div>
-      <p class="mt-4 text-gray-600">{{ $t('invitation.autoAccepting') }}</p>
+      <p class="mt-4 text-gray-600">
+        {{ loading ? $t('invitation.autoAccepting') : $t('invitation.accepting') }}
+      </p>
     </div>
   </div>
 </template>
@@ -74,18 +76,18 @@ const router = useRouter();
 const { $i18n } = useNuxtApp();
 const { apiFetch } = useApi();
 
-// State
-const inviteToken = ref('');
-const loading = ref(false);
+// Check for token immediately to set initial state
+const tokenFromUrl = route.query.token as string || route.query.invite_token as string;
+
+// State - initialize autoAccepting based on token presence
+const inviteToken = ref(tokenFromUrl || '');
+const loading = ref(!!tokenFromUrl); // Start loading if we have a token
 const error = ref('');
-const autoAccepting = ref(false);
+const autoAccepting = ref(!!tokenFromUrl);
 
 // Check for token in query params on mount
 onMounted(async () => {
-  const token = route.query.token as string;
-  if (token) {
-    inviteToken.value = token;
-    autoAccepting.value = true;
+  if (tokenFromUrl) {
     await acceptInvitation();
   }
 });

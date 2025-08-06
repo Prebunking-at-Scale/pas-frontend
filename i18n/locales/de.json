@@ -17,6 +17,7 @@
     "logout": "Abmelden",
     "loading": "Wird geladen...",
     "saving": "Wird gespeichert...",
+    "sending": "Wird gesendet...",
     "views": "Aufrufe",
     "comments": "Kommentare",
     "likes": "Gefällt mir",
@@ -41,7 +42,8 @@
     "components": "Komponenten",
     "help": "Hilfe",
     "alerts": "Benachrichtigungen",
-    "profile": "Profil"
+    "profile": "Profil",
+    "admin": "Verwaltung"
   },
   "videos": {
     "title": "Videos",
@@ -354,5 +356,29 @@
     "copyright": "© {year} Prebunking at Scale. Alle Rechte vorbehalten.",
     "privacy": "Datenschutzrichtlinie",
     "terms": "Nutzungsbedingungen"
+  },
+  "admin": {
+    "manageOrganization": "Organisation verwalten",
+    "organizationSettings": "Organisationseinstellungen",
+    "organizationName": "Organisationsname",
+    "organizationUpdated": "Organisation erfolgreich aktualisiert",
+    "updateError": "Fehler beim Aktualisieren der Organisation",
+    "organizationUsers": "Organisationsbenutzer",
+    "createUser": "Benutzer erstellen",
+    "displayName": "Anzeigename",
+    "email": "E-Mail",
+    "role": "Rolle",
+    "actions": "Aktionen",
+    "admin": "Administrator",
+    "member": "Mitglied",
+    "makeAdmin": "Zum Administrator machen",
+    "remove": "Entfernen",
+    "noUsers": "Keine Benutzer gefunden",
+    "confirmRemoveUser": "Sind Sie sicher, dass Sie diesen Benutzer aus der Organisation entfernen möchten?",
+    "inviteUser": "Benutzer einladen",
+    "emailAddress": "E-Mail-Adresse",
+    "sendInvitation": "Einladung senden",
+    "invitationSent": "Einladung erfolgreich gesendet",
+    "inviteError": "Fehler beim Senden der Einladung"
   }
 }
