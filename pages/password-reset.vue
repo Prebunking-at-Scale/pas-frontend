@@ -173,11 +173,8 @@ const handlePasswordChange = async () => {
     if (isPasswordReset.value) {
       // Password reset with token
       await authService.resetPassword(route.query.token as string, newPassword.value);
-    } else if (isFirstTimeSetup.value) {
-      // First time setup - just update password
-      await authService.updatePassword(newPassword.value);
     } else {
-      // Regular password change - need current password
+      // Regular password change
       await authService.changePassword(newPassword.value);
     }
 

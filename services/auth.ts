@@ -37,19 +37,8 @@ export const authService = {
     return (response as any).data || response as User;
   },
 
-  // Update password (for first time setup or profile page)
-  async updatePassword(newPassword: string): Promise<void> {
-    const { apiFetch } = useApi();
-    await apiFetch('/api/auth/user/password', {
-      method: 'PATCH',
-      body: {
-        new_password: newPassword
-      }
-    });
-  },
-
-  // Change password (for password change page)
-  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  // Change password
+  async changePassword(newPassword: string): Promise<void> {
     const { apiFetch } = useApi();
     await apiFetch('/api/auth/user/password', {
       method: 'PATCH',

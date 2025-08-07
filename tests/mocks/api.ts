@@ -97,7 +97,6 @@ export const mockAuthService = {
   getCurrentUser: vi.fn(),
   getIdentity: vi.fn(),
   updateUser: vi.fn(),
-  updatePassword: vi.fn(),
   requestPasswordReset: vi.fn(),
   getToken: vi.fn(),
   setToken: vi.fn(),

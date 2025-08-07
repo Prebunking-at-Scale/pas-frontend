@@ -232,7 +232,7 @@ onMounted(async () => {
     identity.value = identityData;
     user.value = identityData.user;
 
-    if (sessionStorage.getItem('first_time_setup') === 'true') {
+    if (typeof sessionStorage !== 'undefined' &&  sessionStorage.getItem('first_time_setup') === 'true') {
       // Redirect to password reset page for first time setup
       await navigateTo('/password-reset?firstTimeSetup=true');
       return;
@@ -284,7 +284,7 @@ const changePassword = async () => {
     passwordError.value = '';
     passwordSuccess.value = '';
     
-    await authService.updatePassword(passwordForm.value.new);
+    await authService.changePassword(passwordForm.value.new);
     
     passwordSuccess.value = $i18n.t('profile.passwordChanged');
     passwordForm.value = {
