@@ -375,48 +375,6 @@ export const apiService = {
     };
   },
 
-  // Auth endpoints (mock)
-  async login(email: string, password: string): Promise<{ user: User; token: string }> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Mock authentication
-    if (email && password) {
-      return {
-        user: {
-          id: 'user-1',
-          email,
-          name: 'Test User',
-          role: 'admin',
-          created_at: new Date().toISOString()
-        },
-        token: 'mock-jwt-token'
-      };
-    }
-
-    throw new Error('Invalid credentials');
-  },
-
-  async logout(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    // Mock logout
-  },
-
-  async getCurrentUser(): Promise<User | null> {
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Check if logged in (mock)
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('auth-token')) {
-      return {
-        id: 'user-1',
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'admin',
-        created_at: new Date().toISOString()
-      };
-    }
-
-    return null;
-  },
 
   // Alerts endpoints (mock)
   async getAlerts(): Promise<Alert[]> {

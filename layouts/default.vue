@@ -1,12 +1,27 @@
-<script setup>
+<script setup lang="ts">
 import '~/assets/css/styles.css';
-import {faHouse, faVideo, faCircleNodes, faComment} from '@fortawesome/free-solid-svg-icons'
+import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase} from '@fortawesome/free-solid-svg-icons'
 import Footer from '~/components/Footer.vue';
-
+import { authService } from '~/services/auth';
+import type { IdentityResponse } from '~/types/api';
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 const { headerContent } = usePageHeader();
+
+// Admin status
+const identity = ref<IdentityResponse | null>(null);
+const isOrganizationAdmin = computed(() => identity.value?.is_organisation_admin || false);
+
+// Fetch identity on mount
+onMounted(async () => {
+  try {
+    identity.value = await authService.getIdentity();
+  } catch (error) {
+    console.error('Failed to load identity:', error);
+  }
+});
 
 const defaultPageTitle = computed(() => {
   switch (route.path) {
@@ -23,6 +38,8 @@ const defaultPageTitle = computed(() => {
       return t('alerts.title');
     case '/profile':
       return t('profile.title');
+    case '/admin':
+      return `${t('admin.manageOrganization')}: ${identity.value?.organisation?.display_name || ''}`;
     default:
       if (route.path.startsWith('/narratives/')) {
         return t('narratives.title');
@@ -42,10 +59,16 @@ const isActive = (path) => {
   if (path === '/dashboard') {
     return route.path === '/' || route.path === '/dashboard';
   }
-  if (path === '/alerts' || path === '/profile') {
+  if (path === '/alerts' || path === '/profile' || path === '/admin') {
     return route.path === path;
   }
   return route.path.startsWith(path);
+};
+
+// Logout handler
+const handleLogout = () => {
+  authService.logout();
+  router.push('/login');
 };
 </script>
 
@@ -114,24 +137,39 @@ const isActive = (path) => {
           </NuxtLink>
 
           <div class="pt-4 mt-4 border-t border-neutral-200">
-            <NuxtLink
+            <!-- Alerts menu option hidden for now -->
+            <!-- <NuxtLink
               to="/alerts"
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/alerts') }]"
               :prefetch="false"
             >
               {{ $t('nav.alerts') }}
-            </NuxtLink>
+            </NuxtLink> -->
             <NuxtLink
               to="/profile"
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/profile') }]"
               :prefetch="false"
             >
-              {{ $t('nav.profile') }}
+              <font-awesome :icon="faUser" class="mr-2"/>{{ $t('nav.profile') }}
+            </NuxtLink>
+            <NuxtLink
+              v-if="isOrganizationAdmin"
+              to="/admin"
+              :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/admin') }]"
+              :prefetch="false"
+            >
+              <font-awesome :icon="faBriefcase" class="mr-2"/>{{ $t('nav.admin') }}
             </NuxtLink>
           </div>
 
           <div class="pt-4 mt-4 border-t border-neutral-200">
             <span class="block px-4 py-2 text-neutral-400 cursor-not-allowed">{{ $t('nav.help') }}</span>
+            <button
+              @click="handleLogout"
+              class="block cursor-pointer w-full text-left px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors text-red-600"
+            >
+              <font-awesome :icon="faSignOutAlt" class="mr-2"/>{{ $t('common.logout') }}
+            </button>
           </div>
         </nav>
       </aside>
