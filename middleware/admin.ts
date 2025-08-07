@@ -7,6 +7,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp();
   const config = useRuntimeConfig();
 
+  // ONLY allow test mode if explicitly enabled in runtime config (dev/test only)
+  if (config.public.testModeEnabled && to.query._testMode === 'admin') {
+    console.log('Test mode: bypassing admin middleware (dev/test environment only)');
+    return; 
+  }
+
   try {
     // Check if user is authenticated first
     const tokenCookie = useCookie('auth-token');
