@@ -397,5 +397,47 @@
     "sendInvitation": "Enviar invitación",
     "invitationSent": "Invitación enviada correctamente",
     "inviteError": "Error al enviar la invitación"
+  },
+  "tos": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última actualización: [Por completar]",
+    "sections": {
+      "acceptance": {
+        "title": "Aceptación de Términos",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "description": {
+        "title": "Descripción del Servicio",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "userAccounts": {
+        "title": "Cuentas de Usuario",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "acceptableUse": {
+        "title": "Uso Aceptable",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "limitation": {
+        "title": "Limitación de Responsabilidad",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "termination": {
+        "title": "Terminación",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "changes": {
+        "title": "Cambios en los Términos",
+        "content": "[Por completar por el equipo legal]"
+      },
+      "contact": {
+        "title": "Información de Contacto",
+        "content": "[Por completar por el equipo legal]"
+      }
+    }
   }
 }
