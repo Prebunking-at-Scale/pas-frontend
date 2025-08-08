@@ -397,5 +397,47 @@
     "sendInvitation": "Send Invitation",
     "invitationSent": "Invitation sent successfully",
     "inviteError": "Failed to send invitation"
+  },
+  "tos": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: [To be filled]",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "content": "[To be filled by legal team]"
+      },
+      "description": {
+        "title": "Service Description",
+        "content": "[To be filled by legal team]"
+      },
+      "userAccounts": {
+        "title": "User Accounts",
+        "content": "[To be filled by legal team]"
+      },
+      "acceptableUse": {
+        "title": "Acceptable Use",
+        "content": "[To be filled by legal team]"
+      },
+      "privacy": {
+        "title": "Privacy",
+        "content": "[To be filled by legal team]"
+      },
+      "limitation": {
+        "title": "Limitation of Liability",
+        "content": "[To be filled by legal team]"
+      },
+      "termination": {
+        "title": "Termination",
+        "content": "[To be filled by legal team]"
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "[To be filled by legal team]"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "content": "[To be filled by legal team]"
+      }
+    }
   }
 }
