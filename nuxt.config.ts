@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
 
+  css: [
+    'vanilla-cookieconsent/dist/cookieconsent.css'
+  ],
+
   runtimeConfig: {
     // Server-only config (not exposed to client)
     apiKey: process.env.API_KEY || '',
