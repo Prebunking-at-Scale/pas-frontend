@@ -189,11 +189,17 @@ export interface UserUpdateRequest {
 export interface Alert {
   id: string;
   name: string;
-  description: string;
-  condition: string;
-  is_active: boolean;
+  scope: 'general' | 'specific';
+  alert_type: 'narrative_views' | 'narrative_claims_count' | 'narrative_videos_count' | 'narrative_with_topic' | 'keyword';
+  narrative_id?: string;
+  threshold?: number;
+  topic_id?: string;
+  keyword?: string;
+  enabled: boolean;
   created_at: string;
   updated_at: string;
+  organisation_id: string;
+  user_id: string;
 }
 
 // Video detail response includes video data plus related content
