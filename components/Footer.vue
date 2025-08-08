@@ -79,8 +79,8 @@
         <p>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
       </div>
       <div class="flex items-center gap-6">
-        <a href="#" class="hover:text-gray-700">{{ $t('footer.privacy') }}</a>
-        <a href="#" class="hover:text-gray-700">{{ $t('footer.terms') }}</a>
+        <a v-if="false" href="#" class="hover:text-gray-700">{{ $t('footer.privacy') }}</a>
+        <NuxtLink to="/terms-of-service" class="hover:text-gray-700">{{ $t('footer.terms') }}</NuxtLink>
       </div>
     </div>
   </footer>
