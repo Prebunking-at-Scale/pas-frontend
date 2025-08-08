@@ -1,5 +1,6 @@
 // API Service with mock data
 import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
+import { useApi } from '~/composables/useApi';
 
 // API calls now go through our frontend proxy to hide the API key
 // The proxy handles authentication with the backend
@@ -93,7 +94,7 @@ const generateMockEntity = (index: number): Entity => {
 
 const generateMockTopic = (index: number): Topic => ({
   id: `topic-${index}`,
-  name: `Topic ${index}`,
+  topic: `Topic ${index}`,
   frequency: Math.floor(Math.random() * 120) + 1
 });
 
@@ -294,7 +295,7 @@ export const apiService = {
         }
       });
       
-      const data = response as ApiResponse<Narrative>;
+      const data = response as { data: Narrative[] };
       // Order by the sum of views of each video in the narrative
       return data.data.sort((a: Narrative, b: Narrative) => {
         const aViews = a.videos.reduce((sum, video) => sum + video.views, 0);
@@ -325,7 +326,7 @@ export const apiService = {
         }
       });
       
-      const data = response as ApiResponse<Narrative>;
+      const data = response as { data: Narrative[] };
       // Order them by the count of videos in the narrative, descending
       return data.data.sort((a: Narrative, b: Narrative) => b.videos.length - a.videos.length);
     } catch (error) {
@@ -376,55 +377,103 @@ export const apiService = {
   },
 
 
-  // Alerts endpoints (mock)
-  async getAlerts(): Promise<Alert[]> {
-    await new Promise(resolve => setTimeout(resolve, 400));
-
-    return Array.from({ length: 5 }, (_, i) => ({
-      id: `alert-${i + 1}`,
-      name: `Alert ${i + 1}`,
-      description: `This alert monitors for specific conditions in narratives`,
-      condition: 'views > 100000',
-      is_active: Math.random() > 0.3,
-      created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date().toISOString()
-    }));
+  // Alerts endpoints - using authenticated fetch
+  async getAlerts(params?: {
+    enabled_only?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ items: Alert[]; total: number; limit: number; offset: number }> {
+    try {
+      // Import useApi inside the function to get proper context
+      const { apiFetch } = useApi();
+      
+      const query: any = {
+        limit: params?.limit || 100,
+        offset: params?.offset || 0
+      };
+      
+      if (params?.enabled_only) {
+        query.enabled_only = true;
+      }
+      
+      const response = await apiFetch('/api/alerts', {
+        method: 'GET',
+        query
+      }) as { data: Alert[]; total: number; page: number; size: number };
+      
+      // Transform the API response to match our expected format
+      return {
+        items: response.data || [],
+        total: response.total || 0,
+        limit: response.size || (params?.limit || 100),
+        offset: params?.offset || 0
+      };
+    } catch (error) {
+      console.error('Failed to fetch alerts:', error);
+      // Return empty response on error
+      return {
+        items: [],
+        total: 0,
+        limit: params?.limit || 100,
+        offset: params?.offset || 0
+      };
+    }
   },
 
-  async createAlert(alert: Omit<Alert, 'id' | 'created_at' | 'updated_at'>): Promise<Alert> {
-    await new Promise(resolve => setTimeout(resolve, 500));
+  async getAlert(alertId: string): Promise<Alert> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/alerts/${alertId}`, {
+        method: 'GET'
+      });
+      
+      return response as Alert;
+    } catch (error) {
+      console.error('Failed to fetch alert:', error);
+      throw error;
+    }
+  },
 
-    return {
-      ...alert,
-      id: `alert-${Date.now()}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+  async createAlert(alert: Omit<Alert, 'id' | 'created_at' | 'updated_at' | 'organisation_id' | 'user_id'>): Promise<Alert> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/alerts', {
+        method: 'POST',
+        body: alert
+      });
+      
+      return response as Alert;
+    } catch (error) {
+      console.error('Failed to create alert:', error);
+      throw error;
+    }
   },
 
   async updateAlert(alertId: string, updates: Partial<Alert>): Promise<Alert> {
-    await new Promise(resolve => setTimeout(resolve, 400));
-
-    const existingAlert = {
-      id: alertId,
-      name: 'Existing Alert',
-      description: 'Description',
-      condition: 'views > 50000',
-      is_active: true,
-      created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    return {
-      ...existingAlert,
-      ...updates,
-      updated_at: new Date().toISOString()
-    };
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/alerts/${alertId}`, {
+        method: 'PATCH',
+        body: updates
+      });
+      
+      return response as Alert;
+    } catch (error) {
+      console.error('Failed to update alert:', error);
+      throw error;
+    }
   },
 
   async deleteAlert(alertId: string): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    // Mock deletion
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/alerts/${alertId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete alert:', error);
+      throw error;
+    }
   },
 
   // Entity endpoints
@@ -454,8 +503,8 @@ export const apiService = {
         { id: 'actor-2', name: 'Maria Van Kerkhove', type: 'person', frequency: 32, role: 'Technical Lead' }
       ],
       related_topics: [
-        { id: 'topic-1', name: 'Public Health', frequency: 234 },
-        { id: 'topic-2', name: 'Pandemic Response', frequency: 189 }
+        { id: 'topic-1', topic: 'Public Health', frequency: 234 },
+        { id: 'topic-2', topic: 'Pandemic Response', frequency: 189 }
       ]
     };
   },
@@ -488,8 +537,8 @@ export const apiService = {
         { id: 'entity-2', name: 'CDC', type: 'institution', frequency: 76, description: 'Centers for Disease Control' }
       ],
       related_topics: [
-        { id: 'topic-1', name: 'COVID-19', frequency: 456 },
-        { id: 'topic-2', name: 'Vaccines', frequency: 234 }
+        { id: 'topic-1', topic: 'COVID-19', frequency: 456 },
+        { id: 'topic-2', topic: 'Vaccines', frequency: 234 }
       ]
     };
   },
@@ -508,7 +557,7 @@ export const apiService = {
     // The actual topic name will come from the topics store
     const topic: Topic = {
       id: topicId,
-      name: 'Topic',
+      topic: 'Topic',
       frequency: 1234
     };
 

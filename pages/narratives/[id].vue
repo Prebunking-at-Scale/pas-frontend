@@ -12,9 +12,16 @@
     <div v-else-if="narrative">
       <!-- Header -->
       <div class="mb-6">
-
-        <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
-        <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
+            <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
+          </div>
+          <Button @click="openAlertDialog" variant="outline" class="ml-4">
+            <Bell class="mr-2 h-4 w-4" />
+            {{ $t('alerts.create_alert') }}
+          </Button>
+        </div>
         
         <!-- Topics -->
         <div v-if="narrative.topics && narrative.topics.length > 0" class="mt-4">
@@ -290,14 +297,27 @@
         </div>
       </div>
     </div>
+
+    <!-- Alert Dialog -->
+    <AlertFormDialog
+      v-if="narrative"
+      v-model:open="showAlertDialog"
+      :mode="'create'"
+      :narrative-id="narrative.id"
+      @save="handleAlertSave"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Narrative } from '~/types/api';
+import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
+import AlertFormDialog from '~/components/AlertFormDialog.vue';
+import { Bell } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
 
@@ -306,10 +326,10 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { $i18n } = useNuxtApp();
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-
+const toast = useToast();
 
 // State
 const narrative = ref<Narrative | null>(null);
@@ -317,6 +337,7 @@ const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
+const showAlertDialog = ref(false);
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -348,7 +369,7 @@ onMounted(async () => {
     narrative.value = await apiService.getNarrative(narrativeId);
   } catch (err) {
     console.error('Failed to load narrative:', err);
-    error.value = $i18n.t('narratives.loadError');
+    error.value = t('narratives.loadError');
   } finally {
     loading.value = false;
   }
@@ -371,5 +392,17 @@ const goToTopic = (topicId: string) => {
 
 const goToVideo = (videoId: string) => {
   router.push(`/videos/${videoId}`);
+};
+
+const openAlertDialog = () => {
+  showAlertDialog.value = true;
+};
+
+const handleAlertSave = (alert: Alert) => {
+  toast.add({
+    title: t('common.success'),
+    description: t('alerts.create_success')
+  });
+  showAlertDialog.value = false;
 };
 </script>

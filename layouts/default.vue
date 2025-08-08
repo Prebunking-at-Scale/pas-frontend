@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import '~/assets/css/styles.css';
-import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase} from '@fortawesome/free-solid-svg-icons'
+import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase, faBell} from '@fortawesome/free-solid-svg-icons'
 import Footer from '~/components/Footer.vue';
 import { authService } from '~/services/auth';
 import type { IdentityResponse } from '~/types/api';
@@ -137,14 +137,13 @@ const handleLogout = () => {
           </NuxtLink>
 
           <div class="pt-4 mt-4 border-t border-neutral-200">
-            <!-- Alerts menu option hidden for now -->
-            <!-- <NuxtLink
+            <NuxtLink
               to="/alerts"
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/alerts') }]"
               :prefetch="false"
             >
-              {{ $t('nav.alerts') }}
-            </NuxtLink> -->
+              <font-awesome :icon="faBell" class="mr-2"/>{{ $t('nav.alerts') }}
+            </NuxtLink>
             <NuxtLink
               to="/profile"
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/profile') }]"

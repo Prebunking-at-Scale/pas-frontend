@@ -12,9 +12,9 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
   };
   
-  // For /auth endpoints, forward the user's Bearer token if present
+  // For /auth and /alerts endpoints, forward the user's Bearer token if present
   // For other endpoints, use the API key
-  if (path.startsWith('auth/')) {
+  if (path.startsWith('auth/') || path.startsWith('alerts')) {
     const authHeader = event.node.req.headers.authorization;
     if (authHeader) {
       headers['Authorization'] = authHeader;
