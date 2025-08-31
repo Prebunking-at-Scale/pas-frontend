@@ -3,27 +3,24 @@
     <!-- Filters -->
     <FilterCard
       :title="$t('claims.filters')"
-      :columns="3"
+      :columns="{ default: 1, md: 2, lg: 2 }"
       :has-active-filters="hasActiveFilters"
       @apply-filters="applyFilters"
       @clear-filters="clearFilters"
     >
       <TopicFilter
+        class="w-full"
         v-model="filters.topic_id"
         :label="$t('claims.topic')"
         :placeholder="$t('claims.selectTopic')"
       />
       
-      <ChannelFilter
-        v-model="filters.channel"
-        :label="$t('claims.channel')"
-        :placeholder="$t('filters.channelPlaceholder')"
-      />
-      
-      <SearchFilter
-        v-model="filters.search"
-        :label="$t('claims.search')"
-        :placeholder="$t('claims.searchPlaceholder')"
+      <KeywordsFilter
+        class="w-full"
+        v-model="filters.text"
+        :label="$t('claims.text')"
+        :placeholder="$t('claims.textPlaceholder')"
+        @enter-pressed="applyFilters"
       />
     </FilterCard>
 
@@ -79,6 +76,7 @@
               <Button 
                 :variant="item.value === page ? 'default' : 'outline'" 
                 size="sm"
+                class="cursor-pointer"
                 @click="loadPage(item.value)"
               >
                 {{ item.value }}
@@ -104,8 +102,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationFirst, Paginat
 import ClaimCard from '~/components/ClaimCard.vue';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
-import ChannelFilter from '~/components/filters/ChannelFilter.vue';
-import SearchFilter from '~/components/filters/SearchFilter.vue';
+import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -131,16 +128,14 @@ const loading = ref(true);
 
 // Filters - separate UI state from applied state
 const filters = ref({
-  topic_id: 'all',
-  channel: '',
-  search: ''
+  topic_id: null as string | null,
+  text: [] as string[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
-  topic_id: 'all',
-  channel: '',
-  search: ''
+  topic_id: null as string | null,
+  text: [] as string[]
 });
 
 // Current topic is based on APPLIED filters, not UI filters
@@ -151,9 +146,8 @@ const currentTopic = computed(() => {
 
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
-  return (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') || 
-         appliedFilters.value.channel ||
-         appliedFilters.value.search;
+  return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
+         appliedFilters.value.text.length > 0;
 });
 
 const updatePageHeader = () => {
@@ -212,24 +206,13 @@ const loadClaims = async () => {
       params.topic_id = appliedFilters.value.topic_id;
     }
     
-    const response = await apiService.getClaims(params);
-    
-    // Apply client-side search filter if needed - use APPLIED filters
-    if (response.data && appliedFilters.value.search) {
-      const searchLower = appliedFilters.value.search.toLowerCase();
-      const filteredData = response.data.filter(claim => {
-        const claimText = (claim.claim || claim.text || '').toLowerCase();
-        return claimText.includes(searchLower);
-      });
-      
-      claims.value = {
-        ...response,
-        data: filteredData,
-        total: filteredData.length
-      };
-    } else {
-      claims.value = response;
+    // Add text search parameter if text filters are applied
+    if (appliedFilters.value.text.length > 0) {
+      params.text = appliedFilters.value.text.join(' ');
     }
+    
+    const response = await apiService.getClaims(params);
+    claims.value = response;
   } catch (error) {
     console.error('Failed to load claims:', error);
     claims.value = {
@@ -252,14 +235,12 @@ const applyFilters = () => {
 
 const clearFilters = () => {
   filters.value = {
-    topic_id: 'all',
-    channel: '',
-    search: ''
+    topic_id: null,
+    text: []
   };
   appliedFilters.value = {
-    topic_id: 'all',
-    channel: '',
-    search: ''
+    topic_id: null,
+    text: []
   };
   claims.value.page = 1;
   loadClaims();

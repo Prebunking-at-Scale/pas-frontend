@@ -26,8 +26,23 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-between text-xs text-gray-500">
-        <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <!-- Topics -->
+        <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2">
+          <div class="flex flex-wrap gap-1">
+            <NuxtLink
+              v-for="topic in narrative.topics" 
+              :key="topic.id"
+              :to="`/topics/${topic.id}`"
+              class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer"
+              @click.stop>
+              {{ topic.topic }}
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="flex items-center space-x-3 text-xs text-gray-500">
           <span class="flex items-center">
             <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -70,8 +85,6 @@ const props = withDefaults(defineProps<Props>(), {
 defineEmits<{
   click: []
 }>();
-
-const { $i18n } = useNuxtApp();
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => calculateNarrativeStats(props.narrative));

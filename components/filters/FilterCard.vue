@@ -18,10 +18,7 @@
       </CardContent>
       
       <CardFooter v-if="showActions" class="flex justify-end gap-2 pt-4 pb-4 border-t">
-        <Button v-if="showClearButton" @click="$emit('clear-filters')" variant="outline" size="sm">
-          {{ $t('filters.clear') }}
-        </Button>
-        <Button @click="$emit('apply-filters')" variant="default" size="sm">
+        <Button @click="$emit('apply-filters')" variant="default" size="sm" class="cursor-pointer">
           {{ $t('filters.apply') }}
         </Button>
       </CardFooter>
@@ -39,7 +36,6 @@ interface Props {
   title?: string
   columns?: number | { default?: number; sm?: number; md?: number; lg?: number }
   showActions?: boolean
-  showClearButton?: boolean
   showActiveFilters?: boolean
   hasActiveFilters?: boolean
 }
@@ -47,7 +43,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   columns: 1,
   showActions: true,
-  showClearButton: true,
   showActiveFilters: true,
   hasActiveFilters: false
 })

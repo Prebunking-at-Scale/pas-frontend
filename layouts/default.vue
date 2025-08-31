@@ -165,7 +165,7 @@ const handleLogout = () => {
             <span class="block px-4 py-2 text-neutral-400 cursor-not-allowed">{{ $t('nav.help') }}</span>
             <button
               @click="handleLogout"
-              class="block cursor-pointer w-full text-left px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors text-red-600"
+              class="block cursor-pointer w-full text-left px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
             >
               <font-awesome :icon="faSignOutAlt" class="mr-2"/>{{ $t('common.logout') }}
             </button>

@@ -137,6 +137,7 @@ export const apiService = {
   async getVideos(params?: { 
     platform?: string[] | null;
     channel?: string[] | null;
+    text?: string;
     limit?: number;
     offset?: number;
   }): Promise<PaginatedResponse<Video>> {
@@ -155,6 +156,9 @@ export const apiService = {
       }
       if (params?.channel?.length) {
         query.channel = params.channel;
+      }
+      if (params?.text) {
+        query.text = params.text;
       }
       
       const response = await $fetch('/api/videos', {
@@ -223,17 +227,29 @@ export const apiService = {
   async getNarratives(params?: {
     limit?: number;
     offset?: number;
+    topic_id?: string;
+    text?: string;
   }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
     
     try {
+      const query: any = {
+        limit,
+        offset
+      };
+      
+      // Add optional filters
+      if (params?.topic_id) {
+        query.topic_id = params.topic_id;
+      }
+      if (params?.text) {
+        query.text = params.text;
+      }
+      
       const response = await $fetch('/api/narratives', {
         method: 'GET',
-        query: {
-          limit,
-          offset
-        }
+        query
       });
       
       return response as PaginatedResponse<Narrative>;
@@ -663,6 +679,7 @@ export const apiService = {
   // Claims endpoints
   async getClaims(params?: { 
     topic_id?: string;
+    text?: string;
     limit?: number;
     offset?: number;
   }): Promise<PaginatedResponse<Claim>> {
@@ -678,6 +695,11 @@ export const apiService = {
       // Add topic filter if provided
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
+      }
+      
+      // Add text search if provided
+      if (params?.text) {
+        query.text = params.text;
       }
       
       const response = await $fetch('/api/claims', {

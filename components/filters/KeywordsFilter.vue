@@ -1,36 +1,20 @@
 <template>
   <div class="space-y-2">
     <Label :for="id">{{ label || $t('filters.keywords') }}</Label>
-    <div class="space-y-2">
-      <Input
-        :id="id"
-        type="text"
-        v-model="newKeyword"
-        @keydown.enter.prevent="addKeyword"
-        :placeholder="placeholder || $t('filters.keywordsPlaceholder')"
-      />
-      <div v-if="modelValue.length > 0" class="flex flex-wrap gap-2">
-        <Badge
-          v-for="(keyword, index) in modelValue"
-          :key="index"
-          variant="secondary"
-          class="cursor-pointer"
-          @click="removeKeyword(index)"
-        >
-          {{ keyword }}
-          <X class="w-3 h-3 ml-1" />
-        </Badge>
-      </div>
-    </div>
+    <Input
+      :id="id"
+      type="text"
+      v-model="localText"
+      @keydown.enter="$emit('enter-pressed')"
+      :placeholder="placeholder || $t('filters.keywordsPlaceholder')"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { X } from 'lucide-vue-next'
 
 interface Props {
   modelValue: string[]
@@ -43,20 +27,21 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
+  'enter-pressed': []
 }>()
 
-const newKeyword = ref('')
+// Local text state for the input
+const localText = ref(props.modelValue.join(' '))
 
-const addKeyword = () => {
-  if (newKeyword.value.trim() && !props.modelValue.includes(newKeyword.value.trim())) {
-    emit('update:modelValue', [...props.modelValue, newKeyword.value.trim()])
-    newKeyword.value = ''
-  }
-}
+// Watch for prop changes to update local text
+watch(() => props.modelValue, (newValue) => {
+  localText.value = newValue.join(' ')
+})
 
-const removeKeyword = (index: number) => {
-  const newKeywords = [...props.modelValue]
-  newKeywords.splice(index, 1)
-  emit('update:modelValue', newKeywords)
-}
+// Update the model value when local text changes
+watch(localText, (newValue) => {
+  const trimmed = newValue.trim()
+  const keywords = trimmed ? trimmed.split(/\s+/).filter(k => k.length > 0) : []
+  emit('update:modelValue', keywords)
+})
 </script>

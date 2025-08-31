@@ -3,27 +3,32 @@
     <!-- Filters -->
     <FilterCard
       :title="$t('videos.filters')"
-      :columns="3"
+      :columns="{ default: 1, md: 3, lg: 3 }"
       :has-active-filters="hasActiveFilters"
       @apply-filters="applyFilters"
       @clear-filters="clearFilters"
     >
       <PlatformFilter
+        class="w-full"
         v-model="filters.platform"
         :label="$t('videos.platform')"
         :placeholder="$t('videos.selectPlatform')"
       />
       
       <ChannelFilter
+        class="w-full"
         v-model="filters.channel"
         :label="$t('videos.channel')"
         :placeholder="$t('videos.channelPlaceholder')"
+        @enter-pressed="applyFilters"
       />
       
-      <SearchFilter
-        v-model="filters.search"
-        :label="$t('videos.search')"
-        :placeholder="$t('videos.searchPlaceholder')"
+      <KeywordsFilter
+        class="w-full"
+        v-model="filters.text"
+        :label="$t('videos.text')"
+        :placeholder="$t('videos.textPlaceholder')"
+        @enter-pressed="applyFilters"
       />
     </FilterCard>
 
@@ -73,6 +78,7 @@
               <Button 
                 :variant="item.value === page ? 'default' : 'outline'" 
                 size="sm"
+                class="cursor-pointer"
                 @click="loadPage(item.value)"
               >
                 {{ item.value }}
@@ -98,7 +104,7 @@ import VideoCard from '~/components/VideoCard.vue';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import PlatformFilter from '~/components/filters/PlatformFilter.vue';
 import ChannelFilter from '~/components/filters/ChannelFilter.vue';
-import SearchFilter from '~/components/filters/SearchFilter.vue';
+import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -125,21 +131,21 @@ const currentPage = ref(1);
 const filters = ref({
   platform: 'all',
   channel: '',
-  search: ''
+  text: [] as string[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   platform: 'all',
   channel: '',
-  search: ''
+  text: [] as string[]
 });
 
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.platform && appliedFilters.value.platform !== 'all') || 
          appliedFilters.value.channel || 
-         appliedFilters.value.search;
+         appliedFilters.value.text.length > 0;
 });
 
 const totalPages = computed(() => {
@@ -177,24 +183,13 @@ const loadVideos = async () => {
       params.channel = [appliedFilters.value.channel];
     }
     
-    const response = await apiService.getVideos(params);
-    
-    // Apply client-side search filter if needed - use APPLIED filters
-    if (appliedFilters.value.search && response.data) {
-      const searchLower = appliedFilters.value.search.toLowerCase();
-      const filteredData = response.data.filter(video => 
-        video.title.toLowerCase().includes(searchLower) ||
-        video.description.toLowerCase().includes(searchLower)
-      );
-      
-      videos.value = {
-        ...response,
-        data: filteredData,
-        total: filteredData.length
-      };
-    } else {
-      videos.value = response;
+    // Add text search parameter if text filters are applied
+    if (appliedFilters.value.text.length > 0) {
+      params.text = appliedFilters.value.text.join(' ');
     }
+    
+    const response = await apiService.getVideos(params);
+    videos.value = response;
     
     // Update page tracking
     videos.value.page = currentPage.value;
@@ -222,12 +217,12 @@ const clearFilters = () => {
   filters.value = {
     platform: 'all',
     channel: '',
-    search: ''
+    text: []
   };
   appliedFilters.value = {
     platform: 'all',
     channel: '',
-    search: ''
+    text: []
   };
   currentPage.value = 1;
   loadVideos();

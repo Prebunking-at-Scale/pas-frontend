@@ -20,8 +20,8 @@
       <Input
         :id="id"
         type="text"
-        :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        v-model="localValue"
+        @keydown.enter="$emit('enter-pressed')"
         :placeholder="placeholder || $t('filters.channelPlaceholder')"
       />
     </div>
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -42,12 +43,26 @@ interface Props {
   id?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   type: 'input',
   channels: () => []
 })
 
-defineEmits<{
+const emit = defineEmits<{
   'update:modelValue': [value: string]
+  'enter-pressed': []
 }>()
+
+// Local value for the input
+const localValue = ref(props.modelValue || '')
+
+// Watch for prop changes
+watch(() => props.modelValue, (newValue) => {
+  localValue.value = newValue || ''
+})
+
+// Watch for local changes and emit
+watch(localValue, (newValue) => {
+  emit('update:modelValue', newValue)
+})
 </script>
