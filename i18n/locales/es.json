@@ -241,6 +241,7 @@
     "searchPlaceholder": "Buscar en claims...",
     "text": "Texto",
     "textPlaceholder": "Ingrese texto de búsqueda",
+    "range": "Puntuación de Daño",
     "clearFilters": "Limpiar filtros",
     "applyFilters": "Aplicar filtros",
     "showingClaimsFor": "Mostrando claims para el tema:",
@@ -249,6 +250,7 @@
     "timestamp": "Marca de tiempo",
     "viewSource": "Ver fuente",
     "confidence": "Confianza",
+    "score": "Puntuación",
     "topics": "Temas",
     "viewVideo": "Ver vídeo"
   },

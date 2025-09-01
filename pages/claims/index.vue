@@ -3,24 +3,31 @@
     <!-- Filters -->
     <FilterCard
       :title="$t('claims.filters')"
-      :columns="{ default: 1, md: 2, lg: 2 }"
       :has-active-filters="hasActiveFilters"
       @apply-filters="applyFilters"
       @clear-filters="clearFilters"
     >
       <TopicFilter
-        class="w-full"
         v-model="filters.topic_id"
         :label="$t('claims.topic')"
         :placeholder="$t('claims.selectTopic')"
       />
       
       <KeywordsFilter
-        class="w-full"
+        class="flex-1"
         v-model="filters.text"
         :label="$t('claims.text')"
         :placeholder="$t('claims.textPlaceholder')"
         @enter-pressed="applyFilters"
+      />
+      
+      <RangeSlider
+        class="flex-1"
+        v-model="filters.range"
+        :label="$t('claims.range')"
+        :min="0"
+        :max="5"
+        :step="0.1"
       />
     </FilterCard>
 
@@ -103,6 +110,7 @@ import ClaimCard from '~/components/ClaimCard.vue';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import RangeSlider from '~/components/filters/RangeSlider.vue';
 
 definePageMeta({
   layout: 'default',
@@ -129,13 +137,15 @@ const loading = ref(true);
 // Filters - separate UI state from applied state
 const filters = ref({
   topic_id: null as string | null,
-  text: [] as string[]
+  text: [] as string[],
+  range: [0, 5] as number[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   topic_id: null as string | null,
-  text: [] as string[]
+  text: [] as string[],
+  range: [0, 5] as number[]
 });
 
 // Current topic is based on APPLIED filters, not UI filters
@@ -147,7 +157,8 @@ const currentTopic = computed(() => {
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
-         appliedFilters.value.text.length > 0;
+         appliedFilters.value.text.length > 0 ||
+         (appliedFilters.value.range[0] !== 0 || appliedFilters.value.range[1] !== 5);
 });
 
 const updatePageHeader = () => {
@@ -211,6 +222,14 @@ const loadClaims = async () => {
       params.text = appliedFilters.value.text.join(' ');
     }
     
+    // Add range parameters if not default
+    if (appliedFilters.value.range[0] !== 0) {
+      params.min_score = appliedFilters.value.range[0];
+    }
+    if (appliedFilters.value.range[1] !== 5) {
+      params.max_score = appliedFilters.value.range[1];
+    }
+    
     const response = await apiService.getClaims(params);
     claims.value = response;
   } catch (error) {
@@ -236,11 +255,13 @@ const applyFilters = () => {
 const clearFilters = () => {
   filters.value = {
     topic_id: null,
-    text: []
+    text: [],
+    range: [0, 5]
   };
   appliedFilters.value = {
     topic_id: null,
-    text: []
+    text: [],
+    range: [0, 5]
   };
   claims.value.page = 1;
   loadClaims();

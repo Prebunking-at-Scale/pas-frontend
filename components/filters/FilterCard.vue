@@ -41,7 +41,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  columns: 1,
+  columns: undefined,
   showActions: true,
   showActiveFilters: true,
   hasActiveFilters: false
@@ -53,10 +53,17 @@ defineEmits<{
 }>()
 
 const gridClass = computed(() => {
+  // If no columns specified, use flex wrap
+  if (props.columns === undefined) {
+    return 'flex flex-wrap gap-4'
+  }
+  
+  // If columns is a number
   if (typeof props.columns === 'number') {
     return `grid grid-cols-1 gap-4 ${props.columns > 1 ? `lg:grid-cols-${props.columns}` : ''}`
   }
   
+  // If columns is an object with responsive breakpoints
   const classes = ['grid', 'gap-4']
   
   if (props.columns.default) {

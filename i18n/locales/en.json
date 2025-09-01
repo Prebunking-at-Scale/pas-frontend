@@ -241,6 +241,7 @@
     "searchPlaceholder": "Search in claims...",
     "text": "Text",
     "textPlaceholder": "Enter search text",
+    "range": "Harm Score",
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
     "showingClaimsFor": "Showing claims for topic:",
@@ -249,6 +250,7 @@
     "timestamp": "Timestamp",
     "viewSource": "View source",
     "confidence": "Confidence",
+    "score": "Score",
     "topics": "Topics",
     "viewVideo": "View Video"
   },

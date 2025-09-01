@@ -680,6 +680,8 @@ export const apiService = {
   async getClaims(params?: { 
     topic_id?: string;
     text?: string;
+    min_score?: number;
+    max_score?: number;
     limit?: number;
     offset?: number;
   }): Promise<PaginatedResponse<Claim>> {
@@ -700,6 +702,14 @@ export const apiService = {
       // Add text search if provided
       if (params?.text) {
         query.text = params.text;
+      }
+      
+      // Add score range if provided
+      if (params?.min_score !== undefined) {
+        query.min_score = params.min_score;
+      }
+      if (params?.max_score !== undefined) {
+        query.max_score = params.max_score;
       }
       
       const response = await $fetch('/api/claims', {

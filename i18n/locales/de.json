@@ -241,6 +241,7 @@
     "searchPlaceholder": "In Behauptungen suchen...",
     "text": "Text",
     "textPlaceholder": "Suchtext eingeben",
+    "range": "Schadensbewertung",
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
     "showingClaimsFor": "Zeige Behauptungen für Thema:",
@@ -249,6 +250,7 @@
     "timestamp": "Zeitstempel",
     "viewSource": "Quelle anzeigen",
     "confidence": "Vertrauen",
+    "score": "Punktzahl",
     "topics": "Themen",
     "viewVideo": "Video anzeigen"
   },
