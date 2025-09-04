@@ -13,6 +13,7 @@
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "create": "Crear",
+    "creating": "Creando...",
     "save": "Guardar",
     "logout": "Cerrar sesión",
     "loading": "Cargando...",
@@ -46,7 +47,8 @@
     "help": "Ayuda",
     "alerts": "Alertas",
     "profile": "Perfil",
-    "admin": "Administración"
+    "admin": "Administración",
+    "superadmin": "Superadministrador"
   },
   "videos": {
     "title": "Vídeos",
@@ -448,5 +450,46 @@
         "content": "[Por completar por el equipo legal]"
       }
     }
+  },
+  "superadmin": {
+    "title": "Superadministrador",
+    "description": "Gestionar organizaciones y configuración del sistema",
+    "organizations": "Organizaciones",
+    "createOrganization": "Crear nueva organización",
+    "noOrganizations": "No se encontraron organizaciones",
+    "shortName": "Nombre corto",
+    "language": "Idioma",
+    "countries": "Países",
+    "step1Description": "Ingrese los detalles de la organización",
+    "step2Description": "Invite al primer administrador de esta organización",
+    "fields": {
+      "displayName": "Nombre de la organización",
+      "shortName": "Nombre corto",
+      "language": "Idioma predeterminado",
+      "countryCodes": "Códigos de país",
+      "adminEmail": "Correo del administrador"
+    },
+    "placeholders": {
+      "displayName": "Ingrese el nombre de la organización",
+      "shortName": "Ingrese el nombre corto (opcional)",
+      "searchLanguage": "Escriba para buscar idiomas...",
+      "countryCodes": "p.ej., ESP, MEX, ARG",
+      "adminEmail": "admin{'@'}ejemplo.com"
+    },
+    "hints": {
+      "shortName": "Solo se permiten letras minúsculas, números y guiones",
+      "countryCodes": "Ingrese códigos de país ISO de 3 letras separados por comas. ",
+      "adminInvite": "Este usuario recibirá una invitación por correo para convertirse en el primer administrador de esta organización."
+    },
+    "errors": {
+      "displayNameRequired": "El nombre de la organización es obligatorio",
+      "invalidShortName": "El nombre corto solo puede contener letras minúsculas, números y guiones",
+      "invalidCountryCodes": "Código(s) de país inválido(s): {codes}. Use códigos ISO de 3 letras válidos",
+      "emailRequired": "El correo del administrador es obligatorio",
+      "invalidEmail": "Por favor ingrese una dirección de correo válida",
+      "createFailed": "Error al crear la organización"
+    },
+    "noLanguageFound": "No se encontró el idioma",
+    "viewCountryCodes": "Ver lista de códigos de país"
   }
 }

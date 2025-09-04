@@ -13,6 +13,7 @@
     "delete": "Löschen",
     "cancel": "Abbrechen",
     "create": "Erstellen",
+    "creating": "Erstelle...",
     "save": "Speichern",
     "logout": "Abmelden",
     "loading": "Wird geladen...",
@@ -46,7 +47,8 @@
     "help": "Hilfe",
     "alerts": "Benachrichtigungen",
     "profile": "Profil",
-    "admin": "Verwaltung"
+    "admin": "Verwaltung",
+    "superadmin": "Superadministrator"
   },
   "videos": {
     "title": "Videos",
@@ -111,37 +113,6 @@
     "forgotPasswordError": "Fehler beim Senden des Links. Bitte versuchen Sie es erneut.",
     "sendResetLink": "Link senden",
     "sendingResetLink": "Wird gesendet..."
-  },
-  "profile": {
-    "title": "Profil",
-    "personalInfo": "Persönliche Informationen",
-    "name": "Name",
-    "email": "E-Mail",
-    "organization": "Organisation",
-    "organisation": "Organisation",
-    "role": "Rolle",
-    "admin": "Administrator",
-    "member": "Mitglied",
-    "memberSince": "Mitglied seit",
-    "changePassword": "Passwort ändern",
-    "currentPassword": "Aktuelles Passwort",
-    "newPassword": "Neues Passwort",
-    "confirmPassword": "Passwort bestätigen",
-    "updatePassword": "Passwort aktualisieren",
-    "dangerZone": "Gefahrenzone",
-    "deleteAccountWarning": "Sobald Sie Ihr Konto löschen, gibt es kein Zurück mehr. Bitte seien Sie sicher.",
-    "deleteAccount": "Konto löschen",
-    "confirmDelete": "Löschung bestätigen",
-    "deleteConfirmMessage": "Diese Aktion kann nicht rückgängig gemacht werden. Dies wird Ihr Konto dauerhaft löschen.",
-    "loadError": "Profildaten konnten nicht geladen werden",
-    "profileUpdated": "Profil erfolgreich aktualisiert",
-    "updateError": "Profil konnte nicht aktualisiert werden",
-    "passwordMismatch": "Passwörter stimmen nicht überein",
-    "passwordTooShort": "Das Passwort muss mindestens 12 Zeichen lang sein",
-    "passwordChanged": "Passwort erfolgreich geändert",
-    "passwordChangeError": "Passwort konnte nicht geändert werden",
-    "firstTimeSetupTitle": "Richten Sie Ihr Profil ein",
-    "firstTimeSetupMessage": "Bitte fügen Sie Ihren Namen hinzu und legen Sie ein Passwort für Ihr Konto fest."
   },
   "invitation": {
     "title": "Einladung annehmen",
@@ -427,5 +398,46 @@
     "sendInvitation": "Einladung senden",
     "invitationSent": "Einladung erfolgreich gesendet",
     "inviteError": "Fehler beim Senden der Einladung"
+  },
+  "superadmin": {
+    "title": "Superadministrator",
+    "description": "Organisationen und Systemeinstellungen verwalten",
+    "organizations": "Organisationen",
+    "createOrganization": "Neue Organisation erstellen",
+    "noOrganizations": "Keine Organisationen gefunden",
+    "shortName": "Kurzname",
+    "language": "Sprache",
+    "countries": "Länder",
+    "step1Description": "Geben Sie die Organisationsdetails ein",
+    "step2Description": "Laden Sie den ersten Administrator für diese Organisation ein",
+    "fields": {
+      "displayName": "Organisationsname",
+      "shortName": "Kurzname",
+      "language": "Standardsprache",
+      "countryCodes": "Ländercodes",
+      "adminEmail": "Administrator-E-Mail"
+    },
+    "placeholders": {
+      "displayName": "Organisationsname eingeben",
+      "shortName": "Kurzname eingeben (optional)",
+      "searchLanguage": "Tippen Sie, um Sprachen zu suchen...",
+      "countryCodes": "z.B. DEU, AUT, CHE",
+      "adminEmail": "admin{'@'}beispiel.de"
+    },
+    "hints": {
+      "shortName": "Nur Kleinbuchstaben, Zahlen und Bindestriche erlaubt",
+      "countryCodes": "Geben Sie durch Kommas getrennte ISO-Ländercodes mit 3 Buchstaben ein. ",
+      "adminInvite": "Dieser Benutzer erhält eine E-Mail-Einladung, um der erste Administrator dieser Organisation zu werden."
+    },
+    "errors": {
+      "displayNameRequired": "Der Organisationsname ist erforderlich",
+      "invalidShortName": "Der Kurzname darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten",
+      "invalidCountryCodes": "Ungültige(r) Ländercode(s): {codes}. Verwenden Sie gültige ISO-Codes mit 3 Buchstaben",
+      "emailRequired": "Die Administrator-E-Mail ist erforderlich",
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "createFailed": "Fehler beim Erstellen der Organisation"
+    },
+    "noLanguageFound": "Keine Sprache gefunden",
+    "viewCountryCodes": "Ländercode-Liste anzeigen"
   }
 }

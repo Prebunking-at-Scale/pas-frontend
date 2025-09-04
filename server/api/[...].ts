@@ -12,14 +12,19 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
   };
   
-  // For /auth and /alerts endpoints, forward the user's Bearer token if present
-  // For other endpoints, use the API key
-  if (path.startsWith('auth/') || path.startsWith('alerts')) {
+  // Special handling for /auth/organisation/invite - use X-API-TOKEN
+  if (path === 'auth/organisation/invite' || path.startsWith('auth/organisation/invite?')) {
+    headers['X-API-TOKEN'] = config.apiKey;
+  } 
+  // For other /auth and /alerts endpoints, forward the user's Bearer token if present
+  else if (path.startsWith('auth/') || path.startsWith('alerts')) {
     const authHeader = event.node.req.headers.authorization;
     if (authHeader) {
       headers['Authorization'] = authHeader;
     }
-  } else {
+  } 
+  // For all other endpoints, use the API key
+  else {
     headers['X-API-TOKEN'] = config.apiKey;
   }
   
