@@ -12,9 +12,21 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
   };
   
-  // Special handling for /auth/organisation/invite - use X-API-TOKEN
+  // Special handling for /auth/organisation/invite
   if (path === 'auth/organisation/invite' || path.startsWith('auth/organisation/invite?')) {
-    headers['X-API-TOKEN'] = config.apiKey;
+    // Check if this is a superadmin creating a new organization
+    // If organisation_id is in query params, it's a superadmin creating for a new org
+    const query = getQuery(event);
+    if (query.organisation_id) {
+      // Superadmin creating invitation for a new organization - use X-API-TOKEN
+      headers['X-API-TOKEN'] = config.apiKey;
+    } else {
+      // Regular admin inviting to their current organization - use Bearer token
+      const authHeader = event.node.req.headers.authorization;
+      if (authHeader) {
+        headers['Authorization'] = authHeader;
+      }
+    }
   } 
   // For other /auth and /alerts endpoints, forward the user's Bearer token if present
   else if (path.startsWith('auth/') || path.startsWith('alerts')) {
