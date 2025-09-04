@@ -141,6 +141,7 @@ export interface User {
   id: string;
   email: string;
   display_name: string;
+  is_super_admin: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -176,6 +177,18 @@ export interface IdentityResponse {
   user: User;
   organisation: Organization;
   is_organisation_admin: boolean;
+}
+
+export interface CreateOrganisationRequest {
+  display_name?: string;
+  country_codes?: string[];
+  language?: string;
+  short_name?: string;
+}
+
+export interface OrganisationInviteRequest {
+  user_email: string;
+  as_admin?: boolean;
 }
 
 export interface PasswordUpdateRequest {

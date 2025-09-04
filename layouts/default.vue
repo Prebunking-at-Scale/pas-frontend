@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import '~/assets/css/styles.css';
-import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase, faBell} from '@fortawesome/free-solid-svg-icons'
+import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase, faBell, faShieldAlt} from '@fortawesome/free-solid-svg-icons'
 import Footer from '~/components/Footer.vue';
 import { authService } from '~/services/auth';
-import type { IdentityResponse } from '~/types/api';
+import type { IdentityResponse, User } from '~/types/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -12,14 +12,20 @@ const { headerContent } = usePageHeader();
 
 // Admin status
 const identity = ref<IdentityResponse | null>(null);
+const currentUser = ref<User | null>(null);
 const isOrganizationAdmin = computed(() => identity.value?.is_organisation_admin || false);
+const isSuperAdmin = computed(() => currentUser.value?.is_super_admin || false);
 
-// Fetch identity on mount
+// Fetch identity and user data on mount
 onMounted(async () => {
   try {
+    // Get identity for organization info
     identity.value = await authService.getIdentity();
+    
+    // Get full user data which includes is_super_admin
+    currentUser.value = await authService.getCurrentUser();
   } catch (error) {
-    console.error('Failed to load identity:', error);
+    console.error('Failed to load user data:', error);
   }
 });
 
@@ -40,6 +46,8 @@ const defaultPageTitle = computed(() => {
       return t('profile.title');
     case '/admin':
       return `${t('admin.manageOrganization')}: ${identity.value?.organisation?.display_name || ''}`;
+    case '/superadmin':
+      return t('superadmin.title');
     default:
       if (route.path.startsWith('/narratives/')) {
         return t('narratives.title');
@@ -55,11 +63,11 @@ const defaultPageTitle = computed(() => {
 });
 
 // Use computed property for active route checking to ensure reactivity
-const isActive = (path) => {
+const isActive = (path: string) => {
   if (path === '/dashboard') {
     return route.path === '/' || route.path === '/dashboard';
   }
-  if (path === '/alerts' || path === '/profile' || path === '/admin') {
+  if (path === '/alerts' || path === '/profile' || path === '/admin' || path === '/superadmin') {
     return route.path === path;
   }
   return route.path.startsWith(path);
@@ -158,6 +166,14 @@ const handleLogout = () => {
               :prefetch="false"
             >
               <font-awesome :icon="faBriefcase" class="mr-2"/>{{ $t('nav.admin') }}
+            </NuxtLink>
+            <NuxtLink
+              v-if="isSuperAdmin"
+              to="/superadmin"
+              :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/superadmin') }]"
+              :prefetch="false"
+            >
+              <font-awesome :icon="faShieldAlt" class="mr-2"/>{{ $t('nav.superadmin') }}
             </NuxtLink>
           </div>
 
