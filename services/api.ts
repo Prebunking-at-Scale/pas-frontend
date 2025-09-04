@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
+import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativePatch } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 
 // API calls now go through our frontend proxy to hide the API key
@@ -296,7 +296,7 @@ export const apiService = {
     return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
   },
 
-  async updateNarrative(narrativeId: string, updates: { title?: string }): Promise<Narrative> {
+  async updateNarrative(narrativeId: string, updates: NarrativePatch): Promise<Narrative> {
     try {
       const { apiFetch } = useApi();
       const response = await apiFetch(`/api/narratives/${narrativeId}`, {

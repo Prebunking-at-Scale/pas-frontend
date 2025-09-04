@@ -1,8 +1,10 @@
 <template>
 <Card class="hover:shadow-lg transition-shadow p-0 m-0">
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
+    <!-- Claim Header -->
+    <div class="flex mb-4">
       <!-- Claim Text -->
-      <div class="mb-4">
+      <div class="flex flex-1 flex-col">
         <p class="text-gray-900 text-xl leading-tight">
           "{{ claim.claim || claim.text }}"
         </p>
@@ -14,6 +16,20 @@
           <span>↳ {{ claim.video.title }}</span>
         </p>
       </div>
+      <!-- Actions -->
+      <div class="flex flex-none">
+        <!--Unlink Action-->
+        <UTooltip :text="$t('common.unlink')">
+          <Button
+            v-if="props.showUnlinkAction && props.dialogOpenAction"
+            @click="dialogOpenAction?.(claim)"
+            variant="destructive"
+          >
+            <Unlink />
+          </Button>
+        </UTooltip>
+      </div>
+    </div>
       
       <div class="flex items-center gap-2 justify-between flex-wrap">
         <PlatformBadge v-if="claim.video" :platform="claim.video.platform" />
@@ -58,12 +74,16 @@
 
 <script setup lang="ts">
 import type { Claim } from '~/types/api';
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
+import { Unlink } from 'lucide-vue-next';
 
 interface Props {
   claim: Claim;
+  showUnlinkAction?: boolean;
+  dialogOpenAction?: (claim: Claim) => void;
 }
 
 const props = defineProps<Props>();

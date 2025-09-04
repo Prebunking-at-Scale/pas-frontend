@@ -17,6 +17,7 @@
             <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
+          <!-- Actions -->
           <div class="flex flex-col gap-2 flex-none">
             <Button @click="openAlertDialog" variant="outline">
               <Bell class="mr-2 h-4 w-4" />
@@ -286,6 +287,8 @@
             v-for="claim in narrative.claims" 
             :key="claim.id" 
             :claim="claim"
+            :show-unlink-action="true"
+            :dialog-open-action="openUnlinkDialog"
           />
         </div>
       </div>
@@ -319,20 +322,25 @@
       @update:open="editDialogOpen = $event"
       @save="handleUpdate"
     />
+
+    <!-- Confirmation Dialog -->
+    <ConfirmUnlinkDialog />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Narrative } from '~/types/api';
+import { type Claim, type Narrative } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
+import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import { Bell, Captions } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
+import { useNarrativeDialogsStore } from '~/stores/narrativeDialogs';
 
 definePageMeta({
   layout: 'default',
@@ -343,6 +351,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+const dialogsStore = useNarrativeDialogsStore();
 
 // State
 const narrative = ref<Narrative | null>(null);
@@ -416,6 +425,12 @@ const openUpdateTitleDialog = () => {
   editDialogOpen.value = true;
 };
 
+const openUnlinkDialog = (claim: Claim) => {
+  dialogsStore.openUnlinkDialog(claim, async () => {
+    await unlinkClaimFromNarrative(claim);
+  });
+};
+
 const handleAlertSave = (alert: Alert) => {
   toast.add({
     title: t('common.success'),
@@ -432,5 +447,30 @@ const handleUpdate = (updatedNarrative: Narrative) => {
 
   narrative.value = updatedNarrative;
   editDialogOpen.value = false;
+};
+
+const unlinkClaimFromNarrative = async (claim: Claim) => {
+  if (!narrative.value) return;
+
+  try {
+    const body = {
+      claim_ids: narrative.value.claims?.filter(c => c.id !== claim.id).map(c => c.id) || []
+    };
+    const updatedNarrative = await apiService.updateNarrative(narrative.value.id, body);
+    narrative.value = updatedNarrative;
+
+    toast.add({
+      title: t('common.success'),
+      description: t('narratives.claimUnlinked'),
+      type: 'foreground'
+    });
+  } catch (err) {
+    console.error('Failed to unlink claim:', err);
+    toast.add({
+      title: t('common.error'),
+      description: t('narratives.claimUnlinkError'),
+    });
+    throw err; // Re-throw to let the store handle it
+  }
 };
 </script>
