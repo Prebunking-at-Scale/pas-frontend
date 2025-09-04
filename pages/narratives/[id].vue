@@ -17,10 +17,16 @@
             <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
-          <Button @click="openAlertDialog" variant="outline" class="ml-4">
-            <Bell class="mr-2 h-4 w-4" />
-            {{ $t('alerts.create_alert') }}
-          </Button>
+          <div class="flex flex-col gap-2 flex-none">
+            <Button @click="openAlertDialog" variant="outline">
+              <Bell class="mr-2 h-4 w-4" />
+              {{ $t('alerts.create_alert') }}
+            </Button>
+            <Button @click="openUpdateTitleDialog" variant="outline">
+              <Captions class="mr-2 h-4 w-4" />
+              {{ $t('narratives.editTitle') }}
+            </Button>
+          </div>
         </div>
         
         <!-- Topics -->
@@ -306,6 +312,13 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
+    <!-- Update Title Dialog -->
+    <NarrativeTitleDialog 
+      :open="editDialogOpen" 
+      :narrative="narrative"
+      @update:open="editDialogOpen = $event"
+      @save="handleUpdate"
+    />
   </div>
 </template>
 
@@ -316,7 +329,7 @@ import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
-import { Bell } from 'lucide-vue-next';
+import { Bell, Captions } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
@@ -338,6 +351,7 @@ const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
+const editDialogOpen = ref(false);
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -398,11 +412,25 @@ const openAlertDialog = () => {
   showAlertDialog.value = true;
 };
 
+const openUpdateTitleDialog = () => {
+  editDialogOpen.value = true;
+};
+
 const handleAlertSave = (alert: Alert) => {
   toast.add({
     title: t('common.success'),
     description: t('alerts.create_success')
   });
   showAlertDialog.value = false;
+};
+
+const handleUpdate = (updatedNarrative: Narrative) => {
+  toast.add({
+    title: t('common.success'),
+    description: t('narratives.updateSuccess')
+  });
+
+  narrative.value = updatedNarrative;
+  editDialogOpen.value = false;
 };
 </script>

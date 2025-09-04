@@ -190,6 +190,11 @@
   },
   "narratives": {
     "title": "Récits",
+    "newTitle": "Nouveau titre",
+    "editTitle": "Modifier le titre du récit",
+    "titlePlaceholder": "Entrez le titre du récit",
+    "titleRequired": "Le titre est requis",
+    "updateSuccess": "Titre du récit mis à jour avec succès",
     "filters": "Filtres",
     "channel": "Canal",
     "language": "Langue",

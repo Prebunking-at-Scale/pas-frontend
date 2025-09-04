@@ -191,6 +191,11 @@
   },
   "narratives": {
     "title": "Narrative",
+    "newTitle": "Neuer Titel",
+    "editTitle": "Narrativ-Titel bearbeiten",
+    "titlePlaceholder": "Narrativ-Titel eingeben",
+    "titleRequired": "Titel ist erforderlich",
+    "updateSuccess": "Narrativ-Titel erfolgreich aktualisiert",
     "filters": "Filter",
     "channel": "Kanal",
     "language": "Sprache",

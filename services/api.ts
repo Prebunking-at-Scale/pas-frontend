@@ -296,6 +296,22 @@ export const apiService = {
     return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
   },
 
+  async updateNarrative(narrativeId: string, updates: { title?: string }): Promise<Narrative> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}`, {
+        method: 'PATCH',
+        body: updates
+      });
+      
+      const narrative = (response as { data: Narrative }).data;
+      return narrative;
+    } catch (error) {
+      console.error('Failed to update narrative:', error);
+      throw error;
+    }
+  },
+
   // Viral narratives with hours parameter
   async getViralNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
     // Get config values if not provided
