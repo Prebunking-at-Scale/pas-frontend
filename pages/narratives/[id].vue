@@ -17,10 +17,12 @@
             <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
+          <!-- Alert button hidden
           <Button @click="openAlertDialog" variant="outline" class="ml-4">
             <Bell class="mr-2 h-4 w-4" />
             {{ $t('alerts.create_alert') }}
           </Button>
+          -->
         </div>
         
         <!-- Topics -->
@@ -298,7 +300,7 @@
       </div>
     </div>
 
-    <!-- Alert Dialog -->
+    <!-- Alert Dialog hidden
     <AlertFormDialog
       v-if="narrative"
       v-model:open="showAlertDialog"
@@ -306,18 +308,19 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
+    -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Narrative } from '~/types/api';
-import type { Alert } from '~/types/alert';
+// import type { Alert } from '~/types/alert'; // Alert feature hidden
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
-import AlertFormDialog from '~/components/AlertFormDialog.vue';
-import { Bell } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
+// import AlertFormDialog from '~/components/AlertFormDialog.vue'; // Alert feature hidden
+// import { Bell } from 'lucide-vue-next'; // Alert feature hidden
+// import { Button } from '@/components/ui/button'; // Alert feature hidden
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
 
@@ -337,7 +340,7 @@ const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
-const showAlertDialog = ref(false);
+// const showAlertDialog = ref(false); // Alert feature hidden
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -394,15 +397,16 @@ const goToVideo = (videoId: string) => {
   router.push(`/videos/${videoId}`);
 };
 
-const openAlertDialog = () => {
-  showAlertDialog.value = true;
-};
+// Alert functions hidden
+// const openAlertDialog = () => {
+//   showAlertDialog.value = true;
+// };
 
-const handleAlertSave = (alert: Alert) => {
-  toast.add({
-    title: t('common.success'),
-    description: t('alerts.create_success')
-  });
-  showAlertDialog.value = false;
-};
+// const handleAlertSave = (alert: Alert) => {
+//   toast.add({
+//     title: t('common.success'),
+//     description: t('alerts.create_success')
+//   });
+//   showAlertDialog.value = false;
+// };
 </script>
