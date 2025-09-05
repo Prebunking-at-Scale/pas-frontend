@@ -230,6 +230,11 @@ const handleLogin = async () => {
 
     const orgs = response.data.organisations;
     if (orgs && Object.keys(orgs).length > 0) {
+      // Store all organizations for superadmin page to use
+      if (response.data.user.is_super_admin) {
+        sessionStorage.setItem('all_organizations', JSON.stringify(orgs));
+      }
+      
       if (Object.keys(orgs).length === 1) {
         // Single organization - auto-select
         const orgId = Object.keys(orgs)[0];
