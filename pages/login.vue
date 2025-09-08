@@ -299,6 +299,22 @@ const selectOrganization = async (_orgId: string, orgData: any) => {
     authService.setToken(orgData.token);
     authService.setOrganization(orgData.organisation.id);
     
+    // Track organization selection in Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('set', {
+        'user_properties': {
+          'organization_name': orgData.organisation.display_name,
+          'organization_id': orgData.organisation.id
+        }
+      });
+      
+      window.gtag('event', 'login', {
+        'organization_name': orgData.organisation.display_name,
+        'organization_id': orgData.organisation.id,
+        'is_admin': orgData.is_organisation_admin
+      });
+    }
+    
     // Check if first time setup
     if (loginResponse.value?.data?.first_time_setup) {
       // Store flag for first time setup
@@ -321,5 +337,12 @@ const resetLogin = () => {
   password.value = '';
   error.value = '';
 };
+
+// Declare gtag on window
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void
+  }
+}
 
 </script>

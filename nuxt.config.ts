@@ -9,6 +9,14 @@ export default defineNuxtConfig({
     'vanilla-cookieconsent/dist/cookieconsent.css'
   ],
 
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'G-2GCXK1BQTV',
+      }
+    }
+  },
+
   runtimeConfig: {
     // Server-only config (not exposed to client)
     apiKey: process.env.API_KEY || '',
