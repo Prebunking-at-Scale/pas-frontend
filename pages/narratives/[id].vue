@@ -31,6 +31,10 @@
               <Combine class="mr-2 h-4 w-4" />
               {{ $t('narratives.merge.mergeAndDelete') }}
             </Button>
+            <Button @click="openDeleteDialog" variant="destructive">
+              <Trash class="mr-2 h-4 w-4" />
+              {{ $t('narratives.delete') }}
+            </Button>
           </div>
         </div>
         
@@ -327,6 +331,7 @@
     />
     <ConfirmUnlinkDialog />
     <MergeNarrativesDialog />
+    <ConfirmDeleteDialog />
     <!-- End Dialogs -->
   </div>
 </template>
@@ -338,9 +343,10 @@ import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
+import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
-import { Bell, Captions, Combine } from 'lucide-vue-next';
+import { Bell, Captions, Combine, Trash } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
@@ -438,6 +444,11 @@ const openUnlinkDialog = (claim: Claim) => {
   dialogsStore.openUnlinkDialog(claim, async () => {
     await unlinkClaimFromNarrative(claim);
   });
+};
+
+const openDeleteDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openDeleteDialog(narrative.value);
 };
 
 const handleAlertSave = (alert: Alert) => {

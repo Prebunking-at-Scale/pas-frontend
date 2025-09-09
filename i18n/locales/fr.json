@@ -16,6 +16,9 @@
     "confirm_unlink_description": "Êtes-vous sûr de vouloir dissocier ce contenu ? Cette action ne peut pas être annulée.",
     "unlink": "Dissocier",
     "unlinking": "Dissociation...",
+    "confirm_delete_title": "Confirmer la suppression",
+    "confirm_delete_description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
+    "deleting": "Suppression...",
     "create": "Créer",
     "save": "Enregistrer",
     "logout": "Déconnexion",
@@ -246,7 +249,9 @@
       "mergeAndDelete": "Fusionner et supprimer",
       "merging": "Fusion en cours...",
       "success": "Récits fusionnés avec succès"
-    }
+    },
+    "delete": "Supprimer le récit",
+    "delete_success": "Le récit a été supprimé avec succès"
   },
   "claims": {
     "title": "Affirmations",

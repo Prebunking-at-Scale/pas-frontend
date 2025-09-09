@@ -16,6 +16,9 @@
     "confirm_unlink_description": "¿Está seguro de que desea desvincular este contenido? Esta acción no se puede deshacer.",
     "unlink": "Desvincular",
     "unlinking": "Desvinculando...",
+    "confirm_delete_title": "Confirmar Eliminación",
+    "confirm_delete_description": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
     "create": "Crear",
     "save": "Guardar",
     "logout": "Cerrar sesión",
@@ -247,7 +250,9 @@
       "mergeAndDelete": "Fusionar y Eliminar",
       "merging": "Fusionando...",
       "success": "Narrativas fusionadas con éxito"
-    }
+    },
+    "delete": "Eliminar Narrativa",
+    "delete_success": "La narrativa ha sido eliminada exitosamente"
   },
   "claims": {
     "title": "Claims",

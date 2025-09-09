@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { apiService } from '~/services/api';
 import type { Claim, Narrative } from '~/types/api';
 
 interface UnlinkDialogState {
@@ -21,6 +22,11 @@ interface MergeDialogState {
   selectedNarrative: { id: string; title: string } | null;
 }
 
+interface DeleteDialogState {
+  isOpen: boolean;
+  narrativeToDelete: Narrative | null;
+}
+
 export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
   state: () => ({
     unlinkDialog: {
@@ -38,6 +44,10 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
       isOpen: false,
       actualNarrative: null,
     } as MergeDialogState,
+    deleteDialog: {
+      isOpen: false,
+      narrativeToDelete: null,
+    } as DeleteDialogState,
   }),
 
   actions: {
@@ -97,7 +107,49 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
       setTimeout(() => {
         this.mergeDialog.actualNarrative = null;
       }, 300);
-    }
+    },
+
+    // Delete Dialog Actions
+    openDeleteDialog(narrative: Narrative) {
+      this.deleteDialog.narrativeToDelete = narrative;
+      this.deleteDialog.isOpen = true;
+    },
+
+    closeDeleteDialog() {
+      this.deleteDialog.isOpen = false;
+      // Clear state after a small delay to avoid UI flicker
+      setTimeout(() => {
+        this.deleteDialog.narrativeToDelete = null;
+      }, 300);
+    },
+
+    async confirmDelete() {
+      const { $i18n } = useNuxtApp();
+      const toast = useToast();
+
+      if (!this.deleteDialog.narrativeToDelete) {
+        console.error('No narrative selected for deletion.');
+        return;
+      }
+
+      try {
+        await apiService.deleteNarrative(this.deleteDialog.narrativeToDelete.id);
+        toast.add({
+          color: 'success',
+          title: $i18n.t('common.success'),
+          description: $i18n.t('narratives.delete_success'),
+        })
+        this.closeDeleteDialog();
+        navigateTo('/narratives');
+      } catch (error: any) {
+        console.error('Error during delete confirmation:', error);
+        toast.add({
+          title: $i18n.t('common.error'),
+          description: error.message || $i18n.t('common.error_occurred'),
+          color: 'error'
+        })
+      }
+    },
   },
 
   getters: {
@@ -106,5 +158,6 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
     isAlertDialogOpen: (state) => state.alertDialog.isOpen,
     isTitleDialogOpen: (state) => state.titleDialog.isOpen,
     isMergeDialogOpen: (state) => state.mergeDialog.isOpen,
+    isDeleteDialogOpen: (state) => state.deleteDialog.isOpen,
   },
 });

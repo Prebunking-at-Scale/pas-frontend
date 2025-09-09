@@ -16,6 +16,9 @@
     "confirm_unlink_description": "Sind Sie sicher, dass Sie diesen Inhalt entknüpfen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "unlink": "Verknüpfung aufheben",
     "unlinking": "Verknüpfung wird aufgehoben...",
+    "confirm_delete_title": "Löschen bestätigen",
+    "confirm_delete_description": "Sind Sie sicher, dass Sie dieses Element löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleting": "Wird gelöscht...",
     "create": "Erstellen",
     "save": "Speichern",
     "logout": "Abmelden",
@@ -247,7 +250,9 @@
       "mergeAndDelete": "Zusammenführen und löschen",
       "merging": "Zusammenführung läuft...",
       "success": "Narrative erfolgreich zusammengeführt"
-    }
+    },
+    "delete": "Narrativ löschen",
+    "delete_success": "Das Narrativ wurde erfolgreich gelöscht"
   },
   "claims": {
     "title": "Behauptungen",
