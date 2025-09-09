@@ -234,7 +234,20 @@
     "lastUpdated": "Last updated",
     "loadError": "Failed to load narrative",
     "seenIn": "Seen in",
-    "claimsSupportingNarrative": "Claims supporting this narrative"
+    "claimsSupportingNarrative": "Claims supporting this narrative",
+    "selectNarrative": "Select narrative",
+    "searchNarrative": "Search narratives...",
+    "noNarrativesFound": "No narratives found",
+    "merge": {
+      "title": "Merge Narratives",
+      "description": "This action will delete this narrative and merge its content into another narrative. Select a narrative to use as the final merge result. This action is irreversible.",
+      "selectNarrative": "Select a narrative",
+      "selectTarget": "Select target narrative",
+      "searchPlaceholder": "Type to search narratives...",
+      "mergeAndDelete": "Merge and Delete",
+      "merging": "Merging...",
+      "success": "Narratives merged successfully"
+    }
   },
   "claims": {
     "title": "Claims",

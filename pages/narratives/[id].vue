@@ -27,6 +27,10 @@
               <Captions class="mr-2 h-4 w-4" />
               {{ $t('narratives.editTitle') }}
             </Button>
+            <Button @click="openMergeDialog" variant="outline">
+              <Combine class="mr-2 h-4 w-4" />
+              {{ $t('narratives.merge.mergeAndDelete') }}
+            </Button>
           </div>
         </div>
         
@@ -307,7 +311,7 @@
       </div>
     </div>
 
-    <!-- Alert Dialog -->
+    <!-- Dialogs Section -->
     <AlertFormDialog
       v-if="narrative"
       v-model:open="showAlertDialog"
@@ -315,16 +319,15 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
-    <!-- Update Title Dialog -->
     <NarrativeTitleDialog 
       :open="editDialogOpen" 
       :narrative="narrative"
       @update:open="editDialogOpen = $event"
       @save="handleUpdate"
     />
-
-    <!-- Confirmation Dialog -->
     <ConfirmUnlinkDialog />
+    <MergeNarrativesDialog />
+    <!-- End Dialogs -->
   </div>
 </template>
 
@@ -336,7 +339,8 @@ import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
-import { Bell, Captions } from 'lucide-vue-next';
+import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
+import { Bell, Captions, Combine } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
@@ -423,6 +427,11 @@ const openAlertDialog = () => {
 
 const openUpdateTitleDialog = () => {
   editDialogOpen.value = true;
+};
+
+const openMergeDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openMergeDialog(narrative.value);
 };
 
 const openUnlinkDialog = (claim: Claim) => {

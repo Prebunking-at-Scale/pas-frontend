@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { Claim } from '~/types/api';
+import type { Claim, Narrative } from '~/types/api';
 
 interface UnlinkDialogState {
   isOpen: boolean;
@@ -15,6 +15,12 @@ interface TitleDialogState {
   isOpen: boolean;
 }
 
+interface MergeDialogState {
+  isOpen: boolean;
+  actualNarrative: Narrative | null;
+  selectedNarrative: { id: string; title: string } | null;
+}
+
 export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
   state: () => ({
     unlinkDialog: {
@@ -28,6 +34,10 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
     titleDialog: {
       isOpen: false,
     } as TitleDialogState,
+    mergeDialog: {
+      isOpen: false,
+      actualNarrative: null,
+    } as MergeDialogState,
   }),
 
   actions: {
@@ -76,6 +86,18 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
     closeTitleDialog() {
       this.titleDialog.isOpen = false;
     },
+    // Merge Dialog Actions
+    openMergeDialog(narrative: Narrative) {
+      this.mergeDialog.actualNarrative = narrative;
+      this.mergeDialog.isOpen = true;
+    },
+    closeMergeDialog() {
+      this.mergeDialog.isOpen = false;
+      // Clear state after a small delay to avoid UI flicker
+      setTimeout(() => {
+        this.mergeDialog.actualNarrative = null;
+      }, 300);
+    }
   },
 
   getters: {
@@ -83,5 +105,6 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
     selectedClaimForUnlink: (state) => state.unlinkDialog.selectedClaim,
     isAlertDialogOpen: (state) => state.alertDialog.isOpen,
     isTitleDialogOpen: (state) => state.titleDialog.isOpen,
+    isMergeDialogOpen: (state) => state.mergeDialog.isOpen,
   },
 });

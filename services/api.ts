@@ -373,6 +373,18 @@ export const apiService = {
     }
   },
 
+  async deleteNarrative(narrativeId: string): Promise<void> {
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/narratives/${narrativeId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete narrative:', error);
+      throw error;
+    }
+  },
+
   // Dashboard data
   async getDashboardStats(): Promise<{
     topics: TopicWithStats[];

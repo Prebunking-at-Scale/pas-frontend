@@ -234,7 +234,20 @@
     "lastUpdated": "Última actualización",
     "loadError": "Error al cargar la narrativa",
     "seenIn": "Visto en",
-    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa"
+    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
+    "selectNarrative": "Seleccionar narrativa",
+    "searchNarrative": "Buscar narrativas...",
+    "noNarrativesFound": "No se encontraron narrativas",
+    "merge": {
+      "title": "Fusionar Narrativas",
+      "description": "Esta acción eliminará esta narrativa y fusionará su contenido con otra narrativa. Seleccione una narrativa para usarla como resultado final de la fusión. Esta acción es irreversible.",
+      "selectNarrative": "Seleccionar una narrativa",
+      "selectTarget": "Seleccionar narrativa de destino",
+      "searchPlaceholder": "Escribe para buscar narrativas...",
+      "mergeAndDelete": "Fusionar y Eliminar",
+      "merging": "Fusionando...",
+      "success": "Narrativas fusionadas con éxito"
+    }
   },
   "claims": {
     "title": "Claims",

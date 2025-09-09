@@ -234,7 +234,20 @@
     "lastUpdated": "Zuletzt aktualisiert",
     "loadError": "Fehler beim Laden des Narrativs",
     "seenIn": "Gesehen in",
-    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen"
+    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
+    "selectNarrative": "Narrativ auswählen",
+    "searchNarrative": "Narrative suchen...",
+    "noNarrativesFound": "Keine Narrative gefunden",
+    "merge": {
+      "title": "Narrative zusammenführen",
+      "description": "Diese Aktion löscht dieses Narrativ und führt seinen Inhalt mit einem anderen Narrativ zusammen. Wählen Sie ein Narrativ als endgültiges Zusammenführungsergebnis. Diese Aktion ist unumkehrbar.",
+      "selectNarrative": "Narrativ auswählen",
+      "selectTarget": "Zielnarrativ auswählen",
+      "searchPlaceholder": "Tippen Sie, um Narrative zu suchen...",
+      "mergeAndDelete": "Zusammenführen und löschen",
+      "merging": "Zusammenführung läuft...",
+      "success": "Narrative erfolgreich zusammengeführt"
+    }
   },
   "claims": {
     "title": "Behauptungen",

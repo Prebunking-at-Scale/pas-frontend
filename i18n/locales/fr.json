@@ -233,7 +233,20 @@
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",
     "seenIn": "Vu dans",
-    "claimsSupportingNarrative": "Affirmations soutenant ce récit"
+    "claimsSupportingNarrative": "Affirmations soutenant ce récit",
+    "selectNarrative": "Sélectionner un récit",
+    "searchNarrative": "Rechercher des récits...",
+    "noNarrativesFound": "Aucun récit trouvé",
+    "merge": {
+      "title": "Fusionner les récits",
+      "description": "Cette action supprimera ce récit et fusionnera son contenu avec un autre récit. Sélectionnez un récit à utiliser comme résultat final de la fusion. Cette action est irréversible.",
+      "selectNarrative": "Sélectionner un récit",
+      "selectTarget": "Sélectionner le récit de destination",
+      "searchPlaceholder": "Tapez pour rechercher des récits...",
+      "mergeAndDelete": "Fusionner et supprimer",
+      "merging": "Fusion en cours...",
+      "success": "Récits fusionnés avec succès"
+    }
   },
   "claims": {
     "title": "Affirmations",
