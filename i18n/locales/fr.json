@@ -251,7 +251,9 @@
       "success": "Récits fusionnés avec succès"
     },
     "delete": "Supprimer le récit",
-    "delete_success": "Le récit a été supprimé avec succès"
+    "delete_success": "Le récit a été supprimé avec succès",
+    "claimUnlinked": "L'affirmation a été dissociée du récit",
+    "claimUnlinkError": "Échec de la dissociation de l'affirmation du récit"
   },
   "claims": {
     "title": "Affirmations",

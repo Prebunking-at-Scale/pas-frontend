@@ -252,7 +252,9 @@
       "success": "Narrative erfolgreich zusammengeführt"
     },
     "delete": "Narrativ löschen",
-    "delete_success": "Das Narrativ wurde erfolgreich gelöscht"
+    "delete_success": "Das Narrativ wurde erfolgreich gelöscht",
+    "claimUnlinked": "Die Behauptung wurde vom Narrativ getrennt",
+    "claimUnlinkError": "Die Behauptung konnte nicht vom Narrativ getrennt werden"
   },
   "claims": {
     "title": "Behauptungen",

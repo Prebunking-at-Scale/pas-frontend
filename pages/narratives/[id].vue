@@ -460,11 +460,6 @@ const handleAlertSave = (alert: Alert) => {
 };
 
 const handleUpdate = (updatedNarrative: Narrative) => {
-  toast.add({
-    title: t('common.success'),
-    description: t('narratives.updateSuccess')
-  });
-
   narrative.value = updatedNarrative;
   editDialogOpen.value = false;
 };
@@ -482,7 +477,6 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
     toast.add({
       title: t('common.success'),
       description: t('narratives.claimUnlinked'),
-      type: 'foreground'
     });
   } catch (err) {
     console.error('Failed to unlink claim:', err);

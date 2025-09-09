@@ -252,7 +252,9 @@
       "success": "Narratives merged successfully"
     },
     "delete": "Delete Narrative",
-    "delete_success": "The narrative has been deleted successfully"
+    "delete_success": "The narrative has been deleted successfully",
+    "claimUnlinked": "The claim has been unlinked from the narrative",
+    "claimUnlinkError": "Failed to unlink claim from narrative"
   },
   "claims": {
     "title": "Claims",

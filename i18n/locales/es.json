@@ -252,7 +252,9 @@
       "success": "Narrativas fusionadas con éxito"
     },
     "delete": "Eliminar Narrativa",
-    "delete_success": "La narrativa ha sido eliminada exitosamente"
+    "delete_success": "La narrativa ha sido eliminada exitosamente",
+    "claimUnlinked": "La claim ha sido desvinculada de la narrativa",
+    "claimUnlinkError": "Error al desvincular la claim de la narrativa"
   },
   "claims": {
     "title": "Claims",
