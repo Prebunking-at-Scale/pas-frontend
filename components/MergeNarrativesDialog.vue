@@ -98,52 +98,10 @@ const handleCancel = () => {
 
 const handleConfirm = async () => {
   if (!selectedNarrative.value) return
-  
+
   loading.value = true
-  try {
-    const actualClaims = dialogsStore.mergeDialog.actualNarrative?.claims || []
-    const actualTopics = dialogsStore.mergeDialog.actualNarrative?.topics || []
-
-    const targetClaims = selectedNarrative.value.claims || []
-    const targetTopics = selectedNarrative.value.topics || []
-
-    // Merge claims and topics, avoiding duplicates by ID
-    const actualClaimIds = actualClaims.map(c => c.id)
-    const targetClaimIds = targetClaims.map(c => c.id)
-    const mergedClaims = Array.from(new Set([...actualClaimIds, ...targetClaimIds]))
-    
-    const actualTopicIds = actualTopics.map(t => t.id)
-    const targetTopicIds = targetTopics.map(t => t.id)
-    const mergedTopics = Array.from(new Set([...actualTopicIds, ...targetTopicIds]))
-
-    await apiService.updateNarrative(selectedNarrative.value.id, {
-      claim_ids: mergedClaims,
-      topic_ids: mergedTopics
-    })
-
-    await apiService.deleteNarrative(dialogsStore.mergeDialog.actualNarrative!.id)
-
-    toast.add({
-      color: 'success',
-      title: t('common.success'),
-      description: t('narratives.merge.success', { title: selectedNarrative.value.title })
-    })
-    
-    // Close dialog and navigate if needed
-    dialogsStore.closeMergeDialog()
-
-    // Optionally navigate to the merged narrative
-    await navigateTo(`/narratives/${selectedNarrative.value.id}`)
-  } catch (error: any) {
-    console.error('Error merging narratives:', error)
-    toast.add({
-      title: t('common.error'),
-      description: error.message || t('common.error_occurred'),
-      color: 'error'
-    })
-  } finally {
-    loading.value = false
-  }
+  await dialogsStore.confirmMerge(selectedNarrative.value)  
+  loading.value = false
 }
 
 // Reset selected ID when dialog opens

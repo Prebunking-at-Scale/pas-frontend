@@ -109,6 +109,56 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
       }, 300);
     },
 
+    async confirmMerge(selectedNarrative: Narrative) {
+      const { $i18n } = useNuxtApp();
+      const toast = useToast();
+      
+      try {
+        if (!this.mergeDialog.actualNarrative) {
+          console.error('No actual narrative to merge from.')
+          return
+        }
+        const actualClaims = this.mergeDialog.actualNarrative.claims || []
+        const actualTopics = this.mergeDialog.actualNarrative.topics || []
+  
+        const targetClaims = selectedNarrative.claims || []
+        const targetTopics = selectedNarrative.topics || []
+  
+        // Merge claims and topics, avoiding duplicates by ID
+        const actualClaimIds = actualClaims.map(c => c.id)
+        const targetClaimIds = targetClaims.map(c => c.id)
+        const mergedClaims = Array.from(new Set([...actualClaimIds, ...targetClaimIds]))
+        
+        const actualTopicIds = actualTopics.map(t => t.id)
+        const targetTopicIds = targetTopics.map(t => t.id)
+        const mergedTopics = Array.from(new Set([...actualTopicIds, ...targetTopicIds]))
+  
+        await apiService.updateNarrative(selectedNarrative.id, {
+          claim_ids: mergedClaims,
+          topic_ids: mergedTopics
+        })
+  
+        await apiService.deleteNarrative(this.mergeDialog.actualNarrative!.id)
+  
+        toast.add({
+          color: 'success',
+          title: $i18n.t('common.success'),
+          description: $i18n.t('narratives.merge.success', { title: selectedNarrative.title })
+        })
+  
+        this.closeMergeDialog()
+        // Optionally navigate to the merged narrative
+        await navigateTo(`/narratives/${selectedNarrative.id}`)
+      } catch (error: any) {
+        console.error('Error merging narratives:', error)
+        toast.add({
+          title: $i18n.t('common.error'),
+          description: error.message || $i18n.t('common.error_occurred'),
+          color: 'error'
+        })
+      }
+    },
+
     // Delete Dialog Actions
     openDeleteDialog(narrative: Narrative) {
       this.deleteDialog.narrativeToDelete = narrative;
