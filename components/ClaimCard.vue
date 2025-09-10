@@ -1,5 +1,8 @@
 <template>
-<Card class="hover:shadow-lg transition-shadow p-0 m-0">
+<Card 
+  class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
+  @click="handleCardClick"
+>
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
       <!-- Claim Text -->
       <div class="mb-4">
@@ -8,7 +11,7 @@
         </p>
         <p 
           v-if="claim.video"
-          @click="goToVideo(claim.video_id || claim.source_video_id)"
+          @click.stop="goToVideo(claim.video_id || claim.source_video_id)"
           class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
         >
           <span>↳ {{ claim.video.title }}</span>
@@ -70,6 +73,13 @@ const props = defineProps<Props>();
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
+
+const handleCardClick = () => {
+  const videoId = props.claim.video_id || props.claim.source_video_id;
+  if (videoId) {
+    router.push(`/videos/${videoId}`);
+  }
+};
 
 const goToVideo = (videoId: string) => {
   router.push(`/videos/${videoId}`);
