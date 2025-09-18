@@ -1,9 +1,9 @@
 <template>
   <div 
-    class="flex items-center justify-between p-3 rounded-lg hover:bg-stone-50 cursor-pointer transition-colors border border-stone-100 h-18"
+    class="flex items-center justify-between p-3 rounded-lg bg-white hover:bg-gray-100 cursor-pointer transition-colors border-l-4 border-emerald-500 px-6 h-20 shadow-[0_0_0_1px_theme(colors.stone.200)]"
     @click="$emit('click')"
   >
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-3 flex-1 min-w-0">
       <div class="flex-shrink-0">
         <img 
           v-if="entityImage" 
@@ -17,12 +17,12 @@
         </div>
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-gray-900 truncate">{{ entity.name }}</p>
-        <p v-if="entityType" class="text-xs text-gray-500 capitalize">{{ formatEntityType(entityType) }}</p>
-        <p v-if="entityDescription && showDescription" class="text-xs text-gray-400 truncate">{{ entityDescription }}</p>
+        <p class="text-sm font-medium text-gray-900 truncate" :title="entity.name">{{ entity.name }}</p>
+        <p v-if="entityType" class="text-xs text-gray-500 capitalize truncate">{{ formatEntityType(entityType) }}</p>
+        <p v-if="entityDescription && showDescription" class="text-xs text-gray-400 truncate" :title="entityDescription">{{ entityDescription }}</p>
       </div>
     </div>
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2 flex-shrink-0">
       <Badge v-if="showFrequency && entity.frequency" variant="secondary" class="text-xs">
         {{ entity.frequency }}
       </Badge>

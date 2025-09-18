@@ -81,9 +81,9 @@ const handleLogout = () => {
 </script>
 
 <template>
-
-  <div class="p-4 max-w-[1536px] mx-auto">
-    <header class="from-emerald-800 to-emerald-900 bg-gradient-to-r rounded-xl p-6 flex gap-8 divider-y items-center">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header - full width, no margins -->
+    <header class="w-full from-emerald-800 to-emerald-900 bg-gradient-to-r p-6 flex gap-8 divider-y items-center">
       <a href="/">
         <img 
           src="assets/images/prebunking-logo.png" 
@@ -111,10 +111,11 @@ const handleLogout = () => {
       </div>
     </header>
 
-    <main class="grid grid-cols-12 gap-4 mt-6">
-
-      <aside class="col-span-2">
-        <nav class="space-y-2">
+    <!-- Main content area - flex layout with sidebar and content -->
+    <main class="flex flex-1">
+      <!-- Sidebar - fixed to left, no left margin -->
+      <aside class="w-64 bg-white border-r border-neutral-200">
+        <nav class="p-4 space-y-2">
           <NuxtLink
             to="/dashboard"
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/dashboard') }]"
@@ -189,15 +190,14 @@ const handleLogout = () => {
         </nav>
       </aside>
 
-      <article class="col-span-10">
+      <!-- Content area - gray background, fills remaining space -->
+      <article class="flex-1 bg-gray-50 px-20 py-6">
         <slot />
       </article>
-
     </main>
 
+    <Footer />
   </div>
-
-  <Footer />
 
 </template>
 
