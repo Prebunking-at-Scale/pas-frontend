@@ -203,64 +203,22 @@
         </div>
       </div>
 
-      <!-- Actors and Entities -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" v-if="false">
-        <!-- Actors -->
-        <div class="bg-white shadow rounded-lg p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
-            {{ $t('narratives.actors') }}
-            <span class="text-2xl font-bold text-emerald-600">{{ narrative.actors.length }}</span>
-          </h3>
-          <div class="space-y-3">
-            <div v-for="actor in narrative.actors" :key="actor.id" class="flex justify-between items-center">
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="actor.image_url" 
-                  :src="actor.image_url" 
-                  :alt="actor.name"
-                  class="w-10 h-10 rounded-full object-cover"
-                >
-                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-sm text-gray-500">{{ actor.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ actor.name }}</p>
-                  <p v-if="actor.role || actor.affiliation" class="text-xs text-gray-500">
-                    {{ actor.role }}{{ actor.role && actor.affiliation ? ' • ' : '' }}{{ actor.affiliation }}
-                  </p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-500">{{ actor.frequency }} {{ $t('common.mentions') }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Entities -->
-        <div class="bg-white shadow rounded-lg p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
-            {{ $t('narratives.entities') }}
-            <span class="text-2xl font-bold text-emerald-600">{{ narrative.entities.length }}</span>
-          </h3>
-          <div class="space-y-3">
-            <div v-for="entity in narrative.entities" :key="entity.id" class="flex justify-between items-center">
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="entity.image_url" 
-                  :src="entity.image_url" 
-                  :alt="entity.name"
-                  class="w-10 h-10 rounded-full object-cover"
-                >
-                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-sm text-gray-500">{{ entity.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ entity.name }}</p>
-                  <p v-if="entity.type" class="text-xs text-gray-500 capitalize">{{ entity.type }}</p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-500">{{ entity.frequency }} {{ $t('common.mentions') }}</span>
-            </div>
-          </div>
+      <!-- Entities -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.entities && narrative.entities.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
+          {{ $t('narratives.entities') }}
+          <span class="text-2xl font-bold text-emerald-600">{{ narrative.entities.length }}</span>
+        </h3>
+        <div class="space-y-2 flex flex-wrap gap-2">
+          <EntityCard
+            v-for="entity in narrative.entities" 
+            :key="entity.id"
+            :entity="entity"
+            :show-frequency="false"
+            :show-chevron="true"
+            :show-description="true"
+            @click="goToEntity(entity.id)"
+          />
         </div>
       </div>
 
@@ -315,6 +273,7 @@ import type { Narrative } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
+import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import { Bell } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
@@ -388,6 +347,10 @@ const formatNumber = (num: number): string => {
 
 const goToTopic = (topicId: string) => {
   router.push(`/topics/${topicId}`);
+};
+
+const goToEntity = (entityId: string) => {
+  router.push(`/entities/${entityId}`);
 };
 
 const goToVideo = (videoId: string) => {

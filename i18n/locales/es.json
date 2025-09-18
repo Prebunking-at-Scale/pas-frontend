@@ -312,7 +312,15 @@
     "relatedVideos": "Vídeos relacionados",
     "relatedActors": "Actores relacionados",
     "relatedTopics": "Temas relacionados",
-    "frequency": "Frecuencia"
+    "relatedClaims": "Afirmaciones relacionadas",
+    "relatedEntities": "Entidades relacionadas",
+    "frequency": "Frecuencia",
+    "viewOnWikidata": "Ver en Wikidata",
+    "additionalInfo": "Información adicional",
+    "firstSeen": "Vista por primera vez",
+    "notFound": "Entidad no encontrada",
+    "viewAllNarratives": "Ver las {count} narrativas",
+    "viewAllClaims": "Ver las {count} afirmaciones"
   },
   "actors": {
     "mentions": "Menciones",

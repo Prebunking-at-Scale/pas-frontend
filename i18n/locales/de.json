@@ -302,7 +302,15 @@
     "relatedVideos": "Verwandte Videos",
     "relatedActors": "Verwandte Akteure",
     "relatedTopics": "Verwandte Themen",
-    "frequency": "Häufigkeit"
+    "relatedClaims": "Verwandte Behauptungen",
+    "relatedEntities": "Verwandte Entitäten",
+    "frequency": "Häufigkeit",
+    "viewOnWikidata": "Auf Wikidata anzeigen",
+    "additionalInfo": "Zusätzliche Informationen",
+    "firstSeen": "Erstmals gesehen",
+    "notFound": "Entität nicht gefunden",
+    "viewAllNarratives": "Alle {count} Narrative anzeigen",
+    "viewAllClaims": "Alle {count} Behauptungen anzeigen"
   },
   "actors": {
     "mentions": "Erwähnungen",

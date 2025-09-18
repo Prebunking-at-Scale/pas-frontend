@@ -3,25 +3,34 @@
       <!-- Filters -->
       <FilterCard
         :title="$t('narratives.filters')"
-        :columns="{ default: 1, md: 2, lg: 2 }"
+        :columns="{ default: 1, md: 1, lg: 1 }"
         :has-active-filters="hasActiveFilters"
         @apply-filters="applyFilters"
         @clear-filters="resetFilters"
       >
-        <TopicFilter
-          class="w-full"
-          v-model="filters.topic_id"
-          :label="$t('narratives.topic')"
-          :placeholder="$t('narratives.selectTopic')"
-        />
-        
-        <KeywordsFilter
-          class="w-full"
-          v-model="filters.text"
-          :label="$t('narratives.text')"
-          :placeholder="$t('narratives.textPlaceholder')"
-          @enter-pressed="applyFilters"
-        />
+        <div class="flex flex-col md:flex-row gap-4">
+          <TopicFilter
+            class="w-full md:w-48"
+            v-model="filters.topic_id"
+            :label="$t('narratives.topic')"
+            :placeholder="$t('narratives.selectTopic')"
+          />
+
+          <EntityFilter
+            class="w-full md:w-48"
+            v-model="filters.entity_id"
+            :label="$t('narratives.entity')"
+            :placeholder="$t('narratives.selectEntity')"
+          />
+          
+          <KeywordsFilter
+            class="w-full md:w-96"
+            v-model="filters.text"
+            :label="$t('narratives.text')"
+            :placeholder="$t('narratives.textPlaceholder')"
+            @enter-pressed="applyFilters"
+          />
+        </div>
       </FilterCard>
 
       <!-- Topic Context - based on APPLIED filters -->
@@ -96,6 +105,7 @@ import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
+import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 
 definePageMeta({
@@ -120,12 +130,14 @@ const itemsPerPage = 20;
 // Filters - separate UI state from applied state
 const filters = ref({
   topic_id: null as string | null,
+  entity_id: null as string | null,
   text: [] as string[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   topic_id: null as string | null,
+  entity_id: null as string | null,
   text: [] as string[]
 });
 
@@ -134,6 +146,7 @@ const currentTopicName = ref('');
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
+    (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0;
 });
 
@@ -149,6 +162,10 @@ const loadNarratives = async () => {
     
     if (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') {
       params.topic_id = appliedFilters.value.topic_id;
+    }
+    
+    if (appliedFilters.value.entity_id && appliedFilters.value.entity_id !== 'all') {
+      params.entity_id = appliedFilters.value.entity_id;
     }
     
     if (appliedFilters.value.text.length > 0) {
@@ -189,10 +206,12 @@ const applyFilters = () => {
 const resetFilters = () => {
   filters.value = {
     topic_id: null,
+    entity_id: null,
     text: []
   };
   appliedFilters.value = {
     topic_id: null,
+    entity_id: null,
     text: []
   };
   currentTopicName.value = '';
@@ -244,6 +263,13 @@ onMounted(async () => {
       appliedFilters.value.topic_id = topicId;
       currentTopicName.value = topic.topic;
     }
+  }
+  
+  // Check if we have an entity filter from query params
+  const entityId = route.query.entity as string;
+  if (entityId) {
+    filters.value.entity_id = entityId;
+    appliedFilters.value.entity_id = entityId;
   }
   
   // Update page header

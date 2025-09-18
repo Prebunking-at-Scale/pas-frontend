@@ -8,103 +8,57 @@
       <div v-else>
       
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Topics Card -->
-        <StatsCard 
-          :title="$t('dashboard.topics')" 
-          :count="stats.topics.length"
-        >
-          <div 
-            v-for="topic in stats.topics.slice(0, 5)" 
-            :key="topic.id"
-            class="flex justify-between items-center text-base p-2 rounded hover:bg-stone-50 divide-x divide-stone-200 mx-4"
-          >
-            <span 
-              @click="goToTopic(topic.id)"
-              class="text-gray-600 hover:text-gray-900 cursor-pointer flex-1 grow"
-            >{{ topic.topic }}</span>
-            <div class="flex gap-2">
-              <button
-                @click.stop="goToTopicWithType(topic.id, 'narratives')"
-                class="w-16 cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
-                :title="$t('dashboard.narrativesCount')"
-              >
-                <font-awesome :icon="faCircleNodes" class="mr-2"/> {{ topic.narrative_count }}
-              </button>
-              <button
-                @click.stop="goToTopicWithType(topic.id, 'claims')"
-                class="w-16 cursor-pointer px-2 py-1 text-xs rounded transition-colors bg-stone-100 text-emerald-900 border border-stone-200 hover:bg-stone-200"
-                :title="$t('dashboard.claimsCount')"
-              >
-              <font-awesome :icon="faComment" class="mr-2"/> {{ topic.claim_count }}
-              </button>
-            </div>
-          </div>
-        </StatsCard>
+      <div class="flex flex-col gap-6 mb-8">
 
-        <!-- Entities Card -->
-        <StatsCard 
-          :title="$t('dashboard.entities')" 
-          :count="stats.entities.length"
-        >
-          <div class="space-y-3">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('dashboard.topics') }}</h2>
+          
+          <div class="flex flex-row gap-2">
             <div 
-              v-for="entity in stats.entities.slice(0, 5)" 
+                v-for="topic in stats.topics.slice(0, 5)" 
+                :key="topic.id"
+                class="border border-stone-100 hover:bg-stone-200 rounded-lg px-4 py-2 flex flex-row justify-between items-center"
+              >
+                <span 
+                  @click="goToTopic(topic.id)"
+                  class="text-gray-600 hover:text-gray-900 cursor-pointer text-sm mr-4"
+                >{{ topic.topic }}</span>
+                <div class="flex gap-2">
+                  <button
+                    @click.stop="goToTopicWithType(topic.id, 'narratives')"
+                    class="flex cursor-pointer px-2 py-1 text-xs rounded-full transition-colors bg-stone-50 hover:bg-stone-200 text-emerald-900"
+                    :title="$t('dashboard.narrativesCount')"
+                  >
+                    <font-awesome :icon="faCircleNodes" class="mr-2"/> {{ topic.narrative_count }}
+                  </button>
+                  <button
+                    @click.stop="goToTopicWithType(topic.id, 'claims')"
+                    class="flex cursor-pointer px-2 py-1 text-xs rounded-full transition-colors bg-stone-50 hover:bg-stone-200 text-emerald-900"
+                    :title="$t('dashboard.claimsCount')"
+                  >
+                  <font-awesome :icon="faComment" class="mr-2"/> {{ topic.claim_count }}
+                  </button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('dashboard.entities') }}</h2>
+          
+          <div class="space-y-2 flex flex-row flex-wrap gap-2">
+            <EntityCard
+              v-for="entity in stats.entities.slice(0, 10)" 
               :key="entity.id"
+              :entity="entity"
+              :show-frequency="false"
+              :show-chevron="true"
+              :show-description="false"
               @click="goToEntity(entity.id)"
-              class="flex items-center justify-between p-2 rounded hover:bg-stone-50 cursor-pointer -mx-2"
-            >
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="entity.image_url" 
-                  :src="entity.image_url" 
-                  :alt="entity.name"
-                  class="w-8 h-8 rounded-full object-cover"
-                >
-                <div v-else class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-xs text-gray-500">{{ entity.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ entity.name }}</p>
-                  <p v-if="entity.type" class="text-xs text-gray-500">{{ entity.type }}</p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-900 font-medium">{{ entity.count }}</span>
-            </div>
+            />
           </div>
-        </StatsCard>
+        </div>
 
-        <!-- Actors Card -->
-        <StatsCard 
-          :title="$t('dashboard.actors')" 
-          :count="stats.actors.length"
-        >
-          <div class="space-y-3">
-            <div 
-              v-for="actor in stats.actors.slice(0, 5)" 
-              :key="actor.id"
-              @click="goToActor(actor.id)"
-              class="flex items-center justify-between p-2 rounded hover:bg-stone-50 cursor-pointer -mx-2"
-            >
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="actor.image_url" 
-                  :src="actor.image_url" 
-                  :alt="actor.name"
-                  class="w-8 h-8 rounded-full object-cover"
-                >
-                <div v-else class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-xs text-gray-500">{{ actor.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ actor.name }}</p>
-                  <p v-if="actor.role" class="text-xs text-gray-500">{{ actor.role }}</p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-900 font-medium">{{ actor.count }}</span>
-            </div>
-          </div>
-        </StatsCard>
       </div>
 
       <!-- Viral Narratives -->
@@ -145,7 +99,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { TopicWithStats } from '~/types/api';
+import type { TopicWithStats, Entity } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -154,14 +108,13 @@ definePageMeta({
   middleware: 'auth'
 });
 
-const { $i18n } = useNuxtApp();
 const router = useRouter();
 const topicsStore = useTopicsStore();
 
 // Load dashboard stats with safe defaults
 const stats = ref<{
   topics: TopicWithStats[];
-  entities: any[];
+  entities: Entity[];
   actors: any[];
   viralNarratives: any[];
   prevalentNarratives: any[];
@@ -193,10 +146,6 @@ const goToTopicWithType = (id: string, type: 'narratives' | 'claims') => {
 
 const goToEntity = (id: string) => {
   router.push(`/entities/${id}`);
-};
-
-const goToActor = (id: string) => {
-  router.push(`/actors/${id}`);
 };
 
 onMounted(async () => {
