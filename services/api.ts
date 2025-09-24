@@ -228,6 +228,7 @@ export const apiService = {
     limit?: number;
     offset?: number;
     topic_id?: string;
+    entity_id?: string;
     text?: string;
   }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 20;
@@ -242,6 +243,9 @@ export const apiService = {
       // Add optional filters
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
+      }
+      if (params?.entity_id) {
+        query.entity_id = params.entity_id;
       }
       if (params?.text) {
         query.text = params.text;
@@ -360,7 +364,7 @@ export const apiService = {
   // Dashboard data
   async getDashboardStats(): Promise<{
     topics: TopicWithStats[];
-    entities: any[];
+    entities: Entity[];
     actors: any[];
     viralNarratives: Narrative[];
     prevalentNarratives: Narrative[];
@@ -383,9 +387,20 @@ export const apiService = {
       topicsData = [];
     }
     
+    // Get entities data from the API
+    let entitiesData: Entity[] = [];
+    try {
+      const entitiesResponse = await this.getEntities({ limit: 10 });
+      entitiesData = entitiesResponse.data || [];
+    } catch (error) {
+      console.error('Failed to fetch entities for dashboard:', error);
+      // Use fallback empty data if API fails
+      entitiesData = [];
+    }
+    
     return {
       topics: topicsData,
-      entities: [],
+      entities: entitiesData,
       actors: [],
       viralNarratives: await this.getViralNarratives(viralHours), 
       prevalentNarratives: await this.getPrevalentNarratives(prevalentHours)
@@ -493,36 +508,80 @@ export const apiService = {
   },
 
   // Entity endpoints
-  async getEntity(entityId: string): Promise<Entity & {
-    narratives: Narrative[];
-    videos: Video[];
-    related_actors: Actor[];
-    related_topics: Topic[];
-  }> {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  async getEntities(params?: {
+    limit?: number;
+    offset?: number;
+    text?: string;
+  }): Promise<PaginatedResponse<Entity>> {
+    const limit = params?.limit || 100;
+    const offset = params?.offset || 0;
+    
+    try {
+      const query: any = {
+        limit,
+        offset
+      };
+      
+      // Add text filter if provided
+      if (params?.text) {
+        query.text = params.text;
+      }
+      
+      const response = await $fetch('/api/entities', {
+        method: 'GET',
+        query
+      });
+      
+      return response as PaginatedResponse<Entity>;
+    } catch (error) {
+      console.error('Failed to fetch entities:', error);
+      // Return empty response on error
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
 
-    const entity: Entity = {
-      id: entityId,
-      name: 'World Health Organization',
-      type: 'institution',
-      frequency: 156,
-      image_url: '/api/placeholder/200/200',
-      description: 'The World Health Organization is a specialized agency of the United Nations responsible for international public health.'
-    };
+  async getEntity(entityId: string): Promise<Entity> {
+    try {
+      const response = await $fetch(`/api/entities/${entityId}`, {
+        method: 'GET'
+      });
+      
+      // The API wraps the entity in a data property
+      return (response as { data: Entity }).data;
+    } catch (error) {
+      console.error('Failed to fetch entity:', error);
+      throw error;
+    }
+  },
 
-    return {
-      ...entity,
-      narratives: Array.from({ length: 5 }, (_, i) => generateMockNarrative(i + 1)),
-      videos: Array.from({ length: 10 }, (_, i) => generateMockVideo(i + 1)),
-      related_actors: [
-        { id: 'actor-1', name: 'Dr. Tedros Adhanom', type: 'person', frequency: 45, role: 'Director-General' },
-        { id: 'actor-2', name: 'Maria Van Kerkhove', type: 'person', frequency: 32, role: 'Technical Lead' }
-      ],
-      related_topics: [
-        { id: 'topic-1', topic: 'Public Health', frequency: 234 },
-        { id: 'topic-2', topic: 'Pandemic Response', frequency: 189 }
-      ]
-    };
+  async getEntityNarratives(entityId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Narrative>> {
+    const limit = params?.limit || 100;
+    const offset = params?.offset || 0;
+    
+    try {
+      const response = await $fetch(`/api/entities/${entityId}/narratives`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset
+        }
+      });
+      
+      return response as PaginatedResponse<Narrative>;
+    } catch (error) {
+      console.error('Failed to fetch entity narratives:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
   },
 
   // Actor endpoints

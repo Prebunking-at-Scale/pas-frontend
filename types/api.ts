@@ -75,11 +75,54 @@ export interface Actor {
   affiliation?: string; // e.g., "Republican Party", "Company Name"
 }
 
+export interface WikidataClaim {
+  id?: string;
+  type?: string;
+  label?: string;
+  url?: string;
+  filename?: string;
+  resolution?: number[];
+}
+
+export interface WikidataInfo {
+  id: string;
+  claims: {
+    P17?: WikidataClaim[];
+    P18?: WikidataClaim[];  // image
+    P31?: WikidataClaim[];  // instance of
+    P41?: WikidataClaim[];  // flag image
+    P6?: WikidataClaim[];   // head of government
+    P154?: WikidataClaim[]; // logo image
+  };
+  labels: {
+    en?: {
+      value: string;
+    };
+  };
+  descriptions: {
+    en?: {
+      value: string;
+    };
+  };
+}
+
+export interface EntityMetadata {
+  entity_type?: string;
+  wikidata_info?: WikidataInfo;
+  [key: string]: any;
+}
+
 export interface Entity {
   id: string;
+  wikidata_id?: string;
   name: string;
-  type: 'institution' | 'location' | 'product' | 'event' | 'concept';
-  frequency: number;
+  metadata?: EntityMetadata;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Legacy fields for compatibility
+  type?: 'institution' | 'location' | 'product' | 'event' | 'concept';
+  frequency?: number;
   image_url?: string;
   description?: string;
 }
