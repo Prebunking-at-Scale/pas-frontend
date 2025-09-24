@@ -191,7 +191,7 @@ const handleLogout = () => {
       </aside>
 
       <!-- Content area - gray background, fills remaining space -->
-      <article class="flex-1 bg-gray-50 px-20 py-6">
+      <article class="flex-1 bg-gray-50 px-14 py-6">
         <slot />
       </article>
     </main>

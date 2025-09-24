@@ -1,7 +1,7 @@
 <template>
   <div class="filter-card-container mb-8">
-    <Card class="shadow-sm m-0 p-0 rounded">
-      <CardHeader v-if="title" class="pb-0 bg-stone-200 flex py-2 items-center justify-between">
+    <Card class="shadow-sm m-0 p-0 rounded-lg">
+      <CardHeader v-if="title" class="pb-0 rounded-t-lg flex py-2 items-center justify-between">
         <CardTitle class="text-lg flex items-center">{{ title }}</CardTitle>
           <div v-if="showActiveFilters && hasActiveFilters" class="">
             <Button @click="$emit('clear-filters')" variant="ghost" size="sm" class="text-emerald-800 hover:text-emerald-900 cursor-pointer">

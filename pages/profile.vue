@@ -29,7 +29,7 @@
       </div>
 
       <Card class="bg-white overflow-hidden shadow rounded-lg">
-        <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+        <CardHeader class="px-4 py-3 sm:p-4">
           <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('profile.personalInfo') }}</CardTitle>
         </CardHeader>
         <CardContent class="pb-4 px-4 sm:px-6">
@@ -81,7 +81,7 @@
       </Card>
 
       <Card class="mt-6 bg-white overflow-hidden shadow rounded-lg">
-        <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+        <CardHeader class=" px-4 py-3 sm:p-4">
           <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('profile.changePassword') }}</CardTitle>
         </CardHeader>
         <CardContent class="pb-4 px-4 sm:px-6">
@@ -137,7 +137,7 @@
 
       <!-- Just in case we implement account deletion -->
       <Card class="mt-6 bg-white overflow-hidden shadow rounded-lg" v-if="false">
-        <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+        <CardHeader class=" px-4 py-3 sm:p-4">
           <CardTitle class="text-lg leading-6 font-medium text-destructive">{{ $t('profile.dangerZone') }}</CardTitle>
         </CardHeader>
         <CardContent class="pb-4 px-4 sm:px-6">
