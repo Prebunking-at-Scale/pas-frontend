@@ -17,23 +17,23 @@
             <div 
                 v-for="topic in stats.topics.slice(0, 5)" 
                 :key="topic.id"
-                class="border border-stone-100 hover:bg-stone-200 rounded-lg px-4 py-2 flex flex-row justify-between items-center"
+                class="border border-sky-200 bg-sky-50 text-sky-800 px-4 py-2 rounded-full flex flex-row justify-between items-center"
               >
                 <span 
                   @click="goToTopic(topic.id)"
-                  class="text-gray-600 hover:text-gray-900 cursor-pointer text-sm mr-4"
+                  class="text-sky-800 hover:text-sky-900 cursor-pointer mr-4"
                 >{{ topic.topic }}</span>
                 <div class="flex gap-2">
                   <button
                     @click.stop="goToTopicWithType(topic.id, 'narratives')"
-                    class="flex cursor-pointer px-2 py-1 text-xs rounded-full transition-colors bg-stone-50 hover:bg-stone-200 text-emerald-900"
+                    class="flex cursor-pointer text-xs rounded-full transition-colors bg-sky-50 hover:bg-sky-200 text-sky-800"
                     :title="$t('dashboard.narrativesCount')"
                   >
                     <font-awesome :icon="faCircleNodes" class="mr-2"/> {{ topic.narrative_count }}
                   </button>
                   <button
                     @click.stop="goToTopicWithType(topic.id, 'claims')"
-                    class="flex cursor-pointer px-2 py-1 text-xs rounded-full transition-colors bg-stone-50 hover:bg-stone-200 text-emerald-900"
+                    class="flex cursor-pointer text-xs rounded-full transition-colors bg-sky-50 hover:bg-sky-200 text-sky-800"
                     :title="$t('dashboard.claimsCount')"
                   >
                   <font-awesome :icon="faComment" class="mr-2"/> {{ topic.claim_count }}
@@ -43,12 +43,12 @@
             </div>
         </div>
 
-        <div>
+        <div v-if="stats.entities.length > 0">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('dashboard.entities') }}</h2>
           
-          <div class="space-y-2 flex flex-row flex-wrap gap-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <EntityCard
-              v-for="entity in stats.entities.slice(0, 10)" 
+              v-for="entity in stats.entities.slice(0, 12)" 
               :key="entity.id"
               :entity="entity"
               :show-frequency="false"
@@ -61,10 +61,12 @@
 
       </div>
 
+      <hr class="py-3"/>
+
       <!-- Viral Narratives -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.viralNarratives') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900">🔥 {{ $t('dashboard.viralNarratives') }}</h2>
           <!-- <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span> -->
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -77,10 +79,12 @@
         </div>
       </div>
 
+      <hr class="py-3"/>
+
       <!-- Prevalent Narratives -->
       <div>
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">{{ $t('dashboard.prevalentNarratives') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900">🌐 {{ $t('dashboard.prevalentNarratives') }}</h2>
           <!-- <span class="text-sm text-gray-500">{{ $t('dashboard.lastWeek') }}</span> -->
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

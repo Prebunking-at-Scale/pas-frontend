@@ -27,9 +27,23 @@
       </div>
 
       <div class="flex items-center justify-between flex-wrap gap-2">
+          
+        <!-- Stats -->
+        <div class="flex items-center space-x-3 text-xs text-gray-500 grow flex-1">
+          <span class="flex items-center">
+            👁️ {{ totalViews }}
+          </span>
+          <span class="flex items-center">
+            ❤️ {{ totalLikes }}
+          </span>
+          <span class="flex items-center">
+            💬 {{ totalComments }}
+          </span>
+        </div>
+
         <!-- Topics -->
-        <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2">
-          <div class="flex flex-wrap gap-1">
+        <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2 justify-between">
+          <div class="flex flex-wrap gap-2">
             <NuxtLink
               v-for="topic in narrative.topics" 
               :key="topic.id"
@@ -40,29 +54,7 @@
             </NuxtLink>
           </div>
         </div>
-
-        <!-- Stats -->
-        <div class="flex items-center space-x-3 text-xs text-gray-500">
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {{ totalViews }}
-          </span>
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-            </svg>
-            {{ totalComments }}
-          </span>
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-2 2m0 0l-2-2m2 2V7m6 5a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {{ totalLikes }}
-          </span>
-        </div>
+      
       </div>
       
     </CardContent>

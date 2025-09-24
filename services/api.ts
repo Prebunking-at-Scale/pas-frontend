@@ -402,8 +402,8 @@ export const apiService = {
       topics: topicsData,
       entities: entitiesData,
       actors: [],
-      viralNarratives: await this.getViralNarratives(viralHours), 
-      prevalentNarratives: await this.getPrevalentNarratives(prevalentHours)
+      viralNarratives: await this.getViralNarratives(viralHours, 9), 
+      prevalentNarratives: await this.getPrevalentNarratives(prevalentHours, 10)
     };
   },
 
