@@ -13,7 +13,7 @@
         <div>
           <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t('dashboard.topics') }}</h2>
           
-          <div class="flex flex-row gap-2">
+          <div class="flex flex-row gap-2 text-sm">
             <div 
                 v-for="topic in stats.topics.slice(0, 5)" 
                 :key="topic.id"

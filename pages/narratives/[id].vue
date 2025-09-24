@@ -79,35 +79,14 @@
         </div>
       </div>
 
-      <!-- Timeline: Show all related video dates as a timeline, 100% width -->
-      <div class="bg-white shadow rounded-lg mb-6 p-6 flex flex-col justify-center text-sm text-gray-500 w-full" v-if="narrative.videos && narrative.videos.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Timeline of the narrative</h3>
-        <div class="flex items-center w-full">
-          <template v-for="(video, idx) in sortedVideos" :key="video.id || video.uploaded_at || idx">
-            <!-- Timeline point -->
-            <div class="flex flex-col items-center flex-shrink-0 min-w-[70px]">
-              <div class="w-4 h-4 rounded-full bg-emerald-700 border-2 border-emerald-900"></div>
-              <span class="mt-2 font-medium text-gray-700">
-                <template v-if="idx === 0">
-                  {{ $t('timeline.firstSeen') || 'First seen' }}
-                </template>
-                <template v-else-if="idx === sortedVideos.length - 1">
-                  {{ $t('timeline.lastSeen') || 'Last seen' }}
-                </template>
-                <template v-else>
-                  {{ $t('timeline.seen') || 'Seen' }}
-                </template>
-              </span>
-              <span class="text-xs mt-1" v-if="video.uploaded_at">
-                {{ formatDate(video.uploaded_at, $i18n.locale.value) }}
-              </span>
-            </div>
-            <!-- Line between points, except after last -->
-            <div
-              v-if="idx < sortedVideos.length - 1"
-              class="flex-1 h-0.5 bg-stone-400 mx-2"
-            ></div>
-          </template>
+      <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
+      <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrative.videos && narrative.videos.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
+        <div class="h-96">
+          <NarrativeEvolutionChart
+            :videos="narrative.videos"
+            :locale="$i18n.locale.value"
+          />
         </div>
       </div>
 
@@ -266,6 +245,7 @@ import type { Narrative } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
+import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import { Bell } from 'lucide-vue-next';
