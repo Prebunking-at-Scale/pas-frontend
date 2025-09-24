@@ -15,6 +15,7 @@
     "create": "Erstellen",
     "creating": "Erstelle...",
     "save": "Speichern",
+    "confirm": "Bestätigen",
     "logout": "Abmelden",
     "loading": "Wird geladen...",
     "saving": "Wird gespeichert...",
@@ -398,6 +399,13 @@
     "admin": "Administrator",
     "member": "Mitglied",
     "makeAdmin": "Zum Administrator machen",
+    "revokeAdmin": "Administratorrechte entziehen",
+    "adminStatus": "Administratorstatus",
+    "updatingAdminStatus": "Administratorstatus wird aktualisiert...",
+    "adminStatusUpdated": "Administratorstatus erfolgreich aktualisiert",
+    "adminStatusUpdateError": "Fehler beim Aktualisieren des Administratorstatus",
+    "confirmMakeAdmin": "Sind Sie sicher, dass Sie {name} zum Administrator machen möchten?",
+    "confirmRevokeAdmin": "Sind Sie sicher, dass Sie die Administratorrechte von {name} entziehen möchten?",
     "remove": "Entfernen",
     "noUsers": "Keine Benutzer gefunden",
     "confirmRemoveUser": "Sind Sie sicher, dass Sie diesen Benutzer aus der Organisation entfernen möchten?",
@@ -405,7 +413,8 @@
     "emailAddress": "E-Mail-Adresse",
     "sendInvitation": "Einladung senden",
     "invitationSent": "Einladung erfolgreich gesendet",
-    "inviteError": "Fehler beim Senden der Einladung"
+    "inviteError": "Fehler beim Senden der Einladung",
+    "removeError": "Fehler beim Entfernen des Benutzers"
   },
   "superadmin": {
     "title": "Superadministrator",

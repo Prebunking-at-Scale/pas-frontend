@@ -15,6 +15,7 @@
     "create": "Crear",
     "creating": "Creando...",
     "save": "Guardar",
+    "confirm": "Confirmar",
     "logout": "Cerrar sesión",
     "loading": "Cargando...",
     "saving": "Guardando...",
@@ -408,6 +409,13 @@
     "admin": "Administrador",
     "member": "Miembro",
     "makeAdmin": "Hacer administrador",
+    "revokeAdmin": "Revocar administrador",
+    "adminStatus": "Estado de administrador",
+    "updatingAdminStatus": "Actualizando estado de administrador...",
+    "adminStatusUpdated": "Estado de administrador actualizado exitosamente",
+    "adminStatusUpdateError": "Error al actualizar el estado de administrador",
+    "confirmMakeAdmin": "¿Está seguro de que desea hacer a {name} administrador?",
+    "confirmRevokeAdmin": "¿Está seguro de que desea revocar los privilegios de administrador de {name}?",
     "remove": "Eliminar",
     "noUsers": "No se encontraron usuarios",
     "confirmRemoveUser": "¿Está seguro de que desea eliminar este usuario de la organización?",
@@ -415,7 +423,8 @@
     "emailAddress": "Dirección de correo",
     "sendInvitation": "Enviar invitación",
     "invitationSent": "Invitación enviada correctamente",
-    "inviteError": "Error al enviar la invitación"
+    "inviteError": "Error al enviar la invitación",
+    "removeError": "Error al eliminar el usuario"
   },
   "tos": {
     "title": "Términos de Servicio",

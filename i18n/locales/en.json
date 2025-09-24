@@ -15,6 +15,7 @@
     "create": "Create",
     "creating": "Creating...",
     "save": "Save",
+    "confirm": "Confirm",
     "logout": "Logout",
     "loading": "Loading...",
     "saving": "Saving...",
@@ -415,6 +416,13 @@
     "admin": "Admin",
     "member": "Member",
     "makeAdmin": "Make Admin",
+    "revokeAdmin": "Revoke Admin",
+    "adminStatus": "Admin Status",
+    "updatingAdminStatus": "Updating admin status...",
+    "adminStatusUpdated": "Admin status updated successfully",
+    "adminStatusUpdateError": "Failed to update admin status",
+    "confirmMakeAdmin": "Are you sure you want to make {name} an administrator?",
+    "confirmRevokeAdmin": "Are you sure you want to revoke {name}'s administrator privileges?",
     "remove": "Remove",
     "noUsers": "No users found",
     "confirmRemoveUser": "Are you sure you want to remove this user from the organisation?",
@@ -422,7 +430,8 @@
     "emailAddress": "Email Address",
     "sendInvitation": "Send Invitation",
     "invitationSent": "Invitation sent successfully",
-    "inviteError": "Failed to send invitation"
+    "inviteError": "Failed to send invitation",
+    "removeError": "Failed to remove user"
   },
   "tos": {
     "title": "Terms of Service",

@@ -64,7 +64,7 @@ onMounted(() => {
 
     <!-- Organizations List -->
     <Card>
-      <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+      <CardHeader class=" px-4 py-3 sm:p-4">
           <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('superadmin.organizations') }}</CardTitle>
       </CardHeader>
       <CardContent>
