@@ -95,12 +95,6 @@
         </Button>
       </div>
 
-      <!-- Skip for now (only for first time setup) -->
-      <div v-if="isFirstTimeSetup" class="text-center">
-        <NuxtLink to="/profile" class="text-sm text-green-600 hover:text-green-500">
-          {{ $t('passwordChange.skipForNow') }}
-        </NuxtLink>
-      </div>
     </form>
   </div>
 </template>

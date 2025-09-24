@@ -85,6 +85,9 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ $t('admin.role') }}
                   </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('admin.status') }}
+                  </th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ $t('admin.actions') }}
                   </th>
@@ -106,10 +109,31 @@
                       {{ $t('admin.member') }}
                     </span>
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span v-if="user.accepted" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ $t('admin.active') }}
+                    </span>
+                    <span v-else-if="user.invited" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      {{ $t('admin.invited') }}
+                    </span>
+                    <span v-else class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      {{ $t('admin.inactive') }}
+                    </span>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex justify-end space-x-2">
                       <Button
-                        v-if="user.id !== currentUserId"
+                        v-if="user.invited && !user.accepted"
+                        @click="resendInvitation(user)"
+                        size="sm"
+                        variant="outline"
+                        class="cursor-pointer"
+                        :disabled="loadingAction === user.id"
+                      >
+                        {{ $t('admin.resendInvite') }}
+                      </Button>
+                      <Button
+                        v-if="user.id !== currentUserId && user.accepted"
                         @click="toggleAdminStatus(user)"
                         size="sm"
                         :variant="user.is_admin ? 'outline' : 'default'"
@@ -402,6 +426,35 @@ const executeAdminStatusChange = async (user: any, newAdminStatus: boolean) => {
   } catch (error: any) {
     console.error('Failed to update admin status:', error);
     orgError.value = error.data?.detail || error.message || $i18n.t('admin.adminStatusUpdateError');
+    setTimeout(() => {
+      orgError.value = '';
+    }, 5000);
+  } finally {
+    loadingAction.value = null;
+  }
+};
+
+// Resend invitation to a user
+const resendInvitation = async (user: any) => {
+  try {
+    loadingAction.value = user.id;
+
+    await apiFetch('/api/auth/organisation/invite/resend', {
+      method: 'POST',
+      query: organization.value.id ? { organisation_id: organization.value.id } : undefined,
+      body: {
+        user_email: user.email,
+        as_admin: user.is_admin
+      }
+    });
+
+    orgSuccess.value = $i18n.t('admin.invitationResent');
+    setTimeout(() => {
+      orgSuccess.value = '';
+    }, 3000);
+  } catch (error: any) {
+    console.error('Failed to resend invitation:', error);
+    orgError.value = error.data?.detail || error.message || $i18n.t('admin.resendError');
     setTimeout(() => {
       orgError.value = '';
     }, 5000);
