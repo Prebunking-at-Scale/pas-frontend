@@ -134,7 +134,7 @@ const generateMockClaim = (index: number, videoId: string): Claim => ({
 // API Service
 export const apiService = {
   // Video endpoints
-  async getVideos(params?: { 
+  async getVideos(params?: {
     platform?: string[] | null;
     channel?: string[] | null;
     text?: string;
@@ -143,13 +143,15 @@ export const apiService = {
   }): Promise<PaginatedResponse<Video>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add filters to query if provided
       if (params?.platform?.length) {
         query.platform = params.platform;
@@ -160,12 +162,12 @@ export const apiService = {
       if (params?.text) {
         query.text = params.text;
       }
-      
-      const response = await $fetch('/api/videos', {
+
+      const response = await apiFetch('/api/videos', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Video>;
     } catch (error) {
       console.error('Failed to fetch videos:', error);
@@ -181,10 +183,11 @@ export const apiService = {
 
   async getVideo(videoId: string): Promise<VideoDetailResponse> {
     try {
-      const response = await $fetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
         method: 'GET'
       });
-      
+
       return response.data;
     } catch (error) {
       console.error('Failed to fetch video:', error);
@@ -233,13 +236,15 @@ export const apiService = {
   }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add optional filters
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
@@ -250,12 +255,12 @@ export const apiService = {
       if (params?.text) {
         query.text = params.text;
       }
-      
-      const response = await $fetch('/api/narratives', {
+
+      const response = await apiFetch('/api/narratives', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Narrative>;
     } catch (error) {
       console.error('Failed to fetch narratives:', error);
@@ -271,13 +276,14 @@ export const apiService = {
 
   async getNarrative(narrativeId: string): Promise<Narrative> {
     try {
-      const response = await $fetch(`/api/narratives/${narrativeId}`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}`, {
         method: 'GET'
       });
-      
+
       // Extract narrative from the data wrapper
       const narrative = (response as { data: Narrative }).data;
-      
+
       // Set default values for UI fields if not present
       return {
         ...narrative,
@@ -302,21 +308,20 @@ export const apiService = {
 
   // Viral narratives with hours parameter
   async getViralNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
-    // Get config values if not provided
     const { $config } = useNuxtApp();
     const hoursParam = hours ?? $config.public.viralNarrativesHours ?? 168;
     const limitParam = limit ?? $config.public.viralNarrativesLimit ?? 20;
     try {
-      const response = await $fetch('/api/narratives/viral', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/narratives/viral', {
         method: 'GET',
         query: {
           hours: hoursParam,
           limit: limitParam
         }
       });
-      
+
       const data = response as { data: Narrative[] };
-      // Order by the sum of views of each video in the narrative
       return data.data.sort((a: Narrative, b: Narrative) => {
         const aViews = a.videos.reduce((sum, video) => sum + video.views, 0);
         const bViews = b.videos.reduce((sum, video) => sum + video.views, 0);
@@ -324,7 +329,6 @@ export const apiService = {
       });
     } catch (error) {
       console.error('Failed to fetch viral narratives:', error);
-      // Return mock data as fallback
       return Array.from({ length: 6 }, (_, i) => generateMockNarrative(i + 1));
     }
   },
@@ -333,28 +337,25 @@ export const apiService = {
   // Endpoint: GET /api/narratives/prevalent
   // Returns narratives sorted by video count in specified time period
   async getPrevalentNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
-    // Get config values if not provided
     const { $config } = useNuxtApp();
     const hoursParam = hours ?? $config.public.prevalentNarrativesHours ?? 168;
     const limitParam = limit ?? $config.public.prevalentNarrativesLimit ?? 10;
     try {
-      const response = await $fetch('/api/narratives/prevalent', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/narratives/prevalent', {
         method: 'GET',
         query: {
           hours: hoursParam,
           limit: limitParam
         }
       });
-      
+
       const data = response as { data: Narrative[] };
-      // Order them by the count of videos in the narrative, descending
       return data.data.sort((a: Narrative, b: Narrative) => b.videos.length - a.videos.length);
     } catch (error) {
       console.error('Failed to fetch prevalent narratives:', error);
-      // Return mock data as fallback - simulate narratives with many videos
       return Array.from({ length: 4 }, (_, i) => {
         const narrative = generateMockNarrative(i + 10);
-        // Add more videos to simulate "prevalent" narratives
         narrative.videos = Array.from({ length: 8 + i * 2 }, (_, j) => generateMockVideo(j + 1));
         return narrative;
       });
@@ -515,23 +516,25 @@ export const apiService = {
   }): Promise<PaginatedResponse<Entity>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add text filter if provided
       if (params?.text) {
         query.text = params.text;
       }
-      
-      const response = await $fetch('/api/entities', {
+
+      const response = await apiFetch('/api/entities', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Entity>;
     } catch (error) {
       console.error('Failed to fetch entities:', error);
@@ -547,10 +550,11 @@ export const apiService = {
 
   async getEntity(entityId: string): Promise<Entity> {
     try {
-      const response = await $fetch(`/api/entities/${entityId}`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/entities/${entityId}`, {
         method: 'GET'
       });
-      
+
       // The API wraps the entity in a data property
       return (response as { data: Entity }).data;
     } catch (error) {
@@ -562,16 +566,17 @@ export const apiService = {
   async getEntityNarratives(entityId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch(`/api/entities/${entityId}/narratives`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/entities/${entityId}/narratives`, {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       return response as PaginatedResponse<Narrative>;
     } catch (error) {
       console.error('Failed to fetch entity narratives:', error);
@@ -659,16 +664,17 @@ export const apiService = {
   async getTopicsWithStats(params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<TopicWithStats>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch('/api/topics/stats', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/topics/stats', {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       // The API returns the response directly as a PaginatedResponse
       return response as PaginatedResponse<TopicWithStats>;
     } catch (error) {
@@ -686,16 +692,17 @@ export const apiService = {
   async getTopicClaims(topicId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch(`/api/topics/${topicId}/claims`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/topics/${topicId}/claims`, {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       return response as PaginatedResponse<Claim>;
     } catch (error) {
       console.error('Failed to fetch topic claims:', error);
@@ -712,16 +719,17 @@ export const apiService = {
   async getTopicNarratives(topicId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch(`/api/topics/${topicId}/narratives`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/topics/${topicId}/narratives`, {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       return response as PaginatedResponse<Narrative>;
     } catch (error) {
       console.error('Failed to fetch topic narratives:', error);
@@ -736,7 +744,7 @@ export const apiService = {
   },
 
   // Claims endpoints
-  async getClaims(params?: { 
+  async getClaims(params?: {
     topic_id?: string;
     text?: string;
     min_score?: number;
@@ -746,23 +754,25 @@ export const apiService = {
   }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add topic filter if provided
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
       }
-      
+
       // Add text search if provided
       if (params?.text) {
         query.text = params.text;
       }
-      
+
       // Add score range if provided
       if (params?.min_score !== undefined) {
         query.min_score = params.min_score;
@@ -770,12 +780,12 @@ export const apiService = {
       if (params?.max_score !== undefined) {
         query.max_score = params.max_score;
       }
-      
-      const response = await $fetch('/api/claims', {
+
+      const response = await apiFetch('/api/claims', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Claim>;
     } catch (error) {
       console.error('Failed to fetch claims:', error);
