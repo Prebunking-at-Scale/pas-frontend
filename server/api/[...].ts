@@ -19,10 +19,8 @@ export default defineEventHandler(async (event) => {
   const isPatchOrPost = method === 'PATCH' || method === 'POST';
 
   if (isClaimsOrNarrativesEndpoint && isPatchOrPost) {
-    const xApiToken = event.node.req.headers['X-API-TOKEN'] || event.node.req.headers['x-api-token'];
-    if (xApiToken) {
-      headers['X-API-TOKEN'] = xApiToken as string;
-    }
+    // Use X-API-TOKEN from environment for PATCH/POST to claims and narratives
+    headers['X-API-TOKEN'] = config.apiKey;
   } else {
     // For other requests, forward the Bearer token if present
     const authHeader = event.node.req.headers.authorization;
