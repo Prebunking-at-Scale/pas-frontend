@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const isPatchOrPost = method === 'PATCH' || method === 'POST';
 
   if (isClaimsOrNarrativesEndpoint && isPatchOrPost) {
-    const xApiToken = event.node.req.headers['X-API-TOKEN'];
+    const xApiToken = event.node.req.headers['X-API-TOKEN'] || event.node.req.headers['x-api-token'];
     if (xApiToken) {
       headers['X-API-TOKEN'] = xApiToken as string;
     }
