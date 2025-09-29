@@ -12,14 +12,16 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
   };
 
-  // Check if this is a PATCH or POST request to /api/claims or /api/narratives
+  // Check if this is a PATCH or POST request to /api/claims, /api/narratives, or PATCH to /api/videos
   // These requests come from the Narratives API
   const method = event.node.req.method;
   const isClaimsOrNarrativesEndpoint = path.startsWith('claims') || path.startsWith('narratives');
+  const isVideosEndpoint = path.startsWith('videos');
   const isPatchOrPost = method === 'PATCH' || method === 'POST';
+  const isPatch = method === 'PATCH';
 
-  if (isClaimsOrNarrativesEndpoint && isPatchOrPost) {
-    // Use X-API-TOKEN from environment for PATCH/POST to claims and narratives
+  if ((isClaimsOrNarrativesEndpoint && isPatchOrPost) || (isVideosEndpoint && isPatch)) {
+    // Use X-API-TOKEN from environment for these requests
     headers['X-API-TOKEN'] = config.apiKey;
   } else {
     // For other requests, forward the Bearer token if present
