@@ -12,15 +12,29 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
   };
 
-  const authHeader = event.node.req.headers.authorization;
-  if (authHeader) {
-    headers['Authorization'] = authHeader;
+  // Check if this is a PATCH or POST request to /api/claims or /api/narratives
+  // These requests come from the Narratives API
+  const method = event.node.req.method;
+  const isClaimsOrNarrativesEndpoint = path.startsWith('claims') || path.startsWith('narratives');
+  const isPatchOrPost = method === 'PATCH' || method === 'POST';
+
+  if (isClaimsOrNarrativesEndpoint && isPatchOrPost) {
+    const xApiToken = event.node.req.headers['X-API-TOKEN'];
+    if (xApiToken) {
+      headers['X-API-TOKEN'] = xApiToken as string;
+    }
+  } else {
+    // For other requests, forward the Bearer token if present
+    const authHeader = event.node.req.headers.authorization;
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
+    }
   }
   
   // Forward the request to the backend
   try {
     const response = await $fetch.raw(backendUrl, {
-      method: event.node.req.method,
+      method: event.node.req.method as any,
       headers,
       // Forward query parameters
       query: getQuery(event),
