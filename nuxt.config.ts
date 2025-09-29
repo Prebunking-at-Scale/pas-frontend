@@ -20,6 +20,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-only config (not exposed to client)
     backendEndpoint: process.env.BACKEND_ENDPOINT || 'http://localhost:8000',
+    apiKey: process.env.API_KEY || '',
     
     // Public config (exposed to client)
     public: {
