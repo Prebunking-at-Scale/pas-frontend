@@ -1,6 +1,8 @@
 // API Service with mock data
 import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
 import { useApi } from '~/composables/useApi';
+import { differenceInHours } from 'date-fns';
+import type { IntervalResult } from 'date-fns';
 
 // API calls now go through our frontend proxy to hide the API key
 // The proxy handles authentication with the backend
@@ -307,17 +309,15 @@ export const apiService = {
   },
 
   // Viral narratives with hours parameter
-  async getViralNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
+  async getViralNarratives(hours: number | null, limit?: number): Promise<Narrative[]> {
     const { $config } = useNuxtApp();
-    const hoursParam = hours ?? $config.public.viralNarrativesHours ?? 168;
-    const limitParam = limit ?? $config.public.viralNarrativesLimit ?? 20;
     try {
       const { apiFetch } = useApi();
       const response = await apiFetch('/api/narratives/viral', {
         method: 'GET',
         query: {
-          hours: hoursParam,
-          limit: limitParam
+          hours: hours ?? undefined,
+          limit: limit || $config.public.viralNarrativesLimit
         }
       });
 
@@ -336,17 +336,15 @@ export const apiService = {
   // Prevalent narratives - narratives with most videos in a time frame
   // Endpoint: GET /api/narratives/prevalent
   // Returns narratives sorted by video count in specified time period
-  async getPrevalentNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
+  async getPrevalentNarratives(hours: number | null, limit?: number): Promise<Narrative[]> {
     const { $config } = useNuxtApp();
-    const hoursParam = hours ?? $config.public.prevalentNarrativesHours ?? 168;
-    const limitParam = limit ?? $config.public.prevalentNarrativesLimit ?? 10;
     try {
       const { apiFetch } = useApi();
       const response = await apiFetch('/api/narratives/prevalent', {
         method: 'GET',
         query: {
-          hours: hoursParam,
-          limit: limitParam
+          hours: hours ?? undefined,
+          limit: limit || $config.public.prevalentNarrativesLimit
         }
       });
 
@@ -363,7 +361,9 @@ export const apiService = {
   },
 
   // Dashboard data
-  async getDashboardStats(): Promise<{
+  async getDashboardStats(
+    timeframeInterval: IntervalResult<Date, Date, undefined> | null // null = all time, no date filter
+  ): Promise<{
     topics: TopicWithStats[];
     entities: Entity[];
     actors: any[];
@@ -372,22 +372,19 @@ export const apiService = {
   }> {
     await new Promise(resolve => setTimeout(resolve, 600));
 
-    // Get config values
-    const { $config } = useNuxtApp();
-    const viralHours = $config.public.viralNarrativesHours || 168;
-    const prevalentHours = $config.public.prevalentNarrativesHours || 168;
+    const hours = timeframeInterval ? differenceInHours(timeframeInterval.end, timeframeInterval.start) : null;
 
     // Get real topics data from the API
     let topicsData: TopicWithStats[] = [];
     try {
-      const topicsResponse = await this.getTopicsWithStats({ limit: 5 });
+      const topicsResponse = await this.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end });
       topicsData = topicsResponse.data || [];
     } catch (error) {
       console.error('Failed to fetch topics for dashboard:', error);
       // Use fallback mock data if API fails
       topicsData = [];
     }
-    
+
     // Get entities data from the API
     let entitiesData: Entity[] = [];
     try {
@@ -398,13 +395,13 @@ export const apiService = {
       // Use fallback empty data if API fails
       entitiesData = [];
     }
-    
+
     return {
       topics: topicsData,
       entities: entitiesData,
       actors: [],
-      viralNarratives: await this.getViralNarratives(viralHours, 9), 
-      prevalentNarratives: await this.getPrevalentNarratives(prevalentHours, 10)
+      viralNarratives: await this.getViralNarratives(hours),
+      prevalentNarratives: await this.getPrevalentNarratives(hours)
     };
   },
 
@@ -661,9 +658,12 @@ export const apiService = {
   },
 
   // New topic methods based on API spec
-  async getTopicsWithStats(params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<TopicWithStats>> {
+  async getTopicsWithStats(params?: { startDate?: Date, endDate?: Date, limit?: number; offset?: number }): Promise<PaginatedResponse<TopicWithStats>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
+
+    const startDateStr = params?.startDate ? params.startDate.toISOString() : undefined;
+    const endDateStr = params?.endDate ? params.endDate.toISOString() : undefined;
 
     try {
       const { apiFetch } = useApi();
@@ -671,7 +671,9 @@ export const apiService = {
         method: 'GET',
         query: {
           limit,
-          offset
+          offset,
+          start_date: startDateStr,
+          end_date: endDateStr
         }
       });
 

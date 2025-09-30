@@ -1,5 +1,21 @@
 <template>
   <ClientOnly>
+    <!--filters-->
+    <div class="flex gap-1 items-center bg-gray-200 rounded-md text-sm text-gray-600 px-3 py-2 w-max mb-4">
+      <div class="h-min shrink-0">{{$t('dashboard.displayDataFrom')}}: </div>
+      <Select v-model="selectedTimeframe" class="shrink">
+        <SelectTrigger class="w-full bg-white dark:bg-white font-semibold text-sm"
+          :disabled="loading"
+        >
+          <SelectValue :placeholder="$t('dashboard.selectTimeframe')" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem v-for="value in Object.values(AVAILABLE_TIMEFRAMES)" :key="value" :value="value">
+            {{ $t(`dashboard.${value}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
     <div>
       <div v-if="loading" class="flex justify-center items-center h-64">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
@@ -102,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
@@ -114,6 +131,24 @@ definePageMeta({
 
 const router = useRouter();
 const topicsStore = useTopicsStore();
+
+enum AVAILABLE_TIMEFRAMES {
+  LAST_24_HOURS = 'last24Hours',
+  LAST_WEEK = 'lastWeek',
+  LAST_MONTH = 'lastMonth',
+  ALL_TIME = 'allTime'
+}
+
+const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
+
+// Initialize from localStorage when component mounts (client-side only)
+onMounted(() => {
+  const saved = localStorage.getItem('dashboardTimeframe');
+  if (saved && Object.values(AVAILABLE_TIMEFRAMES).includes(saved as AVAILABLE_TIMEFRAMES)) {
+    selectedTimeframe.value = saved as AVAILABLE_TIMEFRAMES;
+  }
+  loadData();
+});
 
 // Load dashboard stats with safe defaults
 const stats = ref<{
@@ -152,10 +187,34 @@ const goToEntity = (id: string) => {
   router.push(`/entities/${id}`);
 };
 
-onMounted(async () => {
-  // Load data
+const getDateIntervalFromTimeframe = (timeframe: string) => {
+  const now = new Date();
+
+  switch (timeframe) {
+    case AVAILABLE_TIMEFRAMES.LAST_24_HOURS:
+      return interval(sub(now, { hours: 24 }), now);
+    case AVAILABLE_TIMEFRAMES.LAST_WEEK:
+      return interval(sub(now, { days: 7 }), now);
+    case AVAILABLE_TIMEFRAMES.LAST_MONTH:
+      return interval(sub(now, { months: 1 }), now);
+    case AVAILABLE_TIMEFRAMES.ALL_TIME:
+    default:
+      return null; // No filter
+  }
+};
+
+watch(selectedTimeframe, (newValue) => {
+  if (import.meta.client) {
+    localStorage.setItem('dashboardTimeframe', newValue);
+  }
+  loadData();
+});
+
+const loadData = async () => {
+  loading.value = true;
   try {
-    const data = await apiService.getDashboardStats();
+    const timeframeInterval = getDateIntervalFromTimeframe(selectedTimeframe.value);
+    const data = await apiService.getDashboardStats(timeframeInterval);
     // Ensure all arrays exist with defaults
     stats.value = {
       topics: data.topics || [],
@@ -178,5 +237,5 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+}
 </script>
