@@ -113,7 +113,23 @@
     "forgotPasswordSuccess": "¡Enlace de restablecimiento enviado! Revisa tu correo.",
     "forgotPasswordError": "Error al enviar el enlace. Por favor intenta nuevamente.",
     "sendResetLink": "Enviar Enlace",
-    "sendingResetLink": "Enviando..."
+    "sendingResetLink": "Enviando...",
+    "otherLoginOptions": "Otras opciones de inicio de sesión"
+  },
+  "magicLogin": {
+    "title": "Iniciar sesión con Magic Link",
+    "subtitle": "Ingrese su correo electrónico para recibir un enlace de inicio de sesión",
+    "email": "Correo electrónico",
+    "sendLink": "Enviar Enlace",
+    "sendingLink": "Enviando...",
+    "linkSent": "¡Enlace enviado! Revisa tu correo.",
+    "error": "Error al enviar el enlace. Por favor intenta nuevamente.",
+    "invalidEmail": "Por favor ingrese una dirección de correo válida",
+    "networkError": "No se puede conectar al servidor. Por favor verifique su conexión a internet.",
+    "genericError": "Ocurrió un error inesperado. Por favor intente nuevamente.",
+    "invalidToken": "Magic link inválido. Por favor solicita uno nuevo.",
+    "expiredToken": "El magic link ha expirado. Por favor solicita uno nuevo.",
+    "magicLinkSent": "¡Magic link enviado! Revisa tu correo."
   },
   "profile": {
     "title": "Perfil",

@@ -113,7 +113,23 @@
     "forgotPasswordSuccess": "Password reset link sent! Check your email.",
     "forgotPasswordError": "Failed to send reset link. Please try again.",
     "sendResetLink": "Send Reset Link",
-    "sendingResetLink": "Sending..."
+    "sendingResetLink": "Sending...",
+    "otherLoginOptions": "Other login options"
+  },
+  "magicLogin": {
+    "title": "Login with Magic Link",
+    "subtitle": "Enter your email address to receive a login link",
+    "email": "Email address",
+    "sendLink": "Send Link",
+    "sendingLink": "Sending...",
+    "linkSent": "Link sent! Check your email.",
+    "error": "Error sending link. Please try again.",
+    "invalidEmail": "Please enter a valid email address",
+    "networkError": "Unable to connect to the server. Please check your internet connection.",
+    "genericError": "An unexpected error occurred. Please try again.",
+    "invalidToken": "Invalid magic link. Please request a new one.",
+    "expiredToken": "Magic link has expired. Please request a new one.",
+    "magicLinkSent": "Magic link sent! Check your email."
   },
   "profile": {
     "title": "Profile",

@@ -113,7 +113,23 @@
     "forgotPasswordSuccess": "Lien de réinitialisation envoyé! Vérifiez vos e-mails.",
     "forgotPasswordError": "Échec de l'envoi du lien. Veuillez réessayer.",
     "sendResetLink": "Envoyer le lien",
-    "sendingResetLink": "Envoi..."
+    "sendingResetLink": "Envoi...",
+    "otherLoginOptions": "Autres options de connexion"
+  },
+  "magicLogin": {
+    "title": "Connexion avec Magic Link",
+    "subtitle": "Entrez votre adresse e-mail pour recevoir un lien de connexion",
+    "email": "Adresse e-mail",
+    "sendLink": "Envoyer le lien",
+    "sendingLink": "Envoi en cours...",
+    "linkSent": "Lien envoyé! Vérifiez vos e-mails.",
+    "error": "Erreur lors de l'envoi du lien. Veuillez réessayer.",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide.",
+    "networkError": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
+    "genericError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "invalidToken": "Magic link invalide. Veuillez en demander un nouveau.",
+    "expiredToken": "Le magic link a expiré. Veuillez en demander un nouveau.",
+    "magicLinkSent": "Magic link envoyé! Vérifiez vos e-mails."
   },
   "profile": {
     "title": "Profil",
