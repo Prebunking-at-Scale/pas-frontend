@@ -30,6 +30,14 @@
             :placeholder="$t('narratives.textPlaceholder')"
             @enter-pressed="applyFilters"
           />
+
+          <LanguageFilter
+            class="w-full"
+            v-model="filters.language"
+            :label="$t('videos.language')"
+            :placeholder="$t('videos.selectLanguage')"
+            type="select"
+          />
         </div>
       </FilterCard>
 
@@ -107,6 +115,7 @@ import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
 import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -131,14 +140,16 @@ const itemsPerPage = 20;
 const filters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 const currentTopicName = ref('');
@@ -170,6 +181,10 @@ const loadNarratives = async () => {
     
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
+    }
+
+    if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
+      params.language = appliedFilters.value.language;
     }
     
     const result = await apiService.getNarratives(params);

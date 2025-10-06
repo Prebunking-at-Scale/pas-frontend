@@ -2,13 +2,18 @@
   <div class="space-y-2">
     <Label>{{ label || $t('filters.language') }}</Label>
     
-    <div v-if="type === 'select'">
+    <!-- Loading indicator -->
+    <div v-if="isLoading" class="flex items-center gap-2 text-sm text-gray-500">
+      <Icon name="lucide:loader-2" class="animate-spin w-4 h-4" />
+      Loading languages...
+    </div>
+    
+    <div v-else-if="type === 'select'" class="space-y-1">
       <Select :model-value="modelValue as string" @update:model-value="$emit('update:modelValue', $event)">
         <SelectTrigger>
           <SelectValue :placeholder="placeholder || $t('filters.allLanguages')" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{{ $t('filters.allLanguages') }}</SelectItem>
           <SelectItem v-for="language in languages" :key="language.value" :value="language.value">
             {{ language.label }}
           </SelectItem>
@@ -16,7 +21,7 @@
       </Select>
     </div>
     
-    <div v-else class="space-y-2">
+    <div v-else class="space-y-2 max-h-60 overflow-y-auto">
       <div v-for="language in languages" :key="language.value" class="flex items-center space-x-2">
         <Checkbox
           :id="`language-${language.value}`"
@@ -35,11 +40,7 @@
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-
-interface Language {
-  value: string
-  label: string
-}
+import { Icon } from '#components'
 
 interface Props {
   modelValue?: string | string[]
@@ -56,12 +57,12 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | string[]]
 }>()
 
-const languages: Language[] = [
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Español' },
-  { value: 'fr', label: 'Français' },
-  { value: 'de', label: 'Deutsch' }
-]
+const {
+  languages,
+  isLoading,
+} = useLanguages({
+  includeAllOption: true
+})
 
 const handleCheckboxChange = (language: string, checked: boolean) => {
   if (props.type !== 'checkbox') return

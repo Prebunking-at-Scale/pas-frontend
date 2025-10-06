@@ -276,3 +276,8 @@ export interface VideoDetailResponse extends Video {
   };
   narratives?: Narrative[];
 }
+
+export interface LanguageListResponse {
+  language: string;
+  count: number;
+}
