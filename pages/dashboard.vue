@@ -1,21 +1,24 @@
 <template>
   <ClientOnly>
     <!--filters-->
-    <div class="flex gap-1 items-center bg-gray-200 rounded-md text-sm text-gray-600 px-3 py-2 w-max mb-4">
-      <div class="h-min shrink-0">{{$t('dashboard.displayDataFrom')}}: </div>
-      <Select v-model="selectedTimeframe" class="shrink">
-        <SelectTrigger class="w-full bg-white dark:bg-white font-semibold text-sm"
-          :disabled="loading"
-        >
-          <SelectValue :placeholder="$t('dashboard.selectTimeframe')" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem v-for="value in Object.values(AVAILABLE_TIMEFRAMES)" :key="value" :value="value">
-            {{ $t(`dashboard.${value}`) }}
-          </SelectItem>
-        </SelectContent>
-      </Select>
+    <div class="flex gap-1 items-center bg-neutral-100 bord rounded-md text-xs text-gray-600 px-3 py-2 mb-4">
+      <div class="flex gap-1 items-center">
+        <div class="h-min shrink-0">{{$t('dashboard.displayDataFrom')}}: </div>
+        <Select v-model="selectedTimeframe" class="shrink">
+          <SelectTrigger class="w-full bg-neutral-50 dark:bg-white text-xs"
+            :disabled="loading"
+          >
+            <SelectValue :placeholder="$t('dashboard.selectTimeframe')" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="value in Object.values(AVAILABLE_TIMEFRAMES)" :key="value" :value="value">
+              {{ $t(`dashboard.${value}`) }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
+    <hr class="mb-4">
     <div>
       <div v-if="loading" class="flex justify-center items-center h-64">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
