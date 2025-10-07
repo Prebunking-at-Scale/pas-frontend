@@ -25,7 +25,7 @@
               type="email"
               autocomplete="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
               :placeholder="$t('login.email')"
             >
           </div>
@@ -39,7 +39,7 @@
               autocomplete="current-password"
               required
               minlength="12"
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
               :placeholder="$t('login.password')"
             >
           </div>
@@ -58,7 +58,7 @@
         <div>
           <Button
           type="submit"
-          class="w-full bg-green-900 hover:bg-green-950 disabled:opacity-50"
+          class="w-full bg-emerald-900 hover:bg-emerald-950 disabled:opacity-50"
           :disabled="loading"
           >
             {{ loading ? $t('login.loggingIn') : $t('login.signIn') }}
@@ -68,7 +68,7 @@
         <!-- Forgot Password Link -->
         <div class="flex items-center justify-between">
           <div class="text-sm w-full">
-            <a href="#" @click.prevent="showForgotPassword = true" class="font-medium text-green-600 hover:text-green-500">
+            <a href="#" @click.prevent="showForgotPassword = true" class="font-medium text-emerald-600 hover:text-emerald-500">
               {{ $t('login.forgotPassword') }}
             </a>
           </div>
@@ -78,10 +78,9 @@
       <hr class="my-2 w-full border-t border-gray-300"/>
       <!-- Magic Link Login Button -->
       <div class="flex flex-col space-y-2 items-center justify-center">
-        <p>{{ $t('login.otherLoginOptions') }}</p>
         <Button
           variant="outline"
-          class="w-full border-green-600 text-green-600 hover:bg-green-50"
+          class="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-900 hover:text-white mt-4"
           @click="goToMagicLogin"
         >
           {{ $t('magicLogin.title') }}
@@ -107,10 +106,10 @@
         <CardContent>
           <p class="text-sm text-muted-foreground mb-4">{{ $t('login.forgotPasswordDescription') }}</p>
           
-          <div v-if="forgotPasswordSuccess" class="rounded-md bg-green-50 p-4 mb-4">
+          <div v-if="forgotPasswordSuccess" class="rounded-md bg-emerald-50 p-4 mb-4">
             <div class="flex">
               <div class="ml-3">
-                <h3 class="text-sm font-medium text-green-800">
+                <h3 class="text-sm font-medium text-emerald-800">
                   {{ $t('login.forgotPasswordSuccess') }}
                 </h3>
               </div>

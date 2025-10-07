@@ -133,7 +133,7 @@ const onSelectOrganization = async (orgId: string, orgData: any) => {
           <div>
             <label for="email-address" class="sr-only">{{ $t('login.email') }}</label>
             <input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
               :placeholder="$t('login.email')">
           </div>
         </div>
@@ -148,10 +148,10 @@ const onSelectOrganization = async (orgId: string, orgData: any) => {
             </div>
           </div>
         </div>
-        <div v-else-if="successMessage" class="rounded-md bg-green-50 p-4">
+        <div v-else-if="successMessage" class="rounded-md bg-emerald-50 p-4">
           <div class="flex">
             <div class="ml-3">
-              <h3 class="text-sm font-medium text-green-800">
+              <h3 class="text-sm font-medium text-emerald-800">
                 {{ successMessage }}
               </h3>
             </div>
@@ -159,7 +159,7 @@ const onSelectOrganization = async (orgId: string, orgData: any) => {
         </div>
         
         <div class="w-full flex items-center justify-between">
-          <Button type="submit" class="w-full bg-green-900 hover:bg-green-950 disabled:opacity-50"
+          <Button type="submit" class="w-full bg-emerald-900 hover:bg-emerald-950 disabled:opacity-50"
             :disabled="loading">
             {{ loading ? $t('magicLogin.sendingLink') : $t('magicLogin.sendLink') }}
           </Button>
@@ -170,7 +170,7 @@ const onSelectOrganization = async (orgId: string, orgData: any) => {
       <div class="flex flex-col space-y-2 items-center justify-center">
         <Button
           variant="outline"
-          class="w-full border-green-600 text-green-600 hover:bg-green-50"
+          class="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
           @click="goToLogin"
         >
           {{ $t('common.back') }}
