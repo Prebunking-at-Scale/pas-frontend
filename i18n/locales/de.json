@@ -113,7 +113,23 @@
     "forgotPasswordSuccess": "Link zum Zurücksetzen gesendet! Überprüfen Sie Ihre E-Mails.",
     "forgotPasswordError": "Fehler beim Senden des Links. Bitte versuchen Sie es erneut.",
     "sendResetLink": "Link senden",
-    "sendingResetLink": "Wird gesendet..."
+    "sendingResetLink": "Wird gesendet...",
+    "otherLoginOptions": "Andere Anmeldeoptionen"
+  },
+  "magicLogin": {
+    "title": "Magic Link Anmeldung",
+    "subtitle": "Geben Sie Ihre E-Mail-Adresse ein, um einen Anmeldelink zu erhalten",
+    "email": "E-Mail-Adresse",
+    "sendLink": "Link senden",
+    "sendingLink": "Wird gesendet...",
+    "linkSent": "Link gesendet! Überprüfen Sie Ihre E-Mails.",
+    "error": "Fehler beim Senden des Links. Bitte versuchen Sie es erneut.",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "networkError": "Verbindung zum Server nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "genericError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "invalidToken": "Ungültiger Magic Link. Bitte fordern Sie einen neuen an.",
+    "expiredToken": "Magic Link ist abgelaufen. Bitte fordern Sie einen neuen an.",
+    "magicLinkSent": "Magic Link gesendet! Überprüfen Sie Ihre E-Mails."
   },
   "invitation": {
     "title": "Einladung annehmen",

@@ -13,6 +13,33 @@ export const authService = {
     
     return response as LoginResponse;
   },
+  // Login with magic link
+  async requestMagicLink(email: string): Promise<boolean> {
+    try {
+      const response = await $fetch('/api/auth/request-magic-link', {
+        method: 'POST',
+        body: {
+          email
+        }
+      });
+      return true;
+    } catch (error) {
+      console.error('Error requesting magic link:', error);
+      return false;
+    }
+  },
+
+  // Validate magic link token and complete login
+  async validateMagicLink(token: string): Promise<LoginResponse> {
+    const response = await $fetch('/api/auth/magic-login', {
+      method: 'GET',
+      params: {
+        token
+      }
+    });
+    
+    return response as LoginResponse;
+  },
 
   // Get current user
   async getCurrentUser(): Promise<User> {
@@ -155,5 +182,32 @@ export const authService = {
     tokenCookie.value = null;
     orgCookie.value = null;
     userCookie.value = null;
+  },
+  // Select organization
+  selectOrganization (_orgId: string, orgData: any, firstTimeSetup: boolean) {
+    authService.setToken(orgData.token);
+    authService.setOrganization(orgData.organisation.id);
+    
+    // Track organization selection in Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('set', {
+        'user_properties': {
+          'organization_name': orgData.organisation.display_name,
+          'organization_id': orgData.organisation.id
+        }
+      });
+      
+      window.gtag('event', 'login', {
+        'organization_name': orgData.organisation.display_name,
+        'organization_id': orgData.organisation.id,
+        'is_admin': orgData.is_organisation_admin
+      });
+    }
+    
+    // Check if first time setup
+    if (firstTimeSetup) {
+      // Store flag for first time setup
+      sessionStorage.setItem('first_time_setup', 'true');
+    }
   }
 };

@@ -324,6 +324,6 @@ test.describe('Admin Page', () => {
     
     // Check for headers in table
     const headers = page.locator('th')
-    await expect(headers).toHaveCount(3)
+    await expect(headers).toHaveCount(5)
   })
 })
