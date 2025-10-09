@@ -24,9 +24,7 @@ export default defineNuxtConfig({
     
     // Public config (exposed to client)
     public: {
-      viralNarrativesHours: process.env.VIRAL_NARRATIVES_HOURS ? parseInt(process.env.VIRAL_NARRATIVES_HOURS) : 168,
-      viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 20,
-      prevalentNarrativesHours: process.env.PREVALENT_NARRATIVES_HOURS ? parseInt(process.env.PREVALENT_NARRATIVES_HOURS) : 168,
+      viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 9,
       prevalentNarrativesLimit: process.env.PREVALENT_NARRATIVES_LIMIT ? parseInt(process.env.PREVALENT_NARRATIVES_LIMIT) : 10,
       testModeEnabled: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
     }
