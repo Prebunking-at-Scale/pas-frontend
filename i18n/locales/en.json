@@ -267,7 +267,7 @@
     "searchPlaceholder": "Search in claims...",
     "text": "Text",
     "textPlaceholder": "Enter search text",
-    "range": "Harm Score",
+    "range": "Priority Score",
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
     "showingClaimsFor": "Showing claims for topic:",

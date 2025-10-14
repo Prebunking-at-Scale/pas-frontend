@@ -265,7 +265,7 @@
     "searchPlaceholder": "Buscar en claims...",
     "text": "Texto",
     "textPlaceholder": "Ingrese texto de búsqueda",
-    "range": "Puntuación de Daño",
+    "range": "Puntuación de Prioridad",
     "clearFilters": "Limpiar filtros",
     "applyFilters": "Aplicar filtros",
     "showingClaimsFor": "Mostrando claims para el tema:",

@@ -264,7 +264,7 @@
     "searchPlaceholder": "Rechercher dans les affirmations...",
     "text": "Texte",
     "textPlaceholder": "Entrez le texte de recherche",
-    "range": "Score de Nocivité",
+    "range": "Score de Priorité",
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
     "showingClaimsFor": "Affichage des affirmations pour le sujet :",
