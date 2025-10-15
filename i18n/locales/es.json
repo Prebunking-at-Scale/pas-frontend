@@ -33,7 +33,11 @@
     "error": "Error",
     "minutesAgo": "hace {count} min",
     "hoursAgo": "hace {count}h",
-    "daysAgo": "hace {count}d"
+    "daysAgo": "hace {count}d",
+    "sendFeedback": "Enviar Comentario",
+    "confirm_delete_title": "Enviar Comentario",
+    "confirm_delete_description": "¿Te gustaría proporcionar comentarios sobre esta declaración?",
+    "deleting": "Eliminando..."
   },
   "nav": {
     "overview": "Vista general",
@@ -249,7 +253,12 @@
     "lastUpdated": "Última actualización",
     "loadError": "Error al cargar la narrativa",
     "seenIn": "Visto en",
-    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa"
+    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
+    "feedback": "¿Esta declaración describe precisamente una narrativa de desinformación?",
+    "claimsRelatedFeedback": "¿Este claim está relacionado con la narrativa?",
+    "successFeedback": "¡Gracias por tus comentarios!",
+    "feedbackError": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
+    "thankYouForRating": "¡Gracias por calificar con {rating} estrellas!"
   },
   "claims": {
     "title": "Claims",

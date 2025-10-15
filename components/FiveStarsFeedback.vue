@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { Star } from 'lucide-vue-next'
+
+const props = withDefaults(defineProps<{
+  rating: number | null
+  canUpdate?: boolean
+}>(), {
+  canUpdate: true
+})
+
+const emit = defineEmits<{
+  (e: 'rate', rating: number): void
+}>()
+
+const handleStarClick = (starRating: number) => {
+  emit('rate', starRating)
+}
+
+// Hover state management
+const hoveredStar = ref<number | null>(null)
+
+const setHoverStar = (starIndex: number | null) => {
+  if (props.rating === null && props.canUpdate) {
+    hoveredStar.value = starIndex
+  }
+}
+
+const ratingTooltipIndicators = [
+  'Bad',
+  'Fair',
+  'Good',
+  'Very Good',
+  'Excellent'
+]
+
+</script>
+
+<template>
+  <div class="flex justify-center gap-1" @mouseleave="setHoverStar(null)">
+    <template v-for="starIndex in 5" :key="starIndex">
+      <UTooltip :text="rating === null ? ratingTooltipIndicators[starIndex - 1] : 'You have already rated'">
+        <Button 
+          @click="handleStarClick(starIndex)" 
+          @mouseenter="setHoverStar(starIndex)"
+          :disabled="props.rating !== null || !props.canUpdate" 
+          :variant="props.rating !== null && starIndex <= props.rating ? 'default' : 'outline'" 
+          size="icon"
+          class="h-8 w-8 transition-colors duration-200"
+        >
+          <Star 
+            class="size-4 transition-colors duration-200" 
+            :class="{
+              'fill-current text-yellow-400': (props.rating !== null && starIndex <= props.rating) || (hoveredStar !== null && starIndex <= hoveredStar),
+              'text-gray-400': (props.rating === null || starIndex > props.rating) && (hoveredStar === null || starIndex > hoveredStar),
+              'text-yellow-200': hoveredStar !== null && starIndex <= hoveredStar && props.rating === null
+            }"
+          />
+        </Button>
+      </UTooltip>
+    </template>
+  </div>
+</template>

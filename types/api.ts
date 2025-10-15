@@ -276,3 +276,22 @@ export interface VideoDetailResponse extends Video {
   };
   narratives?: Narrative[];
 }
+
+export interface NarrativeFeedback {
+  id: string;
+  user_id: string;
+  narrative_id: string;
+  feedback_score: number; // 1 for like, 0 for dislike
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClaimFeedback {
+  id: string;
+  user_id: string;
+  claim_id: string;
+  narrative_id: string;
+  feedback_score: number; // 1 for like, 0 for dislike
+  created_at: string;
+  updated_at: string;
+}

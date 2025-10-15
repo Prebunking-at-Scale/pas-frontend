@@ -40,56 +40,63 @@
       </div>
 
       <!-- Total stats calculated from videos -->
-      <div class="bg-white shadow rounded-lg mb-6 p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
+      <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
+        <!--Feedback Section -->
+        <div class="flex gap-2 place-self-end w-fit items-center">
+          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback') }}</h6>
+          <LikeDislikeFeedback @like="handleVote('like')" @dislike="handleVote('dislike')" :vote="narrativeFeedback" :can-update="false" />
+        </div>
+        <!-- Total stats calculated from videos -->
+        <div class="bg-white shadow rounded-lg p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Total Views -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                👁️
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Views -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  👁️
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalViews.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.views') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalViews.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.views') }}</div>
             </div>
-          </div>
 
-          <!-- Total Likes -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                ❤️
+            <!-- Total Likes -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  ❤️
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalLikes.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.likes') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalLikes.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.likes') }}</div>
             </div>
-          </div>
 
-          <!-- Total Comments -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                💬
+            <!-- Total Comments -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  💬
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalComments.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.comments') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalComments.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.comments') }}</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
-      <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrative.videos && narrative.videos.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
-        <div class="h-96">
-          <NarrativeEvolutionChart
-            :videos="narrative.videos"
-            :locale="$i18n.locale.value"
-          />
+        <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
+        <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrative.videos && narrative.videos.length > 0">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
+          <div class="h-96">
+            <NarrativeEvolutionChart
+              :videos="narrative.videos"
+              :locale="$i18n.locale.value"
+            />
+          </div>
         </div>
       </div>
-
       
       <!-- Timeline Tabs -->
       <div class="bg-white shadow rounded-lg mb-6" v-if="false">
@@ -206,7 +213,9 @@
       <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claims && narrative.claims.length > 0">
         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claims.length }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
-          <ClaimCard 
+          <ClaimCard
+            :show-feedback-action="true"
+            @open-feedback-dialog="onFeedbackClick"
             v-for="claim in narrative.claims" 
             :key="claim.id" 
             :claim="claim"
@@ -228,7 +237,7 @@
       </div>
     </div>
 
-    <!-- Alert Dialog -->
+    <!-- Dialogs Section -->
     <AlertFormDialog
       v-if="narrative"
       v-model:open="showAlertDialog"
@@ -236,12 +245,15 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
+    <ClaimFeedbackDialog
+      v-if="narrative"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Narrative } from '~/types/api';
+import type { Claim, Narrative } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
@@ -251,7 +263,7 @@ import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import { Bell } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
-import { formatDate } from '~/utils/date';
+import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
 
 definePageMeta({
   layout: 'default',
@@ -262,6 +274,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+const dialogsStore = useNarrativeDialogsStore();
 
 // State
 const narrative = ref<Narrative | null>(null);
@@ -270,6 +283,7 @@ const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
+const narrativeFeedback = ref<'like' | 'dislike' | null>(null);
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -299,6 +313,12 @@ onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
     narrative.value = await apiService.getNarrative(narrativeId);
+    const feedbackResponse = await apiService.getNarrativeFeedback(narrativeId);
+    if (!feedbackResponse) {
+      narrativeFeedback.value = null;
+    } else {
+      narrativeFeedback.value = feedbackResponse.feedback_score === 1 ? 'like' : 'dislike';
+    }
   } catch (err) {
     console.error('Failed to load narrative:', err);
     error.value = t('narratives.loadError');
@@ -341,4 +361,31 @@ const handleAlertSave = (alert: Alert) => {
   });
   showAlertDialog.value = false;
 };
+
+const handleVote = async (vote: 'like' | 'dislike') => {
+  if (!narrative.value) return;
+  const score = vote === 'like' ? 1 : 0;
+  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score)
+    .catch(() => {
+      toast.add({
+        title: t('common.error'),
+        description: t('narratives.feedbackError'),
+        color: 'error'
+      });
+      return null;
+  });
+  if (!result) return;
+
+  narrativeFeedback.value = vote;
+
+  toast.add({
+    title: t('narratives.successFeedback')
+  });
+};
+
+const onFeedbackClick = (claim: Claim) => {
+  if (!narrative.value) return;
+  dialogsStore.openClaimFeedbackDialog(claim, narrative.value);
+};
+
 </script>

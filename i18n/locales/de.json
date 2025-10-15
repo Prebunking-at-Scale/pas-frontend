@@ -33,7 +33,11 @@
     "error": "Fehler",
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
-    "daysAgo": "vor {count} T."
+    "daysAgo": "vor {count} T.",
+    "sendFeedback": "Feedback Senden",
+    "confirm_delete_title": "Feedback Senden",
+    "confirm_delete_description": "Möchten Sie Feedback zu dieser Behauptung geben?",
+    "deleting": "Wird gelöscht..."
   },
   "nav": {
     "overview": "Übersicht",
@@ -218,7 +222,12 @@
     "lastUpdated": "Zuletzt aktualisiert",
     "loadError": "Fehler beim Laden des Narrativs",
     "seenIn": "Gesehen in",
-    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen"
+    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
+    "feedback": "Beschreibt diese Aussage präzise ein Desinformationsnarrativ?",
+    "claimsRelatedFeedback": "Bezieht sich diese Behauptung genau auf das Narrativ?",
+    "successFeedback": "Vielen Dank für Ihr Feedback!",
+    "feedbackError": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
+    "thankYouForRating": "Vielen Dank für die Bewertung mit {rating} Sternen!"
   },
   "claims": {
     "title": "Behauptungen",

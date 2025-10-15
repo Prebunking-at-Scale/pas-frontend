@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
+import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativeFeedback, ClaimFeedback } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -798,6 +798,63 @@ export const apiService = {
         page: 1,
         size: limit
       };
+    }
+  },
+
+  async getNarrativeFeedback(narrativeId: string): Promise<NarrativeFeedback|null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeFeedback|null>>(`/api/feedback/narratives/${narrativeId}`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch narrative feedback:', error);
+      // Return empty response on error
+      return null;
+    }
+  },
+
+  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number) {
+    try {
+      const { apiFetch } = useApi();
+
+      return await apiFetch(`/api/feedback/narratives/${narrativeId}`, {
+        method: 'POST',
+        body: { feedback_score: feedbackScore }
+      });
+    } catch (error) {
+      console.error('Failed to send narrative feedback:', error);
+      throw error;
+    }
+  },
+
+  async getClaimFeedback(claimId: string, narrativeId: string): Promise<ClaimFeedback | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<ClaimFeedback | null>>(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch claim feedback:', error);
+      // Return empty response on error
+      return null;
+    }
+  },
+
+  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number) {
+    try {
+      const { apiFetch } = useApi();
+      return await apiFetch(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
+        method: 'POST',
+        body: { feedback_score: feedbackScore }
+      });
+    } catch (error) {
+      console.error('Failed to send claim feedback:', error);
+      throw error;
     }
   }
 };

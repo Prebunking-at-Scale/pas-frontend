@@ -33,7 +33,11 @@
     "error": "Erreur",
     "minutesAgo": "il y a {count} min",
     "hoursAgo": "il y a {count}h",
-    "daysAgo": "il y a {count}j"
+    "daysAgo": "il y a {count}j",
+    "sendFeedback": "Envoyer des Commentaires",
+    "confirm_delete_title": "Envoyer des Commentaires",
+    "confirm_delete_description": "Souhaitez-vous fournir des commentaires sur cette affirmation ?",
+    "deleting": "Suppression..."
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -248,7 +252,12 @@
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",
     "seenIn": "Vu dans",
-    "claimsSupportingNarrative": "Affirmations soutenant ce récit"
+    "claimsSupportingNarrative": "Affirmations soutenant ce récit",
+    "feedback": "Cette déclaration décrit-elle précisément un récit de désinformation ?",
+    "claimsRelatedFeedback": "Cette affirmation est-elle liée au récit ?",
+    "successFeedback": "Merci pour vos commentaires !",
+    "feedbackError": "Échec de l'envoi des commentaires. Veuillez réessayer.",
+    "thankYouForRating": "Merci d'avoir donné {rating} étoiles !"
   },
   "claims": {
     "title": "Affirmations",

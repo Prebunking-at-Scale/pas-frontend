@@ -33,7 +33,9 @@
     "error": "Error",
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago"
+    "daysAgo": "{count}d ago",
+    "sendFeedback": "Send Feedback",
+    "deleting": "Deleting..."
   },
   "nav": {
     "overview": "Overview",
@@ -251,7 +253,12 @@
     "lastUpdated": "Last updated",
     "loadError": "Failed to load narrative",
     "seenIn": "Seen in",
-    "claimsSupportingNarrative": "Claims supporting this narrative"
+    "claimsSupportingNarrative": "Claims supporting this narrative",
+    "feedback": "Does this statement describe precisely a misinformation narrative?",
+    "claimsRelatedFeedback": "Does this claim accurately relate to the narrative?",
+    "successFeedback": "Thank you for your feedback!",
+    "feedbackError": "Failed to send feedback. Please try again.",
+    "thankYouForRating": "Thank you for rating {rating} stars!"
   },
   "claims": {
     "title": "Claims",

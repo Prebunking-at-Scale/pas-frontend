@@ -4,19 +4,38 @@
   @click="handleCardClick"
 >
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
+    <!-- Claim Header -->
+    <div class="flex mb-4 gap-2">
       <!-- Claim Text -->
-      <div class="mb-4">
-        <p class="text-gray-900 text-xl leading-tight">
-          "{{ claim.claim || claim.text }}"
-        </p>
-        <p 
-          v-if="claim.video"
-          @click.stop="goToVideo(claim.video_id || claim.source_video_id)"
-          class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
-        >
-          <span>↳ {{ claim.video.title }}</span>
-        </p>
+      <div class="flex flex-auto mb-4">
+        <div class="flex flex-1 flex-col">
+          <p class="text-gray-900 text-xl leading-tight">
+            "{{ claim.claim || claim.text }}"
+          </p>
+          <p 
+            v-if="claim.video"
+            @click="goToVideo"
+            class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
+          >
+            <span>↳ {{ claim.video.title }}</span>
+          </p>
+        </div>
       </div>
+      <!-- Actions -->
+      <div class="flex flex-none gap-2">
+        <!--Send Feedback Action-->
+        <UTooltip :text="$t('common.sendFeedback')">
+          <Button
+            v-if="props.showFeedbackAction"
+            @click="onFeedbackDialog"
+            size="icon"
+            variant="outline"
+          >
+            <MessageCircleMore class="size-4" />
+          </Button>
+        </UTooltip>
+      </div>
+    </div>
       
       <div class="flex items-center gap-2 justify-between flex-wrap">
         <PlatformBadge v-if="claim.video" :platform="claim.video.platform" />
@@ -30,6 +49,7 @@
                 v-for="topic in claim.topics" 
                 :key="topic.id"
                 :to="`/topics/${topic.id}`"
+                @click="(e: Event) => e.stopPropagation()"
                 class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer">
                 {{ topic.topic }}
               </NuxtLink>
@@ -60,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import { MessageCircleMore } from 'lucide-vue-next';
 import type { Claim } from '~/types/api';
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
@@ -67,9 +88,16 @@ import { formatDate } from '~/utils/date';
 
 interface Props {
   claim: Claim;
+  showFeedbackAction?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showFeedbackAction: false,
+});
+
+const emit = defineEmits<{
+  (e: 'open-feedback-dialog', claim: Claim): void
+}>()
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
@@ -81,8 +109,12 @@ const handleCardClick = () => {
   }
 };
 
-const goToVideo = (videoId: string) => {
-  router.push(`/videos/${videoId}`);
+const goToVideo = (event: Event) => {
+  event.stopPropagation();
+  const videoId = props.claim.video_id || props.claim.source_video_id;
+  if (videoId) {
+    router.push(`/videos/${videoId}`);
+  }
 };
 
 const goToTopic = (topicId: string) => {
@@ -124,4 +156,10 @@ const getScoreClass = (score: number) => {
     return 'bg-red-200 text-red-900';
   }
 };
+
+const onFeedbackDialog = (event: Event) => {
+  event.stopPropagation();
+  emit('open-feedback-dialog', props.claim);
+};
+
 </script>
