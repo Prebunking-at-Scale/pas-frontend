@@ -35,8 +35,6 @@
     "hoursAgo": "il y a {count}h",
     "daysAgo": "il y a {count}j",
     "sendFeedback": "Envoyer des Commentaires",
-    "confirm_delete_title": "Envoyer des Commentaires",
-    "confirm_delete_description": "Souhaitez-vous fournir des commentaires sur cette affirmation ?",
     "deleting": "Suppression..."
   },
   "nav": {

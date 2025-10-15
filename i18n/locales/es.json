@@ -35,8 +35,6 @@
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
     "sendFeedback": "Enviar Comentario",
-    "confirm_delete_title": "Enviar Comentario",
-    "confirm_delete_description": "¿Te gustaría proporcionar comentarios sobre esta declaración?",
     "deleting": "Eliminando..."
   },
   "nav": {

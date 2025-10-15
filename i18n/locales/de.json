@@ -35,8 +35,6 @@
     "hoursAgo": "vor {count} Std.",
     "daysAgo": "vor {count} T.",
     "sendFeedback": "Feedback Senden",
-    "confirm_delete_title": "Feedback Senden",
-    "confirm_delete_description": "Möchten Sie Feedback zu dieser Behauptung geben?",
     "deleting": "Wird gelöscht..."
   },
   "nav": {
