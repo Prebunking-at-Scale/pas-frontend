@@ -228,6 +228,7 @@
     "allTopics": "All topics",
     "topics": "Topics",
     "languages": "Languages",
+    "languagesCount": "language | languages",
     "created": "Created",
     "lastUpdated": "Last updated",
     "loadError": "Failed to load narrative",

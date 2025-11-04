@@ -225,6 +225,7 @@
     "allTopics": "Tous les sujets",
     "topics": "Sujets",
     "languages": "Langues",
+    "languagesCount": "langue | langues",
     "created": "Créé",
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",

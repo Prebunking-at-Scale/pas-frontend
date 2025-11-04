@@ -226,6 +226,7 @@
     "allTopics": "Todos los temas",
     "topics": "Temas",
     "languages": "Idiomas",
+    "languagesCount": "idioma | idiomas",
     "created": "Creado",
     "lastUpdated": "Última actualización",
     "loadError": "Error al cargar la narrativa",

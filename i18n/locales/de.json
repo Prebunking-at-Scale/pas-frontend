@@ -195,6 +195,7 @@
     "allTopics": "Alle Themen",
     "topics": "Themen",
     "languages": "Sprachen",
+    "languagesCount": "Sprache | Sprachen",
     "created": "Erstellt",
     "lastUpdated": "Zuletzt aktualisiert",
     "loadError": "Fehler beim Laden des Narrativs",
