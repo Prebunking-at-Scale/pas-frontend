@@ -83,6 +83,7 @@
     "metadata": "Información del vídeo",
     "duration": "Duración",
     "language": "Idioma",
+    "selectLanguage": "Seleccionar idioma",
     "source": "Fuente",
     "relatedNarratives": "Narrativas relacionadas",
     "topics": "Temas"
@@ -224,6 +225,7 @@
     "selectTopic": "Seleccionar un tema",
     "allTopics": "Todos los temas",
     "topics": "Temas",
+    "languages": "Idiomas",
     "created": "Creado",
     "lastUpdated": "Última actualización",
     "loadError": "Error al cargar la narrativa",

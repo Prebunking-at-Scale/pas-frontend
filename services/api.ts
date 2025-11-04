@@ -164,7 +164,7 @@ export const apiService = {
         query.text = params.text;
       }
       if (params?.language && params.language !== 'all') {
-        query.video_language = params.language;
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/videos', {
@@ -262,7 +262,7 @@ export const apiService = {
       }
       // Add language filter if provided
       if (params?.language && params.language !== 'all') {
-        query.video_language = params.language;
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -784,7 +784,7 @@ export const apiService = {
       }
       // Add language filter if provided
       if (params?.language && params.language !== 'all') {
-        query.video_language = params.language;
+        query.language = params.language;
       }
 
       // Add score range if provided
@@ -820,6 +820,7 @@ export const apiService = {
         method: 'GET'
       });
 
+      console.dir(response.data, { depth: null });
       return (response.data || [])?.map(item => item.language) || [];
     } catch (error) {
       console.error('Failed to fetch languages:', error);

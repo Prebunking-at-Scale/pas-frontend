@@ -27,13 +27,27 @@
         <div v-if="narrative.topics && narrative.topics.length > 0" class="mt-4">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="text-sm font-medium text-gray-700">{{ $t('narratives.topics') }}:</span>
-            <span 
-              v-for="topic in narrative.topics" 
+            <span
+              v-for="topic in narrative.topics"
               :key="topic.id"
               class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm cursor-pointer hover:bg-emerald-200"
               @click="goToTopic(topic.id)"
             >
               {{ topic.topic }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div v-if="languages.length > 0" class="mt-4">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-medium text-gray-700">{{ $t('narratives.languages') }}:</span>
+            <span
+              v-for="language in languages"
+              :key="language"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+            >
+              {{ language }}
             </span>
           </div>
         </div>
@@ -251,7 +265,6 @@ import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import { Bell } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
-import { formatDate } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -275,6 +288,22 @@ const showAlertDialog = ref(false);
 const stats = computed(() => {
   if (!narrative.value) return { totalViews: 0, totalLikes: 0, totalComments: 0 };
   return calculateNarrativeStats(narrative.value);
+});
+
+const languages = computed(() => {
+  if (!narrative.value) return [];
+
+  const languageSet = new Set<string>();
+
+  if (narrative.value.claims) {
+    narrative.value.claims.forEach(claim => {
+      if (claim.metadata?.language) {
+        languageSet.add(getLanguageName(claim.metadata?.language));
+      }
+    });
+  }
+
+  return Array.from(languageSet).sort();
 });
 
 const timeTabs = [

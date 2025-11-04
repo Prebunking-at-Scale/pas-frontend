@@ -83,6 +83,7 @@
     "metadata": "Videoinformationen",
     "duration": "Dauer",
     "language": "Sprache",
+    "selectLanguage": "Sprache wählen",
     "source": "Quelle",
     "relatedNarratives": "Verwandte Narrative",
     "topics": "Themen"
@@ -193,6 +194,7 @@
     "selectTopic": "Thema auswählen",
     "allTopics": "Alle Themen",
     "topics": "Themen",
+    "languages": "Sprachen",
     "created": "Erstellt",
     "lastUpdated": "Zuletzt aktualisiert",
     "loadError": "Fehler beim Laden des Narrativs",

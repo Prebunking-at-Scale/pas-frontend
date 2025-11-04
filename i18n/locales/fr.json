@@ -83,6 +83,7 @@
     "metadata": "Informations sur la vidéo",
     "duration": "Durée",
     "language": "Langue",
+    "selectLanguage": "Sélectionner la langue",
     "source": "Source",
     "relatedNarratives": "Récits liés",
     "topics": "Sujets"
@@ -223,6 +224,7 @@
     "selectTopic": "Sélectionner un sujet",
     "allTopics": "Tous les sujets",
     "topics": "Sujets",
+    "languages": "Langues",
     "created": "Créé",
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",
