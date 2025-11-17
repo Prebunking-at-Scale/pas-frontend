@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type LanguageListResponse } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -142,6 +142,7 @@ export const apiService = {
     text?: string;
     limit?: number;
     offset?: number;
+    language?: string;
   }): Promise<PaginatedResponse<Video>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -163,6 +164,9 @@ export const apiService = {
       }
       if (params?.text) {
         query.text = params.text;
+      }
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/videos', {
@@ -235,6 +239,7 @@ export const apiService = {
     topic_id?: string;
     entity_id?: string;
     text?: string;
+    language?: string;
   }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -256,6 +261,10 @@ export const apiService = {
       }
       if (params?.text) {
         query.text = params.text;
+      }
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -753,6 +762,7 @@ export const apiService = {
     max_score?: number;
     limit?: number;
     offset?: number;
+    language?: string | null;
   }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -773,6 +783,10 @@ export const apiService = {
       // Add text search if provided
       if (params?.text) {
         query.text = params.text;
+      }
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       // Add score range if provided
@@ -798,6 +812,21 @@ export const apiService = {
         page: 1,
         size: limit
       };
+    }
+  },
+
+  async getLanguages(): Promise<string[]> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<LanguageListResponse[]>>('/api/languages', {
+        method: 'GET'
+      });
+
+      console.dir(response.data, { depth: null });
+      return (response.data || [])?.map(item => item.language) || [];
+    } catch (error) {
+      console.error('Failed to fetch languages:', error);
+      return ['en', 'es', 'fr', 'de'];
     }
   }
 };

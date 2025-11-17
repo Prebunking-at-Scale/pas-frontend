@@ -83,6 +83,7 @@
     "metadata": "Video Information",
     "duration": "Duration",
     "language": "Language",
+    "selectLanguage": "Select language",
     "source": "Source",
     "relatedNarratives": "Related Narratives",
     "topics": "Topics"
@@ -247,6 +248,8 @@
     "selectTopic": "Select a topic",
     "allTopics": "All topics",
     "topics": "Topics",
+    "languages": "Languages",
+    "languagesCount": "language | languages",
     "created": "Created",
     "lastUpdated": "Last updated",
     "loadError": "Failed to load narrative",

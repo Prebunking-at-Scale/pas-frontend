@@ -1,7 +1,7 @@
 <template>
-  <div @click="$emit('click', video.id)" class="cursor-pointer bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden hover:bg-stone-100">
+  <div @click="$emit('click', video.id)" class="cursor-pointer bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden hover:bg-stone-100 flex flex-col h-full">
       <!-- YouTube Embed -->
-      <div v-if="youtubeVideoId" class="aspect-video bg-stone-200 rounded overflow-hidden">
+      <div v-if="youtubeVideoId" class="aspect-video bg-stone-200 rounded overflow-hidden flex-shrink-0">
         <iframe
           :src="`https://www.youtube.com/embed/${youtubeVideoId}`"
           frameborder="0"
@@ -10,53 +10,60 @@
           class="w-full h-full"
         ></iframe>
       </div>
-      <div v-else class="aspect-video bg-stone-200 rounded mb-3 flex items-center justify-center">
+      <div v-else class="aspect-video bg-stone-200 rounded mb-3 flex items-center justify-center flex-shrink-0">
         <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
       </div>
 
-      <div class="p-4">
+      <div class="p-4 flex flex-col flex-grow">
+        <!-- Channel Info -->
+        <div v-if="video.channel" class="text-sm text-gray-600 mb-2 flex items-center gap-2">
+          <PlatformBadge :platform="video.platform" /> {{ video.channel }}
+        </div>
 
-      <!-- Platform and Channel Info -->
-      <div class="flex items-center gap-2 mb-3 text-sm">
-        <PlatformBadge :platform="video.platform" />
-        <span v-if="video.channel" class="text-gray-500">
-          <span>Uploaded by {{ video.channel }}</span>
-          <span> · </span>
-          <span>{{ formatDate(video.uploaded_at, $i18n.locale.value) }}</span>
-        </span>
-      </div>
+        <!-- Title and Description -->
+        <div class="flex-grow">
+          <h3 class="font-semibold text-lg text-gray-900 line-clamp-2 leading-tight mb-1">{{ video.title }}</h3>
+          <p v-if="video.description" class="text-sm text-gray-500 line-clamp-2 leading-tight">{{ video.description }}</p>
+        </div>
 
-      <h3 class="font-semibold text-lg text-gray-900 line-clamp-2 mb-1">{{ video.title }}</h3>
-      <p class="text-sm text-gray-600 line-clamp-2">{{ video.description }}</p>
+        <!-- Bottom Section: Platform, Stats, and Metadata -->
+        <div class="flex items-center justify-between gap-2 flex-wrap" :class="video.description ? 'mt-6' : 'mt-3'">
+        
+          <!-- Left side: Stats, Language, and Date -->
+          <div class="flex items-center gap-3 text-sm text-gray-600 text-xs">
+            <!-- Stats with emojis -->
+            <span class="flex items-center gap-1">
+              👁️
+              {{ formatNumber(video.views || 0) }}
+            </span>
+            <span class="flex items-center gap-1">
+              ❤️
+              {{ formatNumber(video.likes || 0) }}
+            </span>
+            <span class="flex items-center gap-1">
+              💬
+              {{ formatNumber(video.comments || 0) }}
+            </span>
+          </div>
 
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <!-- Language Badge -->
+            <div v-if="video.metadata?.language" class="flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+              <span>{{ getLanguageName(video.metadata?.language) }}</span>
+            </div>
 
-      <!-- Stats -->
-      <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
-        <div class="flex items-center gap-3">
-          <span v-if="video.views" class="flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {{ formatNumber(video.views) }}
-          </span>
-          <span v-if="video.likes" class="flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-            </svg>
-            {{ formatNumber(video.likes) }} {{ $t('common.likes') }}
-          </span>
-          <span v-if="video.comments" class="flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            {{ formatNumber(video.comments) }}
-          </span>
+            <!-- Date -->
+            <div v-if="video.uploaded_at" class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="text-xs">{{ formatDate(video.uploaded_at, $i18n.locale.value) }}</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -64,6 +71,7 @@
 import type { Video } from '~/types/api';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
+import { getLanguageName } from '~/utils/languageMapping';
 
 interface Props {
   video: Video;
@@ -80,22 +88,22 @@ const { $i18n } = useNuxtApp();
 // Extract YouTube video ID from source_url
 const youtubeVideoId = computed(() => {
   if (!props.video.source_url) return null;
-  
+
   // Handle various YouTube URL formats
   const url = props.video.source_url;
-  
+
   // Regular YouTube URLs
   const standardMatch = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/);
   if (standardMatch) return standardMatch[1];
-  
+
   // YouTube Shorts
   const shortsMatch = url.match(/youtube\.com\/shorts\/([^&\n?#]+)/);
   if (shortsMatch) return shortsMatch[1];
-  
+
   // Youtu.be URLs
   const shortUrlMatch = url.match(/youtu\.be\/([^&\n?#]+)/);
   if (shortUrlMatch) return shortUrlMatch[1];
-  
+
   return null;
 });
 

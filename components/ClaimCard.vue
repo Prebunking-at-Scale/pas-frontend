@@ -36,6 +36,11 @@
             </div>
           </div>
 
+          <!-- Language -->
+          <div v-if="claim.metadata.language" class="flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+            <span class="text-xs">{{ getLanguageName(claim.metadata?.language || '') }}</span>
+          </div>
+
           <!-- Score -->
           <div v-if="claim.metadata?.score !== undefined">
             <span 
@@ -64,6 +69,7 @@ import type { Claim } from '~/types/api';
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
+import { getLanguageName } from '~/utils/languageMapping';
 
 interface Props {
   claim: Claim;

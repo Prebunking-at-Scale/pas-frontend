@@ -10,19 +10,23 @@
         <p class="text-gray-900 text-xl font-semibold leading-tight">
           {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
         </p>
-        <div 
+        <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
         >
           <span>{{ narrative.claims?.length || 0 }} claims in {{ narrative.videos?.length  || 0 }} videos</span>
           <span> · </span>
-          <span>Seen in </span>
+          <span>{{ $t('narratives.seenIn') }} </span>
           <div class="flex gap-1">
-            <PlatformBadge 
+            <PlatformBadge
               v-for="platform in [...new Set(narrative.videos?.map(v => v.platform) || [])]"
               :key="platform"
               :platform="platform as 'youtube' | 'tiktok' | 'instagram'"
             />
           </div>
+          <template v-if="languageCount > 0">
+            <span> · </span>
+            <span>{{ languageCount }} {{ $t('narratives.languagesCount', languageCount) }}</span>
+          </template>
         </div>
       </div>
 
@@ -84,4 +88,19 @@ const stats = computed(() => calculateNarrativeStats(props.narrative));
 const totalViews = computed(() => formatNumber(stats.value.totalViews));
 const totalComments = computed(() => formatNumber(stats.value.totalComments));
 const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
+
+// Calculate unique languages from claims
+const languageCount = computed(() => {
+  if (!props.narrative.claims || props.narrative.claims.length === 0) {
+    return 0;
+  }
+
+  const languages = new Set(
+    props.narrative.claims
+      .map(claim => claim.metadata?.language)
+      .filter(lang => lang != null && lang !== '')
+  );
+
+  return languages.size;
+});
 </script>
