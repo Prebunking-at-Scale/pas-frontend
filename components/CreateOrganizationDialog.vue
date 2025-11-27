@@ -105,7 +105,8 @@ const languageOptions = [
   { value: 'sl', label: 'Slovenščina (Slovenian)' },
   { value: 'es', label: 'Español (Spanish)' },
   { value: 'sv', label: 'Svenska (Swedish)' },
-  { value: 'tr', label: 'Türkçe (Turkish)' }
+  { value: 'tr', label: 'Türkçe (Turkish)' },
+  { value: 'sr', label: 'Srpski (Serbian)' }
 ];
 
 // Watch for dialog close
