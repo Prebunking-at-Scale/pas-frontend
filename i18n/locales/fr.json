@@ -513,18 +513,19 @@
     },
     "placeholders": {
       "displayName": "Entrez le nom de l'organisation",
-      "shortName": "Entrez le nom court (optionnel)",
+      "shortName": "Entrez le nom court",
       "searchLanguage": "Tapez pour rechercher des langues...",
       "countryCodes": "p.ex., FRA, BEL, CHE",
       "adminEmail": "admin{'@'}exemple.com"
     },
     "hints": {
-      "shortName": "Seuls les lettres minuscules, chiffres et tirets sont autorisés",
+      "shortName": "Généré automatiquement à partir du nom de l'organisation. Seuls les lettres minuscules, chiffres et tirets sont autorisés",
       "countryCodes": "Entrez les codes pays ISO à 3 lettres séparés par des virgules. ",
       "adminInvite": "Cet utilisateur recevra une invitation par email pour devenir le premier administrateur de cette organisation."
     },
     "errors": {
       "displayNameRequired": "Le nom de l'organisation est requis",
+      "shortNameRequired": "Le nom court est requis",
       "invalidShortName": "Le nom court ne peut contenir que des lettres minuscules, des chiffres et des tirets",
       "invalidCountryCodes": "Code(s) pays invalide(s): {codes}. Utilisez des codes ISO à 3 lettres valides",
       "emailRequired": "L'email de l'administrateur est requis",
