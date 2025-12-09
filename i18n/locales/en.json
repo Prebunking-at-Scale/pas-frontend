@@ -313,7 +313,7 @@
     "threshold_placeholder": "Enter threshold value",
     "topic": "Topic",
     "topic_placeholder": "Select topic",
-    "keyword": "Keyword", 
+    "keyword": "Keyword",
     "keyword_placeholder": "Enter keyword",
     "narrative": "Narrative",
     "narrative_placeholder": "Select narrative",
@@ -542,18 +542,19 @@
     },
     "placeholders": {
       "displayName": "Enter organisation name",
-      "shortName": "Enter short name (optional)",
+      "shortName": "Enter short name",
       "searchLanguage": "Type to search languages...",
       "countryCodes": "e.g., USA, GBR, DEU",
       "adminEmail": "admin{'@'}example.com"
     },
     "hints": {
-      "shortName": "Only lowercase letters, numbers, and hyphens allowed",
+      "shortName": "Auto-generated from organisation name. Only lowercase letters, numbers, and hyphens allowed",
       "countryCodes": "Enter comma-separated ISO 3-letter country codes. ",
       "adminInvite": "This user will receive an email invitation to become the first admin of this organisation."
     },
     "errors": {
       "displayNameRequired": "Organisation name is required",
+      "shortNameRequired": "Short name is required",
       "invalidShortName": "Short name can only contain lowercase letters, numbers, and hyphens",
       "invalidCountryCodes": "Invalid country code(s): {codes}. Please use valid ISO 3-letter codes",
       "emailRequired": "Admin email is required",

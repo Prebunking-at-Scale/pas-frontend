@@ -483,18 +483,19 @@
     },
     "placeholders": {
       "displayName": "Organisationsname eingeben",
-      "shortName": "Kurzname eingeben (optional)",
+      "shortName": "Kurzname eingeben",
       "searchLanguage": "Tippen Sie, um Sprachen zu suchen...",
       "countryCodes": "z.B. DEU, AUT, CHE",
       "adminEmail": "admin{'@'}beispiel.de"
     },
     "hints": {
-      "shortName": "Nur Kleinbuchstaben, Zahlen und Bindestriche erlaubt",
+      "shortName": "Automatisch aus dem Organisationsnamen generiert. Nur Kleinbuchstaben, Zahlen und Bindestriche erlaubt",
       "countryCodes": "Geben Sie durch Kommas getrennte ISO-Ländercodes mit 3 Buchstaben ein. ",
       "adminInvite": "Dieser Benutzer erhält eine E-Mail-Einladung, um der erste Administrator dieser Organisation zu werden."
     },
     "errors": {
       "displayNameRequired": "Der Organisationsname ist erforderlich",
+      "shortNameRequired": "Der Kurzname ist erforderlich",
       "invalidShortName": "Der Kurzname darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten",
       "invalidCountryCodes": "Ungültige(r) Ländercode(s): {codes}. Verwenden Sie gültige ISO-Codes mit 3 Buchstaben",
       "emailRequired": "Die Administrator-E-Mail ist erforderlich",
