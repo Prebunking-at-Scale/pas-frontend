@@ -13,7 +13,7 @@
       </p>
     </div>
 
-    <div class="space-y-3">
+    <div class="space-y-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <Card v-for="(orgData, orgId) in organizations" :key="orgId"
         class="cursor-pointer hover:border-green-500 transition-colors" @click="onSelectOrganization(orgId, orgData)">
         <CardContent class="p-4">
