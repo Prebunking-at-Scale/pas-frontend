@@ -281,3 +281,42 @@ export interface LanguageListResponse {
   language: string;
   count: number;
 }
+
+export interface ChannelFeed {
+  id: string;
+  organisation_id: string;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+  channel: string;
+  platform: 'youtube' | 'tiktok' | 'instagram';
+}
+
+export interface KeywordFeed {
+  id: string;
+  organisation_id: string;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+  topic: string;
+  keywords: string[];
+}
+
+export interface MediaFeedsResponse {
+  channel_feeds: ChannelFeed[];
+  keyword_feeds: KeywordFeed[];
+}
+
+export interface CreateChannelFeedRequest {
+  channel: string;
+  platform: 'youtube' | 'tiktok' | 'instagram';
+}
+
+export interface CreateChannelFeedFromUrlRequest {
+  url: string;
+}
+
+export interface CreateKeywordFeedRequest {
+  topic: string;
+  keywords: string[];
+}
