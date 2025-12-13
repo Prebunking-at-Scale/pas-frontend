@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type LanguageListResponse } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -828,5 +828,49 @@ export const apiService = {
       console.error('Failed to fetch languages:', error);
       return ['en', 'es', 'fr', 'de'];
     }
+  },
+
+  async getMediaFeeds(): Promise<MediaFeedsResponse> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<MediaFeedsResponse>>('/api/media_feeds', {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch media feeds:', error);
+      return {
+        channel_feeds: [],
+        keyword_feeds: []
+      };
+    }
+  },
+
+  async createChannelFeed(data: CreateChannelFeedRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createChannelFeedFromUrl(data: CreateChannelFeedFromUrlRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels/from-url', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createKeywordFeed(data: CreateKeywordFeedRequest): Promise<KeywordFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<KeywordFeed>>('/api/media_feeds/keywords', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
   }
 };

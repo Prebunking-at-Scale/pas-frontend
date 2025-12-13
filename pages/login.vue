@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-md w-full space-y-8 mx-auto">
-    <div v-if="!showOrganizationSelection">
+  <div class="w-full space-y-8 mx-auto">
+    <div class="max-w-md mx-auto" v-if="!showOrganizationSelection">
       <!-- Login Form -->
       <div class="flex justify-center flex-col">
         <div class="flex justify-center">
