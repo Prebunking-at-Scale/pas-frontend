@@ -47,21 +47,21 @@
                 </Button>
                 <Button
                   type="button"
-                  variant="outline"
+                  :variant="usernameForm.platform === 'tiktok' ? 'default' : 'outline'"
                   size="sm"
-                  class="cursor-not-allowed opacity-50"
-                  disabled
-                  :title="$t('channels.comingSoon')"
+                  class="cursor-pointer"
+                  @click="usernameForm.platform = 'tiktok'"
+                  :disabled="loading"
                 >
                   TikTok
                 </Button>
                 <Button
                   type="button"
-                  variant="outline"
+                  :variant="usernameForm.platform === 'instagram' ? 'default' : 'outline'"
                   size="sm"
-                  class="cursor-not-allowed opacity-50"
-                  disabled
-                  :title="$t('channels.comingSoon')"
+                  class="cursor-pointer"
+                  @click="usernameForm.platform = 'instagram'"
+                  :disabled="loading"
                 >
                   Instagram
                 </Button>

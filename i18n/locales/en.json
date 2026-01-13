@@ -236,7 +236,7 @@
     "addByUrl": "Add channel by URL",
     "addByUrlDescription": "Fill the channel URL. Use the URL of the channel home, not specific videos.",
     "channelUrl": "Channel URL",
-    "channelUrlPlaceholder": "https://www.youtube.com/{'@'}channel",
+    "channelUrlPlaceholder": "https://www.youtube.com/{'@'}channel or TikTok/Instagram URL",
     "createSuccess": "Channel feed created successfully",
     "createError": "Failed to create channel feed",
     "comingSoon": "Coming soon",
