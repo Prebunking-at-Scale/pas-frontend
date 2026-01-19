@@ -3,6 +3,8 @@
     "title": "Prebunking a gran escala"
   },
   "common": {
+    "yes": "Sí",
+    "no": "No",
     "back": "Atrás",
     "next": "Siguiente",
     "previous": "Anterior",
@@ -34,7 +36,6 @@
     "minutesAgo": "hace {count} min",
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
-    "sendFeedback": "Enviar Comentario",
     "deleting": "Eliminando..."
   },
   "nav": {
@@ -252,11 +253,24 @@
     "loadError": "Error al cargar la narrativa",
     "seenIn": "Visto en",
     "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
-    "feedback": "¿Esta declaración describe precisamente una narrativa de desinformación?",
-    "claimsRelatedFeedback": "¿Este claim está relacionado con la narrativa?",
-    "successFeedback": "¡Gracias por tus comentarios!",
-    "feedbackError": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
-    "thankYouForRating": "¡Gracias por calificar con {rating} estrellas!"
+    "feedback": {
+      "narrativeGenerationQuestion": "¿Qué tan precisamente describe esta declaración una narrativa de desinformación?",
+      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
+    }
+  },
+  "feedback":{
+    "send": "Enviar comentarios",
+    "sending": "Enviando comentarios...",
+    "success": "¡Gracias por tus comentarios!",
+    "error": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
+    "alreadyRated": "Ya has enviado comentarios.",
+    "rating": {
+      "oneStar": "Malo",
+      "twoStars": "Pobre",
+      "threeStars": "Puede mejorar",
+      "fourStars": "Bueno",
+      "fiveStars": "Excelente"
+    }
   },
   "claims": {
     "title": "Claims",

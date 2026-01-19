@@ -3,6 +3,8 @@
     "title": "Prebunking im großen Maßstab"
   },
   "common": {
+    "yes": "Ja",
+    "no": "Nein",
     "back": "Zurück",
     "next": "Weiter",
     "previous": "Zurück",
@@ -34,7 +36,6 @@
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
     "daysAgo": "vor {count} T.",
-    "sendFeedback": "Feedback Senden",
     "deleting": "Wird gelöscht..."
   },
   "nav": {
@@ -221,11 +222,24 @@
     "loadError": "Fehler beim Laden des Narrativs",
     "seenIn": "Gesehen in",
     "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
-    "feedback": "Beschreibt diese Aussage präzise ein Desinformationsnarrativ?",
-    "claimsRelatedFeedback": "Bezieht sich diese Behauptung genau auf das Narrativ?",
-    "successFeedback": "Vielen Dank für Ihr Feedback!",
-    "feedbackError": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
-    "thankYouForRating": "Vielen Dank für die Bewertung mit {rating} Sternen!"
+    "feedback": {
+      "narrativeGenerationQuestion": "Wie genau beschreibt diese Aussage ein Desinformationsnarrativ?",
+      "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?"
+    }
+  },
+  "feedback":{
+    "send": "Feedback senden",
+    "sending": "Feedback wird gesendet...",
+    "success": "Vielen Dank für Ihr Feedback!",
+    "error": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
+    "alreadyRated": "Sie haben bereits Feedback abgegeben.",
+    "rating": {
+      "oneStar": "Schlecht",
+      "twoStars": "Mangelhaft",
+      "threeStars": "Es kann besser sein",
+      "fourStars": "Gut",
+      "fiveStars": "Ausgezeichnet"
+    }
   },
   "claims": {
     "title": "Behauptungen",

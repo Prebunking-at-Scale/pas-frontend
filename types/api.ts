@@ -282,6 +282,7 @@ export interface NarrativeFeedback {
   user_id: string;
   narrative_id: string;
   feedback_score: number; // 1 for like, 0 for dislike
+  feedback_text: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -292,6 +293,7 @@ export interface ClaimFeedback {
   claim_id: string;
   narrative_id: string;
   feedback_score: number; // 1 for like, 0 for dislike
+  feedback_text: string | null;
   created_at: string;
   updated_at: string;
 }

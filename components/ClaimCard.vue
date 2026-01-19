@@ -24,7 +24,7 @@
       <!-- Actions -->
       <div class="flex flex-none gap-2">
         <!--Send Feedback Action-->
-        <UTooltip :text="$t('common.sendFeedback')">
+        <UTooltip :text="$t('feedback.send')">
           <Button
             v-if="props.showFeedbackAction"
             @click="onFeedbackDialog"

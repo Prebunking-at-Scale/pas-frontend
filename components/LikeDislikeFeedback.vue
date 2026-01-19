@@ -10,6 +10,8 @@ const props = withDefaults(defineProps<{
   canUpdate: true
 })
 
+const { t } = useI18n();
+
 const emit = defineEmits<{
   (e: 'like'): void
   (e: 'dislike'): void
@@ -38,7 +40,7 @@ const setHoverButton = (buttonType: "like" | "dislike" | null) => {
 
 <template>
   <div class="flex justify-center" @mouseleave="setHoverButton(null)">
-    <UTooltip :text="vote === null ? 'Yes' : 'You have already voted'">
+    <UTooltip :text="vote === null ? t('common.yes') : t('feedback.alreadyRated')">
       <Button 
         @click="handleLike" 
         @mouseenter="setHoverButton('like')"
@@ -57,7 +59,7 @@ const setHoverButton = (buttonType: "like" | "dislike" | null) => {
         />
       </Button>
     </UTooltip>
-    <UTooltip :text="vote === null ? 'No' : 'You have already voted'">
+    <UTooltip :text="vote === null ? t('common.no') : t('feedback.alreadyRated')">
       <Button 
         @click="handleDislike" 
         @mouseenter="setHoverButton('dislike')"

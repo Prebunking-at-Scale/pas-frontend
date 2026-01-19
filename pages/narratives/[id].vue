@@ -43,8 +43,8 @@
       <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
         <!--Feedback Section -->
         <div class="flex gap-2 place-self-end w-fit items-center">
-          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback') }}</h6>
-          <LikeDislikeFeedback @like="handleVote('like')" @dislike="handleVote('dislike')" :vote="narrativeFeedback" :can-update="false" />
+          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
+          <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
         </div>
         <!-- Total stats calculated from videos -->
         <div class="bg-white shadow rounded-lg p-6">
@@ -283,7 +283,9 @@ const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
-const narrativeFeedback = ref<'like' | 'dislike' | null>(null);
+const narrativeFeedbackScore = ref<number | null>(null);
+// Constants
+const MAX_NUMBER_OF_STARS = 5;
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -308,6 +310,11 @@ const sortedVideos = computed(() => {
   });
 });
 
+const feedbackRating = computed(() => {
+  if (narrativeFeedbackScore.value === null) return null;
+  return Math.round(narrativeFeedbackScore.value * MAX_NUMBER_OF_STARS);
+});
+
 // Load narrative data
 onMounted(async () => {
   try {
@@ -315,9 +322,9 @@ onMounted(async () => {
     narrative.value = await apiService.getNarrative(narrativeId);
     const feedbackResponse = await apiService.getNarrativeFeedback(narrativeId);
     if (!feedbackResponse) {
-      narrativeFeedback.value = null;
+      narrativeFeedbackScore.value = null;
     } else {
-      narrativeFeedback.value = feedbackResponse.feedback_score === 1 ? 'like' : 'dislike';
+      narrativeFeedbackScore.value = feedbackResponse.feedback_score;
     }
   } catch (err) {
     console.error('Failed to load narrative:', err);
@@ -362,25 +369,37 @@ const handleAlertSave = (alert: Alert) => {
   showAlertDialog.value = false;
 };
 
-const handleVote = async (vote: 'like' | 'dislike') => {
+const handleVote = async (rating: number) => {
   if (!narrative.value) return;
-  const score = vote === 'like' ? 1 : 0;
-  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score)
-    .catch(() => {
-      toast.add({
-        title: t('common.error'),
-        description: t('narratives.feedbackError'),
-        color: 'error'
+
+  const score = rating / MAX_NUMBER_OF_STARS;
+  narrativeFeedbackScore.value = score;
+
+  const infoToast = toast.add({
+    title: t('feedback.sending'),
+    progress: false,
+  });
+
+  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score).catch(() => null);
+
+  if (!result) {
+    toast.update(infoToast.id,
+      {
+        title: t('feedback.error'),
+        color: 'error',
+        progress: true,
       });
-      return null;
-  });
-  if (!result) return;
+    narrativeFeedbackScore.value = null;
+    return;
+  }
 
-  narrativeFeedback.value = vote;
-
-  toast.add({
-    title: t('narratives.successFeedback')
-  });
+  toast.update(infoToast.id,
+    {
+      title: t('feedback.success'),
+      color: 'success',
+      progress: true,
+    }
+  );
 };
 
 const onFeedbackClick = (claim: Claim) => {

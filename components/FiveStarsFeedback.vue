@@ -2,6 +2,8 @@
 import { Button } from '@/components/ui/button'
 import { Star } from 'lucide-vue-next'
 
+const { t } = useI18n();
+
 const props = withDefaults(defineProps<{
   rating: number | null
   canUpdate?: boolean
@@ -27,11 +29,11 @@ const setHoverStar = (starIndex: number | null) => {
 }
 
 const ratingTooltipIndicators = [
-  'Bad',
-  'Fair',
-  'Good',
-  'Very Good',
-  'Excellent'
+  t('feedback.rating.oneStar'),
+  t('feedback.rating.twoStars'),
+  t('feedback.rating.threeStars'),
+  t('feedback.rating.fourStars'),
+  t('feedback.rating.fiveStars')
 ]
 
 </script>
@@ -39,12 +41,12 @@ const ratingTooltipIndicators = [
 <template>
   <div class="flex justify-center gap-1" @mouseleave="setHoverStar(null)">
     <template v-for="starIndex in 5" :key="starIndex">
-      <UTooltip :text="rating === null ? ratingTooltipIndicators[starIndex - 1] : 'You have already rated'">
+      <UTooltip :text="rating === null ? ratingTooltipIndicators[starIndex - 1] : t('feedback.alreadyRated')">
         <Button 
           @click="handleStarClick(starIndex)" 
           @mouseenter="setHoverStar(starIndex)"
           :disabled="props.rating !== null || !props.canUpdate" 
-          :variant="props.rating !== null && starIndex <= props.rating ? 'default' : 'outline'" 
+          variant="outline" 
           size="icon"
           class="h-8 w-8 transition-colors duration-200"
         >

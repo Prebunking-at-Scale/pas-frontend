@@ -3,10 +3,10 @@
     <DialogContent class="max-w-md">
       <DialogHeader>
         <DialogTitle>
-          {{ $t('common.sendFeedback') }}
+          {{ $t('feedback.send') }}
         </DialogTitle>
         <DialogDescription>
-          {{ $t('narratives.claimsRelatedFeedback') }}
+          {{ $t('narratives.feedback.claimRelatedQuestion') }}
         </DialogDescription>
       </DialogHeader>
       <div class="py-4">
@@ -14,12 +14,11 @@
         <div v-if="dialogsStore.isClaimFeedbackLoading" class="flex justify-center items-center py-8">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-        
         <!-- Feedback Component -->
         <LikeDislikeFeedback 
           v-else
-          @like="handleLike" 
-          @dislike="handleDislike" 
+          @like="() => handleVote(LIKE_VOTE)" 
+          @dislike="() => handleVote(DISLIKE_VOTE)" 
           :vote="dialogsStore.claimFeedbackDialog.claimFeedbackScore" 
           :can-update="false" 
         />
@@ -40,6 +39,7 @@ import {
 import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
 import LikeDislikeFeedback from './LikeDislikeFeedback.vue'
 
+const { t } = useI18n();
 const toast = useToast()
 
 const dialogsStore = useNarrativeDialogsStore()
@@ -55,21 +55,27 @@ const dialogOpen = computed({
 const LIKE_VOTE = 1
 const DISLIKE_VOTE = 0
 
-const handleLike = async () => {
-  await dialogsStore.sendClaimFeedback(LIKE_VOTE)
-  dialogsStore.closeClaimFeedbackDialog()
-  toast.add({
-    title: 'Thank you for your feedback!',
-    color: 'success'
+const handleVote = async (vote: number) => {
+  const infoToast = toast.add({
+    title: t('feedback.sending'),
+    color: 'info',
+    progress: false,
   })
-}
 
-const handleDislike = async () => {
-  await dialogsStore.sendClaimFeedback(DISLIKE_VOTE)
+  const response = await dialogsStore.sendClaimFeedback(vote)
   dialogsStore.closeClaimFeedbackDialog()
-  toast.add({
-    title: 'Thank you for your feedback!',
-    color: 'success'
+  if (!response) {
+    toast.update( infoToast.id, {
+      title: t('feedback.error'),
+      color: 'error',
+      progress: true,
+    })
+    return
+  }
+  toast.update( infoToast.id, {
+    title: t('feedback.success'),
+    color: 'success',
+    progress: true,
   })
 }
 
