@@ -30,6 +30,14 @@
         :placeholder="$t('videos.textPlaceholder')"
         @enter-pressed="applyFilters"
       />
+
+      <LanguageFilter
+        class="w-full"
+        v-model="filters.language"
+        :label="$t('videos.language')"
+        :placeholder="$t('videos.selectLanguage')"
+        type="select"
+      />
     </FilterCard>
 
     <!-- Videos List -->
@@ -105,6 +113,7 @@ import FilterCard from '~/components/filters/FilterCard.vue';
 import PlatformFilter from '~/components/filters/PlatformFilter.vue';
 import ChannelFilter from '~/components/filters/ChannelFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -131,14 +140,16 @@ const currentPage = ref(1);
 const filters = ref({
   platform: 'all',
   channel: '',
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   platform: 'all',
   channel: '',
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 const hasActiveFilters = computed(() => {
@@ -182,7 +193,10 @@ const loadVideos = async () => {
     if (appliedFilters.value.channel) {
       params.channel = [appliedFilters.value.channel];
     }
-    
+    if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
+      params.language = [appliedFilters.value.language];
+    }
+
     // Add text search parameter if text filters are applied
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
@@ -217,12 +231,14 @@ const clearFilters = () => {
   filters.value = {
     platform: 'all',
     channel: '',
-    text: []
+    text: [],
+    language: 'all'
   };
   appliedFilters.value = {
     platform: 'all',
     channel: '',
-    text: []
+    text: [],
+    language: 'all'
   };
   currentPage.value = 1;
   loadVideos();

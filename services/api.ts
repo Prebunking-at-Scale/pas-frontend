@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativeFeedback, ClaimFeedback } from '~/types/api';
+import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativeFeedback, ClaimFeedback, LanguageListResponse, MediaFeedsResponse, ChannelFeed, KeywordFeed, CreateChannelFeedRequest, CreateChannelFeedFromUrlRequest, CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -142,6 +142,7 @@ export const apiService = {
     text?: string;
     limit?: number;
     offset?: number;
+    language?: string;
   }): Promise<PaginatedResponse<Video>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -163,6 +164,9 @@ export const apiService = {
       }
       if (params?.text) {
         query.text = params.text;
+      }
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/videos', {
@@ -235,6 +239,7 @@ export const apiService = {
     topic_id?: string;
     entity_id?: string;
     text?: string;
+    language?: string;
   }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -256,6 +261,10 @@ export const apiService = {
       }
       if (params?.text) {
         query.text = params.text;
+      }
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -753,6 +762,7 @@ export const apiService = {
     max_score?: number;
     limit?: number;
     offset?: number;
+    language?: string | null;
   }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -773,6 +783,10 @@ export const apiService = {
       // Add text search if provided
       if (params?.text) {
         query.text = params.text;
+      }
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
       }
 
       // Add score range if provided
@@ -799,6 +813,65 @@ export const apiService = {
         size: limit
       };
     }
+  },
+
+  async getLanguages(): Promise<string[]> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<LanguageListResponse[]>>('/api/languages', {
+        method: 'GET'
+      });
+
+      console.dir(response.data, { depth: null });
+      return (response.data || [])?.map(item => item.language) || [];
+    } catch (error) {
+      console.error('Failed to fetch languages:', error);
+      return ['en', 'es', 'fr', 'de'];
+    }
+  },
+
+  async getMediaFeeds(): Promise<MediaFeedsResponse> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<MediaFeedsResponse>>('/api/media_feeds', {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch media feeds:', error);
+      return {
+        channel_feeds: [],
+        keyword_feeds: []
+      };
+    }
+  },
+
+  async createChannelFeed(data: CreateChannelFeedRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createChannelFeedFromUrl(data: CreateChannelFeedFromUrlRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels/from-url', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createKeywordFeed(data: CreateKeywordFeedRequest): Promise<KeywordFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<KeywordFeed>>('/api/media_feeds/keywords', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
   },
 
   async getNarrativeFeedback(narrativeId: string): Promise<NarrativeFeedback|null> {
@@ -856,5 +929,6 @@ export const apiService = {
       console.error('Failed to send claim feedback:', error);
       throw error;
     }
-  }
+  },
+
 };

@@ -29,6 +29,14 @@
         :max="5"
         :step="0.1"
       />
+
+      <LanguageFilter
+        class="w-full"
+        v-model="filters.language"
+        :label="$t('videos.language')"
+        :placeholder="$t('videos.selectLanguage')"
+        type="select"
+      />
     </FilterCard>
 
     <!-- Claims List -->
@@ -110,6 +118,7 @@ import ClaimCard from '~/components/ClaimCard.vue';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import RangeSlider from '~/components/filters/RangeSlider.vue';
 
 definePageMeta({
@@ -138,14 +147,16 @@ const loading = ref(true);
 const filters = ref({
   topic_id: null as string | null,
   text: [] as string[],
-  range: [0, 5] as number[]
+  range: [0, 5] as number[],
+  language: 'all'
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   topic_id: null as string | null,
   text: [] as string[],
-  range: [0, 5] as number[]
+  range: [0, 5] as number[],
+  language: 'all'
 });
 
 // Current topic is based on APPLIED filters, not UI filters
@@ -220,6 +231,10 @@ const loadClaims = async () => {
     // Add text search parameter if text filters are applied
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
+    }
+    
+    if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
+      params.language = appliedFilters.value.language;
     }
     
     // Add range parameters if not default

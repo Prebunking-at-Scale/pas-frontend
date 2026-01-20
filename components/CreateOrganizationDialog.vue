@@ -67,8 +67,8 @@ const validCountryCodes = new Set([
 const filteredLanguages = computed(() => {
   if (!languageSearch.value) return languageOptions;
   const search = languageSearch.value.toLowerCase();
-  return languageOptions.filter(lang => 
-    lang.label.toLowerCase().includes(search) || 
+  return languageOptions.filter(lang =>
+    lang.label.toLowerCase().includes(search) ||
     lang.value.toLowerCase().includes(search)
   );
 });
@@ -105,8 +105,46 @@ const languageOptions = [
   { value: 'sl', label: 'Slovenščina (Slovenian)' },
   { value: 'es', label: 'Español (Spanish)' },
   { value: 'sv', label: 'Svenska (Swedish)' },
-  { value: 'tr', label: 'Türkçe (Turkish)' }
+  { value: 'tr', label: 'Türkçe (Turkish)' },
+  { value: 'sr', label: 'Srpski (Serbian)' }
 ];
+
+// Auto-generate short name from display name
+const generateShortName = (displayName: string): string => {
+  return displayName
+    .toLowerCase()
+    .trim()
+    // Replace spaces and special characters with hyphens
+    .replace(/[\s_\.]+/g, '-')
+    // Remove any character that's not a-z, 0-9, or hyphen
+    .replace(/[^a-z0-9\-]/g, '')
+    // Replace multiple consecutive hyphens with a single hyphen
+    .replace(/-+/g, '-')
+    // Remove hyphens from start and end
+    .replace(/^-+|-+$/g, '');
+};
+
+// Track if user has manually edited the short_name
+const shortNameManuallyEdited = ref(false);
+
+// Handle manual edit of short_name
+const handleShortNameInput = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const shortValue = target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+  orgForm.value.short_name = shortValue;
+
+  // If user clears the field completely, re-enable auto-generation
+  // Otherwise, mark as manually edited
+  shortNameManuallyEdited.value = shortValue.length > 0;
+};
+
+// Watch display_name to auto-generate short_name
+watch(() => orgForm.value.display_name, (newDisplayName) => {
+  // Only auto-generate if user hasn't manually edited the short_name
+  if (!shortNameManuallyEdited.value) {
+    orgForm.value.short_name = newDisplayName ? generateShortName(newDisplayName) : '';
+  }
+});
 
 // Watch for dialog close
 watch(open, (newValue) => {
@@ -114,6 +152,7 @@ watch(open, (newValue) => {
     // Reset form when dialog closes
     step.value = 1;
     error.value = null;
+    shortNameManuallyEdited.value = false;
     orgForm.value = {
       display_name: '',
       short_name: '',
@@ -145,16 +184,20 @@ const validateStep1 = () => {
     error.value = t('superadmin.errors.displayNameRequired');
     return false;
   }
-  
-  // Validate short name if provided
-  if (orgForm.value.short_name) {
-    const shortNamePattern = /^[a-z0-9\-]+$/;
-    if (!shortNamePattern.test(orgForm.value.short_name)) {
-      error.value = t('superadmin.errors.invalidShortName');
-      return false;
-    }
+
+  // Validate short name is required
+  if (!orgForm.value.short_name) {
+    error.value = t('superadmin.errors.shortNameRequired');
+    return false;
   }
-  
+
+  // Validate short name format
+  const shortNamePattern = /^[a-z0-9\-]+$/;
+  if (!shortNamePattern.test(orgForm.value.short_name)) {
+    error.value = t('superadmin.errors.invalidShortName');
+    return false;
+  }
+
   // Parse and validate country codes
   const countryCodes = parseCountryCodes();
   if (countryCodes.length > 0) {
@@ -164,7 +207,7 @@ const validateStep1 = () => {
       return false;
     }
   }
-  
+
   orgForm.value.country_codes = countryCodes;
   return true;
 };
@@ -202,22 +245,22 @@ const prevStep = () => {
 // Submit the form
 const submit = async () => {
   error.value = null;
-  
+
   if (!validateStep2()) {
     return;
   }
 
   loading.value = true;
-  
+
   try {
     // Step 1: Create organization
     const orgResponse = await apiFetch('/api/auth/organisation', {
       method: 'POST',
       body: orgForm.value
     });
-    
+
     const organization = (orgResponse as any).data || orgResponse;
-    
+
     // Step 2: Invite admin to the newly created organization
     await apiFetch('/api/auth/organisation/invite', {
       method: 'POST',
@@ -226,7 +269,7 @@ const submit = async () => {
         organisation_id: organization.id
       }
     });
-    
+
     // Success - emit event and close dialog
     emit('created', organization);
     emit('update:open', false);
@@ -290,12 +333,13 @@ const submit = async () => {
         </div>
 
         <div class="space-y-2">
-          <Label for="short_name">{{ t('superadmin.fields.shortName') }}</Label>
+          <Label for="short_name">{{ t('superadmin.fields.shortName') }} *</Label>
           <Input
             id="short_name"
             v-model="orgForm.short_name"
             :placeholder="t('superadmin.placeholders.shortName')"
-            @input="(e) => orgForm.short_name = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '')"
+            @input="handleShortNameInput"
+            required
           />
           <p class="text-xs text-gray-500">{{ t('superadmin.hints.shortName') }}</p>
         </div>
