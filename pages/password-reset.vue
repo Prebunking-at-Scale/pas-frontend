@@ -191,7 +191,11 @@ const handlePasswordChange = async () => {
   } catch (err: any) {
     console.error('Password change error:', err);
     if (err.status === 401) {
-      error.value = $i18n.t('passwordChange.incorrectCurrentPassword');
+      // For token-based reset, 401 means invalid/expired token
+      // For regular password change, 401 means wrong current password
+      error.value = isPasswordReset.value
+        ? $i18n.t('passwordChange.invalidToken')
+        : $i18n.t('passwordChange.incorrectCurrentPassword');
     } else if (err.status === 400) {
       error.value = err.data?.detail || $i18n.t('passwordChange.invalidToken');
     } else {
