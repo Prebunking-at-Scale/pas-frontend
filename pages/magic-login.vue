@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Spinner } from '~/components/ui/spinner';
 
 const { $i18n } = useNuxtApp();
+const route = useRoute();
 
 const email = ref('');
 const loading = ref(false);
@@ -21,7 +22,6 @@ definePageMeta({
 
 // Handle magic link token on page load
 onMounted(async () => {
-  const route = useRoute();
   if (route.query.token) {
     await handleMagicLinkValidation(route.query.token as string);
   } else {

@@ -78,13 +78,12 @@
       <hr class="my-2 w-full border-t border-gray-300"/>
       <!-- Magic Link Login Button -->
       <div class="flex flex-col space-y-2 items-center justify-center">
-        <Button
-          variant="outline"
-          class="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-900 hover:text-white mt-4"
-          @click="goToMagicLogin"
+        <NuxtLink
+          to="/magic-login"
+          class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium border border-emerald-700 text-emerald-700 hover:bg-emerald-900 hover:text-white mt-4 h-9 px-4 py-2"
         >
           {{ $t('magicLogin.title') }}
-        </Button>
+        </NuxtLink>
       </div>
     </div>
     <!-- Organization Selection -->
@@ -270,10 +269,6 @@ const resetLogin = () => {
   email.value = '';
   password.value = '';
   error.value = '';
-};
-
-const goToMagicLogin = async () => {
-  await navigateTo('/magic-login');
 };
 
 const onSelectOrganization = async (orgId: string, orgData: any) => {

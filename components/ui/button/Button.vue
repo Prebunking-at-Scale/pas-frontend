@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import { Primitive, type PrimitiveProps } from 'reka-ui'
+import type { ButtonHTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 import { type ButtonVariants, buttonVariants } from '.'
 
-interface Props extends PrimitiveProps {
+interface Props {
   variant?: ButtonVariants['variant']
   size?: ButtonVariants['size']
-  class?: HTMLAttributes['class']
+  class?: ButtonHTMLAttributes['class']
+  type?: ButtonHTMLAttributes['type']
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  as: 'button',
+  type: 'button',
 })
 </script>
 
 <template>
-  <Primitive
+  <button
     data-slot="button"
-    :as="as"
-    :as-child="asChild"
+    :type="type"
+    :disabled="disabled"
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
     <slot />
-  </Primitive>
+  </button>
 </template>
