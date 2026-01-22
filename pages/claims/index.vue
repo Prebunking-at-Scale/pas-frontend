@@ -63,6 +63,7 @@
           v-for="claim in claims.data" 
           :key="claim.id" 
           :claim="claim"
+          @navigate-to-video="goToVideo"
         />
       </div>
       
@@ -130,6 +131,7 @@ const route = useRoute();
 const router = useRouter();
 const { $i18n } = useNuxtApp();
 const topicsStore = useTopicsStore();
+const { saveListState, restoreListState, clearListState } = useListStatePreservation('claims');
 
 // Page title
 const { setPageHeader, clearPageHeader } = usePageHeader();
@@ -196,11 +198,23 @@ onMounted(async () => {
   // Load available topics for filter
   await topicsStore.fetchTopics();
   
-  // Check if we have a topic filter from query params
-  const topicId = route.query.topic as string;
-  if (topicId) {
-    filters.value.topic_id = topicId;
-    appliedFilters.value.topic_id = topicId;
+  // Check if we have saved state from previous navigation (browser back button)
+  const savedState = restoreListState();
+  if (savedState) {
+    // Restore pagination and filters from saved state
+    claims.value.page = savedState.currentPage;
+    filters.value = { ...filters.value, ...savedState.filters };
+    appliedFilters.value = { ...appliedFilters.value, ...savedState.appliedFilters };
+    
+    // Clear saved state after restoring
+    clearListState();
+  } else {
+    // No saved state, check for query params (direct navigation)
+    const topicId = route.query.topic as string;
+    if (topicId) {
+      filters.value.topic_id = topicId;
+      appliedFilters.value.topic_id = topicId;
+    }
   }
   
   // Set page header based on whether we have a topic filter
@@ -271,12 +285,14 @@ const clearFilters = () => {
   filters.value = {
     topic_id: null,
     text: [],
-    range: [0, 5]
+    range: [0, 5],
+    language: 'all'
   };
   appliedFilters.value = {
     topic_id: null,
     text: [],
-    range: [0, 5]
+    range: [0, 5],
+    language: 'all'
   };
   claims.value.page = 1;
   loadClaims();
@@ -285,5 +301,15 @@ const clearFilters = () => {
 const loadPage = (page: number) => {
   claims.value.page = page;
   loadClaims();
+};
+
+const goToVideo = (videoId: string) => {
+  // Save current state before navigating to video detail
+  saveListState({
+    currentPage: claims.value.page,
+    filters: filters.value,
+    appliedFilters: appliedFilters.value
+  });
+  router.push(`/videos/${videoId}`);
 };
 </script>

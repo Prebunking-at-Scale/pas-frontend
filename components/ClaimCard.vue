@@ -77,18 +77,22 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const emit = defineEmits<{
+  navigateToVideo: [videoId: string]
+}>();
+
 const router = useRouter();
 const { $i18n } = useNuxtApp();
 
 const handleCardClick = () => {
   const videoId = props.claim.video_id || props.claim.source_video_id;
   if (videoId) {
-    router.push(`/videos/${videoId}`);
+    emit('navigateToVideo', videoId);
   }
 };
 
 const goToVideo = (videoId: string) => {
-  router.push(`/videos/${videoId}`);
+  emit('navigateToVideo', videoId);
 };
 
 const goToTopic = (topicId: string) => {
