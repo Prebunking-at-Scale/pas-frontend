@@ -123,7 +123,7 @@
 <script setup lang="ts">
 import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
-import type { TopicWithStats, Entity } from '~/types/api';
+import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -158,8 +158,8 @@ const stats = ref<{
   topics: TopicWithStats[];
   entities: Entity[];
   actors: any[];
-  viralNarratives: any[];
-  prevalentNarratives: any[];
+  viralNarratives: NarrativeSummary[];
+  prevalentNarratives: NarrativeSummary[];
 }>({
   topics: [],
   entities: [],
