@@ -13,12 +13,12 @@
         <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
         >
-          <span>{{ narrative.claims?.length || 0 }} claims in {{ narrative.videos?.length  || 0 }} videos</span>
+          <span>{{ claimsCount }} claims in {{ videosCount }} videos</span>
           <span> · </span>
           <span>{{ $t('narratives.seenIn') }} </span>
           <div class="flex gap-1">
             <PlatformBadge
-              v-for="platform in [...new Set(narrative.videos?.map(v => v.platform) || [])]"
+              v-for="platform in platforms"
               :key="platform"
               :platform="platform as 'youtube' | 'tiktok' | 'instagram'"
             />
@@ -66,11 +66,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Narrative } from '~/types/api';
+import type { Narrative, NarrativeSummary } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
-  narrative: Narrative;
+  narrative: Narrative | NarrativeSummary;
   contentType?: 'first' | 'last' | 'active';
 }
 
@@ -82,21 +82,64 @@ defineEmits<{
   click: []
 }>();
 
-// Calculate narrative stats using the helper function
-const stats = computed(() => calculateNarrativeStats(props.narrative));
+// Helper to check if narrative is a summary type
+const isSummary = computed(() => 'claims_count' in props.narrative);
+
+// Calculate narrative stats - use pre-calculated values for summaries
+const stats = computed(() => {
+  if (isSummary.value) {
+    const summary = props.narrative as NarrativeSummary;
+    return {
+      totalViews: summary.total_views || 0,
+      totalLikes: summary.total_likes || 0,
+      totalComments: summary.total_comments || 0
+    };
+  }
+  return calculateNarrativeStats(props.narrative as Narrative);
+});
 
 const totalViews = computed(() => formatNumber(stats.value.totalViews));
 const totalComments = computed(() => formatNumber(stats.value.totalComments));
 const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
 
-// Calculate unique languages from claims
+// Get claims count
+const claimsCount = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).claims_count || 0;
+  }
+  return (props.narrative as Narrative).claims?.length || 0;
+});
+
+// Get videos count
+const videosCount = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).videos_count || 0;
+  }
+  return (props.narrative as Narrative).videos?.length || 0;
+});
+
+// Get platforms
+const platforms = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).platforms || [];
+  }
+  const narrative = props.narrative as Narrative;
+  return [...new Set(narrative.videos?.map(v => v.platform) || [])];
+});
+
+// Calculate unique languages from claims or use pre-calculated value
 const languageCount = computed(() => {
-  if (!props.narrative.claims || props.narrative.claims.length === 0) {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).languages_count || 0;
+  }
+
+  const narrative = props.narrative as Narrative;
+  if (!narrative.claims || narrative.claims.length === 0) {
     return 0;
   }
 
   const languages = new Set(
-    props.narrative.claims
+    narrative.claims
       .map(claim => claim.metadata?.language)
       .filter(lang => lang != null && lang !== '')
   );
