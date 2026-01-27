@@ -46,14 +46,14 @@ export interface NarrativeSummary {
   id: string;
   title: string;
   description?: string;
-  claims_count: number;
-  videos_count: number;
+  claim_count: number;
+  video_count: number;
   total_views: number;
   total_likes: number;
   total_comments: number;
   platforms: string[];
   topics?: Topic[];
-  languages_count?: number;
+  language_count?: number;
   created_at?: string;
   updated_at?: string;
 }

@@ -83,7 +83,7 @@ defineEmits<{
 }>();
 
 // Helper to check if narrative is a summary type
-const isSummary = computed(() => 'claims_count' in props.narrative);
+const isSummary = computed(() => 'claim_count' in props.narrative);
 
 // Calculate narrative stats - use pre-calculated values for summaries
 const stats = computed(() => {
@@ -105,7 +105,7 @@ const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
 // Get claims count
 const claimsCount = computed(() => {
   if (isSummary.value) {
-    return (props.narrative as NarrativeSummary).claims_count || 0;
+    return (props.narrative as NarrativeSummary).claim_count || 0;
   }
   return (props.narrative as Narrative).claims?.length || 0;
 });
@@ -113,7 +113,7 @@ const claimsCount = computed(() => {
 // Get videos count
 const videosCount = computed(() => {
   if (isSummary.value) {
-    return (props.narrative as NarrativeSummary).videos_count || 0;
+    return (props.narrative as NarrativeSummary).video_count || 0;
   }
   return (props.narrative as Narrative).videos?.length || 0;
 });
@@ -130,7 +130,7 @@ const platforms = computed(() => {
 // Calculate unique languages from claims or use pre-calculated value
 const languageCount = computed(() => {
   if (isSummary.value) {
-    return (props.narrative as NarrativeSummary).languages_count || 0;
+    return (props.narrative as NarrativeSummary).language_count || 0;
   }
 
   const narrative = props.narrative as Narrative;
