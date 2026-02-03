@@ -297,7 +297,9 @@
     "feedback": {
       "narrativeGenerationQuestion": "How would you rate this narrative?",
       "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
-    }
+    },
+    "loadMoreClaims": "Load more claims",
+    "loadMoreVideos": "Load more videos"
   },
   "feedback":{
     "send": "Send Feedback",

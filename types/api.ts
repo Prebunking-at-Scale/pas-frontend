@@ -54,6 +54,7 @@ export interface NarrativeSummary {
   platforms: string[];
   topics?: Topic[];
   language_count?: number;
+  entity_count?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -355,4 +356,53 @@ export interface CreateChannelFeedFromUrlRequest {
 export interface CreateKeywordFeedRequest {
   topic: string;
   keywords: string[];
+}
+
+// Time series data point from /narratives/{id}/stats
+export interface NarrativeStatsDataPoint {
+  date: string;
+  views: number;
+  likes: number;
+  comments: number;
+  cumulative_views: number;
+  cumulative_likes: number;
+  cumulative_comments: number;
+  video_count: number;
+  cumulative_video_count: number;
+}
+
+// Stats totals
+export interface NarrativeStatsTotals {
+  views: number;
+  likes: number;
+  comments: number;
+  video_count: number;
+}
+
+// Response from /narratives/{id}/stats
+export interface NarrativeStatsResponse {
+  narrative_id: string;
+  time_series: NarrativeStatsDataPoint[];
+  totals: NarrativeStatsTotals;
+}
+
+// Full narrative detail with preview + counts
+export interface NarrativeDetail {
+  id: string;
+  title: string;
+  description: string;
+  topics?: Topic[];
+  entities?: Entity[];
+  claims: Claim[];           // Preview (first 20)
+  claim_count: number;       // Total count
+  videos: Video[];           // Preview (first 20)
+  video_count: number;       // Total count
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  platforms: string[];
+  language_count: number;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
 }

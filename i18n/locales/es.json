@@ -295,7 +295,9 @@
     "feedback": {
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
       "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
-    }
+    },
+    "loadMoreClaims": "Cargar más afirmaciones",
+    "loadMoreVideos": "Cargar más videos"
   },
   "feedback":{
     "send": "Enviar comentarios",
