@@ -292,7 +292,7 @@
     "seenIn": "Vu dans",
     "claimsSupportingNarrative": "Affirmations soutenant ce récit",
     "feedback": {
-      "narrativeGenerationQuestion": "En quoi cette déclaration décrit-elle précisément un récit de désinformation ?",
+      "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
     }
   },

@@ -295,7 +295,7 @@
     "seenIn": "Seen in",
     "claimsSupportingNarrative": "Claims supporting this narrative",
     "feedback": {
-      "narrativeGenerationQuestion": "How precisely does this statement describe a misinformation narrative?",
+      "narrativeGenerationQuestion": "How would you rate this narrative?",
       "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
     }
   },

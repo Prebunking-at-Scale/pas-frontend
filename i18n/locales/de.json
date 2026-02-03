@@ -262,7 +262,7 @@
     "seenIn": "Gesehen in",
     "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
     "feedback": {
-      "narrativeGenerationQuestion": "Wie genau beschreibt diese Aussage ein Desinformationsnarrativ?",
+      "narrativeGenerationQuestion": "Wie würden Sie dieses Narrativ bewerten?",
       "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?"
     }
   },

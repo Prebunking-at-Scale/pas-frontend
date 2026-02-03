@@ -293,7 +293,7 @@
     "seenIn": "Visto en",
     "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
     "feedback": {
-      "narrativeGenerationQuestion": "¿Qué tan precisamente describe esta declaración una narrativa de desinformación?",
+      "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
       "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
     }
   },
