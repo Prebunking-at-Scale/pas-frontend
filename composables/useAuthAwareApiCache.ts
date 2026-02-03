@@ -18,7 +18,7 @@ interface AuthAwareCacheOptions {
   requireAuth?: boolean;
   /**
    * Routes that do not require authentication
-   * @default ['/login', '/password-reset', '/terms-of-service']
+   * @default ['/login', '/magic-login', '/password-reset', '/terms-of-service']
    */
   publicRoutes?: string[];
 }
@@ -28,7 +28,7 @@ export const useAuthAwareApiCache = <T = any>(options: AuthAwareCacheOptions = {
     cacheDuration = 4 * 60 * 60 * 1000, // 4 hours
     cacheKey = 'auth-app-cache',
     requireAuth = true,
-    publicRoutes = ['/login', '/password-reset', '/terms-of-service']
+    publicRoutes = ['/login', '/magic-login', '/password-reset', '/terms-of-service']
   } = options;
 
   const router = useRouter();

@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const appStore = useAppDataStore();
 
   // Routes that do not require authentication
-  const publicRoutes = ['/login', '/password-reset', '/terms-of-service'];
+  const publicRoutes = ['/login', '/magic-login', '/password-reset', '/terms-of-service'];
   const isPublicRoute = publicRoutes.some(route => to.path.startsWith(route));
 
   // If it's a public route, don't verify auth but keep data if it exists

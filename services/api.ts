@@ -1,5 +1,5 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativeFeedback, ClaimFeedback, LanguageListResponse, MediaFeedsResponse, ChannelFeed, KeywordFeed, CreateChannelFeedRequest, CreateChannelFeedFromUrlRequest, CreateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -317,12 +317,12 @@ export const apiService = {
     return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
   },
 
-  // Viral narratives with hours parameter
-  async getViralNarratives(hours: number | null, limit?: number): Promise<Narrative[]> {
+  // Viral narratives with hours parameter - uses summary endpoint optimized for dashboard display
+  async getViralNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
     const { $config } = useNuxtApp();
     try {
       const { apiFetch } = useApi();
-      const response = await apiFetch('/api/narratives/viral', {
+      const response = await apiFetch('/api/narratives/viral/summary', {
         method: 'GET',
         query: {
           hours: hours ?? undefined,
@@ -330,26 +330,23 @@ export const apiService = {
         }
       });
 
-      const data = response as { data: Narrative[] };
-      return data.data.sort((a: Narrative, b: Narrative) => {
-        const aViews = a.videos.reduce((sum, video) => sum + video.views, 0);
-        const bViews = b.videos.reduce((sum, video) => sum + video.views, 0);
-        return bViews - aViews;
-      });
+      const data = response as { data: NarrativeSummary[] };
+      // Already sorted by views from the API
+      return data.data;
     } catch (error) {
       console.error('Failed to fetch viral narratives:', error);
-      return Array.from({ length: 6 }, (_, i) => generateMockNarrative(i + 1));
+      return [];
     }
   },
 
   // Prevalent narratives - narratives with most videos in a time frame
-  // Endpoint: GET /api/narratives/prevalent
-  // Returns narratives sorted by video count in specified time period
-  async getPrevalentNarratives(hours: number | null, limit?: number): Promise<Narrative[]> {
+  // Endpoint: GET /api/narratives/prevalent/summary
+  // Returns narrative summaries sorted by video count in specified time period
+  async getPrevalentNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
     const { $config } = useNuxtApp();
     try {
       const { apiFetch } = useApi();
-      const response = await apiFetch('/api/narratives/prevalent', {
+      const response = await apiFetch('/api/narratives/prevalent/summary', {
         method: 'GET',
         query: {
           hours: hours ?? undefined,
@@ -357,15 +354,12 @@ export const apiService = {
         }
       });
 
-      const data = response as { data: Narrative[] };
-      return data.data.sort((a: Narrative, b: Narrative) => b.videos.length - a.videos.length);
+      const data = response as { data: NarrativeSummary[] };
+      // Already sorted by video count from the API
+      return data.data;
     } catch (error) {
       console.error('Failed to fetch prevalent narratives:', error);
-      return Array.from({ length: 4 }, (_, i) => {
-        const narrative = generateMockNarrative(i + 10);
-        narrative.videos = Array.from({ length: 8 + i * 2 }, (_, j) => generateMockVideo(j + 1));
-        return narrative;
-      });
+      return [];
     }
   },
 
@@ -376,8 +370,8 @@ export const apiService = {
     topics: TopicWithStats[];
     entities: Entity[];
     actors: any[];
-    viralNarratives: Narrative[];
-    prevalentNarratives: Narrative[];
+    viralNarratives: NarrativeSummary[];
+    prevalentNarratives: NarrativeSummary[];
   }> {
     await new Promise(resolve => setTimeout(resolve, 600));
 

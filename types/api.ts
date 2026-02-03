@@ -42,7 +42,22 @@ export interface JSONResponse<T> {
   data: T;
 }
 
-// Narrative type based on API spec
+export interface NarrativeSummary {
+  id: string;
+  title: string;
+  description?: string;
+  claim_count: number;
+  video_count: number;
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  platforms: string[];
+  topics?: Topic[];
+  language_count?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Narrative {
   id: string;
   title: string;
