@@ -3,6 +3,8 @@
     "title": "Prebunking im großen Maßstab"
   },
   "common": {
+    "yes": "Ja",
+    "no": "Nein",
     "back": "Zurück",
     "next": "Weiter",
     "previous": "Zurück",
@@ -33,7 +35,8 @@
     "error": "Fehler",
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
-    "daysAgo": "vor {count} T."
+    "daysAgo": "vor {count} T.",
+    "deleting": "Wird gelöscht..."
   },
   "nav": {
     "overview": "Übersicht",
@@ -257,7 +260,25 @@
     "lastUpdated": "Zuletzt aktualisiert",
     "loadError": "Fehler beim Laden des Narrativs",
     "seenIn": "Gesehen in",
-    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen"
+    "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
+    "feedback": {
+      "narrativeGenerationQuestion": "Wie würden Sie dieses Narrativ bewerten?",
+      "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?"
+    }
+  },
+  "feedback":{
+    "send": "Feedback senden",
+    "sending": "Feedback wird gesendet...",
+    "success": "Vielen Dank für Ihr Feedback!",
+    "error": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
+    "alreadyRated": "Sie haben bereits Feedback abgegeben.",
+    "rating": {
+      "oneStar": "Schlecht",
+      "twoStars": "Mangelhaft",
+      "threeStars": "Es kann besser sein",
+      "fourStars": "Gut",
+      "fiveStars": "Ausgezeichnet"
+    }
   },
   "claims": {
     "title": "Behauptungen",
