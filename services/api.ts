@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -233,6 +233,7 @@ export const apiService = {
   },
 
   // Narrative endpoints
+  // Returns NarrativeSummary with counts instead of full objects for optimized list rendering
   async getNarratives(params?: {
     limit?: number;
     offset?: number;
@@ -240,7 +241,7 @@ export const apiService = {
     entity_id?: string;
     text?: string;
     language?: string;
-  }): Promise<PaginatedResponse<Narrative>> {
+  }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
 
@@ -272,7 +273,7 @@ export const apiService = {
         query
       });
 
-      return response as PaginatedResponse<Narrative>;
+      return response as PaginatedResponse<NarrativeSummary>;
     } catch (error) {
       console.error('Failed to fetch narratives:', error);
       // Return empty response on error
@@ -285,7 +286,7 @@ export const apiService = {
     }
   },
 
-  async getNarrative(narrativeId: string): Promise<Narrative> {
+  async getNarrative(narrativeId: string): Promise<NarrativeDetail> {
     try {
       const { apiFetch } = useApi();
       const response = await apiFetch(`/api/narratives/${narrativeId}`, {
@@ -293,18 +294,22 @@ export const apiService = {
       });
 
       // Extract narrative from the data wrapper
-      const narrative = (response as { data: Narrative }).data;
+      const narrative = (response as { data: NarrativeDetail }).data;
 
       // Set default values for UI fields if not present
       return {
         ...narrative,
-        actors: narrative.actors || [],
         entities: narrative.entities || [],
         topics: narrative.topics || [],
-        related_content_count: narrative.claim_ids?.length || 0,
-        is_active: true, // Default to active since API doesn't provide this
-        first_seen: narrative.created_at || new Date().toISOString(),
-        last_seen: narrative.updated_at || new Date().toISOString()
+        claims: narrative.claims || [],
+        videos: narrative.videos || [],
+        claim_count: narrative.claim_count || 0,
+        video_count: narrative.video_count || 0,
+        total_views: narrative.total_views || 0,
+        total_likes: narrative.total_likes || 0,
+        total_comments: narrative.total_comments || 0,
+        platforms: narrative.platforms || [],
+        language_count: narrative.language_count || 0
       };
     } catch (error) {
       console.error('Failed to fetch narrative:', error);
@@ -312,9 +317,86 @@ export const apiService = {
     }
   },
 
-  async getNarrativeClaims(narrativeId: string): Promise<Claim[]> {
-    await new Promise(resolve => setTimeout(resolve, 400));
-    return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
+  async getNarrativeClaims(narrativeId: string, params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedResponse<Claim>> {
+    const limit = params?.limit || 20;
+    const offset = params?.offset || 0;
+
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/claims`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset
+        }
+      });
+
+      return response as PaginatedResponse<Claim>;
+    } catch (error) {
+      console.error('Failed to fetch narrative claims:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
+
+  async getNarrativeVideos(narrativeId: string, params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedResponse<Video>> {
+    const limit = params?.limit || 20;
+    const offset = params?.offset || 0;
+
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/videos`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset
+        }
+      });
+
+      return response as PaginatedResponse<Video>;
+    } catch (error) {
+      console.error('Failed to fetch narrative videos:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
+
+  async getNarrativeStats(narrativeId: string): Promise<NarrativeStatsResponse> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/stats`, {
+        method: 'GET'
+      });
+
+      return (response as { data: NarrativeStatsResponse }).data;
+    } catch (error) {
+      console.error('Failed to fetch narrative stats:', error);
+      // Return empty stats on error
+      return {
+        narrative_id: narrativeId,
+        time_series: [],
+        totals: {
+          views: 0,
+          likes: 0,
+          comments: 0,
+          video_count: 0
+        }
+      };
+    }
   },
 
   // Viral narratives with hours parameter - uses summary endpoint optimized for dashboard display

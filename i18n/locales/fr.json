@@ -294,7 +294,9 @@
     "feedback": {
       "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
-    }
+    },
+    "loadMoreClaims": "Charger plus d'affirmations",
+    "loadMoreVideos": "Charger plus de vidéos"
   },
   "feedback":{
     "send": "Envoyer des commentaires",

@@ -107,7 +107,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Narrative } from '~/types/api';
+import type { NarrativeSummary } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
@@ -130,7 +130,7 @@ const { setPageHeader, clearPageHeader } = usePageHeader();
 
 
 // State
-const narratives = ref<Narrative[]>([]);
+const narratives = ref<NarrativeSummary[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
 const totalNarratives = ref(0);
@@ -188,20 +188,8 @@ const loadNarratives = async () => {
     }
     
     const result = await apiService.getNarratives(params);
-    
-    let filteredData = result.data;
-    
-    narratives.value = filteredData.map(narrative => ({
-      ...narrative,
-      actors: narrative.actors || [],
-      entities: narrative.entities || [],
-      topics: narrative.topics || [],
-      related_content_count: narrative.claims?.length || 0,
-      is_active: true, 
-      first_seen: narrative.created_at || new Date().toISOString(),
-      last_seen: narrative.updated_at || new Date().toISOString()
-    }));
-    
+
+    narratives.value = result.data;
     totalNarratives.value = result.total;
   } catch (error) {
     console.error('Failed to load narratives:', error);

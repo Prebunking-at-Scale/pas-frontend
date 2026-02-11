@@ -101,11 +101,11 @@
         </div>
 
         <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
-        <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrative.videos && narrative.videos.length > 0">
+        <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrativeStats?.time_series?.length">
           <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
           <div class="h-96">
             <NarrativeEvolutionChart
-              :videos="narrative.videos"
+              :time-series="narrativeStats.time_series"
               :locale="$i18n.locale.value"
             />
           </div>
@@ -224,29 +224,47 @@
       </div>
 
       <!-- Claims supporting this narrative -->
-      <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claims && narrative.claims.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claims.length }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
+      <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claim_count > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claim_count }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
           <ClaimCard
             :show-feedback-action="true"
             @open-feedback-dialog="onFeedbackClick"
-            v-for="claim in narrative.claims" 
-            :key="claim.id" 
+            v-for="claim in allClaims"
+            :key="claim.id"
             :claim="claim"
           />
+        </div>
+
+        <!-- Load more claims button -->
+        <div v-if="allClaims.length < narrative.claim_count" class="mt-4 text-center">
+          <Button @click="loadMoreClaims" :disabled="claimsLoading" variant="outline">
+            <Loader2 v-if="claimsLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ $t('narratives.loadMoreClaims') }}
+            ({{ allClaims.length }}/{{ narrative.claim_count }})
+          </Button>
         </div>
       </div>
 
       <!-- Seen in Videos -->
-      <div class="bg-stone-100 rounded-lg p-6" v-if="narrative.videos && narrative.videos.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.seenIn') }} {{ narrative.videos.length }} <span class="lowercase">{{ $t('videos.title') }}</span></h3>
+      <div class="bg-stone-100 rounded-lg p-6" v-if="narrative.video_count > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.seenIn') }} {{ narrative.video_count }} <span class="lowercase">{{ $t('videos.title') }}</span></h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <VideoCard 
-            v-for="video in narrative.videos" 
-            :key="video.id" 
+          <VideoCard
+            v-for="video in allVideos"
+            :key="video.id"
             :video="video"
             @click="goToVideo"
           />
+        </div>
+
+        <!-- Load more videos button -->
+        <div v-if="allVideos.length < narrative.video_count" class="mt-4 text-center">
+          <Button @click="loadMoreVideos" :disabled="videosLoading" variant="outline">
+            <Loader2 v-if="videosLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ $t('narratives.loadMoreVideos') }}
+            ({{ allVideos.length }}/{{ narrative.video_count }})
+          </Button>
         </div>
       </div>
     </div>
@@ -267,14 +285,14 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, Narrative } from '~/types/api';
+import type { Claim, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
-import { Bell } from 'lucide-vue-next';
+import { Bell, Loader2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
@@ -291,15 +309,26 @@ const toast = useToast();
 const dialogsStore = useNarrativeDialogsStore();
 
 // State
-const narrative = ref<Narrative | null>(null);
+const narrative = ref<NarrativeDetail | null>(null);
+const narrativeStats = ref<NarrativeStatsResponse | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
 const narrativeFeedbackScore = ref<number | null>(null);
+
+// Pagination state for claims
+const allClaims = ref<Claim[]>([]);
+const claimsLoading = ref(false);
+
+// Pagination state for videos
+const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : never[]>([]);
+const videosLoading = ref(false);
+
 // Constants
 const MAX_NUMBER_OF_STARS = 5;
+const ITEMS_PER_PAGE = 20;
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
@@ -345,12 +374,61 @@ const feedbackRating = computed(() => {
   return Math.round(narrativeFeedbackScore.value * MAX_NUMBER_OF_STARS);
 });
 
+// Load more claims
+const loadMoreClaims = async () => {
+  if (!narrative.value) return;
+
+  claimsLoading.value = true;
+  try {
+    const result = await apiService.getNarrativeClaims(narrative.value.id, {
+      limit: ITEMS_PER_PAGE,
+      offset: allClaims.value.length
+    });
+    allClaims.value = [...allClaims.value, ...result.data];
+  } catch (err) {
+    console.error('Failed to load more claims:', err);
+  } finally {
+    claimsLoading.value = false;
+  }
+};
+
+// Load more videos
+const loadMoreVideos = async () => {
+  if (!narrative.value) return;
+
+  videosLoading.value = true;
+  try {
+    const result = await apiService.getNarrativeVideos(narrative.value.id, {
+      limit: ITEMS_PER_PAGE,
+      offset: allVideos.value.length
+    });
+    allVideos.value = [...allVideos.value, ...result.data];
+  } catch (err) {
+    console.error('Failed to load more videos:', err);
+  } finally {
+    videosLoading.value = false;
+  }
+};
+
 // Load narrative data
 onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
-    narrative.value = await apiService.getNarrative(narrativeId);
-    const feedbackResponse = await apiService.getNarrativeFeedback(narrativeId);
+
+    // Fetch narrative detail, stats, and feedback in parallel
+    const [narrativeData, statsData, feedbackResponse] = await Promise.all([
+      apiService.getNarrative(narrativeId),
+      apiService.getNarrativeStats(narrativeId),
+      apiService.getNarrativeFeedback(narrativeId)
+    ]);
+
+    narrative.value = narrativeData;
+    narrativeStats.value = statsData;
+
+    // Initialize displayed items with preview data
+    allClaims.value = narrativeData.claims || [];
+    allVideos.value = narrativeData.videos || [];
+
     if (!feedbackResponse) {
       narrativeFeedbackScore.value = null;
     } else {

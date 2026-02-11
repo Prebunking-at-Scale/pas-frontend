@@ -1,4 +1,4 @@
-import type { Narrative } from '~/types/api';
+import type { Narrative, NarrativeDetail } from '~/types/api';
 
 export interface NarrativeStats {
   totalViews: number;
@@ -6,8 +6,19 @@ export interface NarrativeStats {
   totalComments: number;
 }
 
-export function calculateNarrativeStats(narrative: Narrative): NarrativeStats {
-  if (!narrative.videos || narrative.videos.length === 0) {
+export function calculateNarrativeStats(narrative: Narrative | NarrativeDetail): NarrativeStats {
+  // Check if it's NarrativeDetail with pre-calculated values
+  if ('total_views' in narrative && typeof narrative.total_views === 'number') {
+    return {
+      totalViews: narrative.total_views,
+      totalLikes: narrative.total_likes,
+      totalComments: narrative.total_comments
+    };
+  }
+
+  // Fallback: calculate from videos array (legacy Narrative type)
+  const legacyNarrative = narrative as Narrative;
+  if (!legacyNarrative.videos || legacyNarrative.videos.length === 0) {
     return {
       totalViews: 0,
       totalLikes: 0,
@@ -16,9 +27,9 @@ export function calculateNarrativeStats(narrative: Narrative): NarrativeStats {
   }
 
   return {
-    totalViews: narrative.videos.reduce((sum, video) => sum + (video.views || video.views_count || 0), 0),
-    totalLikes: narrative.videos.reduce((sum, video) => sum + (video.likes || video.likes_count || 0), 0),
-    totalComments: narrative.videos.reduce((sum, video) => sum + (video.comments || video.comments_count || 0), 0)
+    totalViews: legacyNarrative.videos.reduce((sum, video) => sum + (video.views || 0), 0),
+    totalLikes: legacyNarrative.videos.reduce((sum, video) => sum + (video.likes || 0), 0),
+    totalComments: legacyNarrative.videos.reduce((sum, video) => sum + (video.comments || 0), 0)
   };
 }
 

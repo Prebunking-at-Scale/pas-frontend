@@ -70,7 +70,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import type { Video } from '~/types/api';
+import type { Video, NarrativeStatsDataPoint } from '~/types/api';
 
 // Register ChartJS components
 ChartJS.register(
@@ -85,7 +85,10 @@ ChartJS.register(
 );
 
 interface Props {
-  videos: Video[];
+  // New API: pre-computed time series data
+  timeSeries?: NarrativeStatsDataPoint[];
+  // Legacy: compute from videos array (for backward compatibility)
+  videos?: Video[];
   locale?: string;
 }
 
@@ -109,69 +112,82 @@ const formatDate = (dateString: string | null | undefined, locale: string) => {
   }).format(date);
 };
 
-// Calculate cumulative data
+// Calculate cumulative data - supports both new timeSeries API and legacy videos array
 const chartData = computed(() => {
-  // Sort videos by date
-  const sortedVideos = [...props.videos].sort((a, b) => {
-    const dateA = new Date(a.uploaded_at || a.created_at || '').getTime();
-    const dateB = new Date(b.uploaded_at || b.created_at || '').getTime();
-    return dateA - dateB;
-  });
-
-  // Group videos by date and aggregate their values
-  const videosByDate = new Map<string, { views: number; likes: number; comments: number; date: Date }>();
-
-  sortedVideos.forEach(video => {
-    const dateStr = video.uploaded_at || video.created_at || '';
-    if (!dateStr) return;
-
-    const date = new Date(dateStr);
-    const dateKey = date.toISOString().split('T')[0]; // Get YYYY-MM-DD
-
-    if (videosByDate.has(dateKey)) {
-      const existing = videosByDate.get(dateKey)!;
-      existing.views += video.views || 0;
-      existing.likes += video.likes || 0;
-      existing.comments += video.comments || 0;
-    } else {
-      videosByDate.set(dateKey, {
-        views: video.views || 0,
-        likes: video.likes || 0,
-        comments: video.comments || 0,
-        date: date
-      });
-    }
-  });
-
-  // Sort dates and calculate cumulative values
-  const sortedDates = Array.from(videosByDate.entries()).sort((a, b) =>
-    a[1].date.getTime() - b[1].date.getTime()
-  );
-
-  let cumulativeViews = 0;
-  let cumulativeLikes = 0;
-  let cumulativeComments = 0;
-
   const labels: string[] = [];
   const viewsData: number[] = [];
   const likesData: number[] = [];
   const commentsData: number[] = [];
 
-  sortedDates.forEach(([, data]) => {
-    // Add to cumulative totals
-    cumulativeViews += data.views;
-    cumulativeLikes += data.likes;
-    cumulativeComments += data.comments;
+  // Use pre-computed time series data if available (new API)
+  if (props.timeSeries && props.timeSeries.length > 0) {
+    props.timeSeries.forEach(dataPoint => {
+      const dateLabel = formatDate(dataPoint.date, props.locale);
+      labels.push(dateLabel);
+      viewsData.push(dataPoint.cumulative_views);
+      likesData.push(dataPoint.cumulative_likes);
+      commentsData.push(dataPoint.cumulative_comments);
+    });
+  }
+  // Fallback: compute from videos array (legacy approach)
+  else if (props.videos && props.videos.length > 0) {
+    // Sort videos by date
+    const sortedVideos = [...props.videos].sort((a, b) => {
+      const dateA = new Date(a.uploaded_at || a.created_at || '').getTime();
+      const dateB = new Date(b.uploaded_at || b.created_at || '').getTime();
+      return dateA - dateB;
+    });
 
-    // Create label
-    const dateLabel = formatDate(data.date.toISOString(), props.locale);
-    labels.push(dateLabel);
+    // Group videos by date and aggregate their values
+    const videosByDate = new Map<string, { views: number; likes: number; comments: number; date: Date }>();
 
-    // Store cumulative data
-    viewsData.push(cumulativeViews);
-    likesData.push(cumulativeLikes);
-    commentsData.push(cumulativeComments);
-  });
+    sortedVideos.forEach(video => {
+      const dateStr = video.uploaded_at || video.created_at || '';
+      if (!dateStr) return;
+
+      const date = new Date(dateStr);
+      const dateKey = date.toISOString().split('T')[0]; // Get YYYY-MM-DD
+
+      if (videosByDate.has(dateKey)) {
+        const existing = videosByDate.get(dateKey)!;
+        existing.views += video.views || 0;
+        existing.likes += video.likes || 0;
+        existing.comments += video.comments || 0;
+      } else {
+        videosByDate.set(dateKey, {
+          views: video.views || 0,
+          likes: video.likes || 0,
+          comments: video.comments || 0,
+          date: date
+        });
+      }
+    });
+
+    // Sort dates and calculate cumulative values
+    const sortedDates = Array.from(videosByDate.entries()).sort((a, b) =>
+      a[1].date.getTime() - b[1].date.getTime()
+    );
+
+    let cumulativeViews = 0;
+    let cumulativeLikes = 0;
+    let cumulativeComments = 0;
+
+    sortedDates.forEach(([, data]) => {
+      // Add to cumulative totals
+      cumulativeViews += data.views;
+      cumulativeLikes += data.likes;
+      cumulativeComments += data.comments;
+
+      // Create label
+      const dateLabel = formatDate(data.date.toISOString(), props.locale);
+      labels.push(dateLabel);
+
+      // Store cumulative data
+      viewsData.push(cumulativeViews);
+      likesData.push(cumulativeLikes);
+      commentsData.push(cumulativeComments);
+    });
+  }
 
   return {
     labels,
