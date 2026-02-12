@@ -16,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const handleStarClick = (starRating: number) => {
+  hoveredStar.value = starRating - 1
   emit('rate', starRating)
 }
 
@@ -23,7 +24,7 @@ const handleStarClick = (starRating: number) => {
 const hoveredStar = ref<number | null>(null)
 
 const setHoverStar = (starIndex: number | null) => {
-  if (props.rating === null && props.canUpdate) {
+  if (props.canUpdate) {
     hoveredStar.value = starIndex
   }
 }
@@ -41,17 +42,20 @@ const ratingTooltipIndicators = [
 <template>
   <div class="flex justify-center gap-1" @mouseleave="setHoverStar(null)">
     <template v-for="starIndex in 5" :key="starIndex">
-      <UTooltip :text="rating === null ? ratingTooltipIndicators[starIndex - 1] : t('feedback.alreadyRated')">
-        <Button 
-          @click="handleStarClick(starIndex)" 
+      <UTooltip 
+        :text="ratingTooltipIndicators[starIndex - 1]"
+        :ui="{ content: 'z-[100]' }"
+      >
+        <Button
+          @click="handleStarClick(starIndex)"
           @mouseenter="setHoverStar(starIndex)"
-          :disabled="props.rating !== null || !props.canUpdate" 
-          variant="outline" 
+          :disabled="!props.canUpdate && props.rating !== null"
+          variant="outline"
           size="icon"
           class="h-8 w-8 transition-colors duration-200"
         >
-          <Star 
-            class="size-4 transition-colors duration-200" 
+          <Star
+            class="size-4 transition-colors duration-200"
             :class="{
               'fill-current text-yellow-400': (props.rating !== null && starIndex <= props.rating) || (hoveredStar !== null && starIndex <= hoveredStar),
               'text-gray-400': (props.rating === null || starIndex > props.rating) && (hoveredStar === null || starIndex > hoveredStar),

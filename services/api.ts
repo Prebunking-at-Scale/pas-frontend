@@ -965,13 +965,13 @@ export const apiService = {
     }
   },
 
-  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number) {
+  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number, comment: string | null = null) {
     try {
       const { apiFetch } = useApi();
 
       return await apiFetch(`/api/feedback/narratives/${narrativeId}`, {
         method: 'POST',
-        body: { feedback_score: feedbackScore }
+        body: { feedback_score: feedbackScore, feedback_text: comment }
       });
     } catch (error) {
       console.error('Failed to send narrative feedback:', error);
@@ -994,12 +994,15 @@ export const apiService = {
     }
   },
 
-  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number) {
+  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number, comment: string | null = null) {
     try {
       const { apiFetch } = useApi();
       return await apiFetch(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
         method: 'POST',
-        body: { feedback_score: feedbackScore }
+        body: {
+          feedback_score: feedbackScore,
+          feedback_text: comment
+        }
       });
     } catch (error) {
       console.error('Failed to send claim feedback:', error);

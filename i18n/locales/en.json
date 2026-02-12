@@ -295,18 +295,20 @@
     "seenIn": "Seen in",
     "claimsSupportingNarrative": "Claims supporting this narrative",
     "feedback": {
+      "rate": "Rate this narrative",
       "narrativeGenerationQuestion": "How would you rate this narrative?",
       "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
     },
     "loadMoreClaims": "Load more claims",
     "loadMoreVideos": "Load more videos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Send Feedback",
     "sending": "Sending feedback...",
     "success": "Thank you for your feedback!",
     "error": "Failed to send feedback. Please try again.",
     "alreadyRated": "You have already submitted feedback.",
+    "addComment": "Add a comment (optional)",
     "rating": {
       "oneStar": "Bad",
       "twoStars": "Poor",

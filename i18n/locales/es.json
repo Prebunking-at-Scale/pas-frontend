@@ -293,18 +293,20 @@
     "seenIn": "Visto en",
     "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
     "feedback": {
+      "rate": "Calificar esta narrativa",
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
       "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
     },
     "loadMoreClaims": "Cargar más afirmaciones",
     "loadMoreVideos": "Cargar más videos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Enviar comentarios",
     "sending": "Enviando comentarios...",
     "success": "¡Gracias por tus comentarios!",
     "error": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
     "alreadyRated": "Ya has enviado comentarios.",
+    "addComment": "Agregar un comentario (opcional)",
     "rating": {
       "oneStar": "Malo",
       "twoStars": "Pobre",

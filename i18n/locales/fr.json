@@ -292,18 +292,20 @@
     "seenIn": "Vu dans",
     "claimsSupportingNarrative": "Affirmations soutenant ce récit",
     "feedback": {
+      "rate": "Évaluer ce récit",
       "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
     },
     "loadMoreClaims": "Charger plus d'affirmations",
     "loadMoreVideos": "Charger plus de vidéos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Envoyer des commentaires",
     "sending": "Envoi des commentaires...",
     "success": "Merci pour vos commentaires !",
     "error": "Échec de l'envoi des commentaires. Veuillez réessayer.",
     "alreadyRated": "Vous avez déjà soumis des commentaires.",
+    "addComment": "Ajouter un commentaire (optionnel)",
     "rating": {
       "oneStar": "Mauvais",
       "twoStars": "Médiocre",

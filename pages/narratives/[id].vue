@@ -17,10 +17,19 @@
             <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
-          <Button @click="openAlertDialog" variant="outline" class="ml-4">
-            <Bell class="mr-2 h-4 w-4" />
-            {{ $t('alerts.create_alert') }}
-          </Button>
+          <!--Actions-->
+          <div class="flex flex-col items-center gap-2 ml-4 w-auto">
+            <!--Create Alert-->
+            <Button @click="openAlertDialog" variant="outline" class="w-full">
+              <Bell class="mr-2 h-4 w-4" />
+              {{ $t('alerts.create_alert') }}
+            </Button>
+            <!--Feedback Section -->
+            <Button @click="openNarrativeFeedbackDialog" variant="outline" size="sm" class="w-full">
+              <MessageCircleMore class="mr-2 h-4 w-4" />
+              {{ $t('narratives.feedback.rate') }}
+            </Button>
+          </div>
         </div>
         
         <!-- Topics -->
@@ -55,11 +64,6 @@
 
       <!-- Total stats calculated from videos -->
       <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
-        <!--Feedback Section -->
-        <div class="flex gap-2 place-self-end w-fit items-center">
-          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
-          <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
-        </div>
         <!-- Total stats calculated from videos -->
         <div class="bg-white shadow rounded-lg p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
@@ -280,6 +284,9 @@
     <ClaimFeedbackDialog
       v-if="narrative"
     />
+    <NarrativeFeedbackDialog
+      v-if="narrative"
+    />
   </div>
 </template>
 
@@ -292,7 +299,7 @@ import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
-import { Bell, Loader2 } from 'lucide-vue-next';
+import { Bell, Loader2, MessageCircleMore } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
@@ -327,7 +334,6 @@ const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : n
 const videosLoading = ref(false);
 
 // Constants
-const MAX_NUMBER_OF_STARS = 5;
 const ITEMS_PER_PAGE = 20;
 
 // Calculate narrative stats using the helper function
@@ -367,11 +373,6 @@ const sortedVideos = computed(() => {
     const dateB = new Date(b.uploaded_at || b.created_at || '').getTime();
     return dateA - dateB;
   });
-});
-
-const feedbackRating = computed(() => {
-  if (narrativeFeedbackScore.value === null) return null;
-  return Math.round(narrativeFeedbackScore.value * MAX_NUMBER_OF_STARS);
 });
 
 // Load more claims
@@ -477,37 +478,10 @@ const handleAlertSave = (alert: Alert) => {
   showAlertDialog.value = false;
 };
 
-const handleVote = async (rating: number) => {
-  if (!narrative.value) return;
-
-  const score = rating / MAX_NUMBER_OF_STARS;
-  narrativeFeedbackScore.value = score;
-
-  const infoToast = toast.add({
-    title: t('feedback.sending'),
-    progress: false,
-  });
-
-  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score).catch(() => null);
-
-  if (!result) {
-    toast.update(infoToast.id,
-      {
-        title: t('feedback.error'),
-        color: 'error',
-        progress: true,
-      });
-    narrativeFeedbackScore.value = null;
-    return;
+const openNarrativeFeedbackDialog = () => {
+  if (narrative.value) {
+    dialogsStore.openNarrativeFeedbackDialog(narrative.value);
   }
-
-  toast.update(infoToast.id,
-    {
-      title: t('feedback.success'),
-      color: 'success',
-      progress: true,
-    }
-  );
 };
 
 const onFeedbackClick = (claim: Claim) => {

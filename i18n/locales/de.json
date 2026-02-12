@@ -262,18 +262,20 @@
     "seenIn": "Gesehen in",
     "claimsSupportingNarrative": "Behauptungen, die diese Erzählung unterstützen",
     "feedback": {
+      "rate": "Diese Erzählung bewerten",
       "narrativeGenerationQuestion": "Wie würden Sie dieses Narrativ bewerten?",
       "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?"
     },
     "loadMoreClaims": "Mehr Behauptungen laden",
     "loadMoreVideos": "Mehr Videos laden"
   },
-  "feedback":{
+  "feedback": {
     "send": "Feedback senden",
     "sending": "Feedback wird gesendet...",
     "success": "Vielen Dank für Ihr Feedback!",
     "error": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
     "alreadyRated": "Sie haben bereits Feedback abgegeben.",
+    "addComment": "Kommentar hinzufügen (optional)",
     "rating": {
       "oneStar": "Schlecht",
       "twoStars": "Mangelhaft",
