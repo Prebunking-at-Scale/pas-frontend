@@ -3,6 +3,8 @@
     "title": "Prébunking à grande échelle"
   },
   "common": {
+    "yes": "Oui",
+    "no": "Non",
     "back": "Retour",
     "next": "Suivant",
     "previous": "Précédent",
@@ -33,7 +35,8 @@
     "error": "Erreur",
     "minutesAgo": "il y a {count} min",
     "hoursAgo": "il y a {count}h",
-    "daysAgo": "il y a {count}j"
+    "daysAgo": "il y a {count}j",
+    "deleting": "Suppression..."
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -287,7 +290,27 @@
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",
     "seenIn": "Vu dans",
-    "claimsSupportingNarrative": "Affirmations soutenant ce récit"
+    "claimsSupportingNarrative": "Affirmations soutenant ce récit",
+    "feedback": {
+      "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
+      "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
+    },
+    "loadMoreClaims": "Charger plus d'affirmations",
+    "loadMoreVideos": "Charger plus de vidéos"
+  },
+  "feedback":{
+    "send": "Envoyer des commentaires",
+    "sending": "Envoi des commentaires...",
+    "success": "Merci pour vos commentaires !",
+    "error": "Échec de l'envoi des commentaires. Veuillez réessayer.",
+    "alreadyRated": "Vous avez déjà soumis des commentaires.",
+    "rating": {
+      "oneStar": "Mauvais",
+      "twoStars": "Médiocre",
+      "threeStars": "Peut mieux faire",
+      "fourStars": "Bon",
+      "fiveStars": "Excellent"
+    }
   },
   "claims": {
     "title": "Affirmations",

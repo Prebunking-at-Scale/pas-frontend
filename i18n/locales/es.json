@@ -3,6 +3,8 @@
     "title": "Prebunking a gran escala"
   },
   "common": {
+    "yes": "Sí",
+    "no": "No",
     "back": "Atrás",
     "next": "Siguiente",
     "previous": "Anterior",
@@ -33,7 +35,8 @@
     "error": "Error",
     "minutesAgo": "hace {count} min",
     "hoursAgo": "hace {count}h",
-    "daysAgo": "hace {count}d"
+    "daysAgo": "hace {count}d",
+    "deleting": "Eliminando..."
   },
   "nav": {
     "overview": "Vista general",
@@ -288,7 +291,27 @@
     "lastUpdated": "Última actualización",
     "loadError": "Error al cargar la narrativa",
     "seenIn": "Visto en",
-    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa"
+    "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
+    "feedback": {
+      "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
+      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
+    },
+    "loadMoreClaims": "Cargar más afirmaciones",
+    "loadMoreVideos": "Cargar más videos"
+  },
+  "feedback":{
+    "send": "Enviar comentarios",
+    "sending": "Enviando comentarios...",
+    "success": "¡Gracias por tus comentarios!",
+    "error": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
+    "alreadyRated": "Ya has enviado comentarios.",
+    "rating": {
+      "oneStar": "Malo",
+      "twoStars": "Pobre",
+      "threeStars": "Puede mejorar",
+      "fourStars": "Bueno",
+      "fiveStars": "Excelente"
+    }
   },
   "claims": {
     "title": "Claims",

@@ -3,6 +3,8 @@
     "title": "Prebunking at Scale"
   },
   "common": {
+    "yes": "Yes",
+    "no": "No",
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
@@ -33,7 +35,8 @@
     "error": "Error",
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago"
+    "daysAgo": "{count}d ago",
+    "deleting": "Deleting..."
   },
   "nav": {
     "overview": "Overview",
@@ -290,7 +293,27 @@
     "lastUpdated": "Last updated",
     "loadError": "Failed to load narrative",
     "seenIn": "Seen in",
-    "claimsSupportingNarrative": "Claims supporting this narrative"
+    "claimsSupportingNarrative": "Claims supporting this narrative",
+    "feedback": {
+      "narrativeGenerationQuestion": "How would you rate this narrative?",
+      "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
+    },
+    "loadMoreClaims": "Load more claims",
+    "loadMoreVideos": "Load more videos"
+  },
+  "feedback":{
+    "send": "Send Feedback",
+    "sending": "Sending feedback...",
+    "success": "Thank you for your feedback!",
+    "error": "Failed to send feedback. Please try again.",
+    "alreadyRated": "You have already submitted feedback.",
+    "rating": {
+      "oneStar": "Bad",
+      "twoStars": "Poor",
+      "threeStars": "It can be better",
+      "fourStars": "Good",
+      "fiveStars": "Excellent"
+    }
   },
   "claims": {
     "title": "Claims",
