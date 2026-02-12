@@ -122,6 +122,7 @@ definePageMeta({
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
+const { saveListState, restoreListState, clearListState } = useListStatePreservation('videos');
 
 // Page title
 const { setPageHeader, clearPageHeader } = usePageHeader();
@@ -164,6 +165,18 @@ const totalPages = computed(() => {
 });
 
 onMounted(async () => {
+  // Check if we have saved state from previous navigation (browser back button)
+  const savedState = restoreListState();
+  if (savedState) {
+    // Restore pagination and filters from saved state
+    currentPage.value = savedState.currentPage;
+    filters.value = { ...filters.value, ...savedState.filters };
+    appliedFilters.value = { ...appliedFilters.value, ...savedState.appliedFilters };
+    
+    // Clear saved state after restoring
+    clearListState();
+  }
+  
   setPageHeader({ 
     title: $i18n.t('videos.title'),
     subtitle: $i18n.t('videos.subtitle')
@@ -250,7 +263,12 @@ const loadPage = (page: number) => {
 };
 
 const goToVideo = (videoId: string) => {
-  // Navigate to video detail page when available
+  // Save current state before navigating to video detail
+  saveListState({
+    currentPage: currentPage.value,
+    filters: filters.value,
+    appliedFilters: appliedFilters.value
+  });
   router.push(`/videos/${videoId}`);
 };
 

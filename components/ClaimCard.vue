@@ -103,7 +103,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'open-feedback-dialog', claim: Claim): void
-}>()
+  (e: 'navigateToVideo', videoId: string): void
+}>();
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
@@ -111,7 +112,7 @@ const { $i18n } = useNuxtApp();
 const handleCardClick = () => {
   const videoId = props.claim.video_id || props.claim.source_video_id;
   if (videoId) {
-    router.push(`/videos/${videoId}`);
+    emit('navigateToVideo', videoId);
   }
 };
 
@@ -119,7 +120,7 @@ const goToVideo = (event: Event) => {
   event.stopPropagation();
   const videoId = props.claim.video_id || props.claim.source_video_id;
   if (videoId) {
-    router.push(`/videos/${videoId}`);
+    emit('navigateToVideo', videoId);
   }
 };
 

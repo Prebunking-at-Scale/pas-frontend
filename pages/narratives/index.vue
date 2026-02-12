@@ -127,6 +127,7 @@ const router = useRouter();
 const route = useRoute();
 const topicsStore = useTopicsStore();
 const { setPageHeader, clearPageHeader } = usePageHeader();
+const { saveListState, restoreListState, clearListState, hasSavedState } = useListStatePreservation('narratives');
 
 
 // State
@@ -210,12 +211,14 @@ const resetFilters = () => {
   filters.value = {
     topic_id: null,
     entity_id: null,
-    text: []
+    text: [],
+    language: 'all'
   };
   appliedFilters.value = {
     topic_id: null,
     entity_id: null,
-    text: []
+    text: [],
+    language: 'all'
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -236,6 +239,12 @@ const updatePageHeader = () => {
 };
 
 const goToNarrative = (id: string) => {
+  // Save current state before navigating to detail
+  saveListState({
+    currentPage: currentPage.value,
+    filters: filters.value,
+    appliedFilters: appliedFilters.value
+  });
   router.push(`/narratives/${id}`);
 };
 
@@ -256,23 +265,41 @@ onMounted(async () => {
   // Load available topics for filter
   await topicsStore.fetchTopics();
   
-  // Check if we have a topic filter from query params
-  const topicId = route.query.topic as string;
-  if (topicId) {
-    // Load topic from store
-    const topic = await topicsStore.ensureTopicLoaded(topicId);
-    if (topic) {
-      filters.value.topic_id = topicId;
-      appliedFilters.value.topic_id = topicId;
-      currentTopicName.value = topic.topic;
+  // Check if we have saved state from previous navigation (browser back button)
+  const savedState = restoreListState();
+  if (savedState) {
+    // Restore pagination and filters from saved state
+    currentPage.value = savedState.currentPage;
+    filters.value = { ...filters.value, ...savedState.filters };
+    appliedFilters.value = { ...appliedFilters.value, ...savedState.appliedFilters };
+    
+    // Update topic name if topic filter was applied
+    if (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') {
+      const topic = topicsStore.getTopicById(appliedFilters.value.topic_id);
+      currentTopicName.value = topic?.topic || '';
     }
-  }
-  
-  // Check if we have an entity filter from query params
-  const entityId = route.query.entity as string;
-  if (entityId) {
-    filters.value.entity_id = entityId;
-    appliedFilters.value.entity_id = entityId;
+    
+    // Clear saved state after restoring to avoid unwanted restoration on future visits
+    clearListState();
+  } else {
+    // No saved state, check for query params (direct navigation)
+    const topicId = route.query.topic as string;
+    if (topicId) {
+      // Load topic from store
+      const topic = await topicsStore.ensureTopicLoaded(topicId);
+      if (topic) {
+        filters.value.topic_id = topicId;
+        appliedFilters.value.topic_id = topicId;
+        currentTopicName.value = topic.topic;
+      }
+    }
+    
+    // Check if we have an entity filter from query params
+    const entityId = route.query.entity as string;
+    if (entityId) {
+      filters.value.entity_id = entityId;
+      appliedFilters.value.entity_id = entityId;
+    }
   }
   
   // Update page header
