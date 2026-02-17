@@ -473,7 +473,7 @@ export const apiService = {
     // Get entities data from the API
     let entitiesData: Entity[] = [];
     try {
-      const entitiesResponse = await this.getEntities({ limit: 10 });
+      const entitiesResponse = await this.getEntities({ limit: 10, hours });
       entitiesData = entitiesResponse.data || [];
     } catch (error) {
       console.error('Failed to fetch entities for dashboard:', error);
@@ -595,6 +595,7 @@ export const apiService = {
     limit?: number;
     offset?: number;
     text?: string;
+    hours?: number | null;
   }): Promise<PaginatedResponse<Entity>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
@@ -610,6 +611,11 @@ export const apiService = {
       // Add text filter if provided
       if (params?.text) {
         query.text = params.text;
+      }
+
+      // Add hours filter if provided
+      if (params?.hours) {
+        query.hours = params.hours;
       }
 
       const response = await apiFetch('/api/entities', {
