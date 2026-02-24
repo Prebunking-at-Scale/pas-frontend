@@ -9,17 +9,18 @@
           v-if="entityImage" 
           :src="entityImage" 
           :alt="entity.name"
-          class="w-10 h-10 rounded-full object-cover"
+          class="w-10 h-10 rounded object-cover"
           @error="handleImageError"
         >
-        <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
+        <div v-else class="w-10 h-10 rounded bg-stone-200 flex items-center justify-center">
           <span class="text-sm font-medium text-gray-600">{{ getInitials(entity.name) }}</span>
         </div>
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium text-gray-900 truncate" :title="entity.name">{{ entity.name }}</p>
         <p v-if="entityType" class="text-xs text-gray-500 capitalize truncate">{{ formatEntityType(entityType) }}</p>
-        <p v-if="entityDescription && showDescription" class="text-xs text-gray-400 truncate" :title="entityDescription">{{ entityDescription }}</p>
+        
+        <!-- <p v-if="entityDescription && showDescription" class="text-xs text-gray-400 truncate" :title="entityDescription">{{ entityDescription }}</p> -->
       </div>
     </div>
     <div class="flex items-center space-x-2 flex-shrink-0">

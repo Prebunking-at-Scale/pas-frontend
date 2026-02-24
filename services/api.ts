@@ -595,6 +595,9 @@ export const apiService = {
     limit?: number;
     offset?: number;
     text?: string;
+    language?: string;
+    narratives_min?: number;
+    narratives_max?: number;
   }): Promise<PaginatedResponse<Entity>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
@@ -610,6 +613,18 @@ export const apiService = {
       // Add text filter if provided
       if (params?.text) {
         query.text = params.text;
+      }
+
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
+      }
+
+      if (typeof params?.narratives_min === 'number') {
+        query.narratives_min = params.narratives_min;
+      }
+
+      if (typeof params?.narratives_max === 'number') {
+        query.narratives_max = params.narratives_max;
       }
 
       const response = await apiFetch('/api/entities', {
