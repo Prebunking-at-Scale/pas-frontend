@@ -135,6 +135,11 @@ export interface Entity {
   metadata?: EntityMetadata;
   created_at?: string;
   updated_at?: string;
+  total_claims?: number;
+  total_videos?: number;
+  linked_narratives?: number;
+  platforms?: string[];
+  languages?: string[];
   
   // Legacy fields for compatibility
   type?: 'institution' | 'location' | 'product' | 'event' | 'concept';
