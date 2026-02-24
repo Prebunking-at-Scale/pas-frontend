@@ -415,7 +415,10 @@
     "firstSeen": "First seen",
     "notFound": "Entity not found",
     "viewAllNarratives": "View all {count} narratives",
-    "viewAllClaims": "View all {count} claims"
+    "viewAllClaims": "View all {count} claims",
+    "claimsInVideos": "{claims} claims in {videos} videos",
+    "platformsLabel": "In:",
+    "languagesCount": "{count} languages"
   },
   "actors": {
     "mentions": "Mentions",

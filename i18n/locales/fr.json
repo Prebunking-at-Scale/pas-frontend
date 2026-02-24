@@ -433,7 +433,10 @@
     "firstSeen": "Première observation",
     "notFound": "Entité non trouvée",
     "viewAllNarratives": "Voir les {count} récits",
-    "viewAllClaims": "Voir les {count} affirmations"
+    "viewAllClaims": "Voir les {count} affirmations",
+    "claimsInVideos": "{claims} affirmations dans {videos} vidéos",
+    "platformsLabel": "Sur :",
+    "languagesCount": "{count} langues"
   },
   "actors": {
     "mentions": "Mentions",

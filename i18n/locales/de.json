@@ -403,7 +403,10 @@
     "firstSeen": "Erstmals gesehen",
     "notFound": "Entität nicht gefunden",
     "viewAllNarratives": "Alle {count} Narrative anzeigen",
-    "viewAllClaims": "Alle {count} Behauptungen anzeigen"
+    "viewAllClaims": "Alle {count} Behauptungen anzeigen",
+    "claimsInVideos": "{claims} Behauptungen in {videos} Videos",
+    "platformsLabel": "Auf:",
+    "languagesCount": "{count} Sprachen"
   },
   "actors": {
     "mentions": "Erwähnungen",
