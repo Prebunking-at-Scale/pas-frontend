@@ -27,6 +27,14 @@ interface DeleteDialogState {
   narrativeToDelete: Narrative | null;
 }
 
+interface ClaimFeedbackDialogState {
+  isOpen: boolean;
+  selectedClaim: Claim | null;
+  selectedNarrative: Narrative | null;
+  claimFeedbackScore: 'like' | 'dislike' | null;
+  loading: boolean;
+}
+
 export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
   state: () => ({
     unlinkDialog: {
@@ -48,6 +56,13 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
       isOpen: false,
       narrativeToDelete: null,
     } as DeleteDialogState,
+    claimFeedbackDialog: {
+      isOpen: false,
+      selectedClaim: null,
+      selectedNarrative: null,
+      loading: false,
+      claimFeedbackScore: null,
+    } as ClaimFeedbackDialogState,
   }),
 
   actions: {
@@ -173,6 +188,31 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
       }, 300);
     },
 
+    // Claim Feedback Dialog Actions
+    async openClaimFeedbackDialog(claim: Claim, narrative: Narrative) {
+      this.claimFeedbackDialog.isOpen = true;
+      this.claimFeedbackDialog.loading = true;
+      this.claimFeedbackDialog.selectedClaim = claim;
+      this.claimFeedbackDialog.selectedNarrative = narrative;
+      const feedbackResponse = await apiService.getClaimFeedback(claim.id, narrative.id);
+      this.claimFeedbackDialog.claimFeedbackScore = feedbackResponse ? (feedbackResponse.feedback_score === 1 ? 'like' : 'dislike') : null;
+      this.claimFeedbackDialog.loading = false;
+    },
+
+    closeClaimFeedbackDialog() {
+      this.claimFeedbackDialog.isOpen = false;
+      this.claimFeedbackDialog.selectedClaim = null;
+      this.claimFeedbackDialog.selectedNarrative = null;
+    },
+
+    async sendClaimFeedback(score: number) {
+      this.claimFeedbackDialog.claimFeedbackScore = score === 1 ? 'like' : 'dislike';
+      return await apiService.sendClaimFeedback(this.claimFeedbackDialog.selectedClaim!.id, this.claimFeedbackDialog.selectedNarrative!.id, score).catch((error) => {
+        console.error('Error sending claim feedback:', error);
+        return null;
+      });
+    },
+
     async confirmDelete() {
       const { $i18n } = useNuxtApp();
       const toast = useToast();
@@ -209,5 +249,7 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
     isTitleDialogOpen: (state) => state.titleDialog.isOpen,
     isMergeDialogOpen: (state) => state.mergeDialog.isOpen,
     isDeleteDialogOpen: (state) => state.deleteDialog.isOpen,
+    isClaimFeedbackDialogOpen: (state) => state.claimFeedbackDialog.isOpen,
+    isClaimFeedbackLoading: (state) => state.claimFeedbackDialog.loading,
   },
 });
