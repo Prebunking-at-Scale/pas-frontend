@@ -11,22 +11,30 @@ export default defineEventHandler(async (event) => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
-  
-  // For /auth and /alerts endpoints, forward the user's Bearer token if present
-  // For other endpoints, use the API key
-  if (path.startsWith('auth/') || path.startsWith('alerts')) {
+
+  // Check if this is a PATCH or POST request to /api/claims, /api/narratives, or PATCH to /api/videos
+  // These requests come from the Narratives API
+  const method = event.node.req.method;
+  const isClaimsOrNarrativesEndpoint = path.startsWith('claims') || path.startsWith('narratives');
+  const isVideosEndpoint = path.startsWith('videos');
+  const isPatchOrPost = method === 'PATCH' || method === 'POST';
+  const isPatch = method === 'PATCH';
+
+  if ((isClaimsOrNarrativesEndpoint && isPatchOrPost) || (isVideosEndpoint && isPatch)) {
+    // Use X-API-TOKEN from environment for these requests
+    headers['X-API-TOKEN'] = config.apiKey;
+  } else {
+    // For other requests, forward the Bearer token if present
     const authHeader = event.node.req.headers.authorization;
     if (authHeader) {
       headers['Authorization'] = authHeader;
     }
-  } else {
-    headers['X-API-TOKEN'] = config.apiKey;
   }
   
   // Forward the request to the backend
   try {
     const response = await $fetch.raw(backendUrl, {
-      method: event.node.req.method,
+      method: event.node.req.method as any,
       headers,
       // Forward query parameters
       query: getQuery(event),

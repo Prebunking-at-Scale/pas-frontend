@@ -30,6 +30,14 @@
         :placeholder="$t('videos.textPlaceholder')"
         @enter-pressed="applyFilters"
       />
+
+      <LanguageFilter
+        class="w-full"
+        v-model="filters.language"
+        :label="$t('videos.language')"
+        :placeholder="$t('videos.selectLanguage')"
+        type="select"
+      />
     </FilterCard>
 
     <!-- Videos List -->
@@ -105,6 +113,7 @@ import FilterCard from '~/components/filters/FilterCard.vue';
 import PlatformFilter from '~/components/filters/PlatformFilter.vue';
 import ChannelFilter from '~/components/filters/ChannelFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -113,6 +122,7 @@ definePageMeta({
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
+const { saveListState, restoreListState, clearListState } = useListStatePreservation('videos');
 
 // Page title
 const { setPageHeader, clearPageHeader } = usePageHeader();
@@ -131,14 +141,16 @@ const currentPage = ref(1);
 const filters = ref({
   platform: 'all',
   channel: '',
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   platform: 'all',
   channel: '',
-  text: [] as string[]
+  text: [] as string[],
+  language: 'all'
 });
 
 const hasActiveFilters = computed(() => {
@@ -153,6 +165,18 @@ const totalPages = computed(() => {
 });
 
 onMounted(async () => {
+  // Check if we have saved state from previous navigation (browser back button)
+  const savedState = restoreListState();
+  if (savedState) {
+    // Restore pagination and filters from saved state
+    currentPage.value = savedState.currentPage;
+    filters.value = { ...filters.value, ...savedState.filters };
+    appliedFilters.value = { ...appliedFilters.value, ...savedState.appliedFilters };
+    
+    // Clear saved state after restoring
+    clearListState();
+  }
+  
   setPageHeader({ 
     title: $i18n.t('videos.title'),
     subtitle: $i18n.t('videos.subtitle')
@@ -182,7 +206,10 @@ const loadVideos = async () => {
     if (appliedFilters.value.channel) {
       params.channel = [appliedFilters.value.channel];
     }
-    
+    if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
+      params.language = [appliedFilters.value.language];
+    }
+
     // Add text search parameter if text filters are applied
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
@@ -217,12 +244,14 @@ const clearFilters = () => {
   filters.value = {
     platform: 'all',
     channel: '',
-    text: []
+    text: [],
+    language: 'all'
   };
   appliedFilters.value = {
     platform: 'all',
     channel: '',
-    text: []
+    text: [],
+    language: 'all'
   };
   currentPage.value = 1;
   loadVideos();
@@ -234,7 +263,12 @@ const loadPage = (page: number) => {
 };
 
 const goToVideo = (videoId: string) => {
-  // Navigate to video detail page when available
+  // Save current state before navigating to video detail
+  saveListState({
+    currentPage: currentPage.value,
+    filters: filters.value,
+    appliedFilters: appliedFilters.value
+  });
   router.push(`/videos/${videoId}`);
 };
 

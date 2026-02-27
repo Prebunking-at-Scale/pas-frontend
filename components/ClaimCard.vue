@@ -1,31 +1,48 @@
 <template>
-<Card class="hover:shadow-lg transition-shadow p-0 m-0">
+<Card 
+  class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
+  @click="handleCardClick"
+>
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
     <!-- Claim Header -->
-    <div class="flex mb-4">
+    <div class="flex mb-4 gap-2">
       <!-- Claim Text -->
-      <div class="flex flex-1 flex-col">
-        <p class="text-gray-900 text-xl leading-tight">
-          "{{ claim.claim || claim.text }}"
-        </p>
-        <p 
-          v-if="claim.video"
-          @click="goToVideo(claim.video_id || claim.source_video_id)"
-          class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
-        >
-          <span>↳ {{ claim.video.title }}</span>
-        </p>
+      <div class="flex flex-auto mb-4">
+        <div class="flex flex-1 flex-col">
+          <p class="text-gray-900 text-xl leading-tight">
+            "{{ claim.claim || claim.text }}"
+          </p>
+          <p
+            v-if="claim.video"
+            @click="goToVideo"
+            class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
+          >
+            <span>↳ {{ claim.video.title }}</span>
+          </p>
+        </div>
       </div>
       <!-- Actions -->
-      <div class="flex flex-none">
+      <div class="flex flex-none gap-2">
         <!--Unlink Action-->
         <UTooltip :text="$t('common.unlink')">
           <Button
             v-if="props.showUnlinkAction && props.dialogOpenAction"
             @click="dialogOpenAction?.(claim)"
+            size="icon"
             variant="destructive"
           >
-            <Unlink />
+            <Unlink class="size-4" />
+          </Button>
+        </UTooltip>
+        <!--Send Feedback Action-->
+        <UTooltip :text="$t('feedback.send')">
+          <Button
+            v-if="props.showFeedbackAction"
+            @click="onFeedbackDialog"
+            size="icon"
+            variant="outline"
+          >
+            <MessageCircleMore class="size-4" />
           </Button>
         </UTooltip>
       </div>
@@ -43,10 +60,16 @@
                 v-for="topic in claim.topics" 
                 :key="topic.id"
                 :to="`/topics/${topic.id}`"
+                @click="(e: Event) => e.stopPropagation()"
                 class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer">
                 {{ topic.topic }}
               </NuxtLink>
             </div>
+          </div>
+
+          <!-- Language -->
+          <div v-if="claim.metadata.language" class="flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+            <span class="text-xs">{{ getLanguageName(claim.metadata?.language || '') }}</span>
           </div>
 
           <!-- Score -->
@@ -73,26 +96,47 @@
 </template>
 
 <script setup lang="ts">
+import { MessageCircleMore } from 'lucide-vue-next';
 import type { Claim } from '~/types/api';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
 import { Unlink } from 'lucide-vue-next';
+import { getLanguageName } from '~/utils/languageMapping';
 
 interface Props {
   claim: Claim;
   showUnlinkAction?: boolean;
   dialogOpenAction?: (claim: Claim) => void;
+  showFeedbackAction?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showFeedbackAction: false,
+});
+
+const emit = defineEmits<{
+  (e: 'open-feedback-dialog', claim: Claim): void
+  (e: 'navigateToVideo', videoId: string): void
+}>();
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
 
-const goToVideo = (videoId: string) => {
-  router.push(`/videos/${videoId}`);
+const handleCardClick = () => {
+  const videoId = props.claim.video_id || props.claim.source_video_id;
+  if (videoId) {
+    emit('navigateToVideo', videoId);
+  }
+};
+
+const goToVideo = (event: Event) => {
+  event.stopPropagation();
+  const videoId = props.claim.video_id || props.claim.source_video_id;
+  if (videoId) {
+    emit('navigateToVideo', videoId);
+  }
 };
 
 const goToTopic = (topicId: string) => {
@@ -134,4 +178,10 @@ const getScoreClass = (score: number) => {
     return 'bg-red-200 text-red-900';
   }
 };
+
+const onFeedbackDialog = (event: Event) => {
+  event.stopPropagation();
+  emit('open-feedback-dialog', props.claim);
+};
+
 </script>

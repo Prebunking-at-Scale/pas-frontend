@@ -18,23 +18,34 @@
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
           <!-- Actions -->
-          <div class="flex flex-col gap-2 flex-none">
+          <div class="flex gap-2 flex-none">
             <Button @click="openAlertDialog" variant="outline">
               <Bell class="mr-2 h-4 w-4" />
               {{ $t('alerts.create_alert') }}
             </Button>
-            <Button @click="openUpdateTitleDialog" variant="outline">
-              <Captions class="mr-2 h-4 w-4" />
-              {{ $t('narratives.editTitle') }}
-            </Button>
-            <Button @click="openMergeDialog" variant="outline">
-              <Combine class="mr-2 h-4 w-4" />
-              {{ $t('narratives.merge.mergeAndDelete') }}
-            </Button>
-            <Button @click="openDeleteDialog" variant="destructive">
-              <Trash class="mr-2 h-4 w-4" />
-              {{ $t('narratives.delete') }}
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button variant="outline">
+                  {{ $t('narratives.adminActions') }}
+                  <ChevronDown class="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem @click="openUpdateTitleDialog">
+                  <Captions class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.editTitle') }}
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="openMergeDialog">
+                  <Combine class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.merge.mergeAndDelete') }}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem class="text-red-600" @click="openDeleteDialog">
+                  <Trash class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.delete') }}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         
@@ -42,8 +53,8 @@
         <div v-if="narrative.topics && narrative.topics.length > 0" class="mt-4">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="text-sm font-medium text-gray-700">{{ $t('narratives.topics') }}:</span>
-            <span 
-              v-for="topic in narrative.topics" 
+            <span
+              v-for="topic in narrative.topics"
               :key="topic.id"
               class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm cursor-pointer hover:bg-emerald-200"
               @click="goToTopic(topic.id)"
@@ -52,87 +63,80 @@
             </span>
           </div>
         </div>
+
+        <!-- Languages -->
+        <div v-if="languages.length > 0" class="mt-4">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-medium text-gray-700">{{ $t('narratives.languages') }}:</span>
+            <span
+              v-for="language in languages"
+              :key="language"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+            >
+              {{ language }}
+            </span>
+          </div>
+        </div>
       </div>
 
       <!-- Total stats calculated from videos -->
-      <div class="bg-white shadow rounded-lg mb-6 p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
+      <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
+        <!--Feedback Section -->
+        <div class="flex gap-2 place-self-end w-fit items-center">
+          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
+          <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
+        </div>
+        <!-- Total stats calculated from videos -->
+        <div class="bg-white shadow rounded-lg p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Total Views -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Views -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  👁️
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalViews.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.views') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalViews.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.views') }}</div>
             </div>
-          </div>
 
-          <!-- Total Likes -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                </svg>
+            <!-- Total Likes -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  ❤️
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalLikes.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.likes') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalLikes.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.likes') }}</div>
             </div>
-          </div>
 
-          <!-- Total Comments -->
-          <div class="flex items-center justify-center">
-            <div class="flex flex-col items-center">
-              <div class="text-gray-400 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+            <!-- Total Comments -->
+            <div class="flex items-center justify-center">
+              <div class="flex flex-col items-center">
+                <div class="text-gray-400 mb-2">
+                  💬
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ stats.totalComments.toLocaleString() }}</div>
+                <div class="text-sm text-gray-500">{{ $t('common.comments') }}</div>
               </div>
-              <div class="text-2xl font-bold text-gray-900">{{ stats.totalComments.toLocaleString() }}</div>
-              <div class="text-sm text-gray-500">{{ $t('common.comments') }}</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Timeline: Show all related video dates as a timeline, 100% width -->
-      <div class="bg-white shadow rounded-lg mb-6 p-6 flex flex-col justify-center text-sm text-gray-500 w-full" v-if="narrative.videos && narrative.videos.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Timeline of the narrative</h3>
-        <div class="flex items-center w-full">
-          <template v-for="(video, idx) in sortedVideos" :key="video.id || video.uploaded_at || idx">
-            <!-- Timeline point -->
-            <div class="flex flex-col items-center flex-shrink-0 min-w-[70px]">
-              <div class="w-4 h-4 rounded-full bg-emerald-700 border-2 border-emerald-900"></div>
-              <span class="mt-2 font-medium text-gray-700">
-                <template v-if="idx === 0">
-                  {{ $t('timeline.firstSeen') || 'First seen' }}
-                </template>
-                <template v-else-if="idx === sortedVideos.length - 1">
-                  {{ $t('timeline.lastSeen') || 'Last seen' }}
-                </template>
-                <template v-else>
-                  {{ $t('timeline.seen') || 'Seen' }}
-                </template>
-              </span>
-              <span class="text-xs mt-1" v-if="video.uploaded_at">
-                {{ formatDate(video.uploaded_at, $i18n.locale.value) }}
-              </span>
-            </div>
-            <!-- Line between points, except after last -->
-            <div
-              v-if="idx < sortedVideos.length - 1"
-              class="flex-1 h-0.5 bg-stone-400 mx-2"
-            ></div>
-          </template>
+        <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
+        <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrativeStats?.time_series?.length">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
+          <div class="h-96">
+            <NarrativeEvolutionChart
+              :time-series="narrativeStats.time_series"
+              :locale="$i18n.locale.value"
+            />
+          </div>
         </div>
       </div>
-
       
       <!-- Timeline Tabs -->
       <div class="bg-white shadow rounded-lg mb-6" v-if="false">
@@ -218,64 +222,22 @@
         </div>
       </div>
 
-      <!-- Actors and Entities -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" v-if="false">
-        <!-- Actors -->
-        <div class="bg-white shadow rounded-lg p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
-            {{ $t('narratives.actors') }}
-            <span class="text-2xl font-bold text-emerald-600">{{ narrative.actors.length }}</span>
-          </h3>
-          <div class="space-y-3">
-            <div v-for="actor in narrative.actors" :key="actor.id" class="flex justify-between items-center">
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="actor.image_url" 
-                  :src="actor.image_url" 
-                  :alt="actor.name"
-                  class="w-10 h-10 rounded-full object-cover"
-                >
-                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-sm text-gray-500">{{ actor.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ actor.name }}</p>
-                  <p v-if="actor.role || actor.affiliation" class="text-xs text-gray-500">
-                    {{ actor.role }}{{ actor.role && actor.affiliation ? ' • ' : '' }}{{ actor.affiliation }}
-                  </p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-500">{{ actor.frequency }} {{ $t('common.mentions') }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Entities -->
-        <div class="bg-white shadow rounded-lg p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
-            {{ $t('narratives.entities') }}
-            <span class="text-2xl font-bold text-emerald-600">{{ narrative.entities.length }}</span>
-          </h3>
-          <div class="space-y-3">
-            <div v-for="entity in narrative.entities" :key="entity.id" class="flex justify-between items-center">
-              <div class="flex items-center space-x-3">
-                <img 
-                  v-if="entity.image_url" 
-                  :src="entity.image_url" 
-                  :alt="entity.name"
-                  class="w-10 h-10 rounded-full object-cover"
-                >
-                <div v-else class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center">
-                  <span class="text-sm text-gray-500">{{ entity.name.charAt(0) }}</span>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ entity.name }}</p>
-                  <p v-if="entity.type" class="text-xs text-gray-500 capitalize">{{ entity.type }}</p>
-                </div>
-              </div>
-              <span class="text-sm text-gray-500">{{ entity.frequency }} {{ $t('common.mentions') }}</span>
-            </div>
-          </div>
+      <!-- Entities -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.entities && narrative.entities.length > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
+          {{ $t('narratives.entities') }}
+          <span class="text-2xl font-bold text-emerald-600">{{ narrative.entities.length }}</span>
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <EntityCard
+            v-for="entity in narrative.entities" 
+            :key="entity.id"
+            :entity="entity"
+            :show-frequency="false"
+            :show-chevron="true"
+            :show-description="true"
+            @click="goToEntity(entity.id)"
+          />
         </div>
       </div>
 
@@ -288,29 +250,49 @@
       </div>
 
       <!-- Claims supporting this narrative -->
-      <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claims && narrative.claims.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claims.length }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
+      <div class="mb-6 bg-stone-100 rounded-lg p-6" v-if="narrative.claim_count > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ narrative.claim_count }} <span class="lowercase">{{ $t('narratives.claimsSupportingNarrative') }}</span></h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
-          <ClaimCard 
-            v-for="claim in narrative.claims" 
-            :key="claim.id" 
+          <ClaimCard
+            :show-feedback-action="true"
+            @open-feedback-dialog="onFeedbackClick"
+            v-for="claim in allClaims"
+            :key="claim.id"
             :claim="claim"
             :show-unlink-action="true"
             :dialog-open-action="openUnlinkDialog"
           />
         </div>
+
+        <!-- Load more claims button -->
+        <div v-if="allClaims.length < narrative.claim_count" class="mt-4 text-center">
+          <Button @click="loadMoreClaims" :disabled="claimsLoading" variant="outline">
+            <Loader2 v-if="claimsLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ $t('narratives.loadMoreClaims') }}
+            ({{ allClaims.length }}/{{ narrative.claim_count }})
+          </Button>
+        </div>
       </div>
 
       <!-- Seen in Videos -->
-      <div class="bg-stone-100 rounded-lg p-6" v-if="narrative.videos && narrative.videos.length > 0">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.seenIn') }} {{ narrative.videos.length }} <span class="lowercase">{{ $t('videos.title') }}</span></h3>
+      <div class="bg-stone-100 rounded-lg p-6" v-if="narrative.video_count > 0">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.seenIn') }} {{ narrative.video_count }} <span class="lowercase">{{ $t('videos.title') }}</span></h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <VideoCard 
-            v-for="video in narrative.videos" 
-            :key="video.id" 
+          <VideoCard
+            v-for="video in allVideos"
+            :key="video.id"
             :video="video"
             @click="goToVideo"
           />
+        </div>
+
+        <!-- Load more videos button -->
+        <div v-if="allVideos.length < narrative.video_count" class="mt-4 text-center">
+          <Button @click="loadMoreVideos" :disabled="videosLoading" variant="outline">
+            <Loader2 v-if="videosLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ $t('narratives.loadMoreVideos') }}
+            ({{ allVideos.length }}/{{ narrative.video_count }})
+          </Button>
         </div>
       </div>
     </div>
@@ -323,8 +305,8 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
-    <NarrativeTitleDialog 
-      :open="editDialogOpen" 
+    <NarrativeTitleDialog
+      :open="editDialogOpen"
       :narrative="narrative"
       @update:open="editDialogOpen = $event"
       @save="handleUpdate"
@@ -332,22 +314,27 @@
     <ConfirmUnlinkDialog />
     <MergeNarrativesDialog />
     <ConfirmDeleteDialog />
-    <!-- End Dialogs -->
+    <ClaimFeedbackDialog
+      v-if="narrative"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import { type Claim, type Narrative } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
+import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
+import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
-import { Bell, Captions, Combine, Trash } from 'lucide-vue-next';
+import { Bell, Captions, ChevronDown, Combine, Trash, Loader2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
 import { formatDate } from '~/utils/date';
 import { useNarrativeDialogsStore } from '~/stores/narrativeDialogs';
@@ -364,18 +351,48 @@ const toast = useToast();
 const dialogsStore = useNarrativeDialogsStore();
 
 // State
-const narrative = ref<Narrative | null>(null);
+const narrative = ref<NarrativeDetail | null>(null);
+const narrativeStats = ref<NarrativeStatsResponse | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
+const narrativeFeedbackScore = ref<number | null>(null);
+
+// Pagination state for claims
+const allClaims = ref<Claim[]>([]);
+const claimsLoading = ref(false);
+
+// Pagination state for videos
+const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : never[]>([]);
+const videosLoading = ref(false);
+
+// Constants
+const MAX_NUMBER_OF_STARS = 5;
+const ITEMS_PER_PAGE = 20;
 
 // Calculate narrative stats using the helper function
 const stats = computed(() => {
   if (!narrative.value) return { totalViews: 0, totalLikes: 0, totalComments: 0 };
   return calculateNarrativeStats(narrative.value);
+});
+
+const languages = computed(() => {
+  if (!narrative.value) return [];
+
+  const languageSet = new Set<string>();
+
+  if (narrative.value.claims) {
+    narrative.value.claims.forEach(claim => {
+      if (claim.metadata?.language) {
+        languageSet.add(getLanguageName(claim.metadata?.language));
+      }
+    });
+  }
+
+  return Array.from(languageSet).sort();
 });
 
 const timeTabs = [
@@ -395,11 +412,71 @@ const sortedVideos = computed(() => {
   });
 });
 
+const feedbackRating = computed(() => {
+  if (narrativeFeedbackScore.value === null) return null;
+  return Math.round(narrativeFeedbackScore.value * MAX_NUMBER_OF_STARS);
+});
+
+// Load more claims
+const loadMoreClaims = async () => {
+  if (!narrative.value) return;
+
+  claimsLoading.value = true;
+  try {
+    const result = await apiService.getNarrativeClaims(narrative.value.id, {
+      limit: ITEMS_PER_PAGE,
+      offset: allClaims.value.length
+    });
+    allClaims.value = [...allClaims.value, ...result.data];
+  } catch (err) {
+    console.error('Failed to load more claims:', err);
+  } finally {
+    claimsLoading.value = false;
+  }
+};
+
+// Load more videos
+const loadMoreVideos = async () => {
+  if (!narrative.value) return;
+
+  videosLoading.value = true;
+  try {
+    const result = await apiService.getNarrativeVideos(narrative.value.id, {
+      limit: ITEMS_PER_PAGE,
+      offset: allVideos.value.length
+    });
+    allVideos.value = [...allVideos.value, ...result.data];
+  } catch (err) {
+    console.error('Failed to load more videos:', err);
+  } finally {
+    videosLoading.value = false;
+  }
+};
+
 // Load narrative data
 onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
-    narrative.value = await apiService.getNarrative(narrativeId);
+
+    // Fetch narrative detail, stats, and feedback in parallel
+    const [narrativeData, statsData, feedbackResponse] = await Promise.all([
+      apiService.getNarrative(narrativeId),
+      apiService.getNarrativeStats(narrativeId),
+      apiService.getNarrativeFeedback(narrativeId)
+    ]);
+
+    narrative.value = narrativeData;
+    narrativeStats.value = statsData;
+
+    // Initialize displayed items with preview data
+    allClaims.value = narrativeData.claims || [];
+    allVideos.value = narrativeData.videos || [];
+
+    if (!feedbackResponse) {
+      narrativeFeedbackScore.value = null;
+    } else {
+      narrativeFeedbackScore.value = feedbackResponse.feedback_score;
+    }
   } catch (err) {
     console.error('Failed to load narrative:', err);
     error.value = t('narratives.loadError');
@@ -421,6 +498,10 @@ const formatNumber = (num: number): string => {
 
 const goToTopic = (topicId: string) => {
   router.push(`/topics/${topicId}`);
+};
+
+const goToEntity = (entityId: string) => {
+  router.push(`/entities/${entityId}`);
 };
 
 const goToVideo = (videoId: string) => {
@@ -486,5 +567,43 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
     });
     throw err; // Re-throw to let the store handle it
   }
+};
+
+const handleVote = async (rating: number) => {
+  if (!narrative.value) return;
+
+  const score = rating / MAX_NUMBER_OF_STARS;
+  narrativeFeedbackScore.value = score;
+
+  const infoToast = toast.add({
+    title: t('feedback.sending'),
+    progress: false,
+  });
+
+  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score).catch(() => null);
+
+  if (!result) {
+    toast.update(infoToast.id,
+      {
+        title: t('feedback.error'),
+        color: 'error',
+        progress: true,
+      });
+    narrativeFeedbackScore.value = null;
+    return;
+  }
+
+  toast.update(infoToast.id,
+    {
+      title: t('feedback.success'),
+      color: 'success',
+      progress: true,
+    }
+  );
+};
+
+const onFeedbackClick = (claim: Claim) => {
+  if (!narrative.value) return;
+  dialogsStore.openClaimFeedbackDialog(claim, narrative.value);
 };
 </script>

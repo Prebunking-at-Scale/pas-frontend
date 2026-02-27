@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-stone-900 mt-16 border-t border-neutral-200 p-12 text-white">
+  <footer class="bg-stone-900 border-t border-neutral-200 p-12 text-white">
     <div class="grid grid-cols-12 gap-8">
       <!-- About Section -->
       <div class="col-span-4">

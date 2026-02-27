@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import '~/assets/css/styles.css';
-import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase, faBell} from '@fortawesome/free-solid-svg-icons'
+import {faHouse, faVideo, faCircleNodes, faComment, faSignOutAlt, faUser, faBriefcase, faBell, faShieldAlt, faRss} from '@fortawesome/free-solid-svg-icons'
 import Footer from '~/components/Footer.vue';
 import { authService } from '~/services/auth';
-import type { IdentityResponse } from '~/types/api';
+import type { IdentityResponse, User } from '~/types/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -12,14 +12,20 @@ const { headerContent } = usePageHeader();
 
 // Admin status
 const identity = ref<IdentityResponse | null>(null);
+const currentUser = ref<User | null>(null);
 const isOrganizationAdmin = computed(() => identity.value?.is_organisation_admin || false);
+const isSuperAdmin = computed(() => currentUser.value?.is_super_admin || false);
 
-// Fetch identity on mount
+// Fetch identity and user data on mount
 onMounted(async () => {
   try {
+    // Get identity for organization info
     identity.value = await authService.getIdentity();
+    
+    // Get full user data which includes is_super_admin
+    currentUser.value = await authService.getCurrentUser();
   } catch (error) {
-    console.error('Failed to load identity:', error);
+    console.error('Failed to load user data:', error);
   }
 });
 
@@ -36,10 +42,14 @@ const defaultPageTitle = computed(() => {
       return t('videos.title');
     case '/alerts':
       return t('alerts.title');
+    case '/channels':
+      return t('channels.title');
     case '/profile':
       return t('profile.title');
     case '/admin':
       return `${t('admin.manageOrganization')}: ${identity.value?.organisation?.display_name || ''}`;
+    case '/superadmin':
+      return t('superadmin.title');
     default:
       if (route.path.startsWith('/narratives/')) {
         return t('narratives.title');
@@ -55,11 +65,11 @@ const defaultPageTitle = computed(() => {
 });
 
 // Use computed property for active route checking to ensure reactivity
-const isActive = (path) => {
+const isActive = (path: string) => {
   if (path === '/dashboard') {
     return route.path === '/' || route.path === '/dashboard';
   }
-  if (path === '/alerts' || path === '/profile' || path === '/admin') {
+  if (path === '/channels' || path === '/alerts' || path === '/profile' || path === '/admin' || path === '/superadmin') {
     return route.path === path;
   }
   return route.path.startsWith(path);
@@ -73,9 +83,9 @@ const handleLogout = () => {
 </script>
 
 <template>
-
-  <div class="p-4 max-w-[1536px] mx-auto">
-    <header class="from-emerald-800 to-emerald-900 bg-gradient-to-r rounded-xl p-6 flex gap-8 divider-y items-center">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header - full width, no margins -->
+    <header class="w-full from-emerald-800 to-emerald-900 bg-gradient-to-r p-6 flex gap-8 divider-y items-center">
       <a href="/">
         <img 
           src="assets/images/prebunking-logo.png" 
@@ -103,10 +113,11 @@ const handleLogout = () => {
       </div>
     </header>
 
-    <main class="grid grid-cols-12 gap-4 mt-6">
-
-      <aside class="col-span-2">
-        <nav class="space-y-2">
+    <!-- Main content area - flex layout with sidebar and content -->
+    <main class="flex flex-1">
+      <!-- Sidebar - fixed to left, no left margin -->
+      <aside class="w-64 bg-white border-r border-neutral-200">
+        <nav class="p-4 space-y-2">
           <NuxtLink
             to="/dashboard"
             :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/dashboard') }]"
@@ -138,6 +149,13 @@ const handleLogout = () => {
 
           <div class="pt-4 mt-4 border-t border-neutral-200">
             <NuxtLink
+              to="/channels"
+              :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/channels') }]"
+              :prefetch="false"
+            >
+              <font-awesome :icon="faRss" class="mr-2"/>{{ $t('nav.channels') }}
+            </NuxtLink>
+            <NuxtLink
               to="/alerts"
               :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/alerts') }]"
               :prefetch="false"
@@ -159,6 +177,14 @@ const handleLogout = () => {
             >
               <font-awesome :icon="faBriefcase" class="mr-2"/>{{ $t('nav.admin') }}
             </NuxtLink>
+            <NuxtLink
+              v-if="isSuperAdmin"
+              to="/superadmin"
+              :class="['block px-4 py-2 rounded-lg hover:bg-neutral-100 transition-colors', { 'bg-neutral-100': isActive('/superadmin') }]"
+              :prefetch="false"
+            >
+              <font-awesome :icon="faShieldAlt" class="mr-2"/>{{ $t('nav.superadmin') }}
+            </NuxtLink>
           </div>
 
           <div class="pt-4 mt-4 border-t border-neutral-200">
@@ -173,15 +199,14 @@ const handleLogout = () => {
         </nav>
       </aside>
 
-      <article class="col-span-10">
+      <!-- Content area - gray background, fills remaining space -->
+      <article class="flex-1 bg-gray-50 px-6 py-6">
         <slot />
       </article>
-
     </main>
 
+    <Footer />
   </div>
-
-  <Footer />
 
 </template>
 

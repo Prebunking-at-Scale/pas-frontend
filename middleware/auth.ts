@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  // Skip auth check for login page
-  if (to.path === '/login') return;
+  // Skip auth check for login and magic-login pages
+  if (to.path === '/login' || to.path === '/magic-login') return;
 
   const config = useRuntimeConfig();
   

@@ -3,6 +3,8 @@
     "title": "Prébunking à grande échelle"
   },
   "common": {
+    "yes": "Oui",
+    "no": "Non",
     "back": "Retour",
     "next": "Suivant",
     "previous": "Précédent",
@@ -20,7 +22,9 @@
     "confirm_delete_description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
     "deleting": "Suppression...",
     "create": "Créer",
+    "creating": "Création...",
     "save": "Enregistrer",
+    "confirm": "Confirmer",
     "logout": "Déconnexion",
     "loading": "Chargement...",
     "saving": "Enregistrement...",
@@ -38,7 +42,8 @@
     "error": "Erreur",
     "minutesAgo": "il y a {count} min",
     "hoursAgo": "il y a {count}h",
-    "daysAgo": "il y a {count}j"
+    "daysAgo": "il y a {count}j",
+    "deleting": "Suppression..."
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -51,9 +56,11 @@
     "docs": "Documentation",
     "components": "Composants",
     "help": "Aide",
+    "channels": "Chaînes",
     "alerts": "Alertes",
     "profile": "Profil",
-    "admin": "Administration"
+    "admin": "Administration",
+    "superadmin": "Superadministrateur"
   },
   "videos": {
     "title": "Vidéos",
@@ -87,6 +94,7 @@
     "metadata": "Informations sur la vidéo",
     "duration": "Durée",
     "language": "Langue",
+    "selectLanguage": "Sélectionner la langue",
     "source": "Source",
     "relatedNarratives": "Récits liés",
     "topics": "Sujets"
@@ -117,7 +125,23 @@
     "forgotPasswordSuccess": "Lien de réinitialisation envoyé! Vérifiez vos e-mails.",
     "forgotPasswordError": "Échec de l'envoi du lien. Veuillez réessayer.",
     "sendResetLink": "Envoyer le lien",
-    "sendingResetLink": "Envoi..."
+    "sendingResetLink": "Envoi...",
+    "otherLoginOptions": "Autres options de connexion"
+  },
+  "magicLogin": {
+    "title": "Connexion avec Magic Link",
+    "subtitle": "Entrez votre adresse e-mail pour recevoir un lien de connexion",
+    "email": "Adresse e-mail",
+    "sendLink": "Envoyer le lien",
+    "sendingLink": "Envoi en cours...",
+    "linkSent": "Lien envoyé! Vérifiez vos e-mails.",
+    "error": "Erreur lors de l'envoi du lien. Veuillez réessayer.",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide.",
+    "networkError": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet.",
+    "genericError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "invalidToken": "Magic link invalide. Veuillez en demander un nouveau.",
+    "expiredToken": "Le magic link a expiré. Veuillez en demander un nouveau.",
+    "magicLinkSent": "Magic link envoyé! Vérifiez vos e-mails."
   },
   "profile": {
     "title": "Profil",
@@ -189,11 +213,51 @@
     "actors": "Acteurs",
     "viralNarratives": "Récits viraux",
     "prevalentNarratives": "Récits prévalents",
+    "displayDataFrom": "Afficher les données de",
+    "selectTimeframe": "Sélectionner la période",
+    "last24Hours": "Dernières 24 heures",
     "lastWeek": "Dernière semaine",
+    "lastMonth": "Dernier mois",
+    "allTime": "Tout le temps",
     "narratives": "Récits",
     "claims": "Affirmations",
     "narrativesCount": "Nombre de récits",
     "claimsCount": "Nombre d'affirmations"
+  },
+  "channels": {
+    "title": "Chaînes",
+    "channelFeeds": "Chaînes",
+    "keywordFeeds": "Mots-clés",
+    "addChannelFeed": "Ajouter une chaîne",
+    "addKeywordFeed": "Ajouter un mot-clé",
+    "channel": "Chaîne",
+    "platform": "Plateforme",
+    "topic": "Sujet",
+    "keywords": "Mots-clés",
+    "createdAt": "Créé",
+    "status": "Statut",
+    "noChannelFeeds": "Aucun flux de chaîne configuré",
+    "noKeywordFeeds": "Aucun flux de mots-clés configuré",
+    "addByUsername": "Ajouter une chaîne par nom d'utilisateur",
+    "addByUsernameDescription": "Remplissez le nom de la chaîne et la plateforme",
+    "channelName": "Nom de la chaîne",
+    "channelNamePlaceholder": "Entrez le nom d'utilisateur de la chaîne",
+    "addByUrl": "Ajouter une chaîne par URL",
+    "addByUrlDescription": "Remplissez l'URL de la chaîne. Utilisez l'URL de la page d'accueil de la chaîne, pas de vidéos spécifiques.",
+    "channelUrl": "URL de la chaîne",
+    "channelUrlPlaceholder": "https://www.youtube.com/{'@'}chaine ou URL TikTok/Instagram",
+    "createSuccess": "Flux de chaîne créé avec succès",
+    "createError": "Échec de la création du flux de chaîne",
+    "comingSoon": "Bientôt disponible",
+    "addKeywordFeedTitle": "Ajouter un flux de mots-clés",
+    "selectTopic": "Sélectionner un sujet",
+    "selectTopicPlaceholder": "Choisir un sujet...",
+    "keywordsLabel": "Mots-clés",
+    "keywordsPlaceholder": "Entrez les mots-clés séparés par des virgules",
+    "keywordsHint": "Entrez les mots-clés à surveiller pour ce sujet, séparés par des virgules",
+    "keywordFeedCreateSuccess": "Flux de mots-clés créé avec succès",
+    "keywordFeedCreateError": "Échec de la création du flux de mots-clés",
+    "noTopicsAvailable": "Aucun sujet disponible"
   },
   "narratives": {
     "title": "Récits",
@@ -232,6 +296,8 @@
     "selectTopic": "Sélectionner un sujet",
     "allTopics": "Tous les sujets",
     "topics": "Sujets",
+    "languages": "Langues",
+    "languagesCount": "langue | langues",
     "created": "Créé",
     "lastUpdated": "Dernière mise à jour",
     "loadError": "Échec du chargement du récit",
@@ -253,7 +319,28 @@
     "delete": "Supprimer le récit",
     "delete_success": "Le récit a été supprimé avec succès",
     "claimUnlinked": "L'affirmation a été dissociée du récit",
-    "claimUnlinkError": "Échec de la dissociation de l'affirmation du récit"
+    "claimUnlinkError": "Échec de la dissociation de l'affirmation du récit",
+    "feedback": {
+      "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
+      "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
+    },
+    "adminActions": "Actions d'administration",
+    "loadMoreClaims": "Charger plus d'affirmations",
+    "loadMoreVideos": "Charger plus de vidéos"
+  },
+  "feedback": {
+    "send": "Envoyer des commentaires",
+    "sending": "Envoi des commentaires...",
+    "success": "Merci pour vos commentaires !",
+    "error": "Échec de l'envoi des commentaires. Veuillez réessayer.",
+    "alreadyRated": "Vous avez déjà soumis des commentaires.",
+    "rating": {
+      "oneStar": "Mauvais",
+      "twoStars": "Médiocre",
+      "threeStars": "Peut mieux faire",
+      "fourStars": "Bon",
+      "fiveStars": "Excellent"
+    }
   },
   "claims": {
     "title": "Affirmations",
@@ -269,7 +356,7 @@
     "searchPlaceholder": "Rechercher dans les affirmations...",
     "text": "Texte",
     "textPlaceholder": "Entrez le texte de recherche",
-    "range": "Score de Nocivité",
+    "range": "Score de Priorité",
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
     "showingClaimsFor": "Affichage des affirmations pour le sujet :",
@@ -359,7 +446,15 @@
     "relatedVideos": "Vidéos liées",
     "relatedActors": "Acteurs liés",
     "relatedTopics": "Sujets liés",
-    "frequency": "Fréquence"
+    "relatedClaims": "Affirmations liées",
+    "relatedEntities": "Entités liées",
+    "frequency": "Fréquence",
+    "viewOnWikidata": "Voir sur Wikidata",
+    "additionalInfo": "Informations supplémentaires",
+    "firstSeen": "Première observation",
+    "notFound": "Entité non trouvée",
+    "viewAllNarratives": "Voir les {count} récits",
+    "viewAllClaims": "Voir les {count} affirmations"
   },
   "actors": {
     "mentions": "Mentions",
@@ -447,6 +542,13 @@
     "admin": "Administrateur",
     "member": "Membre",
     "makeAdmin": "Promouvoir administrateur",
+    "revokeAdmin": "Révoquer les droits d'administrateur",
+    "adminStatus": "Statut d'administrateur",
+    "updatingAdminStatus": "Mise à jour du statut d'administrateur...",
+    "adminStatusUpdated": "Statut d'administrateur mis à jour avec succès",
+    "adminStatusUpdateError": "Erreur lors de la mise à jour du statut d'administrateur",
+    "confirmMakeAdmin": "Êtes-vous sûr de vouloir faire de {name} un administrateur?",
+    "confirmRevokeAdmin": "Êtes-vous sûr de vouloir révoquer les privilèges d'administrateur de {name}?",
     "remove": "Supprimer",
     "noUsers": "Aucun utilisateur trouvé",
     "confirmRemoveUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur de l'organisation ?",
@@ -454,6 +556,72 @@
     "emailAddress": "Adresse e-mail",
     "sendInvitation": "Envoyer l'invitation",
     "invitationSent": "Invitation envoyée avec succès",
-    "inviteError": "Erreur lors de l'envoi de l'invitation"
+    "inviteError": "Erreur lors de l'envoi de l'invitation",
+    "removeError": "Erreur lors de la suppression de l'utilisateur",
+    "status": "Statut",
+    "active": "Actif",
+    "invited": "Invité",
+    "inactive": "Inactif",
+    "resendInvite": "Renvoyer l'invitation",
+    "invitationResent": "Invitation renvoyée avec succès",
+    "resendError": "Erreur lors du renvoi de l'invitation"
+  },
+  "superadmin": {
+    "title": "Superadministrateur",
+    "description": "Gérer les organisations et les paramètres système",
+    "organizations": "Organisations",
+    "createOrganization": "Créer une nouvelle organisation",
+    "noOrganizations": "Aucune organisation trouvée",
+    "shortName": "Nom court",
+    "language": "Langue",
+    "countries": "Pays",
+    "organizationUsers": "Utilisateurs de l'organisation",
+    "displayName": "Nom d'affichage",
+    "email": "E-mail",
+    "role": "Rôle",
+    "status": "Statut",
+    "superAdmin": "Super Administrateur",
+    "admin": "Administrateur",
+    "member": "Membre",
+    "active": "Actif",
+    "invited": "Invité",
+    "inactive": "Inactif",
+    "noUsers": "Aucun utilisateur trouvé pour cette organisation",
+    "actions": "Actions",
+    "resendInvite": "Renvoyer l'invitation",
+    "invitationResent": "Invitation renvoyée avec succès",
+    "resendError": "Erreur lors du renvoi de l'invitation",
+    "step1Description": "Entrez les détails de l'organisation",
+    "step2Description": "Invitez le premier administrateur de cette organisation",
+    "fields": {
+      "displayName": "Nom de l'organisation",
+      "shortName": "Nom court",
+      "language": "Langue par défaut",
+      "countryCodes": "Codes pays",
+      "adminEmail": "Email de l'administrateur"
+    },
+    "placeholders": {
+      "displayName": "Entrez le nom de l'organisation",
+      "shortName": "Entrez le nom court",
+      "searchLanguage": "Tapez pour rechercher des langues...",
+      "countryCodes": "p.ex., FRA, BEL, CHE",
+      "adminEmail": "admin{'@'}exemple.com"
+    },
+    "hints": {
+      "shortName": "Généré automatiquement à partir du nom de l'organisation. Seuls les lettres minuscules, chiffres et tirets sont autorisés",
+      "countryCodes": "Entrez les codes pays ISO à 3 lettres séparés par des virgules. ",
+      "adminInvite": "Cet utilisateur recevra une invitation par email pour devenir le premier administrateur de cette organisation."
+    },
+    "errors": {
+      "displayNameRequired": "Le nom de l'organisation est requis",
+      "shortNameRequired": "Le nom court est requis",
+      "invalidShortName": "Le nom court ne peut contenir que des lettres minuscules, des chiffres et des tirets",
+      "invalidCountryCodes": "Code(s) pays invalide(s): {codes}. Utilisez des codes ISO à 3 lettres valides",
+      "emailRequired": "L'email de l'administrateur est requis",
+      "invalidEmail": "Veuillez entrer une adresse email valide",
+      "createFailed": "Échec de la création de l'organisation"
+    },
+    "noLanguageFound": "Aucune langue trouvée",
+    "viewCountryCodes": "Voir la liste des codes pays"
   }
 }

@@ -10,26 +10,44 @@
         <p class="text-gray-900 text-xl font-semibold leading-tight">
           {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
         </p>
-        <div 
+        <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
         >
-          <span>{{ narrative.claims?.length || 0 }} claims in {{ narrative.videos?.length  || 0 }} videos</span>
+          <span>{{ claimsCount }} claims in {{ videosCount }} videos</span>
           <span> · </span>
-          <span>Seen in </span>
+          <span>{{ $t('narratives.seenIn') }} </span>
           <div class="flex gap-1">
-            <PlatformBadge 
-              v-for="platform in [...new Set(narrative.videos?.map(v => v.platform) || [])]"
+            <PlatformBadge
+              v-for="platform in platforms"
               :key="platform"
               :platform="platform as 'youtube' | 'tiktok' | 'instagram'"
             />
           </div>
+          <template v-if="languageCount > 0">
+            <span> · </span>
+            <span>{{ languageCount }} {{ $t('narratives.languagesCount', languageCount) }}</span>
+          </template>
         </div>
       </div>
 
       <div class="flex items-center justify-between flex-wrap gap-2">
+          
+        <!-- Stats -->
+        <div class="flex items-center space-x-3 text-xs text-gray-500 grow flex-1">
+          <span class="flex items-center">
+            👁️ {{ totalViews }}
+          </span>
+          <span class="flex items-center">
+            ❤️ {{ totalLikes }}
+          </span>
+          <span class="flex items-center">
+            💬 {{ totalComments }}
+          </span>
+        </div>
+
         <!-- Topics -->
-        <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2">
-          <div class="flex flex-wrap gap-1">
+        <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2 justify-between">
+          <div class="flex flex-wrap gap-2">
             <NuxtLink
               v-for="topic in narrative.topics" 
               :key="topic.id"
@@ -40,29 +58,7 @@
             </NuxtLink>
           </div>
         </div>
-
-        <!-- Stats -->
-        <div class="flex items-center space-x-3 text-xs text-gray-500">
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {{ totalViews }}
-          </span>
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-            </svg>
-            {{ totalComments }}
-          </span>
-          <span class="flex items-center">
-            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-2 2m0 0l-2-2m2 2V7m6 5a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {{ totalLikes }}
-          </span>
-        </div>
+      
       </div>
       
     </CardContent>
@@ -70,11 +66,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Narrative } from '~/types/api';
+import type { Narrative, NarrativeSummary } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
-  narrative: Narrative;
+  narrative: Narrative | NarrativeSummary;
   contentType?: 'first' | 'last' | 'active';
 }
 
@@ -86,10 +82,68 @@ defineEmits<{
   click: []
 }>();
 
-// Calculate narrative stats using the helper function
-const stats = computed(() => calculateNarrativeStats(props.narrative));
+// Helper to check if narrative is a summary type
+const isSummary = computed(() => 'claim_count' in props.narrative);
+
+// Calculate narrative stats - use pre-calculated values for summaries
+const stats = computed(() => {
+  if (isSummary.value) {
+    const summary = props.narrative as NarrativeSummary;
+    return {
+      totalViews: summary.total_views || 0,
+      totalLikes: summary.total_likes || 0,
+      totalComments: summary.total_comments || 0
+    };
+  }
+  return calculateNarrativeStats(props.narrative as Narrative);
+});
 
 const totalViews = computed(() => formatNumber(stats.value.totalViews));
 const totalComments = computed(() => formatNumber(stats.value.totalComments));
 const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
+
+// Get claims count
+const claimsCount = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).claim_count || 0;
+  }
+  return (props.narrative as Narrative).claims?.length || 0;
+});
+
+// Get videos count
+const videosCount = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).video_count || 0;
+  }
+  return (props.narrative as Narrative).videos?.length || 0;
+});
+
+// Get platforms
+const platforms = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).platforms || [];
+  }
+  const narrative = props.narrative as Narrative;
+  return [...new Set(narrative.videos?.map(v => v.platform) || [])];
+});
+
+// Calculate unique languages from claims or use pre-calculated value
+const languageCount = computed(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).language_count || 0;
+  }
+
+  const narrative = props.narrative as Narrative;
+  if (!narrative.claims || narrative.claims.length === 0) {
+    return 0;
+  }
+
+  const languages = new Set(
+    narrative.claims
+      .map(claim => claim.metadata?.language)
+      .filter(lang => lang != null && lang !== '')
+  );
+
+  return languages.size;
+});
 </script>

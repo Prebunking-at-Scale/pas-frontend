@@ -11,7 +11,7 @@
     <div>
       <!-- Organization Settings Card -->
       <Card class="bg-white overflow-hidden shadow rounded-lg">
-        <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+        <CardHeader class="px-4 py-3 sm:p-4">
           <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('admin.organizationSettings') }}</CardTitle>
         </CardHeader>
         <CardContent class="pb-4 px-4 sm:px-6">
@@ -56,7 +56,7 @@
 
       <!-- Users Management Card -->
       <Card class="mt-6 bg-white overflow-hidden shadow rounded-lg">
-        <CardHeader class="bg-stone-200 px-4 py-3 sm:p-4">
+        <CardHeader class="px-4 py-3 sm:p-4">
           <div class="flex justify-between items-center">
             <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('admin.organizationUsers') }}</CardTitle>
             <Button @click="showInviteModal = true" class="cursor-pointer">
@@ -83,6 +83,12 @@
                     {{ $t('admin.email') }}
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('admin.role') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('admin.status') }}
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ $t('admin.actions') }}
                   </th>
                 </tr>
@@ -95,8 +101,47 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ user.email }}
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span v-if="user.is_admin" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {{ $t('admin.admin') }}
+                    </span>
+                    <span v-else class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      {{ $t('admin.member') }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span v-if="user.accepted" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ $t('admin.active') }}
+                    </span>
+                    <span v-else-if="user.invited" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      {{ $t('admin.invited') }}
+                    </span>
+                    <span v-else class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      {{ $t('admin.inactive') }}
+                    </span>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
+                    <div class="flex justify-end space-x-2">
+                      <Button
+                        v-if="user.invited && !user.accepted"
+                        @click="resendInvitation(user)"
+                        size="sm"
+                        variant="outline"
+                        class="cursor-pointer"
+                        :disabled="loadingAction === user.id"
+                      >
+                        {{ $t('admin.resendInvite') }}
+                      </Button>
+                      <Button
+                        v-if="user.id !== currentUserId && user.accepted"
+                        @click="toggleAdminStatus(user)"
+                        size="sm"
+                        :variant="user.is_admin ? 'outline' : 'default'"
+                        class="cursor-pointer"
+                        :disabled="loadingAction === user.id"
+                      >
+                        {{ user.is_admin ? $t('admin.revokeAdmin') : $t('admin.makeAdmin') }}
+                      </Button>
                       <Button
                         v-if="user.id !== currentUserId"
                         @click="removeUser(user.id)"
@@ -167,18 +212,38 @@
           </form>
         </DialogContent>
       </Dialog>
+
+      <!-- Confirmation Dialog -->
+      <AlertDialog v-model:open="showConfirmDialog">
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ confirmDialogTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ confirmDialogDescription }}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel @click="showConfirmDialog = false">
+              {{ $t('common.cancel') }}
+            </AlertDialogCancel>
+            <AlertDialogAction @click="confirmDialogAction && confirmDialogAction()">
+              {{ $t('common.confirm') || 'Confirm' }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { authService } from '~/services/auth';
-import type { Organization, IdentityResponse } from '~/types/api';
+import type { Organization } from '~/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog';
 
 definePageMeta({
   layout: 'default',
@@ -187,7 +252,6 @@ definePageMeta({
 
 const { $i18n } = useNuxtApp();
 const { apiFetch } = useApi();
-const router = useRouter();
 
 // State
 const organization = ref<Organization>({
@@ -212,6 +276,12 @@ const inviteSuccess = ref('');
 
 const showInviteModal = ref(false);
 const inviteEmail = ref('');
+
+// Confirmation dialog state
+const showConfirmDialog = ref(false);
+const confirmDialogTitle = ref('');
+const confirmDialogDescription = ref('');
+const confirmDialogAction = ref<(() => void) | null>(null);
 
 // Check if user is admin and load data
 onMounted(async () => {
@@ -281,20 +351,113 @@ const updateOrganization = async () => {
 
 // Remove user from organization
 const removeUser = async (userId: string) => {
-  if (!confirm($i18n.t('admin.confirmRemoveUser'))) {
-    return;
-  }
-  
+  const user = users.value.find(u => u.id === userId);
+  if (!user) return;
+
+  confirmDialogTitle.value = $i18n.t('admin.remove');
+  confirmDialogDescription.value = $i18n.t('admin.confirmRemoveUser');
+
+  confirmDialogAction.value = async () => {
+    await executeRemoveUser(userId);
+  };
+
+  showConfirmDialog.value = true;
+};
+
+// Execute the user removal
+const executeRemoveUser = async (userId: string) => {
   try {
     loadingAction.value = userId;
     await apiFetch(`/api/auth/organisation/users/${userId}`, {
       method: 'DELETE'
     });
-    
+
     // Reload users to reflect changes
     await loadUsers();
   } catch (error: any) {
     console.error('Failed to remove user:', error);
+    orgError.value = error.data?.detail || error.message || $i18n.t('admin.removeError');
+    setTimeout(() => {
+      orgError.value = '';
+    }, 5000);
+  } finally {
+    loadingAction.value = null;
+  }
+};
+
+// Toggle user admin status
+const toggleAdminStatus = async (user: any) => {
+  const newAdminStatus = !user.is_admin;
+
+  confirmDialogTitle.value = newAdminStatus ? $i18n.t('admin.makeAdmin') : $i18n.t('admin.revokeAdmin');
+  confirmDialogDescription.value = newAdminStatus
+    ? $i18n.t('admin.confirmMakeAdmin', { name: user.display_name })
+    : $i18n.t('admin.confirmRevokeAdmin', { name: user.display_name });
+
+  confirmDialogAction.value = async () => {
+    await executeAdminStatusChange(user, newAdminStatus);
+  };
+
+  showConfirmDialog.value = true;
+};
+
+// Execute the admin status change
+const executeAdminStatusChange = async (user: any, newAdminStatus: boolean) => {
+  try {
+    loadingAction.value = user.id;
+    await apiFetch(`/api/auth/organisation/users/${user.id}/admin`, {
+      method: 'PATCH',
+      body: {
+        is_admin: newAdminStatus
+      }
+    });
+
+    // Update user in the local state
+    const userIndex = users.value.findIndex(u => u.id === user.id);
+    if (userIndex !== -1) {
+      users.value[userIndex].is_admin = newAdminStatus;
+    }
+
+    // Show success message
+    orgSuccess.value = $i18n.t('admin.adminStatusUpdated');
+    setTimeout(() => {
+      orgSuccess.value = '';
+    }, 3000);
+  } catch (error: any) {
+    console.error('Failed to update admin status:', error);
+    orgError.value = error.data?.detail || error.message || $i18n.t('admin.adminStatusUpdateError');
+    setTimeout(() => {
+      orgError.value = '';
+    }, 5000);
+  } finally {
+    loadingAction.value = null;
+  }
+};
+
+// Resend invitation to a user
+const resendInvitation = async (user: any) => {
+  try {
+    loadingAction.value = user.id;
+
+    await apiFetch('/api/auth/organisation/invite/resend', {
+      method: 'POST',
+      query: organization.value.id ? { organisation_id: organization.value.id } : undefined,
+      body: {
+        user_email: user.email,
+        as_admin: user.is_admin
+      }
+    });
+
+    orgSuccess.value = $i18n.t('admin.invitationResent');
+    setTimeout(() => {
+      orgSuccess.value = '';
+    }, 3000);
+  } catch (error: any) {
+    console.error('Failed to resend invitation:', error);
+    orgError.value = error.data?.detail || error.message || $i18n.t('admin.resendError');
+    setTimeout(() => {
+      orgError.value = '';
+    }, 5000);
   } finally {
     loadingAction.value = null;
   }
@@ -306,17 +469,17 @@ const inviteUser = async () => {
     loadingInvite.value = true;
     inviteError.value = '';
     inviteSuccess.value = '';
-    
+
     await apiFetch('/api/auth/organisation/invite', {
       method: 'POST',
       body: {
         user_email: inviteEmail.value
       }
     });
-    
+
     inviteSuccess.value = $i18n.t('admin.invitationSent');
     inviteEmail.value = '';
-    
+
     // Close modal after success
     setTimeout(() => {
       showInviteModal.value = false;

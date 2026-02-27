@@ -42,7 +42,23 @@ export interface JSONResponse<T> {
   data: T;
 }
 
-// Narrative type based on API spec
+export interface NarrativeSummary {
+  id: string;
+  title: string;
+  description?: string;
+  claim_count: number;
+  video_count: number;
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  platforms: string[];
+  topics?: Topic[];
+  language_count?: number;
+  entity_count?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Narrative {
   id: string;
   title: string;
@@ -83,11 +99,54 @@ export interface Actor {
   affiliation?: string; // e.g., "Republican Party", "Company Name"
 }
 
+export interface WikidataClaim {
+  id?: string;
+  type?: string;
+  label?: string;
+  url?: string;
+  filename?: string;
+  resolution?: number[];
+}
+
+export interface WikidataInfo {
+  id: string;
+  claims: {
+    P17?: WikidataClaim[];
+    P18?: WikidataClaim[];  // image
+    P31?: WikidataClaim[];  // instance of
+    P41?: WikidataClaim[];  // flag image
+    P6?: WikidataClaim[];   // head of government
+    P154?: WikidataClaim[]; // logo image
+  };
+  labels: {
+    en?: {
+      value: string;
+    };
+  };
+  descriptions: {
+    en?: {
+      value: string;
+    };
+  };
+}
+
+export interface EntityMetadata {
+  entity_type?: string;
+  wikidata_info?: WikidataInfo;
+  [key: string]: any;
+}
+
 export interface Entity {
   id: string;
+  wikidata_id?: string;
   name: string;
-  type: 'institution' | 'location' | 'product' | 'event' | 'concept';
-  frequency: number;
+  metadata?: EntityMetadata;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Legacy fields for compatibility
+  type?: 'institution' | 'location' | 'product' | 'event' | 'concept';
+  frequency?: number;
   image_url?: string;
   description?: string;
 }
@@ -149,6 +208,7 @@ export interface User {
   id: string;
   email: string;
   display_name: string;
+  is_super_admin: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -184,6 +244,18 @@ export interface IdentityResponse {
   user: User;
   organisation: Organization;
   is_organisation_admin: boolean;
+}
+
+export interface CreateOrganisationRequest {
+  display_name?: string;
+  country_codes?: string[];
+  language?: string;
+  short_name?: string;
+}
+
+export interface OrganisationInviteRequest {
+  user_email: string;
+  as_admin?: boolean;
 }
 
 export interface PasswordUpdateRequest {
@@ -227,4 +299,118 @@ export interface VideoDetailResponse extends Video {
     claims: Claim[];
   };
   narratives?: Narrative[];
+}
+
+export interface NarrativeFeedback {
+  id: string;
+  user_id: string;
+  narrative_id: string;
+  feedback_score: number; // 1 for like, 0 for dislike
+  feedback_text: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClaimFeedback {
+  id: string;
+  user_id: string;
+  claim_id: string;
+  narrative_id: string;
+  feedback_score: number; // 1 for like, 0 for dislike
+  feedback_text: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LanguageListResponse {
+  language: string;
+  count: number;
+}
+
+export interface ChannelFeed {
+  id: string;
+  organisation_id: string;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+  channel: string;
+  platform: 'youtube' | 'tiktok' | 'instagram';
+}
+
+export interface KeywordFeed {
+  id: string;
+  organisation_id: string;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+  topic: string;
+  keywords: string[];
+}
+
+export interface MediaFeedsResponse {
+  channel_feeds: ChannelFeed[];
+  keyword_feeds: KeywordFeed[];
+}
+
+export interface CreateChannelFeedRequest {
+  channel: string;
+  platform: 'youtube' | 'tiktok' | 'instagram';
+}
+
+export interface CreateChannelFeedFromUrlRequest {
+  url: string;
+}
+
+export interface CreateKeywordFeedRequest {
+  topic: string;
+  keywords: string[];
+}
+
+// Time series data point from /narratives/{id}/stats
+export interface NarrativeStatsDataPoint {
+  date: string;
+  views: number;
+  likes: number;
+  comments: number;
+  cumulative_views: number;
+  cumulative_likes: number;
+  cumulative_comments: number;
+  video_count: number;
+  cumulative_video_count: number;
+}
+
+// Stats totals
+export interface NarrativeStatsTotals {
+  views: number;
+  likes: number;
+  comments: number;
+  video_count: number;
+}
+
+// Response from /narratives/{id}/stats
+export interface NarrativeStatsResponse {
+  narrative_id: string;
+  time_series: NarrativeStatsDataPoint[];
+  totals: NarrativeStatsTotals;
+}
+
+// Full narrative detail with preview + counts
+export interface NarrativeDetail {
+  id: string;
+  title: string;
+  description: string;
+  topics?: Topic[];
+  entities?: Entity[];
+  claims: Claim[];           // Preview (first 20)
+  claim_count: number;       // Total count
+  videos: Video[];           // Preview (first 20)
+  video_count: number;       // Total count
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  platforms: string[];
+  language_count: number;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
 }

@@ -3,25 +3,42 @@
       <!-- Filters -->
       <FilterCard
         :title="$t('narratives.filters')"
-        :columns="{ default: 1, md: 2, lg: 2 }"
+        :columns="{ default: 1, md: 1, lg: 1 }"
         :has-active-filters="hasActiveFilters"
         @apply-filters="applyFilters"
         @clear-filters="resetFilters"
       >
-        <TopicFilter
-          class="w-full"
-          v-model="filters.topic_id"
-          :label="$t('narratives.topic')"
-          :placeholder="$t('narratives.selectTopic')"
-        />
-        
-        <KeywordsFilter
-          class="w-full"
-          v-model="filters.text"
-          :label="$t('narratives.text')"
-          :placeholder="$t('narratives.textPlaceholder')"
-          @enter-pressed="applyFilters"
-        />
+        <div class="flex flex-col md:flex-row gap-4">
+          <TopicFilter
+            class="w-full md:w-48"
+            v-model="filters.topic_id"
+            :label="$t('narratives.topic')"
+            :placeholder="$t('narratives.selectTopic')"
+          />
+
+          <EntityFilter
+            class="w-full md:w-48"
+            v-model="filters.entity_id"
+            :label="$t('narratives.entity')"
+            :placeholder="$t('narratives.selectEntity')"
+          />
+          
+          <KeywordsFilter
+            class="w-full md:w-96"
+            v-model="filters.text"
+            :label="$t('narratives.text')"
+            :placeholder="$t('narratives.textPlaceholder')"
+            @enter-pressed="applyFilters"
+          />
+
+          <LanguageFilter
+            class="w-full"
+            v-model="filters.language"
+            :label="$t('videos.language')"
+            :placeholder="$t('videos.selectLanguage')"
+            type="select"
+          />
+        </div>
       </FilterCard>
 
       <!-- Topic Context - based on APPLIED filters -->
@@ -90,13 +107,15 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Narrative } from '~/types/api';
+import type { NarrativeSummary } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
+import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
+import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 
 definePageMeta({
   layout: 'default',
@@ -108,10 +127,11 @@ const router = useRouter();
 const route = useRoute();
 const topicsStore = useTopicsStore();
 const { setPageHeader, clearPageHeader } = usePageHeader();
+const { saveListState, restoreListState, clearListState, hasSavedState } = useListStatePreservation('narratives');
 
 
 // State
-const narratives = ref<Narrative[]>([]);
+const narratives = ref<NarrativeSummary[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
 const totalNarratives = ref(0);
@@ -120,13 +140,17 @@ const itemsPerPage = 20;
 // Filters - separate UI state from applied state
 const filters = ref({
   topic_id: null as string | null,
-  text: [] as string[]
+  entity_id: null as string | null,
+  text: [] as string[],
+  language: 'all'
 });
 
 // Applied filters - these are the filters actually being used for data fetching
 const appliedFilters = ref({
   topic_id: null as string | null,
-  text: [] as string[]
+  entity_id: null as string | null,
+  text: [] as string[],
+  language: 'all'
 });
 
 const currentTopicName = ref('');
@@ -134,6 +158,7 @@ const currentTopicName = ref('');
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
+    (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0;
 });
 
@@ -151,25 +176,21 @@ const loadNarratives = async () => {
       params.topic_id = appliedFilters.value.topic_id;
     }
     
+    if (appliedFilters.value.entity_id && appliedFilters.value.entity_id !== 'all') {
+      params.entity_id = appliedFilters.value.entity_id;
+    }
+    
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
     }
+
+    if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
+      params.language = appliedFilters.value.language;
+    }
     
     const result = await apiService.getNarratives(params);
-    
-    let filteredData = result.data;
-    
-    narratives.value = filteredData.map(narrative => ({
-      ...narrative,
-      actors: narrative.actors || [],
-      entities: narrative.entities || [],
-      topics: narrative.topics || [],
-      related_content_count: narrative.claims?.length || 0,
-      is_active: true, 
-      first_seen: narrative.created_at || new Date().toISOString(),
-      last_seen: narrative.updated_at || new Date().toISOString()
-    }));
-    
+
+    narratives.value = result.data;
     totalNarratives.value = result.total;
   } catch (error) {
     console.error('Failed to load narratives:', error);
@@ -189,11 +210,15 @@ const applyFilters = () => {
 const resetFilters = () => {
   filters.value = {
     topic_id: null,
-    text: []
+    entity_id: null,
+    text: [],
+    language: 'all'
   };
   appliedFilters.value = {
     topic_id: null,
-    text: []
+    entity_id: null,
+    text: [],
+    language: 'all'
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -214,6 +239,12 @@ const updatePageHeader = () => {
 };
 
 const goToNarrative = (id: string) => {
+  // Save current state before navigating to detail
+  saveListState({
+    currentPage: currentPage.value,
+    filters: filters.value,
+    appliedFilters: appliedFilters.value
+  });
   router.push(`/narratives/${id}`);
 };
 
@@ -234,15 +265,40 @@ onMounted(async () => {
   // Load available topics for filter
   await topicsStore.fetchTopics();
   
-  // Check if we have a topic filter from query params
-  const topicId = route.query.topic as string;
-  if (topicId) {
-    // Load topic from store
-    const topic = await topicsStore.ensureTopicLoaded(topicId);
-    if (topic) {
-      filters.value.topic_id = topicId;
-      appliedFilters.value.topic_id = topicId;
-      currentTopicName.value = topic.topic;
+  // Check if we have saved state from previous navigation (browser back button)
+  const savedState = restoreListState();
+  if (savedState) {
+    // Restore pagination and filters from saved state
+    currentPage.value = savedState.currentPage;
+    filters.value = { ...filters.value, ...savedState.filters };
+    appliedFilters.value = { ...appliedFilters.value, ...savedState.appliedFilters };
+    
+    // Update topic name if topic filter was applied
+    if (appliedFilters.value.topic_id && appliedFilters.value.topic_id !== 'all') {
+      const topic = topicsStore.getTopicById(appliedFilters.value.topic_id);
+      currentTopicName.value = topic?.topic || '';
+    }
+    
+    // Clear saved state after restoring to avoid unwanted restoration on future visits
+    clearListState();
+  } else {
+    // No saved state, check for query params (direct navigation)
+    const topicId = route.query.topic as string;
+    if (topicId) {
+      // Load topic from store
+      const topic = await topicsStore.ensureTopicLoaded(topicId);
+      if (topic) {
+        filters.value.topic_id = topicId;
+        appliedFilters.value.topic_id = topicId;
+        currentTopicName.value = topic.topic;
+      }
+    }
+    
+    // Check if we have an entity filter from query params
+    const entityId = route.query.entity as string;
+    if (entityId) {
+      filters.value.entity_id = entityId;
+      appliedFilters.value.entity_id = entityId;
     }
   }
   

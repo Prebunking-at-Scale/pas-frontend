@@ -1,6 +1,8 @@
 // API Service with mock data
-import type { Video, VideoFilters, CursorResponse, JSONResponse, Narrative, Actor, Entity, Topic, User, Alert, Claim, TopicWithStats, PaginatedResponse, VideoDetailResponse, NarrativePatch } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
+import { differenceInHours } from 'date-fns';
+import type { IntervalResult } from 'date-fns';
 
 // API calls now go through our frontend proxy to hide the API key
 // The proxy handles authentication with the backend
@@ -134,22 +136,25 @@ const generateMockClaim = (index: number, videoId: string): Claim => ({
 // API Service
 export const apiService = {
   // Video endpoints
-  async getVideos(params?: { 
+  async getVideos(params?: {
     platform?: string[] | null;
     channel?: string[] | null;
     text?: string;
     limit?: number;
     offset?: number;
+    language?: string;
   }): Promise<PaginatedResponse<Video>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add filters to query if provided
       if (params?.platform?.length) {
         query.platform = params.platform;
@@ -160,12 +165,15 @@ export const apiService = {
       if (params?.text) {
         query.text = params.text;
       }
-      
-      const response = await $fetch('/api/videos', {
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
+      }
+
+      const response = await apiFetch('/api/videos', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Video>;
     } catch (error) {
       console.error('Failed to fetch videos:', error);
@@ -181,10 +189,11 @@ export const apiService = {
 
   async getVideo(videoId: string): Promise<VideoDetailResponse> {
     try {
-      const response = await $fetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<VideoDetailResponse>>(`/api/videos/${videoId}`, {
         method: 'GET'
       });
-      
+
       return response.data;
     } catch (error) {
       console.error('Failed to fetch video:', error);
@@ -224,35 +233,47 @@ export const apiService = {
   },
 
   // Narrative endpoints
+  // Returns NarrativeSummary with counts instead of full objects for optimized list rendering
   async getNarratives(params?: {
     limit?: number;
     offset?: number;
     topic_id?: string;
+    entity_id?: string;
     text?: string;
-  }): Promise<PaginatedResponse<Narrative>> {
+    language?: string;
+  }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add optional filters
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
       }
+      if (params?.entity_id) {
+        query.entity_id = params.entity_id;
+      }
       if (params?.text) {
         query.text = params.text;
       }
-      
-      const response = await $fetch('/api/narratives', {
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
+      }
+
+      const response = await apiFetch('/api/narratives', {
         method: 'GET',
         query
       });
-      
-      return response as PaginatedResponse<Narrative>;
+
+      return response as PaginatedResponse<NarrativeSummary>;
     } catch (error) {
       console.error('Failed to fetch narratives:', error);
       // Return empty response on error
@@ -265,35 +286,35 @@ export const apiService = {
     }
   },
 
-  async getNarrative(narrativeId: string): Promise<Narrative> {
+  async getNarrative(narrativeId: string): Promise<NarrativeDetail> {
     try {
-      const response = await $fetch(`/api/narratives/${narrativeId}`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}`, {
         method: 'GET'
       });
-      
+
       // Extract narrative from the data wrapper
-      const narrative = (response as { data: Narrative }).data;
-      
+      const narrative = (response as { data: NarrativeDetail }).data;
+
       // Set default values for UI fields if not present
       return {
         ...narrative,
-        actors: narrative.actors || [],
         entities: narrative.entities || [],
         topics: narrative.topics || [],
-        related_content_count: narrative.claim_ids?.length || 0,
-        is_active: true, // Default to active since API doesn't provide this
-        first_seen: narrative.created_at || new Date().toISOString(),
-        last_seen: narrative.updated_at || new Date().toISOString()
+        claims: narrative.claims || [],
+        videos: narrative.videos || [],
+        claim_count: narrative.claim_count || 0,
+        video_count: narrative.video_count || 0,
+        total_views: narrative.total_views || 0,
+        total_likes: narrative.total_likes || 0,
+        total_comments: narrative.total_comments || 0,
+        platforms: narrative.platforms || [],
+        language_count: narrative.language_count || 0
       };
     } catch (error) {
       console.error('Failed to fetch narrative:', error);
       throw error;
     }
-  },
-
-  async getNarrativeClaims(narrativeId: string): Promise<Claim[]> {
-    await new Promise(resolve => setTimeout(resolve, 400));
-    return Array.from({ length: 10 }, (_, i) => generateMockClaim(i + 1, `video-${i + 1}`));
   },
 
   async updateNarrative(narrativeId: string, updates: NarrativePatch): Promise<Narrative> {
@@ -303,7 +324,7 @@ export const apiService = {
         method: 'PATCH',
         body: updates
       });
-      
+
       const narrative = (response as { data: Narrative }).data;
       return narrative;
     } catch (error) {
@@ -312,64 +333,131 @@ export const apiService = {
     }
   },
 
-  // Viral narratives with hours parameter
-  async getViralNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
-    // Get config values if not provided
-    const { $config } = useNuxtApp();
-    const hoursParam = hours ?? $config.public.viralNarrativesHours ?? 168;
-    const limitParam = limit ?? $config.public.viralNarrativesLimit ?? 20;
+  async getNarrativeClaims(narrativeId: string, params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedResponse<Claim>> {
+    const limit = params?.limit || 20;
+    const offset = params?.offset || 0;
+
     try {
-      const response = await $fetch('/api/narratives/viral', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/claims`, {
         method: 'GET',
         query: {
-          hours: hoursParam,
-          limit: limitParam
+          limit,
+          offset
         }
       });
-      
-      const data = response as { data: Narrative[] };
-      // Order by the sum of views of each video in the narrative
-      return data.data.sort((a: Narrative, b: Narrative) => {
-        const aViews = a.videos.reduce((sum, video) => sum + video.views, 0);
-        const bViews = b.videos.reduce((sum, video) => sum + video.views, 0);
-        return bViews - aViews;
+
+      return response as PaginatedResponse<Claim>;
+    } catch (error) {
+      console.error('Failed to fetch narrative claims:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
+
+  async getNarrativeVideos(narrativeId: string, params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedResponse<Video>> {
+    const limit = params?.limit || 20;
+    const offset = params?.offset || 0;
+
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/videos`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset
+        }
       });
+
+      return response as PaginatedResponse<Video>;
+    } catch (error) {
+      console.error('Failed to fetch narrative videos:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
+
+  async getNarrativeStats(narrativeId: string): Promise<NarrativeStatsResponse> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}/stats`, {
+        method: 'GET'
+      });
+
+      return (response as { data: NarrativeStatsResponse }).data;
+    } catch (error) {
+      console.error('Failed to fetch narrative stats:', error);
+      // Return empty stats on error
+      return {
+        narrative_id: narrativeId,
+        time_series: [],
+        totals: {
+          views: 0,
+          likes: 0,
+          comments: 0,
+          video_count: 0
+        }
+      };
+    }
+  },
+
+  // Viral narratives with hours parameter - uses summary endpoint optimized for dashboard display
+  async getViralNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
+    const { $config } = useNuxtApp();
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/narratives/viral/summary', {
+        method: 'GET',
+        query: {
+          hours: hours ?? undefined,
+          limit: limit || $config.public.viralNarrativesLimit
+        }
+      });
+
+      const data = response as { data: NarrativeSummary[] };
+      // Already sorted by views from the API
+      return data.data;
     } catch (error) {
       console.error('Failed to fetch viral narratives:', error);
-      // Return mock data as fallback
-      return Array.from({ length: 6 }, (_, i) => generateMockNarrative(i + 1));
+      return [];
     }
   },
 
   // Prevalent narratives - narratives with most videos in a time frame
-  // Endpoint: GET /api/narratives/prevalent
-  // Returns narratives sorted by video count in specified time period
-  async getPrevalentNarratives(hours?: number, limit?: number): Promise<Narrative[]> {
-    // Get config values if not provided
+  // Endpoint: GET /api/narratives/prevalent/summary
+  // Returns narrative summaries sorted by video count in specified time period
+  async getPrevalentNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
     const { $config } = useNuxtApp();
-    const hoursParam = hours ?? $config.public.prevalentNarrativesHours ?? 168;
-    const limitParam = limit ?? $config.public.prevalentNarrativesLimit ?? 10;
     try {
-      const response = await $fetch('/api/narratives/prevalent', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/narratives/prevalent/summary', {
         method: 'GET',
         query: {
-          hours: hoursParam,
-          limit: limitParam
+          hours: hours ?? undefined,
+          limit: limit || $config.public.prevalentNarrativesLimit
         }
       });
-      
-      const data = response as { data: Narrative[] };
-      // Order them by the count of videos in the narrative, descending
-      return data.data.sort((a: Narrative, b: Narrative) => b.videos.length - a.videos.length);
+
+      const data = response as { data: NarrativeSummary[] };
+      // Already sorted by video count from the API
+      return data.data;
     } catch (error) {
       console.error('Failed to fetch prevalent narratives:', error);
-      // Return mock data as fallback - simulate narratives with many videos
-      return Array.from({ length: 4 }, (_, i) => {
-        const narrative = generateMockNarrative(i + 10);
-        // Add more videos to simulate "prevalent" narratives
-        narrative.videos = Array.from({ length: 8 + i * 2 }, (_, j) => generateMockVideo(j + 1));
-        return narrative;
-      });
+      return [];
     }
   },
 
@@ -386,37 +474,47 @@ export const apiService = {
   },
 
   // Dashboard data
-  async getDashboardStats(): Promise<{
+  async getDashboardStats(
+    timeframeInterval: IntervalResult<Date, Date, undefined> | null // null = all time, no date filter
+  ): Promise<{
     topics: TopicWithStats[];
-    entities: any[];
+    entities: Entity[];
     actors: any[];
-    viralNarratives: Narrative[];
-    prevalentNarratives: Narrative[];
+    viralNarratives: NarrativeSummary[];
+    prevalentNarratives: NarrativeSummary[];
   }> {
     await new Promise(resolve => setTimeout(resolve, 600));
 
-    // Get config values
-    const { $config } = useNuxtApp();
-    const viralHours = $config.public.viralNarrativesHours || 168;
-    const prevalentHours = $config.public.prevalentNarrativesHours || 168;
+    const hours = timeframeInterval ? differenceInHours(timeframeInterval.end, timeframeInterval.start) : null;
 
     // Get real topics data from the API
     let topicsData: TopicWithStats[] = [];
     try {
-      const topicsResponse = await this.getTopicsWithStats({ limit: 5 });
+      const topicsResponse = await this.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end });
       topicsData = topicsResponse.data || [];
     } catch (error) {
       console.error('Failed to fetch topics for dashboard:', error);
       // Use fallback mock data if API fails
       topicsData = [];
     }
-    
+
+    // Get entities data from the API
+    let entitiesData: Entity[] = [];
+    try {
+      const entitiesResponse = await this.getEntities({ limit: 10, hours });
+      entitiesData = entitiesResponse.data || [];
+    } catch (error) {
+      console.error('Failed to fetch entities for dashboard:', error);
+      // Use fallback empty data if API fails
+      entitiesData = [];
+    }
+
     return {
       topics: topicsData,
-      entities: [],
+      entities: entitiesData,
       actors: [],
-      viralNarratives: await this.getViralNarratives(viralHours), 
-      prevalentNarratives: await this.getPrevalentNarratives(prevalentHours)
+      viralNarratives: await this.getViralNarratives(hours),
+      prevalentNarratives: await this.getPrevalentNarratives(hours)
     };
   },
 
@@ -521,36 +619,90 @@ export const apiService = {
   },
 
   // Entity endpoints
-  async getEntity(entityId: string): Promise<Entity & {
-    narratives: Narrative[];
-    videos: Video[];
-    related_actors: Actor[];
-    related_topics: Topic[];
-  }> {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  async getEntities(params?: {
+    limit?: number;
+    offset?: number;
+    text?: string;
+    hours?: number | null;
+  }): Promise<PaginatedResponse<Entity>> {
+    const limit = params?.limit || 100;
+    const offset = params?.offset || 0;
 
-    const entity: Entity = {
-      id: entityId,
-      name: 'World Health Organization',
-      type: 'institution',
-      frequency: 156,
-      image_url: '/api/placeholder/200/200',
-      description: 'The World Health Organization is a specialized agency of the United Nations responsible for international public health.'
-    };
+    try {
+      const { apiFetch } = useApi();
 
-    return {
-      ...entity,
-      narratives: Array.from({ length: 5 }, (_, i) => generateMockNarrative(i + 1)),
-      videos: Array.from({ length: 10 }, (_, i) => generateMockVideo(i + 1)),
-      related_actors: [
-        { id: 'actor-1', name: 'Dr. Tedros Adhanom', type: 'person', frequency: 45, role: 'Director-General' },
-        { id: 'actor-2', name: 'Maria Van Kerkhove', type: 'person', frequency: 32, role: 'Technical Lead' }
-      ],
-      related_topics: [
-        { id: 'topic-1', topic: 'Public Health', frequency: 234 },
-        { id: 'topic-2', topic: 'Pandemic Response', frequency: 189 }
-      ]
-    };
+      const query: any = {
+        limit,
+        offset
+      };
+
+      // Add text filter if provided
+      if (params?.text) {
+        query.text = params.text;
+      }
+
+      // Add hours filter if provided
+      if (params?.hours) {
+        query.hours = params.hours;
+      }
+
+      const response = await apiFetch('/api/entities', {
+        method: 'GET',
+        query
+      });
+
+      return response as PaginatedResponse<Entity>;
+    } catch (error) {
+      console.error('Failed to fetch entities:', error);
+      // Return empty response on error
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
+  },
+
+  async getEntity(entityId: string): Promise<Entity> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/entities/${entityId}`, {
+        method: 'GET'
+      });
+
+      // The API wraps the entity in a data property
+      return (response as { data: Entity }).data;
+    } catch (error) {
+      console.error('Failed to fetch entity:', error);
+      throw error;
+    }
+  },
+
+  async getEntityNarratives(entityId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Narrative>> {
+    const limit = params?.limit || 100;
+    const offset = params?.offset || 0;
+
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/entities/${entityId}/narratives`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset
+        }
+      });
+
+      return response as PaginatedResponse<Narrative>;
+    } catch (error) {
+      console.error('Failed to fetch entity narratives:', error);
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        size: limit
+      };
+    }
   },
 
   // Actor endpoints
@@ -625,19 +777,25 @@ export const apiService = {
   },
 
   // New topic methods based on API spec
-  async getTopicsWithStats(params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<TopicWithStats>> {
+  async getTopicsWithStats(params?: { startDate?: Date, endDate?: Date, limit?: number; offset?: number }): Promise<PaginatedResponse<TopicWithStats>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
+    const startDateStr = params?.startDate ? params.startDate.toISOString() : undefined;
+    const endDateStr = params?.endDate ? params.endDate.toISOString() : undefined;
+
     try {
-      const response = await $fetch('/api/topics/stats', {
+      const { apiFetch } = useApi();
+      const response = await apiFetch('/api/topics/stats', {
         method: 'GET',
         query: {
           limit,
-          offset
+          offset,
+          start_date: startDateStr,
+          end_date: endDateStr
         }
       });
-      
+
       // The API returns the response directly as a PaginatedResponse
       return response as PaginatedResponse<TopicWithStats>;
     } catch (error) {
@@ -655,16 +813,17 @@ export const apiService = {
   async getTopicClaims(topicId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch(`/api/topics/${topicId}/claims`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/topics/${topicId}/claims`, {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       return response as PaginatedResponse<Claim>;
     } catch (error) {
       console.error('Failed to fetch topic claims:', error);
@@ -681,16 +840,17 @@ export const apiService = {
   async getTopicNarratives(topicId: string, params?: { limit?: number; offset?: number }): Promise<PaginatedResponse<Narrative>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
-    
+
     try {
-      const response = await $fetch(`/api/topics/${topicId}/narratives`, {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/topics/${topicId}/narratives`, {
         method: 'GET',
         query: {
           limit,
           offset
         }
       });
-      
+
       return response as PaginatedResponse<Narrative>;
     } catch (error) {
       console.error('Failed to fetch topic narratives:', error);
@@ -705,33 +865,40 @@ export const apiService = {
   },
 
   // Claims endpoints
-  async getClaims(params?: { 
+  async getClaims(params?: {
     topic_id?: string;
     text?: string;
     min_score?: number;
     max_score?: number;
     limit?: number;
     offset?: number;
+    language?: string | null;
   }): Promise<PaginatedResponse<Claim>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
-    
+
     try {
+      const { apiFetch } = useApi();
+
       const query: any = {
         limit,
         offset
       };
-      
+
       // Add topic filter if provided
       if (params?.topic_id) {
         query.topic_id = params.topic_id;
       }
-      
+
       // Add text search if provided
       if (params?.text) {
         query.text = params.text;
       }
-      
+      // Add language filter if provided
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
+      }
+
       // Add score range if provided
       if (params?.min_score !== undefined) {
         query.min_score = params.min_score;
@@ -739,12 +906,12 @@ export const apiService = {
       if (params?.max_score !== undefined) {
         query.max_score = params.max_score;
       }
-      
-      const response = await $fetch('/api/claims', {
+
+      const response = await apiFetch('/api/claims', {
         method: 'GET',
         query
       });
-      
+
       return response as PaginatedResponse<Claim>;
     } catch (error) {
       console.error('Failed to fetch claims:', error);
@@ -756,5 +923,122 @@ export const apiService = {
         size: limit
       };
     }
-  }
+  },
+
+  async getLanguages(): Promise<string[]> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<LanguageListResponse[]>>('/api/languages', {
+        method: 'GET'
+      });
+
+      console.dir(response.data, { depth: null });
+      return (response.data || [])?.map(item => item.language) || [];
+    } catch (error) {
+      console.error('Failed to fetch languages:', error);
+      return ['en', 'es', 'fr', 'de'];
+    }
+  },
+
+  async getMediaFeeds(): Promise<MediaFeedsResponse> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<MediaFeedsResponse>>('/api/media_feeds', {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch media feeds:', error);
+      return {
+        channel_feeds: [],
+        keyword_feeds: []
+      };
+    }
+  },
+
+  async createChannelFeed(data: CreateChannelFeedRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createChannelFeedFromUrl(data: CreateChannelFeedFromUrlRequest): Promise<ChannelFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<ChannelFeed>>('/api/media_feeds/channels/from-url', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async createKeywordFeed(data: CreateKeywordFeedRequest): Promise<KeywordFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<KeywordFeed>>('/api/media_feeds/keywords', {
+      method: 'POST',
+      body: data
+    });
+    return response.data;
+  },
+
+  async getNarrativeFeedback(narrativeId: string): Promise<NarrativeFeedback|null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeFeedback|null>>(`/api/feedback/narratives/${narrativeId}`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch narrative feedback:', error);
+      // Return empty response on error
+      return null;
+    }
+  },
+
+  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number) {
+    try {
+      const { apiFetch } = useApi();
+
+      return await apiFetch(`/api/feedback/narratives/${narrativeId}`, {
+        method: 'POST',
+        body: { feedback_score: feedbackScore }
+      });
+    } catch (error) {
+      console.error('Failed to send narrative feedback:', error);
+      throw error;
+    }
+  },
+
+  async getClaimFeedback(claimId: string, narrativeId: string): Promise<ClaimFeedback | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<ClaimFeedback | null>>(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch claim feedback:', error);
+      // Return empty response on error
+      return null;
+    }
+  },
+
+  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number) {
+    try {
+      const { apiFetch } = useApi();
+      return await apiFetch(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
+        method: 'POST',
+        body: { feedback_score: feedbackScore }
+      });
+    } catch (error) {
+      console.error('Failed to send claim feedback:', error);
+      throw error;
+    }
+  },
+
 };

@@ -9,16 +9,22 @@ export default defineNuxtConfig({
     'vanilla-cookieconsent/dist/cookieconsent.css'
   ],
 
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'G-2GCXK1BQTV',
+      }
+    }
+  },
+
   runtimeConfig: {
     // Server-only config (not exposed to client)
-    apiKey: process.env.API_KEY || '',
     backendEndpoint: process.env.BACKEND_ENDPOINT || 'http://localhost:8000',
+    apiKey: process.env.API_KEY || '',
     
     // Public config (exposed to client)
     public: {
-      viralNarrativesHours: process.env.VIRAL_NARRATIVES_HOURS ? parseInt(process.env.VIRAL_NARRATIVES_HOURS) : 168,
-      viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 20,
-      prevalentNarrativesHours: process.env.PREVALENT_NARRATIVES_HOURS ? parseInt(process.env.PREVALENT_NARRATIVES_HOURS) : 168,
+      viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 9,
       prevalentNarrativesLimit: process.env.PREVALENT_NARRATIVES_LIMIT ? parseInt(process.env.PREVALENT_NARRATIVES_LIMIT) : 10,
       testModeEnabled: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
     }
