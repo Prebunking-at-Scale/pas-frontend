@@ -81,6 +81,14 @@ export interface Narrative {
   evolution_data?: EvolutionDataPoint[];
 }
 
+export interface NarrativePatch {
+  title?: string;
+  description?: string;
+  claim_ids?: string[];
+  topic_ids?: string[];
+  metadata?: Record<string, any>;
+}
+
 export interface Actor {
   id: string;
   name: string;

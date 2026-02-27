@@ -12,7 +12,7 @@
           <p class="text-gray-900 text-xl leading-tight">
             "{{ claim.claim || claim.text }}"
           </p>
-          <p 
+          <p
             v-if="claim.video"
             @click="goToVideo"
             class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
@@ -23,6 +23,17 @@
       </div>
       <!-- Actions -->
       <div class="flex flex-none gap-2">
+        <!--Unlink Action-->
+        <UTooltip :text="$t('common.unlink')">
+          <Button
+            v-if="props.showUnlinkAction && props.dialogOpenAction"
+            @click="dialogOpenAction?.(claim)"
+            size="icon"
+            variant="destructive"
+          >
+            <Unlink class="size-4" />
+          </Button>
+        </UTooltip>
         <!--Send Feedback Action-->
         <UTooltip :text="$t('feedback.send')">
           <Button
@@ -87,13 +98,17 @@
 <script setup lang="ts">
 import { MessageCircleMore } from 'lucide-vue-next';
 import type { Claim } from '~/types/api';
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
+import { Unlink } from 'lucide-vue-next';
 import { getLanguageName } from '~/utils/languageMapping';
 
 interface Props {
   claim: Claim;
+  showUnlinkAction?: boolean;
+  dialogOpenAction?: (claim: Claim) => void;
   showFeedbackAction?: boolean;
 }
 

@@ -36,7 +36,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
+import { useNarrativeDialogsStore } from '~/stores/narrativeDialogs'
 import LikeDislikeFeedback from './LikeDislikeFeedback.vue'
 
 const { t } = useI18n();

@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -317,6 +317,22 @@ export const apiService = {
     }
   },
 
+  async updateNarrative(narrativeId: string, updates: NarrativePatch): Promise<Narrative> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch(`/api/narratives/${narrativeId}`, {
+        method: 'PATCH',
+        body: updates
+      });
+
+      const narrative = (response as { data: Narrative }).data;
+      return narrative;
+    } catch (error) {
+      console.error('Failed to update narrative:', error);
+      throw error;
+    }
+  },
+
   async getNarrativeClaims(narrativeId: string, params?: {
     limit?: number;
     offset?: number;
@@ -442,6 +458,18 @@ export const apiService = {
     } catch (error) {
       console.error('Failed to fetch prevalent narratives:', error);
       return [];
+    }
+  },
+
+  async deleteNarrative(narrativeId: string): Promise<void> {
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/narratives/${narrativeId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete narrative:', error);
+      throw error;
     }
   },
 
