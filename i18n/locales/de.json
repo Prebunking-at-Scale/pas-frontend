@@ -259,6 +259,8 @@
     "entities": "Entitäten",
     "timelineContentRecurrences": "Zeitleiste, Inhalt und Wiederholungen",
     "evolutionOfNarrative": "Entwicklung des Narrativs",
+    "evolutionDescription": "Entwicklungsbeschreibung",
+    "evolutionFirstAnalysis": "Erste Analyse",
     "showingNarrativesFor": "Zeige Narrative für Thema:",
     "showingResults": "Zeige {count} Narrative",
     "clearFilter": "Filter löschen",

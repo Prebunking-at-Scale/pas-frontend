@@ -290,6 +290,8 @@
     "entities": "Entidades",
     "timelineContentRecurrences": "Línea de tiempo, contenido y recurrencias",
     "evolutionOfNarrative": "Evolución de la narrativa",
+    "evolutionDescription": "Descripción de la evolución",
+    "evolutionFirstAnalysis": "Primer análisis",
     "showingNarrativesFor": "Mostrando narrativas para el tema:",
     "showingResults": "Mostrando {count} narrativas",
     "clearFilter": "Limpiar filtro",

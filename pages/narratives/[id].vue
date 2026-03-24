@@ -137,7 +137,29 @@
           </div>
         </div>
       </div>
-      
+
+      <!-- Evolution Description -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.evolution_description">
+        <button
+          class="flex items-center justify-between w-full text-left"
+          @click="evolutionExpanded = !evolutionExpanded"
+        >
+          <h3 class="text-lg font-medium text-gray-900">
+            {{ $t('narratives.evolutionDescription') }}
+          </h3>
+          <ChevronDown
+            class="h-5 w-5 text-gray-500 transition-transform duration-200"
+            :class="{ 'rotate-180': evolutionExpanded }"
+          />
+        </button>
+        <div v-show="evolutionExpanded" class="mt-4">
+          <NarrativeEvolutionTimeline
+            :evolution-description="narrative.evolution_description"
+            :locale="$i18n.locale.value"
+          />
+        </div>
+      </div>
+
       <!-- Timeline Tabs -->
       <div class="bg-white shadow rounded-lg mb-6" v-if="false">
         <div class="border-b border-gray-200">
@@ -327,6 +349,7 @@ import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
+import NarrativeEvolutionTimeline from '~/components/NarrativeEvolutionTimeline.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
@@ -359,6 +382,7 @@ const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
+const evolutionExpanded = ref(false);
 const narrativeFeedbackScore = ref<number | null>(null);
 
 // Pagination state for claims
