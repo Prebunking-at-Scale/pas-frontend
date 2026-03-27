@@ -43,7 +43,8 @@
     "minutesAgo": "hace {count} min",
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
-    "deleting": "Eliminando..."
+    "deleting": "Eliminando...",
+    "no_results": "No se encontraron resultados"
   },
   "nav": {
     "overview": "Vista general",
@@ -405,6 +406,11 @@
     "narrative": "Narrativa",
     "narrative_placeholder": "Seleccionar narrativa",
     "enabled": "Habilitada",
+    "activate_slack_integration": "Canal de Slack (Active la integración de Slack en el panel de administración para usar este tipo de canal)",
+    "notificationChannel": "Canal de notificación",
+    "select_channels_placeholder": "Selecciona canales...",
+    "channel_selected": "canal seleccionado",
+    "channels_selected": "canales seleccionados",
     "delete_confirmation_title": "Eliminar alerta",
     "delete_confirmation_message": "¿Está seguro de que desea eliminar la alerta \"{name}\"? Esta acción no se puede deshacer.",
     "fetch_error": "No se pudieron obtener las alertas",
@@ -545,6 +551,15 @@
     "resendInvite": "Reenviar Invitación",
     "invitationResent": "Invitación reenviada exitosamente",
     "resendError": "Error al reenviar la invitación"
+  },
+  "slack": {
+    "title": "Espacios de trabajo de Slack conectados",
+    "description": "Agrega tu espacio de trabajo de Slack para recibir alertas directamente en tus canales.",
+    "addWorkspace": "Agregar espacio de trabajo de Slack",
+    "teamName": "Nombre del equipo",
+    "channel": "Canal",
+    "removeInstallationSuccess": "Espacio de trabajo de Slack eliminado exitosamente",
+    "removeInstallationError": "No se pudo eliminar la instalación de Slack"
   },
   "tos": {
     "title": "Términos de Servicio",

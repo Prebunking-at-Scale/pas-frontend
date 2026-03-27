@@ -43,7 +43,8 @@
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "no_results": "No results found"
   },
   "nav": {
     "overview": "Overview",
@@ -407,6 +408,11 @@
     "narrative": "Narrative",
     "narrative_placeholder": "Select narrative",
     "enabled": "Enabled",
+    "activate_slack_integration": "Slack Channel (Activate Slack integration on admin panel to use this channel type)",
+    "notificationChannel": "Notification Channel",
+    "select_channels_placeholder": "Select channels...",
+    "channel_selected": "channel selected",
+    "channels_selected": "channels selected",
     "delete_confirmation_title": "Delete Alert",
     "delete_confirmation_message": "Are you sure you want to delete the alert \"{name}\"? This action cannot be undone.",
     "fetch_error": "Failed to fetch alerts",
@@ -552,6 +558,15 @@
     "resendInvite": "Resend Invitation",
     "invitationResent": "Invitation resent successfully",
     "resendError": "Failed to resend invitation"
+  },
+  "slack": {
+    "title": "Connected Slack Workspaces",
+    "description": "Add your Slack workspace to receive alerts directly in your channels.",
+    "addWorkspace": "Add Slack Workspace",
+    "teamName": "Team Name",
+    "channel": "Channel",
+    "removeInstallationSuccess": "Slack workspace removed successfully",
+    "removeInstallationError": "Failed to remove Slack installation"
   },
   "tos": {
     "title": "Terms of Service",

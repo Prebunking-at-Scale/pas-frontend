@@ -1,8 +1,10 @@
+import type { Alert, AlertChannel } from './api'
+
 export type AlertType = 'narrative_views' | 'narrative_claims_count' | 'narrative_videos_count' | 'narrative_with_topic' | 'keyword'
 
 export type AlertScope = 'general' | 'specific'
 
-export { Alert } from './api'
+export type { Alert };
 
 export interface CreateAlertRequest {
   scope: AlertScope
@@ -13,6 +15,7 @@ export interface CreateAlertRequest {
   keyword?: string
   enabled?: boolean
   name: string
+  channels: AlertChannel[]
 }
 
 export interface UpdateAlertRequest {
@@ -20,6 +23,7 @@ export interface UpdateAlertRequest {
   threshold?: number
   keyword?: string
   name: string
+  channels: AlertChannel[]
 }
 
 export interface AlertsResponse {

@@ -280,6 +280,12 @@ export interface Alert {
   updated_at: string;
   organisation_id: string;
   user_id: string;
+  channels?: AlertChannel[];
+}
+
+export interface AlertChannel {
+  channel_type: 'slack' | 'email'
+  slack_channel_id?: string
 }
 
 // Video detail response includes video data plus related content
@@ -413,4 +419,28 @@ export interface NarrativeDetail {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface SlackInstallation {
+  id: string
+  organisation_id: string
+  // Slack workspace identification
+  team_id: string
+  team_name: string | null
+  enterprise_id: string | null
+  enterprise_name: string | null
+  // Slack app identification
+  app_id: string | null
+  // Bot info (without token)
+  bot_id: string | null
+  bot_user_id: string | null
+  bot_scopes: string | null
+  // Incoming webhook configuration
+  incoming_webhook_channel: string | null
+  incoming_webhook_channel_id: string | null
+  // Installation metadata
+  is_enterprise_install: boolean
+  // Timestamps
+  created_at: string | null
+  updated_at: string | null
 }

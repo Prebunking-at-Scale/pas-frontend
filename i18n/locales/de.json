@@ -43,7 +43,8 @@
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
     "daysAgo": "vor {count} T.",
-    "deleting": "Wird gelöscht..."
+    "deleting": "Wird gelöscht...",
+    "no_results": "Keine Ergebnisse gefunden"
   },
   "nav": {
     "overview": "Übersicht",
@@ -374,6 +375,11 @@
     "narrative": "Narrativ",
     "narrative_placeholder": "Narrativ auswählen",
     "enabled": "Aktiviert",
+    "notificationChannel": "Benachrichtigungskanal",
+    "activate_slack_integration": "Slack Channel (Aktivieren Sie die Slack-Integration im Admin-Panel, um diesen Kanaltyp zu verwenden)",
+    "select_channels_placeholder": "Kanäle auswählen...",
+    "channel_selected": "Kanal ausgewählt",
+    "channels_selected": "Kanäle ausgewählt",
     "delete_confirmation_title": "Benachrichtigung löschen",
     "delete_confirmation_message": "Möchten Sie die Benachrichtigung \"{name}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "fetch_error": "Benachrichtigungen konnten nicht abgerufen werden",
@@ -535,6 +541,15 @@
     "resendInvite": "Einladung erneut senden",
     "invitationResent": "Einladung erfolgreich erneut gesendet",
     "resendError": "Fehler beim erneuten Senden der Einladung"
+  },
+  "slack": {
+    "title": "Verbundene Slack-Arbeitsbereiche",
+    "description": "Fügen Sie Ihren Slack-Arbeitsbereich hinzu, um Benachrichtigungen direkt in Ihren Kanälen zu erhalten.",
+    "addWorkspace": "Slack-Arbeitsbereich hinzufügen",
+    "teamName": "Teamname",
+    "channel": "Kanal",
+    "removeInstallationSuccess": "Slack-Arbeitsbereich erfolgreich entfernt",
+    "removeInstallationError": "Fehler beim Entfernen der Slack-Installation"
   },
   "superadmin": {
     "title": "Superadministrator",

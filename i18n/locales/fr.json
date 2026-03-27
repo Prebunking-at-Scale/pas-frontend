@@ -43,7 +43,8 @@
     "minutesAgo": "il y a {count} min",
     "hoursAgo": "il y a {count}h",
     "daysAgo": "il y a {count}j",
-    "deleting": "Suppression..."
+    "deleting": "Suppression...",
+    "no_results": "Aucun résultat trouvé"
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -404,6 +405,11 @@
     "narrative": "Récit",
     "narrative_placeholder": "Sélectionner le récit",
     "enabled": "Activée",
+    "activate_slack_integration": "Canal Slack (Activez l'intégration Slack dans le panneau d'administration pour utiliser ce type de canal)",
+    "notificationChannel": "Canal de notification",
+    "select_channels_placeholder": "Sélectionner les canaux...",
+    "channel_selected": "canal sélectionné",
+    "channels_selected": "canaux sélectionnés",
     "delete_confirmation_title": "Supprimer l'alerte",
     "delete_confirmation_message": "Êtes-vous sûr de vouloir supprimer l'alerte \"{name}\" ? Cette action ne peut pas être annulée.",
     "fetch_error": "Impossible de récupérer les alertes",
@@ -565,6 +571,15 @@
     "resendInvite": "Renvoyer l'invitation",
     "invitationResent": "Invitation renvoyée avec succès",
     "resendError": "Erreur lors du renvoi de l'invitation"
+  },
+  "slack": {
+    "title": "Espaces de travail Slack connectés",
+    "description": "Ajoutez votre espace de travail Slack pour recevoir des alertes directement dans vos canaux.",
+    "addWorkspace": "Ajouter un espace de travail Slack",
+    "teamName": "Nom de l'équipe",
+    "channel": "Canal",
+    "removeInstallationSuccess": "Espace de travail Slack supprimé avec succès",
+    "removeInstallationError": "Échec de la suppression de l'installation Slack"
   },
   "superadmin": {
     "title": "Superadministrateur",

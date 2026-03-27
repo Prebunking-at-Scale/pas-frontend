@@ -51,6 +51,10 @@ export const useAlerts = () => {
       }
     }
 
+    if (request.channels.length === 0) {
+      return 'At least one alert channel must be selected'
+    }
+
     return null
   }
 
