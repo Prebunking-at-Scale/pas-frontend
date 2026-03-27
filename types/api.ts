@@ -410,7 +410,7 @@ export interface NarrativeDetail {
   total_comments: number;
   platforms: string[];
   language_count: number;
-  evolution_description?: string | null;
+  narrative_context?: string | null;
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;

@@ -139,24 +139,23 @@
       </div>
 
       <!-- Evolution Description -->
-      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.evolution_description">
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.narrative_context">
         <button
           class="flex items-center justify-between w-full text-left"
-          @click="evolutionExpanded = !evolutionExpanded"
+          @click="contextExpanded = !contextExpanded"
         >
           <h3 class="text-lg font-medium text-gray-900">
-            {{ $t('narratives.evolutionDescription') }}
+            {{ $t('narratives.narrativeContext') }}
           </h3>
           <ChevronDown
             class="h-5 w-5 text-gray-500 transition-transform duration-200"
-            :class="{ 'rotate-180': evolutionExpanded }"
+            :class="{ 'rotate-180': contextExpanded }"
           />
         </button>
-        <div v-show="evolutionExpanded" class="mt-4">
-          <NarrativeEvolutionTimeline
-            :evolution-description="narrative.evolution_description"
-            :locale="$i18n.locale.value"
-          />
+        <div v-show="contextExpanded" class="mt-4">
+          <div class="bg-gray-50 rounded-lg p-4 text-gray-700 text-sm whitespace-pre-line">
+            {{ narrative.narrative_context }}
+          </div>
         </div>
       </div>
 
@@ -349,7 +348,6 @@ import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
-import NarrativeEvolutionTimeline from '~/components/NarrativeEvolutionTimeline.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
@@ -382,7 +380,7 @@ const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
-const evolutionExpanded = ref(false);
+const contextExpanded = ref(true);
 const narrativeFeedbackScore = ref<number | null>(null);
 
 // Pagination state for claims
