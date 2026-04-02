@@ -125,7 +125,7 @@
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="feed in keywordFeeds" :key="feed.id">
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ feed.topic }}
+                    {{ feed.topic_name }}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500">
                     <div class="flex flex-wrap gap-1">

@@ -343,7 +343,8 @@ export interface KeywordFeed {
   is_archived: boolean;
   created_at: string;
   updated_at: string;
-  topic: string;
+  topic_id: string;
+  topic_name: string;
   keywords: string[];
 }
 
@@ -362,7 +363,7 @@ export interface CreateChannelFeedFromUrlRequest {
 }
 
 export interface CreateKeywordFeedRequest {
-  topic: string;
+  topic_id: string;
   keywords: string[];
 }
 
