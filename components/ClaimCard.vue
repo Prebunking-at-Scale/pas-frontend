@@ -10,7 +10,7 @@
       <div class="flex flex-auto mb-4">
         <div class="flex flex-1 flex-col">
           <p class="text-gray-900 text-xl leading-tight">
-            "{{ claim.claim || claim.text }}"
+            {{ claim.claim || claim.text }}
           </p>
           <p
             v-if="claim.video"
