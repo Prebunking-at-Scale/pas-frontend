@@ -88,6 +88,7 @@
               <CardTitle>{{ $t('videos.relatedClaims') }} ({{ claims.length }})</CardTitle>
             </CardHeader>
             <CardContent>
+              <ClaimsDisclaimer />
               <div class="space-y-4">
                 <div v-for="claim in claims" :key="claim.id" class="border-b last:border-0 pb-4 last:pb-0">
                   <p class="text-gray-900 mb-2">"{{ claim.claim || claim.text }}"</p>
@@ -191,6 +192,7 @@ import { apiService } from '~/services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import PlatformBadge from '~/components/PlatformBadge.vue';
+import ClaimsDisclaimer from '~/components/ClaimsDisclaimer.vue';
 import { formatDate } from '~/utils/date';
 
 definePageMeta({

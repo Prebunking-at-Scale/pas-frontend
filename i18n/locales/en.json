@@ -370,7 +370,8 @@
     "confidence": "Confidence",
     "score": "Score",
     "topics": "Topics",
-    "viewVideo": "View Video"
+    "viewVideo": "View Video",
+    "disclaimer": "Claims are extracted and contextualized with AI but are not quotes. To read the full transcription, click on the Transcription button in each video."
   },
   "alerts": {
     "title": "Alerts",
