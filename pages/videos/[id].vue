@@ -90,7 +90,7 @@
             <CardContent>
               <div class="space-y-4">
                 <div v-for="claim in claims" :key="claim.id" class="border-b last:border-0 pb-4 last:pb-0">
-                  <p class="text-gray-900 mb-2">"{{ claim.claim || claim.text }}"</p>
+                  <p class="text-gray-900 mb-2">{{ claim.claim || claim.text }}</p>
                   <div class="flex items-center gap-4 text-sm text-gray-500">
                     
                     <button
