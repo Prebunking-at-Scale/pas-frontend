@@ -79,12 +79,12 @@
         <AlertDialogHeader>
           <AlertDialogTitle>{{ $t('alerts.delete_confirmation_title') }}</AlertDialogTitle>
           <AlertDialogDescription>
-            {{ $t('alerts.delete_confirmation_message') }}
+            {{ $t('alerts.delete_confirmation_message', { name: selectedAlert?.name }) }}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
-          <AlertDialogAction @click="deleteSelectedAlert" class="bg-destructive text-destructive-foreground">
+          <AlertDialogAction @click="deleteSelectedAlert" class="bg-destructive text-white hover:bg-destructive/80">
             {{ $t('common.delete') }}
           </AlertDialogAction>
         </AlertDialogFooter>
