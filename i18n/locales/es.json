@@ -295,6 +295,7 @@
     "entities": "Entidades",
     "timelineContentRecurrences": "Línea de tiempo, contenido y recurrencias",
     "evolutionOfNarrative": "Evolución de la narrativa",
+    "narrativeContext": "Contexto de la narrativa",
     "showingNarrativesFor": "Mostrando narrativas para el tema:",
     "showingResults": "Mostrando {count} narrativas",
     "clearFilter": "Limpiar filtro",

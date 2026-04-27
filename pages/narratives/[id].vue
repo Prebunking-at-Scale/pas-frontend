@@ -137,7 +137,28 @@
           </div>
         </div>
       </div>
-      
+
+      <!-- Evolution Description -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.narrative_context">
+        <button
+          class="flex items-center justify-between w-full text-left"
+          @click="contextExpanded = !contextExpanded"
+        >
+          <h3 class="text-lg font-medium text-gray-900">
+            {{ $t('narratives.narrativeContext') }}
+          </h3>
+          <ChevronDown
+            class="h-5 w-5 text-gray-500 transition-transform duration-200"
+            :class="{ 'rotate-180': contextExpanded }"
+          />
+        </button>
+        <div v-show="contextExpanded" class="mt-4">
+          <div class="bg-gray-50 rounded-lg p-4 text-gray-700 text-sm whitespace-pre-line">
+            {{ narrative.narrative_context }}
+          </div>
+        </div>
+      </div>
+
       <!-- Timeline Tabs -->
       <div class="bg-white shadow rounded-lg mb-6" v-if="false">
         <div class="border-b border-gray-200">
@@ -359,6 +380,7 @@ const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
+const contextExpanded = ref(true);
 const narrativeFeedbackScore = ref<number | null>(null);
 
 // Pagination state for claims

@@ -297,6 +297,7 @@
     "entities": "Entities",
     "timelineContentRecurrences": "Timeline, content and recurrences",
     "evolutionOfNarrative": "Evolution of the narrative",
+    "narrativeContext": "Narrative context",
     "showingNarrativesFor": "Showing narratives for topic:",
     "showingResults": "Showing {count} narratives",
     "clearFilter": "Clear filter",
