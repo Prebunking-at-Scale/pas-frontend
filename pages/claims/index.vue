@@ -39,6 +39,9 @@
       />
     </FilterCard>
 
+    <!-- Disclaimer -->
+    <ClaimsDisclaimer />
+
     <!-- Claims List -->
     <div v-if="loading" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
@@ -116,6 +119,7 @@ import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
 import ClaimCard from '~/components/ClaimCard.vue';
+import ClaimsDisclaimer from '~/components/ClaimsDisclaimer.vue';
 import FilterCard from '~/components/filters/FilterCard.vue';
 import TopicFilter from '~/components/filters/TopicFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
