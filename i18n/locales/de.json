@@ -97,7 +97,12 @@
     "selectLanguage": "Sprache wählen",
     "source": "Quelle",
     "relatedNarratives": "Verwandte Narrative",
-    "topics": "Themen"
+    "topics": "Themen",
+    "transcript": "Transkript",
+    "transcriptTitle": "Video-Transkript",
+    "transcriptDescription": "Vollständiges Transkript mit Zeitstempeln",
+    "noTranscript": "Kein Transkript für dieses Video verfügbar",
+    "viewFullTranscript": "Vollständiges Transkript anzeigen"
   },
   "login": {
     "title": "Bei Ihrem Konto anmelden",

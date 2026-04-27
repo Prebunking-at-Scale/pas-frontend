@@ -97,7 +97,12 @@
     "selectLanguage": "Select language",
     "source": "Source",
     "relatedNarratives": "Related Narratives",
-    "topics": "Topics"
+    "topics": "Topics",
+    "transcript": "Transcript",
+    "transcriptTitle": "Video Transcript",
+    "transcriptDescription": "Full transcript with timestamps",
+    "noTranscript": "No transcript available for this video",
+    "viewFullTranscript": "View full transcript"
   },
   "login": {
     "title": "Sign in to your account",

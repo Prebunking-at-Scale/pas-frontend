@@ -97,7 +97,12 @@
     "selectLanguage": "Sélectionner la langue",
     "source": "Source",
     "relatedNarratives": "Récits liés",
-    "topics": "Sujets"
+    "topics": "Sujets",
+    "transcript": "Transcription",
+    "transcriptTitle": "Transcription de la vidéo",
+    "transcriptDescription": "Transcription complète avec horodatages",
+    "noTranscript": "Aucune transcription disponible pour cette vidéo",
+    "viewFullTranscript": "Voir la transcription complète"
   },
   "login": {
     "title": "Connectez-vous à votre compte",
