@@ -51,7 +51,6 @@
           :entity="entity"
           :show-frequency="false"
           :show-chevron="true"
-          :show-description="false"
           @click="goToEntity(entity.id)"
         />
       </div>

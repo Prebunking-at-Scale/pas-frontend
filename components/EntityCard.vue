@@ -18,16 +18,17 @@
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium text-gray-900 truncate" :title="entity.name">{{ entity.name }}</p>
-        <p v-if="entityType" class="text-xs text-gray-600 capitalize truncate">{{ formatEntityType(entityType) }}</p>
+        <p v-if="entityDescription" class="text-xs text-gray-600 truncate" :title="entityDescription">{{ entityDescription }}</p>
+        <p v-else-if="entityType" class="text-xs text-gray-600 capitalize truncate">{{ formatEntityType(entityType) }}</p>
         <!--Claims & videos stats-->
         <p v-if="entity.total_claims && entity.total_videos" class="text-xs text-gray-500 truncate">
           {{ $t('entities.claimsInVideos', { claims: entity.total_claims, videos: entity.total_videos }) }}
         </p>
         <div v-if="entity.platforms?.length > 0" class="flex text-xs text-gray-500">
           <p class="mr-1">{{ $t('entities.platformsLabel') }}</p>
-          <PlatformBadge 
-            v-for="platform in entity.platforms || []" 
-            :key="platform" 
+          <PlatformBadge
+            v-for="platform in entity.platforms || []"
+            :key="platform"
             :platform="platform as 'youtube' | 'tiktok' | 'instagram'"
             class="mr-1"
           />
@@ -35,7 +36,6 @@
         <p v-if="entity.languages?.length > 0" class="flex text-xs text-gray-500">
           {{ $t('entities.languagesCount', { count: entity.languages.length }) }}
         </p>
-        <!-- <p v-if="entityDescription && showDescription" class="text-xs text-gray-400 truncate" :title="entityDescription">{{ entityDescription }}</p> -->
       </div>
     </div>
     <div class="flex items-center space-x-2 flex-shrink-0">
@@ -57,13 +57,11 @@ interface Props {
   entity: Entity;
   showFrequency?: boolean;
   showChevron?: boolean;
-  showDescription?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showFrequency: true,
-  showChevron: false,
-  showDescription: false
+  showChevron: false
 });
 
 defineEmits<{
