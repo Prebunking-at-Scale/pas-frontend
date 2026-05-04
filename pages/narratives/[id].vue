@@ -17,10 +17,36 @@
             <h1 class="text-3xl font-bold text-gray-900">{{ narrative.title }}</h1>
             <p v-if="narrative.description != narrative.title" class="mt-2 text-gray-600">{{ narrative.description }}</p>
           </div>
-          <Button @click="openAlertDialog" variant="outline" class="ml-4">
-            <Bell class="mr-2 h-4 w-4" />
-            {{ $t('alerts.create_alert') }}
-          </Button>
+          <!-- Actions -->
+          <div class="flex gap-2 flex-none">
+            <Button @click="openAlertDialog" variant="outline">
+              <Bell class="mr-2 h-4 w-4" />
+              {{ $t('alerts.create_alert') }}
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button variant="outline">
+                  {{ $t('narratives.adminActions') }}
+                  <ChevronDown class="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem @click="openUpdateTitleDialog">
+                  <Captions class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.editTitle') }}
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="openMergeDialog">
+                  <Combine class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.merge.mergeAndDelete') }}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem class="text-red-600" @click="openDeleteDialog">
+                  <Trash class="mr-2 h-4 w-4" />
+                  {{ $t('narratives.delete') }}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         
         <!-- Topics -->
@@ -111,7 +137,28 @@
           </div>
         </div>
       </div>
-      
+
+      <!-- Evolution Description -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6" v-if="narrative.narrative_context">
+        <button
+          class="flex items-center justify-between w-full text-left"
+          @click="contextExpanded = !contextExpanded"
+        >
+          <h3 class="text-lg font-medium text-gray-900">
+            {{ $t('narratives.narrativeContext') }}
+          </h3>
+          <ChevronDown
+            class="h-5 w-5 text-gray-500 transition-transform duration-200"
+            :class="{ 'rotate-180': contextExpanded }"
+          />
+        </button>
+        <div v-show="contextExpanded" class="mt-4">
+          <div class="bg-gray-50 rounded-lg p-4 text-gray-700 text-sm whitespace-pre-line">
+            {{ narrative.narrative_context }}
+          </div>
+        </div>
+      </div>
+
       <!-- Timeline Tabs -->
       <div class="bg-white shadow rounded-lg mb-6" v-if="false">
         <div class="border-b border-gray-200">
@@ -232,6 +279,8 @@
             v-for="claim in allClaims"
             :key="claim.id"
             :claim="claim"
+            :show-unlink-action="true"
+            :dialog-open-action="openUnlinkDialog"
           />
         </div>
 
@@ -276,6 +325,15 @@
       :narrative-id="narrative.id"
       @save="handleAlertSave"
     />
+    <NarrativeTitleDialog
+      :open="editDialogOpen"
+      :narrative="narrative"
+      @update:open="editDialogOpen = $event"
+      @save="handleUpdate"
+    />
+    <ConfirmUnlinkDialog />
+    <MergeNarrativesDialog />
+    <ConfirmDeleteDialog />
     <ClaimFeedbackDialog
       v-if="narrative"
     />
@@ -284,17 +342,22 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
 import EntityCard from '~/components/EntityCard.vue';
 import AlertFormDialog from '~/components/AlertFormDialog.vue';
-import { Bell, Loader2 } from 'lucide-vue-next';
+import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
+import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
+import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
+import { Bell, Captions, ChevronDown, Combine, Trash, Loader2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
-import { useNarrativeDialogsStore } from '~/stores/narrativesDialogs'
+import { formatDate } from '~/utils/date';
+import { useNarrativeDialogsStore } from '~/stores/narrativeDialogs';
 
 definePageMeta({
   layout: 'default',
@@ -315,6 +378,8 @@ const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
 const showAlertDialog = ref(false);
+const editDialogOpen = ref(false);
+const contextExpanded = ref(true);
 const narrativeFeedbackScore = ref<number | null>(null);
 
 // Pagination state for claims
@@ -468,12 +533,61 @@ const openAlertDialog = () => {
   showAlertDialog.value = true;
 };
 
+const openUpdateTitleDialog = () => {
+  editDialogOpen.value = true;
+};
+
+const openMergeDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openMergeDialog(narrative.value);
+};
+
+const openUnlinkDialog = (claim: Claim) => {
+  dialogsStore.openUnlinkDialog(claim, async () => {
+    await unlinkClaimFromNarrative(claim);
+  });
+};
+
+const openDeleteDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openDeleteDialog(narrative.value);
+};
+
 const handleAlertSave = (alert: Alert) => {
   toast.add({
     title: t('common.success'),
     description: t('alerts.create_success')
   });
   showAlertDialog.value = false;
+};
+
+const handleUpdate = (updatedNarrative: Narrative) => {
+  narrative.value = updatedNarrative;
+  editDialogOpen.value = false;
+};
+
+const unlinkClaimFromNarrative = async (claim: Claim) => {
+  if (!narrative.value) return;
+
+  try {
+    const body = {
+      claim_ids: narrative.value.claims?.filter(c => c.id !== claim.id).map(c => c.id) || []
+    };
+    const updatedNarrative = await apiService.updateNarrative(narrative.value.id, body);
+    narrative.value = updatedNarrative;
+
+    toast.add({
+      title: t('common.success'),
+      description: t('narratives.claimUnlinked'),
+    });
+  } catch (err) {
+    console.error('Failed to unlink claim:', err);
+    toast.add({
+      title: t('common.error'),
+      description: t('narratives.claimUnlinkError'),
+    });
+    throw err; // Re-throw to let the store handle it
+  }
 };
 
 const handleVote = async (rating: number) => {
@@ -513,5 +627,4 @@ const onFeedbackClick = (claim: Claim) => {
   if (!narrative.value) return;
   dialogsStore.openClaimFeedbackDialog(claim, narrative.value);
 };
-
 </script>

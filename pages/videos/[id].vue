@@ -88,9 +88,10 @@
               <CardTitle>{{ $t('videos.relatedClaims') }} ({{ claims.length }})</CardTitle>
             </CardHeader>
             <CardContent>
+              <ClaimsDisclaimer />
               <div class="space-y-4">
                 <div v-for="claim in claims" :key="claim.id" class="border-b last:border-0 pb-4 last:pb-0">
-                  <p class="text-gray-900 mb-2">"{{ claim.claim || claim.text }}"</p>
+                  <p class="text-gray-900 mb-2">{{ claim.claim || claim.text }}</p>
                   <div class="flex items-center gap-4 text-sm text-gray-500">
                     
                     <button
@@ -161,6 +162,67 @@
             </CardContent>
           </Card>
 
+          <!-- Transcript -->
+          <Card class="mt-4 p-0 rounded pb-4" v-if="transcriptSentences.length > 0">
+            <CardHeader class="p-4 bg-stone-200 flex flex-row items-center justify-between">
+              <CardTitle>{{ $t('videos.transcript') }} ({{ transcriptSentences.length }})</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                @click="showTranscriptDialog = true"
+              >
+                {{ $t('videos.viewFullTranscript') }}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div class="space-y-2">
+                <div v-for="sentence in transcriptSentences.slice(0, 3)" :key="sentence.id" class="flex items-start gap-3">
+                  <button
+                    @click="seekToTime(sentence.start_time_s)"
+                    class="flex-shrink-0 flex items-center gap-1 text-stone-900 hover:text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-md px-2 py-1 transition-colors border border-stone-200 cursor-pointer text-sm"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ formatTimestamp(sentence.start_time_s) }}
+                  </button>
+                  <p class="text-gray-700 text-sm">{{ sentence.text }}</p>
+                </div>
+                <p v-if="transcriptSentences.length > 3" class="text-sm text-gray-400 italic">
+                  ...{{ transcriptSentences.length - 3 }} more
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <!-- Transcript Dialog -->
+          <Dialog v-model:open="showTranscriptDialog">
+            <DialogScrollContent class="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{{ $t('videos.transcriptTitle') }}</DialogTitle>
+                <DialogDescription>{{ $t('videos.transcriptDescription') }}</DialogDescription>
+              </DialogHeader>
+              <div class="space-y-3 py-4">
+                <div
+                  v-for="sentence in transcriptSentences"
+                  :key="sentence.id"
+                  class="flex items-start gap-3 border-b last:border-0 pb-3 last:pb-0"
+                >
+                  <button
+                    @click="seekToTime(sentence.start_time_s); showTranscriptDialog = false"
+                    class="flex-shrink-0 flex items-center gap-1 text-stone-900 hover:text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-md px-2 py-1 transition-colors border border-stone-200 cursor-pointer text-sm"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ formatTimestamp(sentence.start_time_s) }}
+                  </button>
+                  <p class="text-gray-700">{{ sentence.text }}</p>
+                </div>
+              </div>
+            </DialogScrollContent>
+          </Dialog>
+
           <!-- Topics -->
           <Card v-if="video.topics && video.topics.length > 0">
             <CardHeader>
@@ -186,11 +248,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Video, Claim, Narrative } from '~/types/api';
+import type { Video, Claim, Narrative, VideoDetailResponse } from '~/types/api';
 import { apiService } from '~/services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
+import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogDescription } from '~/components/ui/dialog';
 import PlatformBadge from '~/components/PlatformBadge.vue';
+import ClaimsDisclaimer from '~/components/ClaimsDisclaimer.vue';
 import { formatDate } from '~/utils/date';
 
 definePageMeta({
@@ -208,6 +272,8 @@ const videoPlayer = ref<HTMLIFrameElement | null>(null);
 const video = ref<Video | null>(null);
 const claims = ref<Claim[]>([]);
 const narratives = ref<Narrative[]>([]);
+const transcriptSentences = ref<NonNullable<VideoDetailResponse['transcript']>['sentences']>([]);
+const showTranscriptDialog = ref(false);
 const loading = ref(true);
 const error = ref(false);
 
@@ -290,6 +356,13 @@ const loadVideoData = async () => {
       narratives.value = videoResponse.narratives;
     } else {
       narratives.value = [];
+    }
+
+    // Extract transcript sentences from the response
+    if (videoResponse.transcript?.sentences) {
+      transcriptSentences.value = videoResponse.transcript.sentences;
+    } else {
+      transcriptSentences.value = [];
     }
     
   } catch (e) {

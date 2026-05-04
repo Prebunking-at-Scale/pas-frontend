@@ -14,6 +14,13 @@
     "disable": "Deshabilitar",
     "delete": "Eliminar",
     "cancel": "Cancelar",
+    "confirm_unlink_title": "Confirmar Desvinculación",
+    "confirm_unlink_description": "¿Está seguro de que desea desvincular este contenido? Esta acción no se puede deshacer.",
+    "unlink": "Desvincular",
+    "unlinking": "Desvinculando...",
+    "confirm_delete_title": "Confirmar Eliminación",
+    "confirm_delete_description": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
     "create": "Crear",
     "creating": "Creando...",
     "save": "Guardar",
@@ -91,7 +98,12 @@
     "selectLanguage": "Seleccionar idioma",
     "source": "Fuente",
     "relatedNarratives": "Narrativas relacionadas",
-    "topics": "Temas"
+    "topics": "Temas",
+    "transcript": "Transcripción",
+    "transcriptTitle": "Transcripción del video",
+    "transcriptDescription": "Transcripción completa con marcas de tiempo",
+    "noTranscript": "No hay transcripción disponible para este video",
+    "viewFullTranscript": "Ver transcripción completa"
   },
   "login": {
     "title": "Inicie sesión en su cuenta",
@@ -256,6 +268,11 @@
   },
   "narratives": {
     "title": "Narrativas",
+    "newTitle": "Nuevo título",
+    "editTitle": "Editar título de narrativa",
+    "titlePlaceholder": "Ingrese el título de la narrativa",
+    "titleRequired": "El título es obligatorio",
+    "updateSuccess": "Título de narrativa actualizado con éxito",
     "filters": "Filtros",
     "channel": "Canal",
     "language": "Idioma",
@@ -279,6 +296,7 @@
     "entities": "Entidades",
     "timelineContentRecurrences": "Línea de tiempo, contenido y recurrencias",
     "evolutionOfNarrative": "Evolución de la narrativa",
+    "narrativeContext": "Contexto de la narrativa",
     "showingNarrativesFor": "Mostrando narrativas para el tema:",
     "showingResults": "Mostrando {count} narrativas",
     "clearFilter": "Limpiar filtro",
@@ -293,14 +311,32 @@
     "loadError": "Error al cargar la narrativa",
     "seenIn": "Visto en",
     "claimsSupportingNarrative": "Afirmaciones que apoyan esta narrativa",
+    "selectNarrative": "Seleccionar narrativa",
+    "searchNarrative": "Buscar narrativas...",
+    "noNarrativesFound": "No se encontraron narrativas",
+    "merge": {
+      "title": "Fusionar Narrativas",
+      "description": "Esta acción eliminará esta narrativa y fusionará su contenido con otra narrativa. Seleccione una narrativa para usarla como resultado final de la fusión. Esta acción es irreversible.",
+      "selectNarrative": "Seleccionar una narrativa",
+      "selectTarget": "Seleccionar narrativa de destino",
+      "searchPlaceholder": "Escribe para buscar narrativas...",
+      "mergeAndDelete": "Fusionar y Eliminar",
+      "merging": "Fusionando...",
+      "success": "Narrativas fusionadas con éxito"
+    },
+    "delete": "Eliminar Narrativa",
+    "delete_success": "La narrativa ha sido eliminada exitosamente",
+    "claimUnlinked": "La claim ha sido desvinculada de la narrativa",
+    "claimUnlinkError": "Error al desvincular la claim de la narrativa",
     "feedback": {
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
       "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
     },
+    "adminActions": "Acciones de administrador",
     "loadMoreClaims": "Cargar más afirmaciones",
     "loadMoreVideos": "Cargar más videos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Enviar comentarios",
     "sending": "Enviando comentarios...",
     "success": "¡Gracias por tus comentarios!",

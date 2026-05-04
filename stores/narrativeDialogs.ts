@@ -1,0 +1,255 @@
+import { defineStore } from 'pinia';
+import { apiService } from '~/services/api';
+import type { Claim, Narrative } from '~/types/api';
+
+interface UnlinkDialogState {
+  isOpen: boolean;
+  selectedClaim: Claim | null;
+  onConfirm: (() => Promise<void>) | null;
+}
+
+interface AlertDialogState {
+  isOpen: boolean;
+}
+
+interface TitleDialogState {
+  isOpen: boolean;
+}
+
+interface MergeDialogState {
+  isOpen: boolean;
+  actualNarrative: Narrative | null;
+  selectedNarrative: { id: string; title: string } | null;
+}
+
+interface DeleteDialogState {
+  isOpen: boolean;
+  narrativeToDelete: Narrative | null;
+}
+
+interface ClaimFeedbackDialogState {
+  isOpen: boolean;
+  selectedClaim: Claim | null;
+  selectedNarrative: Narrative | null;
+  claimFeedbackScore: 'like' | 'dislike' | null;
+  loading: boolean;
+}
+
+export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
+  state: () => ({
+    unlinkDialog: {
+      isOpen: false,
+      selectedClaim: null,
+      onConfirm: null,
+    } as UnlinkDialogState,
+    alertDialog: {
+      isOpen: false,
+    } as AlertDialogState,
+    titleDialog: {
+      isOpen: false,
+    } as TitleDialogState,
+    mergeDialog: {
+      isOpen: false,
+      actualNarrative: null,
+    } as MergeDialogState,
+    deleteDialog: {
+      isOpen: false,
+      narrativeToDelete: null,
+    } as DeleteDialogState,
+    claimFeedbackDialog: {
+      isOpen: false,
+      selectedClaim: null,
+      selectedNarrative: null,
+      loading: false,
+      claimFeedbackScore: null,
+    } as ClaimFeedbackDialogState,
+  }),
+
+  actions: {
+    // Unlink Dialog Actions
+    openUnlinkDialog(claim: Claim, onConfirm: () => Promise<void>) {
+      this.unlinkDialog.selectedClaim = claim;
+      this.unlinkDialog.onConfirm = onConfirm;
+      this.unlinkDialog.isOpen = true;
+    },
+
+    closeUnlinkDialog() {
+      this.unlinkDialog.isOpen = false;
+      // Clear state after a small delay to avoid UI flicker
+      setTimeout(() => {
+        this.unlinkDialog.selectedClaim = null;
+        this.unlinkDialog.onConfirm = null;
+      }, 300);
+    },
+
+    async confirmUnlink() {
+      if (this.unlinkDialog.onConfirm) {
+        try {
+          await this.unlinkDialog.onConfirm();
+          this.closeUnlinkDialog();
+        } catch (error) {
+          // Error handling is done in the onConfirm callback
+          console.error('Error during unlink confirmation:', error);
+        }
+      }
+    },
+
+    // Alert Dialog Actions (for future implementation)
+    openAlertDialog() {
+      this.alertDialog.isOpen = true;
+    },
+
+    closeAlertDialog() {
+      this.alertDialog.isOpen = false;
+    },
+
+    // Title Dialog Actions (for future implementation)
+    openTitleDialog() {
+      this.titleDialog.isOpen = true;
+    },
+
+    closeTitleDialog() {
+      this.titleDialog.isOpen = false;
+    },
+    // Merge Dialog Actions
+    openMergeDialog(narrative: Narrative) {
+      this.mergeDialog.actualNarrative = narrative;
+      this.mergeDialog.isOpen = true;
+    },
+    closeMergeDialog() {
+      this.mergeDialog.isOpen = false;
+      // Clear state after a small delay to avoid UI flicker
+      setTimeout(() => {
+        this.mergeDialog.actualNarrative = null;
+      }, 300);
+    },
+
+    async confirmMerge(selectedNarrative: Narrative) {
+      const { $i18n } = useNuxtApp();
+      const toast = useToast();
+      
+      try {
+        if (!this.mergeDialog.actualNarrative) {
+          console.error('No actual narrative to merge from.')
+          return
+        }
+        const actualClaims = this.mergeDialog.actualNarrative.claims || []
+        const actualTopics = this.mergeDialog.actualNarrative.topics || []
+  
+        const targetClaims = selectedNarrative.claims || []
+        const targetTopics = selectedNarrative.topics || []
+  
+        // Merge claims and topics, avoiding duplicates by ID
+        const actualClaimIds = actualClaims.map(c => c.id)
+        const targetClaimIds = targetClaims.map(c => c.id)
+        const mergedClaims = Array.from(new Set([...actualClaimIds, ...targetClaimIds]))
+        
+        const actualTopicIds = actualTopics.map(t => t.id)
+        const targetTopicIds = targetTopics.map(t => t.id)
+        const mergedTopics = Array.from(new Set([...actualTopicIds, ...targetTopicIds]))
+  
+        await apiService.updateNarrative(selectedNarrative.id, {
+          claim_ids: mergedClaims,
+          topic_ids: mergedTopics
+        })
+  
+        await apiService.deleteNarrative(this.mergeDialog.actualNarrative!.id)
+  
+        toast.add({
+          color: 'success',
+          title: $i18n.t('common.success'),
+          description: $i18n.t('narratives.merge.success', { title: selectedNarrative.title })
+        })
+  
+        this.closeMergeDialog()
+        // Optionally navigate to the merged narrative
+        await navigateTo(`/narratives/${selectedNarrative.id}`)
+      } catch (error: any) {
+        console.error('Error merging narratives:', error)
+        toast.add({
+          title: $i18n.t('common.error'),
+          description: error.message || $i18n.t('common.error_occurred'),
+          color: 'error'
+        })
+      }
+    },
+
+    // Delete Dialog Actions
+    openDeleteDialog(narrative: Narrative) {
+      this.deleteDialog.narrativeToDelete = narrative;
+      this.deleteDialog.isOpen = true;
+    },
+
+    closeDeleteDialog() {
+      this.deleteDialog.isOpen = false;
+      // Clear state after a small delay to avoid UI flicker
+      setTimeout(() => {
+        this.deleteDialog.narrativeToDelete = null;
+      }, 300);
+    },
+
+    // Claim Feedback Dialog Actions
+    async openClaimFeedbackDialog(claim: Claim, narrative: Narrative) {
+      this.claimFeedbackDialog.isOpen = true;
+      this.claimFeedbackDialog.loading = true;
+      this.claimFeedbackDialog.selectedClaim = claim;
+      this.claimFeedbackDialog.selectedNarrative = narrative;
+      const feedbackResponse = await apiService.getClaimFeedback(claim.id, narrative.id);
+      this.claimFeedbackDialog.claimFeedbackScore = feedbackResponse ? (feedbackResponse.feedback_score === 1 ? 'like' : 'dislike') : null;
+      this.claimFeedbackDialog.loading = false;
+    },
+
+    closeClaimFeedbackDialog() {
+      this.claimFeedbackDialog.isOpen = false;
+      this.claimFeedbackDialog.selectedClaim = null;
+      this.claimFeedbackDialog.selectedNarrative = null;
+    },
+
+    async sendClaimFeedback(score: number) {
+      this.claimFeedbackDialog.claimFeedbackScore = score === 1 ? 'like' : 'dislike';
+      return await apiService.sendClaimFeedback(this.claimFeedbackDialog.selectedClaim!.id, this.claimFeedbackDialog.selectedNarrative!.id, score).catch((error) => {
+        console.error('Error sending claim feedback:', error);
+        return null;
+      });
+    },
+
+    async confirmDelete() {
+      const { $i18n } = useNuxtApp();
+      const toast = useToast();
+
+      if (!this.deleteDialog.narrativeToDelete) {
+        console.error('No narrative selected for deletion.');
+        return;
+      }
+
+      try {
+        await apiService.deleteNarrative(this.deleteDialog.narrativeToDelete.id);
+        toast.add({
+          color: 'success',
+          title: $i18n.t('common.success'),
+          description: $i18n.t('narratives.delete_success'),
+        })
+        this.closeDeleteDialog();
+        navigateTo('/narratives');
+      } catch (error: any) {
+        console.error('Error during delete confirmation:', error);
+        toast.add({
+          title: $i18n.t('common.error'),
+          description: error.message || $i18n.t('common.error_occurred'),
+          color: 'error'
+        })
+      }
+    },
+  },
+
+  getters: {
+    isUnlinkDialogOpen: (state) => state.unlinkDialog.isOpen,
+    selectedClaimForUnlink: (state) => state.unlinkDialog.selectedClaim,
+    isAlertDialogOpen: (state) => state.alertDialog.isOpen,
+    isTitleDialogOpen: (state) => state.titleDialog.isOpen,
+    isMergeDialogOpen: (state) => state.mergeDialog.isOpen,
+    isDeleteDialogOpen: (state) => state.deleteDialog.isOpen,
+    isClaimFeedbackDialogOpen: (state) => state.claimFeedbackDialog.isOpen,
+    isClaimFeedbackLoading: (state) => state.claimFeedbackDialog.loading,
+  },
+});

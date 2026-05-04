@@ -14,6 +14,13 @@
     "disable": "Désactiver",
     "delete": "Supprimer",
     "cancel": "Annuler",
+    "confirm_unlink_title": "Confirmer la dissociation",
+    "confirm_unlink_description": "Êtes-vous sûr de vouloir dissocier ce contenu ? Cette action ne peut pas être annulée.",
+    "unlink": "Dissocier",
+    "unlinking": "Dissociation...",
+    "confirm_delete_title": "Confirmer la suppression",
+    "confirm_delete_description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
+    "deleting": "Suppression...",
     "create": "Créer",
     "creating": "Création...",
     "save": "Enregistrer",
@@ -91,7 +98,12 @@
     "selectLanguage": "Sélectionner la langue",
     "source": "Source",
     "relatedNarratives": "Récits liés",
-    "topics": "Sujets"
+    "topics": "Sujets",
+    "transcript": "Transcription",
+    "transcriptTitle": "Transcription de la vidéo",
+    "transcriptDescription": "Transcription complète avec horodatages",
+    "noTranscript": "Aucune transcription disponible pour cette vidéo",
+    "viewFullTranscript": "Voir la transcription complète"
   },
   "login": {
     "title": "Connectez-vous à votre compte",
@@ -255,6 +267,11 @@
   },
   "narratives": {
     "title": "Récits",
+    "newTitle": "Nouveau titre",
+    "editTitle": "Modifier le titre du récit",
+    "titlePlaceholder": "Entrez le titre du récit",
+    "titleRequired": "Le titre est requis",
+    "updateSuccess": "Titre du récit mis à jour avec succès",
     "filters": "Filtres",
     "channel": "Canal",
     "language": "Langue",
@@ -278,6 +295,7 @@
     "entities": "Entités",
     "timelineContentRecurrences": "Chronologie, contenu et récurrences",
     "evolutionOfNarrative": "Évolution du récit",
+    "narrativeContext": "Contexte du récit",
     "showingNarrativesFor": "Affichage des récits pour le sujet :",
     "showingResults": "Affichage de {count} récits",
     "clearFilter": "Effacer le filtre",
@@ -292,14 +310,32 @@
     "loadError": "Échec du chargement du récit",
     "seenIn": "Vu dans",
     "claimsSupportingNarrative": "Affirmations soutenant ce récit",
+    "selectNarrative": "Sélectionner un récit",
+    "searchNarrative": "Rechercher des récits...",
+    "noNarrativesFound": "Aucun récit trouvé",
+    "merge": {
+      "title": "Fusionner les récits",
+      "description": "Cette action supprimera ce récit et fusionnera son contenu avec un autre récit. Sélectionnez un récit à utiliser comme résultat final de la fusion. Cette action est irréversible.",
+      "selectNarrative": "Sélectionner un récit",
+      "selectTarget": "Sélectionner le récit de destination",
+      "searchPlaceholder": "Tapez pour rechercher des récits...",
+      "mergeAndDelete": "Fusionner et supprimer",
+      "merging": "Fusion en cours...",
+      "success": "Récits fusionnés avec succès"
+    },
+    "delete": "Supprimer le récit",
+    "delete_success": "Le récit a été supprimé avec succès",
+    "claimUnlinked": "L'affirmation a été dissociée du récit",
+    "claimUnlinkError": "Échec de la dissociation de l'affirmation du récit",
     "feedback": {
       "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
     },
+    "adminActions": "Actions d'administration",
     "loadMoreClaims": "Charger plus d'affirmations",
     "loadMoreVideos": "Charger plus de vidéos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Envoyer des commentaires",
     "sending": "Envoi des commentaires...",
     "success": "Merci pour vos commentaires !",

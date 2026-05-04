@@ -81,6 +81,14 @@ export interface Narrative {
   evolution_data?: EvolutionDataPoint[];
 }
 
+export interface NarrativePatch {
+  title?: string;
+  description?: string;
+  claim_ids?: string[];
+  topic_ids?: string[];
+  metadata?: Record<string, any>;
+}
+
 export interface Actor {
   id: string;
   name: string;
@@ -340,7 +348,8 @@ export interface KeywordFeed {
   is_archived: boolean;
   created_at: string;
   updated_at: string;
-  topic: string;
+  topic_id: string;
+  topic_name: string;
   keywords: string[];
 }
 
@@ -359,7 +368,7 @@ export interface CreateChannelFeedFromUrlRequest {
 }
 
 export interface CreateKeywordFeedRequest {
-  topic: string;
+  topic_id: string;
   keywords: string[];
 }
 
@@ -407,6 +416,7 @@ export interface NarrativeDetail {
   total_comments: number;
   platforms: string[];
   language_count: number;
+  narrative_context?: string | null;
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;

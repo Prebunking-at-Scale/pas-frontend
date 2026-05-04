@@ -195,7 +195,7 @@ const submit = async () => {
     successMessage.value = '';
 
     await apiService.createKeywordFeed({
-      topic: form.value.topic,
+      topic_id: form.value.topic,
       keywords: keywords.value
     });
 

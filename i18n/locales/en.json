@@ -10,6 +10,13 @@
     "previous": "Previous",
     "active": "Active",
     "inactive": "Inactive",
+    "confirm_unlink_title": "Confirm Unlink",
+    "confirm_unlink_description": "Are you sure you want to unlink this content? This action cannot be undone.",
+    "unlink": "Unlink",
+    "unlinking": "Unlinking...",
+    "confirm_delete_title": "Confirm Delete",
+    "confirm_delete_description": "Are you sure you want to delete this item? This action cannot be undone.",
+    "deleting": "Deleting...",
     "enable": "Enable",
     "disable": "Disable",
     "delete": "Delete",
@@ -91,7 +98,12 @@
     "selectLanguage": "Select language",
     "source": "Source",
     "relatedNarratives": "Related Narratives",
-    "topics": "Topics"
+    "topics": "Topics",
+    "transcript": "Transcript",
+    "transcriptTitle": "Video Transcript",
+    "transcriptDescription": "Full transcript with timestamps",
+    "noTranscript": "No transcript available for this video",
+    "viewFullTranscript": "View full transcript"
   },
   "login": {
     "title": "Sign in to your account",
@@ -256,6 +268,11 @@
   },
   "narratives": {
     "title": "Narratives",
+    "newTitle": "New title",
+    "editTitle": "Edit Narrative Title",
+    "titlePlaceholder": "Enter narrative title",
+    "titleRequired": "Title is required",
+    "updateSuccess": "Narrative title updated successfully",
     "filters": "Filters",
     "channel": "Channel",
     "language": "Language",
@@ -281,6 +298,7 @@
     "entities": "Entities",
     "timelineContentRecurrences": "Timeline, content and recurrences",
     "evolutionOfNarrative": "Evolution of the narrative",
+    "narrativeContext": "Narrative context",
     "showingNarrativesFor": "Showing narratives for topic:",
     "showingResults": "Showing {count} narratives",
     "clearFilter": "Clear filter",
@@ -295,14 +313,32 @@
     "loadError": "Failed to load narrative",
     "seenIn": "Seen in",
     "claimsSupportingNarrative": "Claims supporting this narrative",
+    "selectNarrative": "Select narrative",
+    "searchNarrative": "Search narratives...",
+    "noNarrativesFound": "No narratives found",
+    "merge": {
+      "title": "Merge Narratives",
+      "description": "This action will delete this narrative and merge its content into another narrative. Select a narrative to use as the final merge result. This action is irreversible.",
+      "selectNarrative": "Select a narrative",
+      "selectTarget": "Select target narrative",
+      "searchPlaceholder": "Type to search narratives...",
+      "mergeAndDelete": "Merge and Delete",
+      "merging": "Merging...",
+      "success": "Narratives merged successfully"
+    },
+    "delete": "Delete Narrative",
+    "delete_success": "The narrative has been deleted successfully",
+    "claimUnlinked": "The claim has been unlinked from the narrative",
+    "claimUnlinkError": "Failed to unlink claim from narrative",
     "feedback": {
       "narrativeGenerationQuestion": "How would you rate this narrative?",
       "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
     },
+    "adminActions": "Admin actions",
     "loadMoreClaims": "Load more claims",
     "loadMoreVideos": "Load more videos"
   },
-  "feedback":{
+  "feedback": {
     "send": "Send Feedback",
     "sending": "Sending feedback...",
     "success": "Thank you for your feedback!",
@@ -341,7 +377,8 @@
     "confidence": "Confidence",
     "score": "Score",
     "topics": "Topics",
-    "viewVideo": "View Video"
+    "viewVideo": "View Video",
+    "disclaimer": "Claims are extracted and contextualized with AI but are not quotes. To read the full transcription, click on the Transcription button in each video."
   },
   "alerts": {
     "title": "Alerts",
