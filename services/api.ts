@@ -1,8 +1,9 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type SlackInstallation } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
+import type { CreateAlertRequest } from '~/types/alert';
 
 // API calls now go through our frontend proxy to hide the API key
 // The proxy handles authentication with the backend
@@ -576,7 +577,7 @@ export const apiService = {
     }
   },
 
-  async createAlert(alert: Omit<Alert, 'id' | 'created_at' | 'updated_at' | 'organisation_id' | 'user_id'>): Promise<Alert> {
+  async createAlert(alert: CreateAlertRequest): Promise<Alert> {
     try {
       const { apiFetch } = useApi();
       const response = await apiFetch('/api/alerts', {
@@ -1040,5 +1041,45 @@ export const apiService = {
       throw error;
     }
   },
+
+  async getSlackInstallations(): Promise<SlackInstallation[]> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<SlackInstallation[]>>('/api/integrations/slack/installations', {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch Slack installations:', error);
+      return [];
+    }
+  },
+
+  async getSlackInstallUrl(): Promise<string> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<{ install_url: string }>>('/api/integrations/slack/install-url', {
+        method: 'GET'
+      });
+
+      return response.data.install_url;
+    } catch (error) {
+      console.error('Failed to fetch Slack install URL:', error);
+      return '';
+    }
+  },
+
+  async deleteSlackInstallation(installationId: string): Promise<void> {
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/integrations/slack/installations/${installationId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete Slack installation:', error);
+      throw error;
+    }
+  }
 
 };

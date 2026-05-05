@@ -8,7 +8,7 @@
         </div>
       </div>
     </template>
-    <div>
+    <div class="flex flex-col gap-6">
       <!-- Organization Settings Card -->
       <Card class="bg-white overflow-hidden shadow rounded-lg">
         <CardHeader class="px-4 py-3 sm:p-4">
@@ -55,7 +55,7 @@
       </Card>
 
       <!-- Users Management Card -->
-      <Card class="mt-6 bg-white overflow-hidden shadow rounded-lg">
+      <Card class="bg-white overflow-hidden shadow rounded-lg">
         <CardHeader class="px-4 py-3 sm:p-4">
           <div class="flex justify-between items-center">
             <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('admin.organizationUsers') }}</CardTitle>
@@ -166,6 +166,62 @@
         </CardContent>
       </Card>
 
+      <!-- Alert Channel Settings -->
+      <Card class="bg-white overflow-hidden shadow rounded-lg">
+        <CardHeader class="px-4 py-3 sm:p-4">
+          <div class="flex justify-between items-center">
+            <div class="flex flex-col gap-2">
+              <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('slack.title') }}</CardTitle>
+              <p class="text-sm">{{ $t('slack.description') }}</p>
+            </div>
+            <!--Slack button-->
+            <Button v-if="slackInstallUrl" @click="openInstallUrl">{{ $t('slack.addWorkspace') }}</Button>
+          </div>
+        </CardHeader>
+        <CardContent class="flex flex-col gap-2 px-4 sm:px-6">
+          <div v-if="slackInstallations.length > 0">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('slack.teamName') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('slack.channel') }}
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('admin.actions') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="installation in slackInstallations" :key="installation.id">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ installation.team_name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    #{{ installation.incoming_webhook_channel }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex justify-end space-x-2">
+                      <Button
+                        @click="removeSlackInstallation(installation.id)"
+                        size="sm"
+                        variant="destructive"
+                        class="cursor-pointer"
+                        :disabled="loadingAction === installation.id"
+                      >
+                        {{ loadingAction === installation.id ? $t('common.deleting') : $t('admin.remove') }}
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
       <!-- Invite User Modal -->
       <Dialog v-model:open="showInviteModal">
         <DialogContent>
@@ -244,6 +300,8 @@ import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog';
+import { apiService } from '~/services/api';
+import { authService } from '~/services/auth';
 
 definePageMeta({
   layout: 'default',
@@ -252,6 +310,7 @@ definePageMeta({
 
 const { $i18n } = useNuxtApp();
 const { apiFetch } = useApi();
+const toast = useToast();
 
 // State
 const organization = ref<Organization>({
@@ -276,6 +335,8 @@ const inviteSuccess = ref('');
 
 const showInviteModal = ref(false);
 const inviteEmail = ref('');
+const slackInstallUrl = ref<string | null>(null);
+const slackInstallations = ref<Array<any>>([]);
 
 // Confirmation dialog state
 const showConfirmDialog = ref(false);
@@ -286,30 +347,40 @@ const confirmDialogAction = ref<(() => void) | null>(null);
 // Check if user is admin and load data
 onMounted(async () => {
   try {
-    // Get identity data
-    const { apiFetch } = useApi();
-    const response = await apiFetch('/api/auth/identity', {
-      method: 'GET'
-    });
-    const identity = (response as any).data;
+    // Get identity data using authService
+    const [identity, installUrl] = await Promise.all([authService.getIdentity(), apiService.getSlackInstallUrl()]);
     
     if (!identity.is_organisation_admin) {
-      // Redirect non-admins away from this page
       await navigateTo('/');
       return;
     }
     
     currentUserId.value = identity.user.id;
     organization.value = identity.organisation;
+
+    slackInstallUrl.value = installUrl;
     
     // Load organization users
     await loadUsers();
+    // Load Slack installations
+    await loadSlackInstallations();
+
   } catch (error: any) {
     console.error('Failed to load admin data:', error);
     // Don't automatically redirect on error - let the user stay if they're already here
     // The middleware will handle redirects on navigation
   }
 });
+
+const loadSlackInstallations = async () => {
+  try {
+    const installations = await apiService.getSlackInstallations();
+    slackInstallations.value = installations;
+  } catch (error: any) {
+    console.error('Failed to load Slack installations:', error);
+  }
+};
+
 
 // Load organization users
 const loadUsers = async () => {
@@ -491,4 +562,33 @@ const inviteUser = async () => {
     loadingInvite.value = false;
   }
 };
+
+const openInstallUrl = () => {
+  if (slackInstallUrl.value) {
+    window.open(slackInstallUrl.value, '_blank');
+  }
+};
+
+const removeSlackInstallation = async (installationId: string) => {
+  try {
+    loadingAction.value = installationId;
+    await apiService.deleteSlackInstallation(installationId);
+    // Refresh the list of installations after successful removal
+    await loadSlackInstallations();
+    toast.add({
+      title: $i18n.t('common.success'),
+      description: $i18n.t('slack.removeInstallationSuccess')
+    });
+  } catch (error: any) {
+    console.error('Failed to remove Slack installation:', error);
+    toast.add({
+      title: $i18n.t('common.error'),
+      description: error.data?.detail || error.message || $i18n.t('slack.removeInstallationError'),
+      color: 'error'
+    });
+  } finally {
+    loadingAction.value = null;
+  }
+};
+
 </script>
