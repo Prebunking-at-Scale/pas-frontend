@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, type AnalysisIndicator, AnalysisIndicatorType } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -1071,5 +1071,20 @@ export const apiService = {
       throw error;
     }
   },
+
+  async getNarrativeAnalysisIndicators(narrativeId: string): Promise<NarrativeAnalysisIndicatorsResponse | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeAnalysisIndicatorsResponse>>(`/api/narratives/${narrativeId}/indicators`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch narrative analysis indicators:', error);
+      // Return empty response on error
+      return null;
+    }
+  }
 
 };
