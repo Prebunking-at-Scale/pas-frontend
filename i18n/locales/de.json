@@ -335,7 +335,12 @@
     "alertLevelDescriptionEARLY_SURGE": "Frühes Wachstumsmuster erkannt",
     "alertLevelDescriptionALERT": "Bemerkenswerter Aktivitätsanstieg",
     "alertLevelDescriptionWATCH": "Signifikantes Wachstum erfordert Aufmerksamkeit",
-    "alertLevelDescriptionVIRAL": "Viraler Status - Sofortige Aufmerksamkeit erforderlich"
+    "alertLevelDescriptionVIRAL": "Viraler Status - Sofortige Aufmerksamkeit erforderlich",
+    "alertThresholds": "Alarmschwellen",
+    "alertLevelConditionEARLY_SURGE": "ZVI {'<'} 0.65 und BI > 2.0",
+    "alertLevelConditionALERT": "ZVI > 0.70 und BI > 1.5",
+    "alertLevelConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
+    "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0"
   },
   "feedback": {
     "send": "Feedback senden",

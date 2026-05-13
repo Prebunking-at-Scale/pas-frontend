@@ -365,7 +365,12 @@
     "alertLevelDescriptionEARLY_SURGE": "Modèle de croissance précoce détecté",
     "alertLevelDescriptionALERT": "Augmentation notable de l'activité",
     "alertLevelDescriptionWATCH": "Croissance significative nécessitant une attention",
-    "alertLevelDescriptionVIRAL": "Statut viral - Attention immédiate requise"
+    "alertLevelDescriptionVIRAL": "Statut viral - Attention immédiate requise",
+    "alertThresholds": "Seuils d'Alerte",
+    "alertLevelConditionEARLY_SURGE": "IVC {'<'} 0.65 et IA > 2.0",
+    "alertLevelConditionALERT": "IVC > 0.70 et IA > 1.5",
+    "alertLevelConditionWATCH": "IVC > 0.55 ou IA > 1.2",
+    "alertLevelConditionVIRAL": "IVC > 0.85 et IA > 1.0"
   },
   "feedback": {
     "send": "Envoyer des commentaires",
