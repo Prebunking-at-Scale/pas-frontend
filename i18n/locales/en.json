@@ -378,7 +378,12 @@
     "alertLevelDescriptionEARLY_SURGE": "Early growth pattern detected",
     "alertLevelDescriptionALERT": "Notable increase in activity",
     "alertLevelDescriptionWATCH": "Significant growth requiring attention",
-    "alertLevelDescriptionVIRAL": "Viral status - Immediate attention required"
+    "alertLevelDescriptionVIRAL": "Viral status - Immediate attention required",
+    "alertThresholds": "Alert Thresholds",
+    "alertLevelConditionEARLY_SURGE": "CVI {'<'} 0.65 and AI > 2.0",
+    "alertLevelConditionALERT": "CVI > 0.70 and AI > 1.5",
+    "alertLevelConditionWATCH": "CVI > 0.55 or AI > 1.2",
+    "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0"
   },
   "feedback": {
     "send": "Send Feedback",

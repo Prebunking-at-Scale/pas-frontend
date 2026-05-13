@@ -468,7 +468,7 @@ interface CompositeViralityMetadata {
 
 interface AccelerationRateMetadata {
   change_engagement: number;
-  change_video_volume: number;
+  change_video_count: number;
   change_views: number;
   engagement_weight: number;
   video_volume_weight: number;

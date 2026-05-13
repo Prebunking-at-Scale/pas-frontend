@@ -376,7 +376,12 @@
     "alertLevelDescriptionEARLY_SURGE": "Patrón de crecimiento temprano detectado",
     "alertLevelDescriptionALERT": "Aumento notable en la actividad",
     "alertLevelDescriptionWATCH": "Crecimiento significativo que requiere atención",
-    "alertLevelDescriptionVIRAL": "Estado viral - Se requiere atención inmediata"
+    "alertLevelDescriptionVIRAL": "Estado viral - Se requiere atención inmediata",
+    "alertThresholds": "Umbrales de Alerta",
+    "alertLevelConditionEARLY_SURGE": "IVC {'<'} 0.65 y IA > 2.0",
+    "alertLevelConditionALERT": "IVC > 0,70 y IA > 1.5",
+    "alertLevelConditionWATCH": "IVC > 0.55 o IA > 1.2",
+    "alertLevelConditionVIRAL": "IVC > 0.85 y IA > 1.0"
   },
   "feedback": {
     "send": "Enviar comentarios",

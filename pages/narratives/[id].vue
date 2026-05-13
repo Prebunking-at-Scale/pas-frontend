@@ -126,85 +126,140 @@
           </div>
         </div>
 
-        <!-- Analysis Indicators -->
-        <div v-if="analysisIndicators" class="shadow rounded-lg p-4">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.analysisIndicatorsDate', { date: analysisIndicators.date }) }}</h3>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <!-- Composite Virality indicator-->
-            <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
-              <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 text-center">{{ $t('narratives.compositeViralityIndex') }} <br>({{ $t('narratives.compositeViralityIndexAcronym') }})</h4>
-              <p class="text-3xl font-extrabold text-orange-500">{{ analysisIndicators.composite_virality.indicator_value.toFixed(2) }}</p>
-              <p class="text-sm text-gray-400">{{ $t('narratives.rangeLabel') }}</p>
-              <!--Parameters detail-->
-              <div class="grid grid-cols-3 w-full gap-2">
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.composite_virality.metadata?.engagement_percentile ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.engagementScore') }} <br>({{ $t('narratives.engagementScoreAcronym') }})</p>
+        <div v-if="analysisIndicators" class="flex flex-col gap-3 shadow rounded-lg p-4">
+          <!-- Analysis Indicators -->
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.analysisIndicatorsDate', { date: analysisIndicators.date }) }}</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <!-- Composite Virality indicator-->
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
+                <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 text-center">{{
+                  $t('narratives.compositeViralityIndex') }} <br>({{ $t('narratives.compositeViralityIndexAcronym') }})
+                </h4>
+                <p class="text-3xl font-extrabold text-orange-500">{{
+                  analysisIndicators.composite_virality.indicator_value.toFixed(3) }}</p>
+                <p class="text-sm text-gray-400">{{ $t('narratives.rangeLabel') }}</p>
+                <!--Parameters detail-->
+                <div class="grid grid-cols-3 w-full gap-2">
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.composite_virality.metadata?.engagement_percentile ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.engagementScore') }} <br>({{
+                      $t('narratives.engagementScoreAcronym') }})</p>
+                  </div>
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.composite_virality.metadata?.reach_percentile ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.reachScore') }} <br>({{
+                      $t('narratives.reachScoreAcronym') }})</p>
+                  </div>
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.composite_virality.metadata?.velocity_percentile ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.velocityScore') }} <br>({{
+                      $t('narratives.velocityScoreAcronym') }})</p>
+                  </div>
                 </div>
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.composite_virality.metadata?.reach_percentile ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.reachScore') }} <br>({{ $t('narratives.reachScoreAcronym') }})</p>
-                </div>
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.composite_virality.metadata?.velocity_percentile ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.velocityScore') }} <br>({{ $t('narratives.velocityScoreAcronym') }})</p>
-                </div>
-              </div>
-              <!--Formula-->
-              <div class="w-full text-center bg-white text-xs text-gray-400 italic p-3 rounded-lg">
-                {{ $t('narratives.compositeViralityFormula', {
-                  engagementWeight: (analysisIndicators.composite_virality.metadata?.engagement_weight ?? 0).toFixed(2),
-                  reachWeight: (analysisIndicators.composite_virality.metadata?.reach_weight ?? 0).toFixed(2),
-                  velocityWeight: (analysisIndicators.composite_virality.metadata?.velocity_weight ?? 0).toFixed(2)
-                }) }}
-              </div>
-            </div>
-            <!-- Acceleration Rate indicator-->
-            <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
-              <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 text-center">{{ $t('narratives.accelerationIndex') }} <br>({{ $t('narratives.accelerationIndexAcronym') }})</h4>
-              <p class="text-3xl font-extrabold text-orange-500">{{ analysisIndicators.acceleration_rate.indicator_value.toFixed(2) }}</p>
-              <p class="text-sm text-gray-400">{{ $t('narratives.baselineLabel') }}</p>
-              <!--Parameters detail-->
-              <div class="grid grid-cols-3 w-full gap-2">
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.acceleration_rate.metadata?.change_engagement ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.engagementChange') }} <br>({{ $t('narratives.engagementChangeAcronym') }})</p>
-                </div>
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.acceleration_rate.metadata?.change_video_volume ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.videoVolumeChange') }} <br>({{ $t('narratives.videoVolumeChangeAcronym') }})</p>
-                </div>
-                <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
-                  <p class="text-xl text-black font-semibold">{{ (analysisIndicators.acceleration_rate.metadata?.change_views ?? 0).toFixed(2) }}</p>
-                  <p class="text-xs text-gray-400 text-center">{{ $t('narratives.viewsChange') }} <br>({{ $t('narratives.viewsChangeAcronym') }})</p>
+                <!--Formula-->
+                <div class="w-full text-center bg-white text-xs text-gray-400 italic p-3 rounded-lg">
+                  {{ $t('narratives.compositeViralityFormula', {
+                    engagementWeight: (analysisIndicators.composite_virality.metadata?.engagement_weight ?? 0).toFixed(2),
+                    reachWeight: (analysisIndicators.composite_virality.metadata?.reach_weight ?? 0).toFixed(2),
+                    velocityWeight: (analysisIndicators.composite_virality.metadata?.velocity_weight ?? 0).toFixed(2)
+                  }) }}
                 </div>
               </div>
-              <!--Formula-->
-              <div class="w-full text-center bg-white text-xs text-gray-400 italic p-3 rounded-lg">
-                {{ $t('narratives.accelerationFormula', {
-                  engagementWeight: (analysisIndicators.acceleration_rate.metadata?.engagement_weight ?? 0).toFixed(2),
-                  videoVolumeWeight: (analysisIndicators.acceleration_rate.metadata?.video_volume_weight ?? 0).toFixed(2),
-                  viewsWeight: (analysisIndicators.acceleration_rate.metadata?.views_weight ?? 0).toFixed(2)
-                }) }}
+              <!-- Acceleration Rate indicator-->
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
+                <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 text-center">{{
+                  $t('narratives.accelerationIndex') }} <br>({{ $t('narratives.accelerationIndexAcronym') }})</h4>
+                <p class="text-3xl font-extrabold text-orange-500">{{
+                  analysisIndicators.acceleration_rate.indicator_value.toFixed(3) }}</p>
+                <p class="text-sm text-gray-400">{{ $t('narratives.baselineLabel') }}</p>
+                <!--Parameters detail-->
+                <div class="grid grid-cols-3 w-full gap-2">
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.acceleration_rate.metadata?.change_engagement ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.engagementChange') }} <br>({{
+                      $t('narratives.engagementChangeAcronym') }})</p>
+                  </div>
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.acceleration_rate.metadata?.change_video_count ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.videoVolumeChange') }} <br>({{
+                      $t('narratives.videoVolumeChangeAcronym') }})</p>
+                  </div>
+                  <div class="flex flex-col gap-1 items-center bg-white rounded-lg p-3">
+                    <p class="text-xl text-black font-semibold">{{
+                      (analysisIndicators.acceleration_rate.metadata?.change_views ?? 0).toFixed(3) }}</p>
+                    <p class="text-xs text-gray-400 text-center">{{ $t('narratives.viewsChange') }} <br>({{
+                      $t('narratives.viewsChangeAcronym') }})</p>
+                  </div>
+                </div>
+                <!--Formula-->
+                <div class="w-full text-center bg-white text-xs text-gray-400 italic p-3 rounded-lg">
+                  {{ $t('narratives.accelerationFormula', {
+                    engagementWeight: (analysisIndicators.acceleration_rate.metadata?.engagement_weight ?? 0).toFixed(2),
+                    videoVolumeWeight: (analysisIndicators.acceleration_rate.metadata?.video_volume_weight ?? 0).toFixed(2),
+                    viewsWeight: (analysisIndicators.acceleration_rate.metadata?.views_weight ?? 0).toFixed(2)
+                  }) }}
+                </div>
               </div>
-            </div>
-            <!--Alert level-->
-            <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
-              <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 ">{{ $t('narratives.alertLevel') }}</h4>
-              <Badge 
-                text-size="text-2xl"
-                :variant="{
+              <!--Alert level-->
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-6 gap-2">
+                <h4 class="text-md uppercase font-semibold text-gray-500 mb-2 ">{{ $t('narratives.alertLevel') }}</h4>
+                <Badge text-size="text-2xl" :variant="{
                   [NarrativeAlertLevel.NONE]: 'outline',
                   [NarrativeAlertLevel.EARLY_SURGE]: 'purple',
                   [NarrativeAlertLevel.ALERT]: 'orange',
                   [NarrativeAlertLevel.WATCH]: 'warning',
                   [NarrativeAlertLevel.VIRAL]: 'destructive',
                 }[narrative.alert_level ?? NarrativeAlertLevel.NONE]">
-                {{ $t('narratives.alertLevel' + alertLevelKey) }}
-              </Badge>
-              <p class="text-sm text-gray-400 text-center">
-                {{ $t('narratives.alertLevelDescription' + alertLevelKey) }}
-              </p>
+                  {{ $t('narratives.alertLevel' + alertLevelKey) }}
+                </Badge>
+                <p class="text-sm text-gray-400 text-center">
+                  {{ $t('narratives.alertLevelDescription' + alertLevelKey) }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <!--Alert thresholds-->
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.alertThresholds') }}</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-4 gap-2">
+                <h3 class="text-sm font-bold text-red-500 text-center">
+                  {{ $t('narratives.alertLevelVIRAL') }}
+                </h3>
+                <p class="text-sm text-gray-900 text-center">
+                  {{ $t('narratives.alertLevelConditionVIRAL') }}
+                </p>
+              </div>
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-4 gap-2">
+                <h3 class="text-sm font-bold text-purple-500 text-center">
+                  {{ $t('narratives.alertLevelEARLY_SURGE') }}
+                </h3>
+                <p class="text-sm text-gray-900 text-center">
+                  {{ $t('narratives.alertLevelConditionEARLY_SURGE') }}
+                </p>
+              </div>
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-4 gap-2">
+                <h3 class="text-sm font-bold text-orange-500 text-center">
+                  {{ $t('narratives.alertLevelALERT') }}
+                </h3>
+                <p class="text-sm text-gray-900 text-center">
+                  {{ $t('narratives.alertLevelConditionALERT') }}
+                </p>
+              </div>
+              <div class="flex flex-col justify-center items-center bg-gray-100 rounded-lg p-4 gap-2">
+                <h3 class="text-sm font-bold text-yellow-500 text-center">
+                  {{ $t('narratives.alertLevelWATCH') }}
+                </h3>
+                <p class="text-sm text-gray-900 text-center">
+                  {{ $t('narratives.alertLevelConditionWATCH') }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
