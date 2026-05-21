@@ -1,8 +1,8 @@
 # Production Dockerfile for Nuxt.js frontend with Nitro
 FROM node:22-alpine AS builder
 
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm (pinned version — newer pnpm releases changed config handling)
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 
 # Set work directory
 WORKDIR /app
