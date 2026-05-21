@@ -624,6 +624,9 @@ export const apiService = {
     offset?: number;
     text?: string;
     hours?: number | null;
+    language?: string;
+    narratives_min?: number;
+    narratives_max?: number;
   }): Promise<PaginatedResponse<Entity>> {
     const limit = params?.limit || 100;
     const offset = params?.offset || 0;
@@ -644,6 +647,18 @@ export const apiService = {
       // Add hours filter if provided
       if (params?.hours) {
         query.hours = params.hours;
+      }
+
+      if (params?.language && params.language !== 'all') {
+        query.language = params.language;
+      }
+
+      if (typeof params?.narratives_min === 'number') {
+        query.narratives_min = params.narratives_min;
+      }
+
+      if (typeof params?.narratives_max === 'number') {
+        query.narratives_max = params.narratives_max;
       }
 
       const response = await apiFetch('/api/entities', {

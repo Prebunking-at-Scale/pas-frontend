@@ -51,6 +51,7 @@
     "narratives": "Récits",
     "claims": "Affirmations",
     "videos": "Vidéos",
+    "entities": "Entités",
     "messages": "Messages",
     "authentication": "Authentification",
     "docs": "Documentation",
@@ -447,6 +448,14 @@
     "seen": "Vu"
   },
   "entities": {
+    "title": "Entités",
+    "subtitle": "Parcourir et rechercher les entités détectées dans les contenus analysés",
+    "filters": "Filtres",
+    "name": "Nom",
+    "namePlaceholder": "Rechercher des entités par nom...",
+    "linkedNarrativesRange": "Nombre de récits associés",
+    "showingResults": "Affichage de {count} entités",
+    "noEntitiesFound": "Aucune entité trouvée",
     "mentions": "Mentions",
     "relatedNarratives": "Récits liés",
     "relatedVideos": "Vidéos liées",
@@ -460,7 +469,10 @@
     "firstSeen": "Première observation",
     "notFound": "Entité non trouvée",
     "viewAllNarratives": "Voir les {count} récits",
-    "viewAllClaims": "Voir les {count} affirmations"
+    "viewAllClaims": "Voir les {count} affirmations",
+    "claimsInVideos": "{claims} affirmations dans {videos} vidéos",
+    "platformsLabel": "Sur :",
+    "languagesCount": "{count} langues"
   },
   "actors": {
     "mentions": "Mentions",
@@ -498,6 +510,9 @@
     "topic": "Sujet",
     "allTopics": "Tous les sujets",
     "search": "Rechercher",
+    "min": "Min",
+    "max": "Max",
+    "invalidRange": "La valeur minimale doit être inférieure ou égale à la valeur maximale",
     "searchPlaceholder": "Rechercher...",
     "platform": "Plateforme",
     "allPlatforms": "Toutes les plateformes",

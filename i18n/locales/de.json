@@ -51,6 +51,7 @@
     "narratives": "Narrative",
     "claims": "Behauptungen",
     "videos": "Videos",
+    "entities": "Entitäten",
     "messages": "Nachrichten",
     "authentication": "Authentifizierung",
     "docs": "Dokumentation",
@@ -417,6 +418,14 @@
     "seen": "Gesehen"
   },
   "entities": {
+    "title": "Entitäten",
+    "subtitle": "Durchsuchen und suchen Sie Entitäten aus analysierten Inhalten",
+    "filters": "Filter",
+    "name": "Name",
+    "namePlaceholder": "Entitäten nach Name suchen...",
+    "linkedNarrativesRange": "Anzahl der verknüpften Narrative",
+    "showingResults": "Zeige {count} Entitäten",
+    "noEntitiesFound": "Keine Entitäten gefunden",
     "mentions": "Erwähnungen",
     "relatedNarratives": "Verwandte Narrative",
     "relatedVideos": "Verwandte Videos",
@@ -430,7 +439,10 @@
     "firstSeen": "Erstmals gesehen",
     "notFound": "Entität nicht gefunden",
     "viewAllNarratives": "Alle {count} Narrative anzeigen",
-    "viewAllClaims": "Alle {count} Behauptungen anzeigen"
+    "viewAllClaims": "Alle {count} Behauptungen anzeigen",
+    "claimsInVideos": "{claims} Behauptungen in {videos} Videos",
+    "platformsLabel": "Auf:",
+    "languagesCount": "{count} Sprachen"
   },
   "actors": {
     "mentions": "Erwähnungen",
@@ -468,6 +480,9 @@
     "topic": "Thema",
     "allTopics": "Alle Themen",
     "search": "Suchen",
+    "min": "Min",
+    "max": "Max",
+    "invalidRange": "Der Mindestwert muss kleiner oder gleich dem Höchstwert sein",
     "searchPlaceholder": "Suchen...",
     "platform": "Plattform",
     "allPlatforms": "Alle Plattformen",

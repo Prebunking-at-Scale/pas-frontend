@@ -51,6 +51,7 @@
     "narratives": "Narrativas",
     "claims": "Claims",
     "videos": "Vídeos",
+    "entities": "Entidades",
     "messages": "Mensajes",
     "authentication": "Autenticación",
     "docs": "Documentación",
@@ -427,6 +428,14 @@
     "seen": "Visto"
   },
   "entities": {
+    "title": "Entidades",
+    "subtitle": "Explora y busca entidades detectadas en el contenido analizado",
+    "filters": "Filtros",
+    "name": "Nombre",
+    "namePlaceholder": "Buscar entidades por nombre...",
+    "linkedNarrativesRange": "Número de narrativas asociadas",
+    "showingResults": "Mostrando {count} entidades",
+    "noEntitiesFound": "No se encontraron entidades",
     "mentions": "Menciones",
     "relatedNarratives": "Narrativas relacionadas",
     "relatedVideos": "Vídeos relacionados",
@@ -440,7 +449,10 @@
     "firstSeen": "Vista por primera vez",
     "notFound": "Entidad no encontrada",
     "viewAllNarratives": "Ver las {count} narrativas",
-    "viewAllClaims": "Ver las {count} afirmaciones"
+    "viewAllClaims": "Ver las {count} afirmaciones",
+    "claimsInVideos": "{claims} afirmaciones en {videos} vídeos",
+    "platformsLabel": "En:",
+    "languagesCount": "{count} idiomas"
   },
   "actors": {
     "mentions": "Menciones",
@@ -478,6 +490,9 @@
     "topic": "Tema",
     "allTopics": "Todos los temas",
     "search": "Buscar",
+    "min": "Mín",
+    "max": "Máx",
+    "invalidRange": "El valor mínimo debe ser menor o igual que el valor máximo",
     "searchPlaceholder": "Buscar...",
     "platform": "Plataforma",
     "allPlatforms": "Todas las plataformas",
