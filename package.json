@@ -61,14 +61,5 @@
     "playwright-core": "^1.54.2",
     "vitest": "^3.2.4",
     "vitest-environment-nuxt": "^1.0.1"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@tailwindcss/oxide",
-      "esbuild",
-      "sharp",
-      "vue-demi"
-    ]
   }
 }
