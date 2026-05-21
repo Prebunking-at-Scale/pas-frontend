@@ -570,11 +570,13 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
   if (!narrative.value) return;
 
   try {
-    const body = {
-      claim_ids: narrative.value.claims?.filter(c => c.id !== claim.id).map(c => c.id) || []
+    await apiService.deleteClaimFromNarrative(narrative.value.id, claim.id);
+    allClaims.value = allClaims.value.filter(c => c.id !== claim.id);
+    narrative.value = {
+      ...narrative.value,
+      claim_count: narrative.value.claim_count - 1,
+      claims: narrative.value.claims?.filter(c => c.id !== claim.id) || []
     };
-    const updatedNarrative = await apiService.updateNarrative(narrative.value.id, body);
-    narrative.value = updatedNarrative;
 
     toast.add({
       title: t('common.success'),
