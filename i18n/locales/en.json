@@ -30,6 +30,7 @@
     "saving": "Saving...",
     "sending": "Sending...",
     "edit": "Edit",
+    "archive": "Archive",
     "success": "Success",
     "error_occurred": "An error occurred",
     "views": "views",
@@ -264,7 +265,15 @@
     "keywordsHint": "Enter keywords to monitor for this topic, separated by commas",
     "keywordFeedCreateSuccess": "Keyword feed created successfully",
     "keywordFeedCreateError": "Failed to create keyword feed",
-    "noTopicsAvailable": "No topics available"
+    "noTopicsAvailable": "No topics available",
+    "actions": "Actions",
+    "editKeywordFeedTitle": "Edit keyword feed",
+    "keywordFeedUpdateSuccess": "Keyword feed updated successfully",
+    "keywordFeedUpdateError": "Failed to update keyword feed",
+    "archiveKeywordFeedTitle": "Archive keyword feed",
+    "archiveConfirmMessage": "Are you sure you want to archive the keyword feed for \"{topic}\"? It will stop monitoring new content.",
+    "keywordFeedArchiveSuccess": "Keyword feed archived successfully",
+    "keywordFeedArchiveError": "Failed to archive keyword feed"
   },
   "narratives": {
     "title": "Narratives",

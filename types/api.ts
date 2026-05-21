@@ -372,6 +372,11 @@ export interface CreateKeywordFeedRequest {
   keywords: string[];
 }
 
+export interface UpdateKeywordFeedRequest {
+  topic_id: string;
+  keywords: string[];
+}
+
 // Time series data point from /narratives/{id}/stats
 export interface NarrativeStatsDataPoint {
   date: string;

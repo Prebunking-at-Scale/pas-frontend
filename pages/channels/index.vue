@@ -90,7 +90,7 @@
         <CardHeader class="px-4 py-3 sm:p-4">
           <div class="flex justify-between items-center">
             <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('channels.keywordFeeds') }}</CardTitle>
-            <Button class="cursor-pointer" @click="showAddKeywordDialog = true">
+            <Button class="cursor-pointer" @click="openAddKeywordDialog">
               <Plus class="mr-2 h-4 w-4" />
               {{ $t('channels.addKeywordFeed') }}
             </Button>
@@ -120,6 +120,9 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ $t('channels.createdAt') }}
                   </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('channels.actions') }}
+                  </th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -146,6 +149,28 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(feed.created_at) }}
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical class="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem class="cursor-pointer" @click="openEditKeywordDialog(feed)">
+                          <Pencil class="mr-2 h-4 w-4" />
+                          {{ $t('common.edit') }}
+                        </DropdownMenuItem>
+                        <template v-if="!feed.is_archived">
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem class="cursor-pointer text-red-600" @click="confirmArchive(feed)">
+                            <Archive class="mr-2 h-4 w-4" />
+                            {{ $t('common.archive') }}
+                          </DropdownMenuItem>
+                        </template>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -164,20 +189,60 @@
         @created="loadMediaFeeds"
       />
 
-      <!-- Add Keyword Feed Dialog -->
-      <AddKeywordFeedDialog
-        v-model:open="showAddKeywordDialog"
-        @created="loadMediaFeeds"
+      <!-- Add / Edit Keyword Feed Dialog -->
+      <KeywordFeedDialog
+        v-model:open="showKeywordDialog"
+        :feed="editingFeed"
+        @saved="loadMediaFeeds"
       />
+
+      <!-- Archive Keyword Feed Confirmation -->
+      <AlertDialog :open="showArchiveDialog" @update:open="showArchiveDialog = $event">
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ $t('channels.archiveKeywordFeedTitle') }}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ $t('channels.archiveConfirmMessage', { topic: feedToArchive?.topic_name }) }}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
+            <AlertDialogAction
+              class="bg-destructive text-white hover:bg-destructive/80"
+              @click="archiveSelectedFeed"
+            >
+              {{ $t('common.archive') }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { Plus } from 'lucide-vue-next';
+import { Plus, MoreVertical, Pencil, Archive } from 'lucide-vue-next';
 import type { ChannelFeed, KeywordFeed } from '~/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '~/components/ui/alert-dialog';
+import { apiService } from '~/services/api';
 
 definePageMeta({
   layout: 'default',
@@ -185,12 +250,17 @@ definePageMeta({
 });
 
 const { fetchMediaFeeds } = useMediaFeeds();
+const { t } = useI18n();
+const toast = useToast();
 
 const channelFeeds = ref<ChannelFeed[]>([]);
 const keywordFeeds = ref<KeywordFeed[]>([]);
 const loading = ref(true);
 const showAddChannelDialog = ref(false);
-const showAddKeywordDialog = ref(false);
+const showKeywordDialog = ref(false);
+const editingFeed = ref<KeywordFeed | null>(null);
+const showArchiveDialog = ref(false);
+const feedToArchive = ref<KeywordFeed | null>(null);
 
 onMounted(async () => {
   await loadMediaFeeds();
@@ -206,6 +276,43 @@ const loadMediaFeeds = async () => {
     console.error('Failed to load media feeds:', error);
   } finally {
     loading.value = false;
+  }
+};
+
+const openAddKeywordDialog = () => {
+  editingFeed.value = null;
+  showKeywordDialog.value = true;
+};
+
+const openEditKeywordDialog = (feed: KeywordFeed) => {
+  editingFeed.value = feed;
+  showKeywordDialog.value = true;
+};
+
+const confirmArchive = (feed: KeywordFeed) => {
+  feedToArchive.value = feed;
+  showArchiveDialog.value = true;
+};
+
+const archiveSelectedFeed = async () => {
+  if (!feedToArchive.value) return;
+
+  try {
+    await apiService.archiveKeywordFeed(feedToArchive.value.id);
+    toast.add({
+      title: t('common.success'),
+      description: t('channels.keywordFeedArchiveSuccess')
+    });
+    await loadMediaFeeds();
+  } catch (error: any) {
+    console.error('Failed to archive keyword feed:', error);
+    toast.add({
+      title: t('common.error'),
+      description: error.data?.detail || error.message || t('channels.keywordFeedArchiveError'),
+      color: 'error'
+    });
+  } finally {
+    feedToArchive.value = null;
   }
 };
 

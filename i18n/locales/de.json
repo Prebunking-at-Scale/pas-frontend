@@ -30,6 +30,7 @@
     "saving": "Wird gespeichert...",
     "sending": "Wird gesendet...",
     "edit": "Bearbeiten",
+    "archive": "Archivieren",
     "success": "Erfolg",
     "error_occurred": "Ein Fehler ist aufgetreten",
     "views": "Aufrufe",
@@ -233,7 +234,15 @@
     "keywordsHint": "Geben Sie die zu überwachenden Stichwörter für dieses Thema ein, getrennt durch Kommas",
     "keywordFeedCreateSuccess": "Stichwort-Feed erfolgreich erstellt",
     "keywordFeedCreateError": "Stichwort-Feed konnte nicht erstellt werden",
-    "noTopicsAvailable": "Keine Themen verfügbar"
+    "noTopicsAvailable": "Keine Themen verfügbar",
+    "actions": "Aktionen",
+    "editKeywordFeedTitle": "Stichwort-Feed bearbeiten",
+    "keywordFeedUpdateSuccess": "Stichwort-Feed erfolgreich aktualisiert",
+    "keywordFeedUpdateError": "Stichwort-Feed konnte nicht aktualisiert werden",
+    "archiveKeywordFeedTitle": "Stichwort-Feed archivieren",
+    "archiveConfirmMessage": "Möchten Sie den Stichwort-Feed für „{topic}“ wirklich archivieren? Es werden keine neuen Inhalte mehr überwacht.",
+    "keywordFeedArchiveSuccess": "Stichwort-Feed erfolgreich archiviert",
+    "keywordFeedArchiveError": "Stichwort-Feed konnte nicht archiviert werden"
   },
   "narratives": {
     "title": "Narrative",

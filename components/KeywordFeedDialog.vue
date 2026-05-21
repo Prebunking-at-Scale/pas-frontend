@@ -2,7 +2,9 @@
   <Dialog v-model:open="dialogOpen">
     <DialogContent class="max-w-lg">
       <DialogHeader>
-        <DialogTitle>{{ $t('channels.addKeywordFeedTitle') }}</DialogTitle>
+        <DialogTitle>
+          {{ isEdit ? $t('channels.editKeywordFeedTitle') : $t('channels.addKeywordFeedTitle') }}
+        </DialogTitle>
       </DialogHeader>
 
       <!-- Success/Error Messages -->
@@ -17,7 +19,15 @@
         <!-- Topic Selection -->
         <div class="space-y-2">
           <Label for="topic">{{ $t('channels.selectTopic') }}</Label>
-          <Select v-model="form.topic" :disabled="loading || loadingTopics">
+          <!-- Edit mode: topic is locked -->
+          <div
+            v-if="isEdit"
+            class="flex h-9 w-full items-center rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-gray-700"
+          >
+            {{ feed?.topic_name }}
+          </div>
+          <!-- Create mode: topic selector -->
+          <Select v-else v-model="form.topic" :disabled="loading || loadingTopics">
             <SelectTrigger>
               <SelectValue :placeholder="$t('channels.selectTopicPlaceholder')" />
             </SelectTrigger>
@@ -86,8 +96,8 @@
           :disabled="!canSubmit || loading"
           @click="submit"
         >
-          <span v-if="loading">{{ $t('common.creating') }}</span>
-          <span v-else>{{ $t('common.create') }}</span>
+          <span v-if="loading">{{ isEdit ? $t('common.saving') : $t('common.creating') }}</span>
+          <span v-else>{{ isEdit ? $t('common.save') : $t('common.create') }}</span>
         </Button>
       </DialogFooter>
     </DialogContent>
@@ -102,18 +112,21 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { apiService } from '~/services/api';
-import type { TopicWithStats } from '~/types/api';
+import type { TopicWithStats, KeywordFeed } from '~/types/api';
 
 const { t } = useI18n();
 
 const props = defineProps<{
   open: boolean;
+  feed?: KeywordFeed | null;
 }>();
 
 const emit = defineEmits<{
   (e: 'update:open', value: boolean): void;
-  (e: 'created'): void;
+  (e: 'saved'): void;
 }>();
+
+const isEdit = computed(() => !!props.feed);
 
 const dialogOpen = computed({
   get: () => props.open,
@@ -134,7 +147,7 @@ const keywordInput = ref('');
 const keywords = ref<string[]>([]);
 
 const canSubmit = computed(() => {
-  return form.value.topic !== '' && keywords.value.length > 0;
+  return keywords.value.length > 0 && (isEdit.value || form.value.topic !== '');
 });
 
 const addKeywordsFromInput = () => {
@@ -194,29 +207,53 @@ const submit = async () => {
     errorMessage.value = '';
     successMessage.value = '';
 
-    await apiService.createKeywordFeed({
-      topic_id: form.value.topic,
-      keywords: keywords.value
-    });
+    if (isEdit.value && props.feed) {
+      await apiService.updateKeywordFeed(props.feed.id, {
+        topic_id: props.feed.topic_id,
+        keywords: keywords.value
+      });
+      successMessage.value = t('channels.keywordFeedUpdateSuccess');
+    } else {
+      await apiService.createKeywordFeed({
+        topic_id: form.value.topic,
+        keywords: keywords.value
+      });
+      successMessage.value = t('channels.keywordFeedCreateSuccess');
+    }
 
-    successMessage.value = t('channels.keywordFeedCreateSuccess');
-    emit('created');
+    emit('saved');
 
     // Close dialog after short delay to show success message
     setTimeout(() => {
       closeDialog();
     }, 1500);
   } catch (error: any) {
-    console.error('Failed to create keyword feed:', error);
-    errorMessage.value = error.data?.detail || error.message || t('channels.keywordFeedCreateError');
+    console.error('Failed to save keyword feed:', error);
+    const fallback = isEdit.value
+      ? t('channels.keywordFeedUpdateError')
+      : t('channels.keywordFeedCreateError');
+    errorMessage.value = error.data?.detail || error.message || fallback;
   } finally {
     loading.value = false;
   }
 };
 
-// Load topics when dialog opens
+// Prepare the form whenever the dialog opens
 watch(dialogOpen, (isOpen) => {
-  if (isOpen) {
+  if (!isOpen) {
+    return;
+  }
+
+  successMessage.value = '';
+  errorMessage.value = '';
+  keywordInput.value = '';
+
+  if (isEdit.value && props.feed) {
+    form.value.topic = props.feed.topic_id;
+    keywords.value = [...(props.feed.keywords ?? [])];
+  } else {
+    form.value.topic = '';
+    keywords.value = [];
     loadTopics();
   }
 });

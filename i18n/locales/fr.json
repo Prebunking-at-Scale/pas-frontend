@@ -30,6 +30,7 @@
     "saving": "Enregistrement...",
     "sending": "Envoi...",
     "edit": "Modifier",
+    "archive": "Archiver",
     "success": "Succès",
     "error_occurred": "Une erreur s'est produite",
     "views": "vues",
@@ -263,7 +264,15 @@
     "keywordsHint": "Entrez les mots-clés à surveiller pour ce sujet, séparés par des virgules",
     "keywordFeedCreateSuccess": "Flux de mots-clés créé avec succès",
     "keywordFeedCreateError": "Échec de la création du flux de mots-clés",
-    "noTopicsAvailable": "Aucun sujet disponible"
+    "noTopicsAvailable": "Aucun sujet disponible",
+    "actions": "Actions",
+    "editKeywordFeedTitle": "Modifier le flux de mots-clés",
+    "keywordFeedUpdateSuccess": "Flux de mots-clés mis à jour avec succès",
+    "keywordFeedUpdateError": "Échec de la mise à jour du flux de mots-clés",
+    "archiveKeywordFeedTitle": "Archiver le flux de mots-clés",
+    "archiveConfirmMessage": "Voulez-vous vraiment archiver le flux de mots-clés pour « {topic} » ? La surveillance de nouveaux contenus sera interrompue.",
+    "keywordFeedArchiveSuccess": "Flux de mots-clés archivé avec succès",
+    "keywordFeedArchiveError": "Échec de l'archivage du flux de mots-clés"
   },
   "narratives": {
     "title": "Récits",

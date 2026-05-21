@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -997,6 +997,22 @@ export const apiService = {
       body: data
     });
     return response.data;
+  },
+
+  async updateKeywordFeed(feedId: string, data: UpdateKeywordFeedRequest): Promise<KeywordFeed> {
+    const { apiFetch } = useApi();
+    const response = await apiFetch<JSONResponse<KeywordFeed>>(`/api/media_feeds/keywords/${feedId}`, {
+      method: 'PATCH',
+      body: data
+    });
+    return response.data;
+  },
+
+  async archiveKeywordFeed(feedId: string): Promise<void> {
+    const { apiFetch } = useApi();
+    await apiFetch(`/api/media_feeds/keywords/${feedId}`, {
+      method: 'DELETE'
+    });
   },
 
   async getNarrativeFeedback(narrativeId: string): Promise<NarrativeFeedback|null> {

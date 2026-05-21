@@ -30,6 +30,7 @@
     "saving": "Guardando...",
     "sending": "Enviando...",
     "edit": "Editar",
+    "archive": "Archivar",
     "success": "Éxito",
     "error_occurred": "Se produjo un error",
     "views": "vistas",
@@ -264,7 +265,15 @@
     "keywordsHint": "Introduce las palabras clave a monitorizar para este tema, separadas por comas",
     "keywordFeedCreateSuccess": "Feed de palabras clave creado correctamente",
     "keywordFeedCreateError": "Error al crear el feed de palabras clave",
-    "noTopicsAvailable": "No hay temas disponibles"
+    "noTopicsAvailable": "No hay temas disponibles",
+    "actions": "Acciones",
+    "editKeywordFeedTitle": "Editar feed de palabras clave",
+    "keywordFeedUpdateSuccess": "Feed de palabras clave actualizado correctamente",
+    "keywordFeedUpdateError": "Error al actualizar el feed de palabras clave",
+    "archiveKeywordFeedTitle": "Archivar feed de palabras clave",
+    "archiveConfirmMessage": "¿Seguro que quieres archivar el feed de palabras clave de «{topic}»? Dejará de monitorizar nuevo contenido.",
+    "keywordFeedArchiveSuccess": "Feed de palabras clave archivado correctamente",
+    "keywordFeedArchiveError": "Error al archivar el feed de palabras clave"
   },
   "narratives": {
     "title": "Narrativas",
