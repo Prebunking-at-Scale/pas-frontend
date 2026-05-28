@@ -289,6 +289,16 @@
     "keywordsPlaceholder": "Entrez un mot-clé et appuyez sur Entrée",
     "text": "Texte",
     "textPlaceholder": "Entrez le texte de recherche",
+    "alertLevel": "Niveau d'alerte",
+    "allAlertLevels": "Tous les niveaux",
+    "alertLevelsSelected": "{count} sélectionnés",
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alerte",
+      "early_surge": "Montée précoce",
+      "watch": "Surveiller",
+      "none": "Aucun"
+    },
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
     "selectStartDate": "Sélectionner la date de début",
@@ -380,7 +390,66 @@
     "alertLevelConditionEARLY_SURGE": "IVC {'<'} 0.65 et IA > 2.0",
     "alertLevelConditionALERT": "IVC > 0.70 et IA > 1.5",
     "alertLevelConditionWATCH": "IVC > 0.55 ou IA > 1.2",
-    "alertLevelConditionVIRAL": "IVC > 0.85 et IA > 1.0"
+    "alertLevelConditionVIRAL": "IVC > 0.85 et IA > 1.0",
+    "indicators": {
+      "empty": "Aucun indicateur d'analyse n'a encore été calculé pour ce récit.",
+      "asOf": "Mis à jour {when}",
+      "today": "aujourd'hui",
+      "yesterday": "hier",
+      "daysAgo": "il y a {n} jours",
+      "lastDays": "Derniers {n} jours",
+      "technicalDetails": "Détails techniques",
+      "thresholds": "Seuils d'alerte",
+      "why": "Pourquoi « {level} »",
+      "verdict": {
+        "viral": "Ce récit est parmi les plus populaires ET s'accélère rapidement. Attention immédiate requise.",
+        "alert": "Populaire et en croissance notable d'un jour à l'autre. À surveiller de près.",
+        "early_surge": "Croissance explosive à partir d'une base modeste — quelque chose démarre ici.",
+        "watch": "Sur le radar — soit populaire mais stable, soit en croissance modérée depuis une base plus faible.",
+        "none": "Aucune activité notable pour le moment."
+      },
+      "composite": {
+        "label": "Popularité",
+        "howCalculated": "centile pondéré d'engagement, portée et vélocité",
+        "engagement": "Engagement",
+        "reach": "Portée",
+        "velocity": "Vélocité",
+        "context": {
+          "top5": "top 5 % parmi tous les récits",
+          "top15": "top 15 % parmi tous les récits",
+          "top30": "top 30 % parmi tous les récits",
+          "top45": "au-dessus de la médiane",
+          "middle": "autour de la médiane",
+          "low": "en dessous de la médiane"
+        }
+      },
+      "acceleration": {
+        "label": "Accélération",
+        "howCalculated": "variation en % pondérée vs la veille, plafonnée à +500 % par dimension",
+        "engagement": "Taux d'engagement",
+        "videoVolume": "Volume vidéo",
+        "views": "Vues",
+        "context": {
+          "explosive": "croissance explosive vs hier",
+          "fast": "croissance rapide vs hier",
+          "notable": "croissance notable vs hier",
+          "modest": "croissance modérée vs hier",
+          "flat": "quasiment plat vs hier"
+        }
+      },
+      "cond": {
+        "compositeAbove": "Popularité ({actual}) est au-dessus de {v}",
+        "compositeBelow": "Popularité ({actual}) est en dessous de {v}",
+        "accelAbove": "Accélération ({actual}) est au-dessus de {v}",
+        "plateauedPopular": "Popularité ({actual}) est dans la tranche supérieure — maintenu sur le radar même sans accélération active.",
+        "noneReason": "Ni la popularité ni l'accélération ne franchissent aucun seuil d'alerte."
+      },
+      "toReach": {
+        "viral": "Pour atteindre VIRAL : la popularité doit augmenter de {composite} ou l'accélération de {accel}.",
+        "alert": "Pour atteindre ALERT : la popularité doit augmenter de {composite} ou l'accélération de {accel}.",
+        "watch": "Pour passer en WATCH : la popularité doit augmenter de {composite} ou l'accélération de {accel}."
+      }
+    }
   },
   "feedback": {
     "send": "Envoyer des commentaires",

@@ -57,6 +57,7 @@ export interface NarrativeSummary {
   entity_count?: number;
   created_at?: string;
   updated_at?: string;
+  alert_level?: NarrativeAlertLevel | null;
 }
 
 export interface Narrative {

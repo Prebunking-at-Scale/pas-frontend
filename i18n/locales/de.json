@@ -259,6 +259,16 @@
     "keywordsPlaceholder": "Schlüsselwort eingeben und Enter drücken",
     "text": "Text",
     "textPlaceholder": "Suchtext eingeben",
+    "alertLevel": "Alarmstufe",
+    "allAlertLevels": "Alle Alarmstufen",
+    "alertLevelsSelected": "{count} ausgewählt",
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alarm",
+      "early_surge": "Frühanstieg",
+      "watch": "Beobachten",
+      "none": "Keine"
+    },
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
     "selectStartDate": "Startdatum auswählen",
@@ -350,7 +360,66 @@
     "alertLevelConditionEARLY_SURGE": "ZVI {'<'} 0.65 und BI > 2.0",
     "alertLevelConditionALERT": "ZVI > 0.70 und BI > 1.5",
     "alertLevelConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
-    "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0"
+    "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0",
+    "indicators": {
+      "empty": "Für dieses Narrativ wurden noch keine Analyseindikatoren berechnet.",
+      "asOf": "Aktualisiert {when}",
+      "today": "heute",
+      "yesterday": "gestern",
+      "daysAgo": "vor {n} Tagen",
+      "lastDays": "Letzte {n} Tage",
+      "technicalDetails": "Technische Details",
+      "thresholds": "Alarmschwellen",
+      "why": "Warum „{level}\"",
+      "verdict": {
+        "viral": "Dieses Narrativ gehört zu den populärsten UND beschleunigt sich rapide. Sofortige Aufmerksamkeit erforderlich.",
+        "alert": "Populär und merklich wachsend von Tag zu Tag. Im Auge behalten.",
+        "early_surge": "Explosives Wachstum aus kleiner Basis — hier setzt sich etwas in Bewegung.",
+        "watch": "Auf dem Radar — entweder populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
+        "none": "Aktuell keine bemerkenswerte Aktivität."
+      },
+      "composite": {
+        "label": "Popularität",
+        "howCalculated": "gewichtetes Perzentil aus Engagement, Reichweite und Geschwindigkeit",
+        "engagement": "Engagement",
+        "reach": "Reichweite",
+        "velocity": "Geschwindigkeit",
+        "context": {
+          "top5": "Top 5 % aller Narrative",
+          "top15": "Top 15 % aller Narrative",
+          "top30": "Top 30 % aller Narrative",
+          "top45": "über dem Median",
+          "middle": "um den Median",
+          "low": "unter dem Median"
+        }
+      },
+      "acceleration": {
+        "label": "Beschleunigung",
+        "howCalculated": "gewichtete prozentuale Änderung gegenüber Vortag, pro Dimension auf +500 % gedeckelt",
+        "engagement": "Engagement-Rate",
+        "videoVolume": "Videovolumen",
+        "views": "Aufrufe",
+        "context": {
+          "explosive": "explosives Wachstum vs gestern",
+          "fast": "schnelles Wachstum vs gestern",
+          "notable": "merkliches Wachstum vs gestern",
+          "modest": "moderates Wachstum vs gestern",
+          "flat": "praktisch unverändert vs gestern"
+        }
+      },
+      "cond": {
+        "compositeAbove": "Popularität ({actual}) liegt über {v}",
+        "compositeBelow": "Popularität ({actual}) liegt unter {v}",
+        "accelAbove": "Beschleunigung ({actual}) liegt über {v}",
+        "plateauedPopular": "Popularität ({actual}) ist im obersten Bereich — auch ohne aktive Beschleunigung auf dem Radar gehalten.",
+        "noneReason": "Weder Popularität noch Beschleunigung überschreiten eine Alarmschwelle."
+      },
+      "toReach": {
+        "viral": "Um VIRAL zu erreichen: Popularität muss um {composite} steigen oder Beschleunigung um {accel}.",
+        "alert": "Um ALERT zu erreichen: Popularität muss um {composite} steigen oder Beschleunigung um {accel}.",
+        "watch": "Um in WATCH zu kommen: Popularität muss um {composite} steigen oder Beschleunigung um {accel}."
+      }
+    }
   },
   "feedback": {
     "send": "Feedback senden",

@@ -292,6 +292,16 @@
     "textPlaceholder": "Enter search text",
     "entity": "Entity",
     "selectEntity": "Select entity",
+    "alertLevel": "Alert level",
+    "allAlertLevels": "All alert levels",
+    "alertLevelsSelected": "{count} selected",
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alert",
+      "early_surge": "Early surge",
+      "watch": "Watch",
+      "none": "None"
+    },
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
     "selectStartDate": "Select start date",
@@ -383,7 +393,66 @@
     "alertLevelConditionEARLY_SURGE": "CVI {'<'} 0.65 and AI > 2.0",
     "alertLevelConditionALERT": "CVI > 0.70 and AI > 1.5",
     "alertLevelConditionWATCH": "CVI > 0.55 or AI > 1.2",
-    "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0"
+    "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0",
+    "indicators": {
+      "empty": "No analysis indicators have been computed for this narrative yet.",
+      "asOf": "Updated {when}",
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo": "{n} days ago",
+      "lastDays": "Last {n} days",
+      "technicalDetails": "Technical details",
+      "thresholds": "Alert thresholds",
+      "why": "Why \"{level}\"",
+      "verdict": {
+        "viral": "This narrative is among the most popular AND accelerating fast. It needs immediate attention.",
+        "alert": "Popular and growing notably day over day. Worth keeping an eye on.",
+        "early_surge": "Explosive growth from a small base — something is starting to move here.",
+        "watch": "On the radar — either popular but stable, or growing modestly from a smaller base.",
+        "none": "No significant activity right now."
+      },
+      "composite": {
+        "label": "Popularity",
+        "howCalculated": "weighted percentile of engagement, reach and velocity",
+        "engagement": "Engagement",
+        "reach": "Reach",
+        "velocity": "Velocity",
+        "context": {
+          "top5": "top 5% across narratives",
+          "top15": "top 15% across narratives",
+          "top30": "top 30% across narratives",
+          "top45": "above the median",
+          "middle": "around the median",
+          "low": "below the median"
+        }
+      },
+      "acceleration": {
+        "label": "Acceleration",
+        "howCalculated": "weighted percent change vs the previous day, capped at +500% per dimension",
+        "engagement": "Engagement rate",
+        "videoVolume": "Video volume",
+        "views": "Views",
+        "context": {
+          "explosive": "explosive growth vs yesterday",
+          "fast": "fast growth vs yesterday",
+          "notable": "notable growth vs yesterday",
+          "modest": "modest growth vs yesterday",
+          "flat": "roughly flat vs yesterday"
+        }
+      },
+      "cond": {
+        "compositeAbove": "Popularity ({actual}) is above {v}",
+        "compositeBelow": "Popularity ({actual}) is below {v}",
+        "accelAbove": "Acceleration ({actual}) is above {v}",
+        "plateauedPopular": "Popularity ({actual}) is in the top tier — kept on the radar even without active acceleration.",
+        "noneReason": "Neither popularity nor acceleration cross any alert threshold."
+      },
+      "toReach": {
+        "viral": "To reach VIRAL: popularity needs to rise by {composite} more, or acceleration by {accel} more.",
+        "alert": "To reach ALERT: popularity needs to rise by {composite}, or acceleration by {accel}.",
+        "watch": "To enter WATCH: popularity needs to rise by {composite}, or acceleration by {accel}."
+      }
+    }
   },
   "feedback": {
     "send": "Send Feedback",

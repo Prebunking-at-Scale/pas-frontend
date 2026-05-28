@@ -7,9 +7,16 @@
     <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
       <!-- Claim Text -->
       <div class="mb-4">
-        <p class="text-gray-900 text-xl font-semibold leading-tight">
-          {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
-        </p>
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <p class="text-gray-900 text-xl font-semibold leading-tight flex-1">
+            {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
+          </p>
+          <AlertLevelBadge
+            v-if="alertLevel && alertLevel !== 'none'"
+            :level="alertLevel"
+            class="shrink-0"
+          />
+        </div>
         <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
         >
@@ -66,8 +73,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Narrative, NarrativeSummary } from '~/types/api';
+import type { Narrative, NarrativeSummary, NarrativeAlertLevel } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
+import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
 
 interface Props {
   narrative: Narrative | NarrativeSummary;
@@ -125,6 +133,15 @@ const platforms = computed(() => {
   }
   const narrative = props.narrative as Narrative;
   return [...new Set(narrative.videos?.map(v => v.platform) || [])];
+});
+
+// Alert level lives on summaries only; detail-shaped narratives don't carry it
+// in the list response shape used here.
+const alertLevel = computed<NarrativeAlertLevel | null | undefined>(() => {
+  if (isSummary.value) {
+    return (props.narrative as NarrativeSummary).alert_level ?? null;
+  }
+  return (props.narrative as any).alert_level ?? null;
 });
 
 // Calculate unique languages from claims or use pre-calculated value

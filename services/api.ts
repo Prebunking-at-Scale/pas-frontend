@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, type AnalysisIndicator, AnalysisIndicatorType } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, type AnalysisIndicator, AnalysisIndicatorType, NarrativeAlertLevel } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 import { differenceInHours } from 'date-fns';
 import type { IntervalResult } from 'date-fns';
@@ -241,6 +241,7 @@ export const apiService = {
     entity_id?: string;
     text?: string;
     language?: string;
+    alert_level?: NarrativeAlertLevel[];
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -266,6 +267,10 @@ export const apiService = {
       // Add language filter if provided
       if (params?.language && params.language !== 'all') {
         query.language = params.language;
+      }
+      // alert_level is a repeatable query parameter: ?alert_level=viral&alert_level=alert
+      if (params?.alert_level && params.alert_level.length > 0) {
+        query.alert_level = params.alert_level;
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -1072,17 +1077,47 @@ export const apiService = {
     }
   },
 
-  async getNarrativeAnalysisIndicators(narrativeId: string): Promise<NarrativeAnalysisIndicatorsResponse | null> {
+  async getNarrativeAnalysisIndicatorsHistory(
+    narrativeId: string,
+    days = 7,
+  ): Promise<NarrativeAnalysisIndicatorsResponse[]> {
     try {
       const { apiFetch } = useApi();
-      const response = await apiFetch<JSONResponse<NarrativeAnalysisIndicatorsResponse>>(`/api/narratives/${narrativeId}/indicators`, {
-        method: 'GET'
-      });
+      const response = await apiFetch<JSONResponse<NarrativeAnalysisIndicatorsResponse[]>>(
+        `/api/narratives/${narrativeId}/indicators/history`,
+        { method: 'GET', query: { days } },
+      );
+      return response.data ?? [];
+    } catch (error) {
+      console.error('Failed to fetch narrative analysis indicators history:', error);
+      return [];
+    }
+  },
+
+  async getNarrativeAnalysisIndicators(
+    narrativeId: string,
+    date?: string,
+  ): Promise<NarrativeAnalysisIndicatorsResponse | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeAnalysisIndicatorsResponse>>(
+        `/api/narratives/${narrativeId}/indicators`,
+        {
+          method: 'GET',
+          query: date ? { date } : undefined,
+        },
+      );
 
       return response.data;
     } catch (error) {
-      console.error('Failed to fetch narrative analysis indicators:', error);
-      // Return empty response on error
+      // 404 just means there are no indicators for that day yet — common when
+      // walking back several days for the trend sparkline. Don't pollute the
+      // console with one error per missing day.
+      const status = (error as { statusCode?: number; status?: number })?.statusCode
+        ?? (error as { statusCode?: number; status?: number })?.status;
+      if (status !== 404) {
+        console.error('Failed to fetch narrative analysis indicators:', error);
+      }
       return null;
     }
   }

@@ -38,6 +38,11 @@
             :placeholder="$t('videos.selectLanguage')"
             type="select"
           />
+
+          <AlertLevelFilter
+            class="w-full md:w-56"
+            v-model="filters.alert_level"
+          />
         </div>
       </FilterCard>
 
@@ -116,6 +121,8 @@ import TopicFilter from '~/components/filters/TopicFilter.vue';
 import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
+import AlertLevelFilter from '~/components/filters/AlertLevelFilter.vue';
+import { NarrativeAlertLevel } from '~/types/api';
 
 definePageMeta({
   layout: 'default',
@@ -142,7 +149,8 @@ const filters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
   text: [] as string[],
-  language: 'all'
+  language: 'all',
+  alert_level: [] as NarrativeAlertLevel[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -150,7 +158,8 @@ const appliedFilters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
   text: [] as string[],
-  language: 'all'
+  language: 'all',
+  alert_level: [] as NarrativeAlertLevel[]
 });
 
 const currentTopicName = ref('');
@@ -159,7 +168,8 @@ const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
     (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
-    appliedFilters.value.text.length > 0;
+    appliedFilters.value.text.length > 0 ||
+    appliedFilters.value.alert_level.length > 0;
 });
 
 
@@ -187,7 +197,11 @@ const loadNarratives = async () => {
     if (appliedFilters.value.language && appliedFilters.value.language !== 'all') {
       params.language = appliedFilters.value.language;
     }
-    
+
+    if (appliedFilters.value.alert_level.length > 0) {
+      params.alert_level = appliedFilters.value.alert_level;
+    }
+
     const result = await apiService.getNarratives(params);
 
     narratives.value = result.data;
@@ -212,13 +226,15 @@ const resetFilters = () => {
     topic_id: null,
     entity_id: null,
     text: [],
-    language: 'all'
+    language: 'all',
+    alert_level: []
   };
   appliedFilters.value = {
     topic_id: null,
     entity_id: null,
     text: [],
-    language: 'all'
+    language: 'all',
+    alert_level: []
   };
   currentTopicName.value = '';
   currentPage.value = 1;
