@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <Label>{{ label || $t('narratives.alertLevel') }}</Label>
     <TooltipProvider :delay-duration="150">
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap md:flex-nowrap gap-2">
         <Tooltip v-for="level in LEVELS" :key="level">
           <TooltipTrigger as-child>
             <button
@@ -17,7 +17,7 @@
               <AlertLevelBadge :level="level" />
             </button>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent :class="TOOLTIP_BG[level]">
             {{ $t(`narratives.alertLevelDescriptions.${level}`) }}
           </TooltipContent>
         </Tooltip>
@@ -50,6 +50,14 @@ const LEVELS: NarrativeAlertLevel[] = [
   NarrativeAlertLevel.EARLY_SURGE,
   NarrativeAlertLevel.WATCH,
 ];
+
+// Tooltip tinted to each level's alert colour (mirrors the badge variants).
+const TOOLTIP_BG: Record<string, string> = {
+  [NarrativeAlertLevel.VIRAL]: 'bg-red-600 text-white',
+  [NarrativeAlertLevel.ALERT]: 'bg-yellow-500 text-white',
+  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500 text-white',
+  [NarrativeAlertLevel.WATCH]: 'bg-gray-500 text-white',
+};
 
 const toggle = (level: NarrativeAlertLevel, checked: boolean) => {
   const next = checked

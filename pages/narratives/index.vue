@@ -40,7 +40,7 @@
           />
 
           <AlertLevelFilter
-            class="w-full md:w-56"
+            class="w-full md:w-auto md:shrink-0"
             v-model="filters.alert_level"
           />
         </div>
