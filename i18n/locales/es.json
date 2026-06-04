@@ -401,7 +401,6 @@
       "lastDays": "Últimos {n} días",
       "technicalDetails": "Detalles técnicos",
       "thresholds": "Umbrales de alerta",
-      "why": "Por qué \"{level}\"",
       "verdict": {
         "viral": "Esta narrativa está entre las más populares Y acelerando rápido. Requiere atención inmediata.",
         "alert": "Popular y creciendo notablemente día a día. Conviene seguirla de cerca.",
@@ -437,18 +436,6 @@
           "modest": "crecimiento moderado vs ayer",
           "flat": "prácticamente plano vs ayer"
         }
-      },
-      "cond": {
-        "compositeAbove": "Popularidad ({actual}) está por encima de {v}",
-        "compositeBelow": "Popularidad ({actual}) está por debajo de {v}",
-        "accelAbove": "Aceleración ({actual}) está por encima de {v}",
-        "plateauedPopular": "Popularidad ({actual}) está en el tramo más alto — se mantiene en el radar aunque no esté acelerando ahora.",
-        "noneReason": "Ni la popularidad ni la aceleración cruzan ningún umbral de alerta."
-      },
-      "toReach": {
-        "viral": "Para llegar a VIRAL: popularidad debe subir {composite} más, o aceleración {accel} más.",
-        "alert": "Para llegar a ALERT: popularidad debe subir {composite}, o aceleración {accel}.",
-        "watch": "Para entrar en WATCH: popularidad debe subir {composite}, o aceleración {accel}."
       }
     }
   },

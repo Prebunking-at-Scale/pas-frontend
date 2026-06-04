@@ -90,25 +90,7 @@
         </div>
       </div>
 
-      <!-- 3) WHY THIS LEVEL + path to next -->
-      <div class="border-t border-gray-100 pt-4 text-sm">
-        <p class="font-medium text-gray-700 mb-2">
-          {{ $t('narratives.indicators.why', { level: $t(`narratives.alertLevels.${levelKey}`) }) }}
-        </p>
-        <ul class="space-y-1 text-gray-600">
-          <li v-for="(c, i) in conditions" :key="i" class="flex items-start gap-2">
-            <span class="mt-0.5" :class="c.met ? 'text-green-600' : 'text-gray-400'">
-              {{ c.met ? '✓' : '·' }}
-            </span>
-            <span>{{ c.text }}</span>
-          </li>
-        </ul>
-        <p v-if="pathToNext" class="mt-3 text-xs text-gray-500 italic">
-          {{ pathToNext }}
-        </p>
-      </div>
-
-      <!-- 4) Technical details, collapsed by default -->
+      <!-- 3) Technical details, collapsed by default -->
       <div class="border-t border-gray-100 pt-4">
         <button
           type="button"
@@ -271,76 +253,6 @@ const accelContextLabel = computed(() => {
   if (v >= 1.0) return $i18n.t('narratives.indicators.acceleration.context.notable');
   if (v >= 0.5) return $i18n.t('narratives.indicators.acceleration.context.modest');
   return $i18n.t('narratives.indicators.acceleration.context.flat');
-});
-
-// ── Why this level + path to next ─────────────────────────────────────────
-// Mirrors the threshold logic in backend/core/narratives/service.py
-// (update_narrative_alert_levels). Keep in sync.
-const conditions = computed<{ met: boolean; text: string }[]>(() => {
-  const c = compositeValue.value;
-  const a = accelerationValue.value;
-  switch (levelKey.value) {
-    case NarrativeAlertLevel.VIRAL:
-      return [
-        { met: c > 0.85, text: $i18n.t('narratives.indicators.cond.compositeAbove', { v: 0.85, actual: c.toFixed(2) }) },
-        { met: a > 1.0, text: $i18n.t('narratives.indicators.cond.accelAbove', { v: 1.0, actual: a.toFixed(2) }) },
-      ];
-    case NarrativeAlertLevel.ALERT:
-      return [
-        { met: c > 0.70, text: $i18n.t('narratives.indicators.cond.compositeAbove', { v: 0.70, actual: c.toFixed(2) }) },
-        { met: a > 1.5, text: $i18n.t('narratives.indicators.cond.accelAbove', { v: 1.5, actual: a.toFixed(2) }) },
-      ];
-    case NarrativeAlertLevel.EARLY_SURGE:
-      return [
-        { met: c < 0.65, text: $i18n.t('narratives.indicators.cond.compositeBelow', { v: 0.65, actual: c.toFixed(2) }) },
-        { met: a > 2.0, text: $i18n.t('narratives.indicators.cond.accelAbove', { v: 2.0, actual: a.toFixed(2) }) },
-      ];
-    case NarrativeAlertLevel.WATCH:
-      // Two paths to WATCH: standard (composite > 0.55 AND accel > 1.2),
-      // or plateaued-popular (composite > 0.85 alone). Show whichever path matched.
-      if (c > 0.85) {
-        return [
-          { met: true, text: $i18n.t('narratives.indicators.cond.plateauedPopular', { actual: c.toFixed(2) }) },
-        ];
-      }
-      return [
-        { met: c > 0.55, text: $i18n.t('narratives.indicators.cond.compositeAbove', { v: 0.55, actual: c.toFixed(2) }) },
-        { met: a > 1.2, text: $i18n.t('narratives.indicators.cond.accelAbove', { v: 1.2, actual: a.toFixed(2) }) },
-      ];
-    case NarrativeAlertLevel.NONE:
-    default:
-      return [{ met: false, text: $i18n.t('narratives.indicators.cond.noneReason') }];
-  }
-});
-
-const pathToNext = computed<string | null>(() => {
-  const c = compositeValue.value;
-  const a = accelerationValue.value;
-  switch (levelKey.value) {
-    case NarrativeAlertLevel.VIRAL:
-      return null; // max level
-    case NarrativeAlertLevel.ALERT:
-      return $i18n.t('narratives.indicators.toReach.viral', {
-        composite: Math.max(0, 0.85 - c).toFixed(2),
-        accel: Math.max(0, 1.0 - a).toFixed(2),
-      });
-    case NarrativeAlertLevel.WATCH:
-      return $i18n.t('narratives.indicators.toReach.alert', {
-        composite: Math.max(0, 0.70 - c).toFixed(2),
-        accel: Math.max(0, 1.5 - a).toFixed(2),
-      });
-    case NarrativeAlertLevel.EARLY_SURGE:
-      return $i18n.t('narratives.indicators.toReach.alert', {
-        composite: Math.max(0, 0.70 - c).toFixed(2),
-        accel: Math.max(0, 1.5 - a).toFixed(2),
-      });
-    case NarrativeAlertLevel.NONE:
-    default:
-      return $i18n.t('narratives.indicators.toReach.watch', {
-        composite: Math.max(0, 0.55 - c).toFixed(2),
-        accel: Math.max(0, 1.2 - a).toFixed(2),
-      });
-  }
 });
 
 // ── Technical details ─────────────────────────────────────────────────────
