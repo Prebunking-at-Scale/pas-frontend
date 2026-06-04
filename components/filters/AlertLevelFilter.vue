@@ -8,9 +8,9 @@
             <button
               type="button"
               :aria-pressed="modelValue.includes(level)"
-              class="rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 cursor-pointer"
+              class="rounded-full transition focus:outline-none cursor-pointer"
               :class="modelValue.includes(level)
-                ? 'ring-2 ring-gray-500 ring-offset-1'
+                ? ''
                 : 'opacity-45 hover:opacity-100'"
               @click="toggle(level, !modelValue.includes(level))"
             >
