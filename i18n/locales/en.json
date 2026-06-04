@@ -403,8 +403,8 @@
       "technicalDetails": "Technical details",
       "thresholds": "Alert thresholds",
       "verdict": {
-        "viral": "This narrative is among the most popular AND accelerating fast. It needs immediate attention.",
-        "alert": "Popular and growing notably day over day. Worth keeping an eye on.",
+        "viral": "This narrative is among the most popular AND accelerating fast.",
+        "alert": "Popular and growing notably day over day.",
         "early_surge": "Explosive growth from a small base — something is starting to move here.",
         "watch": "On the radar — either popular but stable, or growing modestly from a smaller base.",
         "none": "No significant activity right now."
