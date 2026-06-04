@@ -26,26 +26,17 @@
 
       <div v-else>
 
-      <!-- Alert-level triage: counts per level, click through to the filtered list. -->
-      <div class="flex flex-wrap gap-2 items-center mb-8">
-        <button
-          v-for="level in ALERT_SECTIONS"
-          :key="level"
-          @click="goToAlertLevel(level)"
-          class="flex items-center gap-2 border rounded-md px-3 py-1.5 hover:bg-neutral-50 transition-colors cursor-pointer"
-        >
-          <AlertLevelBadge :level="level" />
-          <span class="text-sm font-medium text-gray-700 tabular-nums">{{ counts[level] }}</span>
-        </button>
-      </div>
-
-      <!-- Narratives grouped by alert level. alert_level is the current daily
-           classification, so these sections are not scoped by the timeframe
-           selector (which still drives Topics and Entities below). -->
+      <!-- Narratives grouped by alert level. Only the prebunking-priority
+           levels (early surge first, then viral) are surfaced here. alert_level
+           is the current daily classification, so these sections are not scoped
+           by the timeframe selector (which still drives Topics and Entities
+           below). Each box scrolls internally when it holds many narratives. -->
       <template v-for="level in ALERT_SECTIONS" :key="level">
-        <div v-if="sections[level].length" class="mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $t(`narratives.alertLevels.${level}`) }}</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-if="sections[level].length" class="mb-6 bg-stone-100 rounded-lg p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">
+            {{ counts[level] }} <span class="lowercase">{{ $t(`narratives.alertLevels.${level}`) }}</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[32rem] overflow-y-auto pr-1">
             <NarrativeCard
               v-for="narrative in sections[level]"
               :key="narrative.id"
@@ -139,14 +130,12 @@ enum AVAILABLE_TIMEFRAMES {
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
 // Alert-level sections, ordered by prebunking priority: emerging narratives
-// first (the window to act early), then the higher-severity levels.
+// first (the window to act early), then the already-viral ones.
 const ALERT_SECTIONS = [
   NarrativeAlertLevel.EARLY_SURGE,
   NarrativeAlertLevel.VIRAL,
-  NarrativeAlertLevel.ALERT,
-  NarrativeAlertLevel.WATCH,
 ] as const;
-const SECTION_LIMIT = 9;
+const SECTION_LIMIT = 30;
 
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
@@ -186,10 +175,6 @@ const loading = ref(true);
 
 const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
-};
-
-const goToAlertLevel = (level: NarrativeAlertLevel) => {
-  router.push(`/narratives?alert_level=${level}`);
 };
 
 const goToTopic = (id: string) => {
