@@ -291,8 +291,12 @@
     "text": "Texte",
     "textPlaceholder": "Entrez le texte de recherche",
     "alertLevel": "Niveau d'alerte",
-    "allAlertLevels": "Tous les niveaux",
-    "alertLevelsSelected": "{count} sélectionnés",
+    "alertLevelDescriptions": {
+      "viral": "Très populaire et en forte accélération.",
+      "alert": "Populaire et en forte croissance au jour le jour.",
+      "early_surge": "Encore petite mais en croissance explosive.",
+      "watch": "Croissance modérée, ou populaire mais stable."
+    },
     "alertLevels": {
       "viral": "Viral",
       "alert": "Alerte",

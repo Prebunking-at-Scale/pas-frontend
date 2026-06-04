@@ -261,8 +261,12 @@
     "text": "Text",
     "textPlaceholder": "Suchtext eingeben",
     "alertLevel": "Alarmstufe",
-    "allAlertLevels": "Alle Alarmstufen",
-    "alertLevelsSelected": "{count} ausgewählt",
+    "alertLevelDescriptions": {
+      "viral": "Sehr populär und stark beschleunigend.",
+      "alert": "Populär und stark wachsend von Tag zu Tag.",
+      "early_surge": "Noch klein, aber explosiv wachsend.",
+      "watch": "Moderat wachsend oder populär, aber stabil."
+    },
     "alertLevels": {
       "viral": "Viral",
       "alert": "Alarm",

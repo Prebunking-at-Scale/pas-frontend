@@ -294,8 +294,12 @@
     "entity": "Entity",
     "selectEntity": "Select entity",
     "alertLevel": "Alert level",
-    "allAlertLevels": "All alert levels",
-    "alertLevelsSelected": "{count} selected",
+    "alertLevelDescriptions": {
+      "viral": "Highly popular and accelerating fast.",
+      "alert": "Popular and growing strongly day over day.",
+      "early_surge": "Still small but growing explosively.",
+      "watch": "Growing modestly, or popular but stable."
+    },
     "alertLevels": {
       "viral": "Viral",
       "alert": "Alert",
