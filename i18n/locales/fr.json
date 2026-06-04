@@ -403,8 +403,8 @@
       "verdict": {
         "viral": "Ce récit est parmi les plus populaires ET s'accélère rapidement.",
         "alert": "Populaire et en croissance notable d'un jour à l'autre.",
-        "early_surge": "Croissance explosive à partir d'une base modeste — quelque chose démarre ici.",
-        "watch": "Sur le radar — soit populaire mais stable, soit en croissance modérée depuis une base plus faible.",
+        "early_surge": "Croissance explosive à partir d'une base modeste.",
+        "watch": "Populaire mais stable, ou en croissance modérée depuis une base plus faible.",
         "none": "Aucune activité notable pour le moment."
       },
       "composite": {

@@ -373,8 +373,8 @@
       "verdict": {
         "viral": "Dieses Narrativ gehört zu den populärsten UND beschleunigt sich rapide.",
         "alert": "Populär und merklich wachsend von Tag zu Tag.",
-        "early_surge": "Explosives Wachstum aus kleiner Basis — hier setzt sich etwas in Bewegung.",
-        "watch": "Auf dem Radar — entweder populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
+        "early_surge": "Explosives Wachstum aus kleiner Basis.",
+        "watch": "Populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
         "none": "Aktuell keine bemerkenswerte Aktivität."
       },
       "composite": {
