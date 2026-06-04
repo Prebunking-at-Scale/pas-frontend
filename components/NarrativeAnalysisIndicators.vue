@@ -157,7 +157,6 @@ const props = defineProps<Props>();
 
 const { $i18n } = useNuxtApp();
 
-const HISTORY_DAYS = 7;
 // Acceleration is unbounded but we render it on a [-cap, +cap] visual scale.
 // The backend caps each change_* at 5 (ACCELERATION_CHANGE_CAP), so weighted
 // acceleration_rate can't reach 5 either. 3.0 covers the realistic range for
@@ -278,13 +277,9 @@ function formatPercent(v: number): string {
 async function load() {
   loading.value = true;
   try {
-    // Fetch the recent series and use its most recent entry, so the latest
-    // indicators show regardless of whether today's recalc has run yet.
-    const series = await apiService.getNarrativeAnalysisIndicatorsHistory(
-      props.narrativeId,
-      HISTORY_DAYS,
-    );
-    current.value = series[series.length - 1] ?? null;
+    // Latest indicators for this narrative (the endpoint returns the most
+    // recent available entry, regardless of whether today's recalc has run).
+    current.value = await apiService.getNarrativeAnalysisIndicators(props.narrativeId);
   } catch (e) {
     console.error('Failed to load indicators:', e);
     current.value = null;
