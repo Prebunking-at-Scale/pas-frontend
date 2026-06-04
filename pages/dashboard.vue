@@ -153,6 +153,13 @@ const SECTION_BG: Record<string, string> = {
   [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
 };
 
+// Ranking score per level: early surge is defined by acceleration (the
+// emerging signal), viral by overall composite virality.
+const SECTION_SORT: Record<string, string> = {
+  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
+  [NarrativeAlertLevel.VIRAL]: 'composite',
+};
+
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
   const saved = localStorage.getItem('dashboardTimeframe');
@@ -248,7 +255,7 @@ const loadData = async () => {
       apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
       apiService.getEntities({ limit: 12, hours }),
       ...ALERT_SECTIONS.map((level) =>
-        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: 'composite' })
+        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: SECTION_SORT[level] })
       ),
     ]);
 
