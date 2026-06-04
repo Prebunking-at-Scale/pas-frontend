@@ -316,6 +316,15 @@ onMounted(async () => {
       filters.value.entity_id = entityId;
       appliedFilters.value.entity_id = entityId;
     }
+
+    // Check if we have an alert-level filter from query params (e.g. from the
+    // dashboard triage chips). Accepts a single value or a repeated param.
+    const alertLevelParam = route.query.alert_level;
+    if (alertLevelParam) {
+      const levels = (Array.isArray(alertLevelParam) ? alertLevelParam : [alertLevelParam]) as NarrativeAlertLevel[];
+      filters.value.alert_level = levels;
+      appliedFilters.value.alert_level = levels;
+    }
   }
   
   // Update page header
