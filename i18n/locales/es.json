@@ -215,6 +215,7 @@
     "skipForNow": "Omitir por ahora"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Panel",
     "topics": "Temas",
     "entities": "Entidades",

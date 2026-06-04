@@ -184,6 +184,7 @@
     "skipForNow": "Vorerst überspringen"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Dashboard",
     "topics": "Themen",
     "entities": "Entitäten",

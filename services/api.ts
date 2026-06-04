@@ -242,6 +242,7 @@ export const apiService = {
     text?: string;
     language?: string;
     alert_level?: NarrativeAlertLevel[];
+    sort?: string;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -271,6 +272,10 @@ export const apiService = {
       // alert_level is a repeatable query parameter: ?alert_level=viral&alert_level=alert
       if (params?.alert_level && params.alert_level.length > 0) {
         query.alert_level = params.alert_level;
+      }
+      // sort=composite ranks by latest composite virality score (top first)
+      if (params?.sort) {
+        query.sort = params.sort;
       }
 
       const response = await apiFetch('/api/narratives', {

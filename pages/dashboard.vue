@@ -26,17 +26,27 @@
 
       <div v-else>
 
-      <!-- Narratives grouped by alert level. Only the prebunking-priority
-           levels (early surge first, then viral) are surfaced here. alert_level
-           is the current daily classification, so these sections are not scoped
-           by the timeframe selector (which still drives Topics and Entities
-           below). Each box scrolls internally when it holds many narratives. -->
+      <!-- Top narratives per alert level. Only the prebunking-priority levels
+           (early surge first, then viral) are surfaced, ranked by composite
+           virality score. alert_level is the current daily classification, so
+           these sections are not scoped by the timeframe selector (which still
+           drives Topics and Entities below). Each box is tinted towards its
+           alert colour. -->
       <template v-for="level in ALERT_SECTIONS" :key="level">
-        <div v-if="sections[level].length" class="mb-6 bg-stone-100 rounded-lg p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">
-            {{ counts[level] }} <span class="lowercase">{{ $t(`narratives.alertLevels.${level}`) }}</span>
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[32rem] overflow-y-auto pr-1">
+        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="SECTION_BG[level]">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <h3 class="text-lg font-medium text-gray-900">
+              {{ $t('dashboard.topN', { n: sections[level].length }) }}
+              <span class="lowercase">{{ $t(`narratives.alertLevels.${level}`) }}</span>
+            </h3>
+            <button
+              @click="goToAlertLevel(level)"
+              class="shrink-0 text-sm text-gray-700 hover:text-gray-900 underline underline-offset-2 cursor-pointer"
+            >
+              {{ $t('entities.viewAllNarratives', { count: counts[level] }) }}
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <NarrativeCard
               v-for="narrative in sections[level]"
               :key="narrative.id"
@@ -135,7 +145,13 @@ const ALERT_SECTIONS = [
   NarrativeAlertLevel.EARLY_SURGE,
   NarrativeAlertLevel.VIRAL,
 ] as const;
-const SECTION_LIMIT = 30;
+const SECTION_LIMIT = 3;
+
+// Box background tinted towards each level's alert colour (translucent).
+const SECTION_BG: Record<string, string> = {
+  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
+  [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
+};
 
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
@@ -175,6 +191,10 @@ const loading = ref(true);
 
 const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
+};
+
+const goToAlertLevel = (level: NarrativeAlertLevel) => {
+  router.push(`/narratives?alert_level=${level}`);
 };
 
 const goToTopic = (id: string) => {
@@ -228,7 +248,7 @@ const loadData = async () => {
       apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
       apiService.getEntities({ limit: 12, hours }),
       ...ALERT_SECTIONS.map((level) =>
-        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT })
+        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: 'composite' })
       ),
     ]);
 

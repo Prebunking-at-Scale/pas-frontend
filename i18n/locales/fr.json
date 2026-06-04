@@ -214,6 +214,7 @@
     "skipForNow": "Ignorer pour le moment"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Tableau de bord",
     "topics": "Sujets",
     "entities": "Entités",

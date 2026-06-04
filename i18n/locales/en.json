@@ -215,6 +215,7 @@
     "skipForNow": "Skip for now"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Dashboard",
     "topics": "Topics",
     "entities": "Entities",
