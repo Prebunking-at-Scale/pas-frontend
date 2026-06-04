@@ -400,7 +400,6 @@
       "today": "today",
       "yesterday": "yesterday",
       "daysAgo": "{n} days ago",
-      "lastDays": "Last {n} days",
       "technicalDetails": "Technical details",
       "thresholds": "Alert thresholds",
       "verdict": {

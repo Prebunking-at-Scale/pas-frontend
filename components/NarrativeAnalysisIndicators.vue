@@ -48,14 +48,8 @@
               :style="{ width: `${Math.min(compositeValue, 1) * 100}%` }"
             />
           </div>
-          <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
-            <span>{{ compositeContextLabel }}</span>
-            <Sparkline
-              v-if="compositeHistory.filter(v => v !== null).length >= 2"
-              :values="compositeHistory"
-              :stroke-class="magnitudeColor(compositeValue)"
-              :title="$t('narratives.indicators.lastDays', { n: HISTORY_DAYS })"
-            />
+          <div class="mt-2 text-xs text-gray-500">
+            {{ compositeContextLabel }}
           </div>
         </div>
 
@@ -78,14 +72,8 @@
               :style="accelBarStyle"
             />
           </div>
-          <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
-            <span>{{ accelContextLabel }}</span>
-            <Sparkline
-              v-if="accelerationHistory.filter(v => v !== null).length >= 2"
-              :values="accelerationHistory"
-              :stroke-class="accelColor(accelerationValue)"
-              :title="$t('narratives.indicators.lastDays', { n: HISTORY_DAYS })"
-            />
+          <div class="mt-2 text-xs text-gray-500">
+            {{ accelContextLabel }}
           </div>
         </div>
       </div>
@@ -160,7 +148,6 @@ import { ChevronRight } from 'lucide-vue-next';
 import { apiService } from '~/services/api';
 import { NarrativeAlertLevel, type NarrativeAnalysisIndicatorsResponse } from '~/types/api';
 import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
-import Sparkline from '~/components/Sparkline.vue';
 
 interface Props {
   narrativeId: string;
@@ -180,24 +167,12 @@ const ACCEL_ZERO_POS = 0; // baseline at the LEFT edge — accel >= 0 in practic
 
 const loading = ref(true);
 const current = ref<NarrativeAnalysisIndicatorsResponse | null>(null);
-// History aligned by day: HISTORY_DAYS entries, oldest → newest, null for
-// days without data (rendered as gaps in the sparkline).
-const history = ref<(NarrativeAnalysisIndicatorsResponse | null)[]>([]);
 const detailsOpen = ref(false);
 
 const compositeValue = computed(() => current.value?.composite_virality.indicator_value ?? 0);
 const accelerationValue = computed(() => current.value?.acceleration_rate.indicator_value ?? 0);
 
 const levelKey = computed<NarrativeAlertLevel>(() => props.alertLevel ?? NarrativeAlertLevel.NONE);
-
-// ── History series ────────────────────────────────────────────────────────
-// HISTORY_DAYS values from oldest → newest, with nulls for missing days.
-const compositeHistory = computed(() =>
-  history.value.map((r) => r?.composite_virality.indicator_value ?? null),
-);
-const accelerationHistory = computed(() =>
-  history.value.map((r) => r?.acceleration_rate.indicator_value ?? null),
-);
 
 // ── Visual styling helpers ────────────────────────────────────────────────
 function magnitudeColor(v: number): string {
@@ -303,29 +278,16 @@ function formatPercent(v: number): string {
 async function load() {
   loading.value = true;
   try {
-    // Single bulk fetch — backend returns up to HISTORY_DAYS entries (only
-    // those that exist). We then align them by calendar date into a fixed-
-    // length array so the sparkline has consistent x-spacing with gaps.
+    // Fetch the recent series and use its most recent entry, so the latest
+    // indicators show regardless of whether today's recalc has run yet.
     const series = await apiService.getNarrativeAnalysisIndicatorsHistory(
       props.narrativeId,
       HISTORY_DAYS,
     );
-    const byDate = new Map(series.map((s) => [s.date, s]));
-    const aligned: (NarrativeAnalysisIndicatorsResponse | null)[] = [];
-    for (let i = HISTORY_DAYS - 1; i >= 0; i--) {
-      const d = new Date();
-      d.setHours(0, 0, 0, 0);
-      d.setDate(d.getDate() - i);
-      aligned.push(byDate.get(d.toISOString().slice(0, 10)) ?? null);
-    }
-    history.value = aligned;
-    // Prefer the most recent entry the backend actually returned, regardless
-    // of whether today's recalc has run yet.
     current.value = series[series.length - 1] ?? null;
   } catch (e) {
-    console.error('Failed to load indicators history:', e);
+    console.error('Failed to load indicators:', e);
     current.value = null;
-    history.value = [];
   } finally {
     loading.value = false;
   }

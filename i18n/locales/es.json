@@ -398,7 +398,6 @@
       "today": "hoy",
       "yesterday": "ayer",
       "daysAgo": "hace {n} días",
-      "lastDays": "Últimos {n} días",
       "technicalDetails": "Detalles técnicos",
       "thresholds": "Umbrales de alerta",
       "verdict": {
