@@ -338,7 +338,10 @@
     "claimUnlinkError": "Échec de la dissociation de l'affirmation du récit",
     "feedback": {
       "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
-      "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?"
+      "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?",
+      "averageScore": "Moyenne {score}/{max}",
+      "reviewCount": "{count} avis | {count} avis",
+      "noReviews": "Pas encore d'évaluations"
     },
     "adminActions": "Actions d'administration",
     "loadMoreClaims": "Charger plus d'affirmations",

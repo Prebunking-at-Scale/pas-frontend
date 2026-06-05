@@ -339,7 +339,10 @@
     "claimUnlinkError": "Error al desvincular la claim de la narrativa",
     "feedback": {
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
-      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
+      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?",
+      "averageScore": "Media {score}/{max}",
+      "reviewCount": "{count} reseña | {count} reseñas",
+      "noReviews": "Sin valoraciones aún"
     },
     "adminActions": "Acciones de administrador",
     "loadMoreClaims": "Cargar más afirmaciones",

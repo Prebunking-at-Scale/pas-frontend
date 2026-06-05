@@ -308,7 +308,10 @@
     "claimUnlinkError": "Die Behauptung konnte nicht vom Narrativ getrennt werden",
     "feedback": {
       "narrativeGenerationQuestion": "Wie würden Sie dieses Narrativ bewerten?",
-      "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?"
+      "claimRelatedQuestion": "Bezieht sich diese Behauptung genau auf das Narrativ?",
+      "averageScore": "Durchschnitt {score}/{max}",
+      "reviewCount": "{count} Bewertung | {count} Bewertungen",
+      "noReviews": "Noch keine Bewertungen"
     },
     "adminActions": "Admin-Aktionen",
     "loadMoreClaims": "Mehr Behauptungen laden",

@@ -341,7 +341,10 @@
     "claimUnlinkError": "Failed to unlink claim from narrative",
     "feedback": {
       "narrativeGenerationQuestion": "How would you rate this narrative?",
-      "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
+      "claimRelatedQuestion": "Does this claim accurately relate to the narrative?",
+      "averageScore": "Average {score}/{max}",
+      "reviewCount": "{count} review | {count} reviews",
+      "noReviews": "No ratings yet"
     },
     "adminActions": "Admin actions",
     "loadMoreClaims": "Load more claims",
