@@ -1072,4 +1072,16 @@ export const apiService = {
     }
   },
 
+  async deleteClaimFromNarrative(narrativeId: string, claimId: string) {
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/narratives/${narrativeId}/claims/${claimId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete claim from narrative:', error);
+      throw error;
+    }
+  }
+
 };
