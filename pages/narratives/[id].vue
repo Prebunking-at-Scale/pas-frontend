@@ -344,7 +344,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, Video } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
@@ -389,7 +389,7 @@ const allClaims = ref<Claim[]>([]);
 const claimsLoading = ref(false);
 
 // Pagination state for videos
-const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : never[]>([]);
+const allVideos = ref<Video[]>([]);
 const videosLoading = ref(false);
 
 // Constants
@@ -561,10 +561,12 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
   try {
     await apiService.deleteClaimFromNarrative(narrative.value.id, claim.id);
     allClaims.value = allClaims.value.filter(c => c.id !== claim.id);
+    allVideos.value = allVideos.value.filter(v => v.id !== claim.video_id);
     narrative.value = {
       ...narrative.value,
       claim_count: narrative.value.claim_count - 1,
-      claims: narrative.value.claims?.filter(c => c.id !== claim.id) || []
+      claims: narrative.value.claims?.filter(c => c.id !== claim.id) || [],
+      videos: narrative.value.videos?.filter(v => v.id !== claim.video_id) || []
     };
 
     toast.add({
