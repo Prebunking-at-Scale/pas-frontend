@@ -7,16 +7,15 @@
         </DialogTitle>
       </DialogHeader>
       <div>
-        <div v-if="dialogsStore.isClaimFeedbackLoading" class="flex justify-center items-center py-8">
+        <div v-if="dialogsStore.isNarrativeFeedbackLoading" class="flex justify-center items-center py-8">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
         <div v-else class="flex flex-col gap-y-3 text-center text-sm text-muted-foreground">
-          {{ $t('narratives.feedback.claimRelatedQuestion') }}
-          <LikeDislikeFeedback
-            :vote="receivedVote"
+          {{ $t('narratives.feedback.narrativeGenerationQuestion') }}
+          <FiveStarsFeedback
+            :rating="receivedRating"
             :can-update="canEditFeedback"
-            @like="() => handleVote(LIKE_VOTE)"
-            @dislike="() => handleVote(DISLIKE_VOTE)"
+            @rate="handleRating"
           />
           <Textarea
             v-model="comment"
@@ -25,7 +24,7 @@
             :disabled="!canEditFeedback"
           />
           <Button
-            :disabled="!canEditFeedback || receivedVote === null || isSubmitting"
+            :disabled="!canEditFeedback || receivedRating === null || isSubmitting"
             class="w-full"
             @click="handleSubmit"
           >
@@ -48,45 +47,42 @@ import {
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useNarrativeDialogsStore } from '~/stores/narrativeDialogs'
-import LikeDislikeFeedback from './LikeDislikeFeedback.vue'
+import FiveStarsFeedback from './FiveStarsFeedback.vue'
 
 const { t } = useI18n();
 const toast = useToast()
 const dialogsStore = useNarrativeDialogsStore()
 
-const LIKE_VOTE = 1
-const DISLIKE_VOTE = 0
-
-const receivedVote = ref<number | null>(dialogsStore.claimFeedbackDialog.claimFeedbackScore)
-const comment = ref<string>(dialogsStore.claimFeedbackDialog.claimFeedbackComment || '')
+const receivedRating = ref<number | null>(dialogsStore.narrativeFeedbackDialog.narrativeFeedbackRating)
+const comment = ref<string>(dialogsStore.narrativeFeedbackDialog.narrativeFeedbackComment || '')
 const isSubmitting = ref(false)
 
 watch(
-  () => dialogsStore.claimFeedbackDialog,
+  () => dialogsStore.narrativeFeedbackDialog,
   (newFeedback) => {
-    receivedVote.value = newFeedback.claimFeedbackScore
-    comment.value = newFeedback.claimFeedbackComment || ''
+    receivedRating.value = newFeedback.narrativeFeedbackRating
+    comment.value = newFeedback.narrativeFeedbackComment || ''
   },
   { deep: true }
 )
 
 const dialogOpen = computed({
-  get: () => dialogsStore.isClaimFeedbackDialogOpen,
+  get: () => dialogsStore.isNarrativeFeedbackDialogOpen,
   set: (value) => {
     if (!value) {
-      dialogsStore.closeClaimFeedbackDialog()
+      dialogsStore.closeNarrativeFeedbackDialog()
     }
   }
 })
 
-const canEditFeedback = computed(() => dialogsStore.claimFeedbackDialog.claimFeedbackScore === null)
+const canEditFeedback = computed(() => dialogsStore.narrativeFeedbackDialog.narrativeFeedbackRating === null)
 
-const handleVote = (vote: number) => {
-  receivedVote.value = vote
+const handleRating = (rating: number) => {
+  receivedRating.value = rating
 }
 
 const handleSubmit = async () => {
-  if (receivedVote.value === null) return
+  if (receivedRating.value === null) return
 
   try {
     isSubmitting.value = true
@@ -96,8 +92,9 @@ const handleSubmit = async () => {
       progress: false,
     })
 
-    const response = await dialogsStore.sendClaimFeedback(receivedVote.value, comment.value)
-    dialogsStore.closeClaimFeedbackDialog()
+    const response = await dialogsStore.sendNarrativeFeedback(receivedRating.value, comment.value)
+    dialogsStore.closeNarrativeFeedbackDialog()
+
     if (!response) {
       toast.update(infoToast.id, {
         title: t('feedback.error'),
@@ -106,6 +103,7 @@ const handleSubmit = async () => {
       })
       return
     }
+
     toast.update(infoToast.id, {
       title: t('feedback.success'),
       color: 'success',

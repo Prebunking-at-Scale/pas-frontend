@@ -341,7 +341,8 @@
     "claimUnlinkError": "Failed to unlink claim from narrative",
     "feedback": {
       "narrativeGenerationQuestion": "How would you rate this narrative?",
-      "claimRelatedQuestion": "Does this claim accurately relate to the narrative?"
+      "claimRelatedQuestion": "Does this claim accurately relate to the narrative?",
+      "rate": "Rate narrative"
     },
     "adminActions": "Admin actions",
     "loadMoreClaims": "Load more claims",
@@ -353,6 +354,7 @@
     "success": "Thank you for your feedback!",
     "error": "Failed to send feedback. Please try again.",
     "alreadyRated": "You have already submitted feedback.",
+    "addComment": "Add a comment (optional)",
     "rating": {
       "oneStar": "Bad",
       "twoStars": "Poor",

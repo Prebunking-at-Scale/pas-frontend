@@ -339,7 +339,8 @@
     "claimUnlinkError": "Error al desvincular la claim de la narrativa",
     "feedback": {
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
-      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?"
+      "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?",
+      "rate": "Valorar narrativa"
     },
     "adminActions": "Acciones de administrador",
     "loadMoreClaims": "Cargar más afirmaciones",
@@ -351,6 +352,7 @@
     "success": "¡Gracias por tus comentarios!",
     "error": "Error al enviar comentarios. Por favor, inténtalo de nuevo.",
     "alreadyRated": "Ya has enviado comentarios.",
+    "addComment": "Añade un comentario (opcional)",
     "rating": {
       "oneStar": "Malo",
       "twoStars": "Pobre",
