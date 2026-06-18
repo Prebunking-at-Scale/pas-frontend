@@ -341,7 +341,8 @@
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?",
       "averageScore": "Moyenne {score}/{max}",
       "reviewCount": "{count} avis | {count} avis",
-      "noReviews": "Pas encore d'évaluations"
+      "noReviews": "Pas encore d'évaluations",
+      "rate": "Évaluer le récit"
     },
     "adminActions": "Actions d'administration",
     "loadMoreClaims": "Charger plus d'affirmations",
@@ -353,6 +354,7 @@
     "success": "Merci pour vos commentaires !",
     "error": "Échec de l'envoi des commentaires. Veuillez réessayer.",
     "alreadyRated": "Vous avez déjà soumis des commentaires.",
+    "addComment": "Ajouter un commentaire (facultatif)",
     "rating": {
       "oneStar": "Mauvais",
       "twoStars": "Médiocre",

@@ -23,6 +23,10 @@
               <Bell class="mr-2 h-4 w-4" />
               {{ $t('alerts.create_alert') }}
             </Button>
+            <Button @click="openNarrativeFeedbackDialog" variant="outline">
+              <MessageCircleMore class="mr-2 h-4 w-4" />
+              {{ $t('narratives.feedback.rate') }}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
                 <Button variant="outline">
@@ -346,12 +350,15 @@
     <ClaimFeedbackDialog
       v-if="narrative"
     />
+    <NarrativeFeedbackDialog
+      v-if="narrative"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
@@ -361,7 +368,8 @@ import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
-import { Bell, Captions, ChevronDown, Combine, Trash, Loader2 } from 'lucide-vue-next';
+import NarrativeFeedbackDialog from '~/components/NarrativeFeedbackDialog.vue';
+import { Bell, Captions, ChevronDown, Combine, MessageCircleMore, Trash, Loader2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
@@ -397,7 +405,7 @@ const allClaims = ref<Claim[]>([]);
 const claimsLoading = ref(false);
 
 // Pagination state for videos
-const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : never[]>([]);
+const allVideos = ref<Video[]>([]);
 const videosLoading = ref(false);
 
 // Constants
@@ -582,11 +590,15 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
   if (!narrative.value) return;
 
   try {
-    const body = {
-      claim_ids: narrative.value.claims?.filter(c => c.id !== claim.id).map(c => c.id) || []
+    await apiService.deleteClaimFromNarrative(narrative.value.id, claim.id);
+    allClaims.value = allClaims.value.filter(c => c.id !== claim.id);
+    allVideos.value = allVideos.value.filter(v => v.id !== claim.video_id);
+    narrative.value = {
+      ...narrative.value,
+      claim_count: narrative.value.claim_count - 1,
+      claims: narrative.value.claims?.filter(c => c.id !== claim.id) || [],
+      videos: narrative.value.videos?.filter(v => v.id !== claim.video_id) || []
     };
-    const updatedNarrative = await apiService.updateNarrative(narrative.value.id, body);
-    narrative.value = updatedNarrative;
 
     toast.add({
       title: t('common.success'),
@@ -600,6 +612,11 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
     });
     throw err; // Re-throw to let the store handle it
   }
+};
+
+const openNarrativeFeedbackDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openNarrativeFeedbackDialog(narrative.value);
 };
 
 const handleVote = async (rating: number) => {
