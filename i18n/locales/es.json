@@ -340,6 +340,9 @@
     "feedback": {
       "narrativeGenerationQuestion": "¿Cómo valorarías esta narrativa?",
       "claimRelatedQuestion": "¿Este claim está relacionado con la narrativa?",
+      "averageScore": "Media {score}/{max}",
+      "reviewCount": "{count} reseña | {count} reseñas",
+      "noReviews": "Sin valoraciones aún",
       "rate": "Valorar narrativa"
     },
     "adminActions": "Acciones de administrador",

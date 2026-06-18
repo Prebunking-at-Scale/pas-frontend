@@ -55,6 +55,8 @@ export interface NarrativeSummary {
   topics?: Topic[];
   language_count?: number;
   entity_count?: number;
+  score_count?: number;
+  average_score?: number | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -314,6 +316,11 @@ export interface NarrativeFeedback {
   feedback_text: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface NarrativeFeedbackSummary {
+  score_count: number; // number of users who rated the narrative
+  average_score: number | null; // average feedback score (null when none exist)
 }
 
 export interface ClaimFeedback {

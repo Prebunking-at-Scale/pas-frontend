@@ -85,6 +85,20 @@
 
       <!-- Total stats calculated from videos -->
       <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
+        <!--Feedback Section -->
+        <div class="flex items-center justify-between gap-2">
+          <!-- Aggregate rating (top-left corner) -->
+          <NarrativeRating
+            :average-score="narrativeFeedbackSummary?.average_score ?? null"
+            :score-count="narrativeFeedbackSummary?.score_count ?? 0"
+            show-count
+          />
+          <!-- Rate prompt -->
+          <div class="flex gap-2 w-fit items-center">
+            <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
+            <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
+          </div>
+        </div>
         <!-- Total stats calculated from videos -->
         <div class="bg-white shadow rounded-lg p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Stats</h3>
@@ -344,7 +358,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, Video } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
@@ -383,6 +397,8 @@ const contentType = ref('first');
 const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
 const contextExpanded = ref(true);
+const narrativeFeedbackScore = ref<number | null>(null);
+const narrativeFeedbackSummary = ref<NarrativeFeedbackSummary | null>(null);
 
 // Pagination state for claims
 const allClaims = ref<Claim[]>([]);
@@ -393,6 +409,7 @@ const allVideos = ref<Video[]>([]);
 const videosLoading = ref(false);
 
 // Constants
+const MAX_NUMBER_OF_STARS = 5;
 const ITEMS_PER_PAGE = 20;
 
 // Calculate narrative stats using the helper function
@@ -432,6 +449,11 @@ const sortedVideos = computed(() => {
     const dateB = new Date(b.uploaded_at || b.created_at || '').getTime();
     return dateA - dateB;
   });
+});
+
+const feedbackRating = computed(() => {
+  if (narrativeFeedbackScore.value === null) return null;
+  return Math.round(narrativeFeedbackScore.value * MAX_NUMBER_OF_STARS);
 });
 
 // Load more claims
@@ -475,18 +497,27 @@ onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
 
-    // Fetch narrative detail and stats in parallel
-    const [narrativeData, statsData] = await Promise.all([
+    // Fetch narrative detail, stats, feedback and feedback summary in parallel
+    const [narrativeData, statsData, feedbackResponse, feedbackSummary] = await Promise.all([
       apiService.getNarrative(narrativeId),
-      apiService.getNarrativeStats(narrativeId)
+      apiService.getNarrativeStats(narrativeId),
+      apiService.getNarrativeFeedback(narrativeId),
+      apiService.getNarrativeFeedbackSummary(narrativeId)
     ]);
 
     narrative.value = narrativeData;
     narrativeStats.value = statsData;
+    narrativeFeedbackSummary.value = feedbackSummary;
 
     // Initialize displayed items with preview data
     allClaims.value = narrativeData.claims || [];
     allVideos.value = narrativeData.videos || [];
+
+    if (!feedbackResponse) {
+      narrativeFeedbackScore.value = null;
+    } else {
+      narrativeFeedbackScore.value = feedbackResponse.feedback_score;
+    }
   } catch (err) {
     console.error('Failed to load narrative:', err);
     error.value = t('narratives.loadError');
@@ -586,6 +617,42 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
 const openNarrativeFeedbackDialog = () => {
   if (!narrative.value) return;
   dialogsStore.openNarrativeFeedbackDialog(narrative.value);
+};
+
+const handleVote = async (rating: number) => {
+  if (!narrative.value) return;
+
+  const score = rating / MAX_NUMBER_OF_STARS;
+  narrativeFeedbackScore.value = score;
+
+  const infoToast = toast.add({
+    title: t('feedback.sending'),
+    progress: false,
+  });
+
+  const result = await apiService.sendNarrativeFeedback(narrative.value!.id, score).catch(() => null);
+
+  if (!result) {
+    toast.update(infoToast.id,
+      {
+        title: t('feedback.error'),
+        color: 'error',
+        progress: true,
+      });
+    narrativeFeedbackScore.value = null;
+    return;
+  }
+
+  toast.update(infoToast.id,
+    {
+      title: t('feedback.success'),
+      color: 'success',
+      progress: true,
+    }
+  );
+
+  // Refresh the aggregate so the new rating is reflected in the summary
+  narrativeFeedbackSummary.value = await apiService.getNarrativeFeedbackSummary(narrative.value!.id);
 };
 
 const onFeedbackClick = (claim: Claim) => {

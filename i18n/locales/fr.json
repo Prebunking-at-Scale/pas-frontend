@@ -339,6 +339,9 @@
     "feedback": {
       "narrativeGenerationQuestion": "Comment évalueriez-vous ce récit ?",
       "claimRelatedQuestion": "Cette affirmation est-elle liée au récit ?",
+      "averageScore": "Moyenne {score}/{max}",
+      "reviewCount": "{count} avis | {count} avis",
+      "noReviews": "Pas encore d'évaluations",
       "rate": "Évaluer le récit"
     },
     "adminActions": "Actions d'administration",
