@@ -56,7 +56,7 @@
         <div v-if="narrative.topics && narrative.topics.length > 0" class="flex items-center gap-2 justify-between">
           <div class="flex flex-wrap gap-2">
             <NuxtLink
-              v-for="topic in narrative.topics" 
+              v-for="topic in narrative.topics"
               :key="topic.id"
               :to="`/topics/${topic.id}`"
               class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer"
@@ -65,7 +65,15 @@
             </NuxtLink>
           </div>
         </div>
-      
+
+        <!-- Rating (bottom-right corner) -->
+        <NarrativeRating
+          v-if="isSummary"
+          class="ml-auto"
+          :average-score="rating.averageScore"
+          :score-count="rating.scoreCount"
+        />
+
       </div>
       
     </CardContent>
@@ -109,6 +117,15 @@ const stats = computed(() => {
 const totalViews = computed(() => formatNumber(stats.value.totalViews));
 const totalComments = computed(() => formatNumber(stats.value.totalComments));
 const totalLikes = computed(() => formatNumber(stats.value.totalLikes));
+
+// Rating aggregate (only present on summary items from the list endpoint)
+const rating = computed(() => {
+  const summary = props.narrative as NarrativeSummary;
+  return {
+    averageScore: summary.average_score ?? null,
+    scoreCount: summary.score_count ?? 0,
+  };
+});
 
 // Get claims count
 const claimsCount = computed(() => {

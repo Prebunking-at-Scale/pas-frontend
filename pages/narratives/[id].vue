@@ -23,6 +23,10 @@
               <Bell class="mr-2 h-4 w-4" />
               {{ $t('alerts.create_alert') }}
             </Button>
+            <Button @click="openNarrativeFeedbackDialog" variant="outline">
+              <MessageCircleMore class="mr-2 h-4 w-4" />
+              {{ $t('narratives.feedback.rate') }}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
                 <Button variant="outline">
@@ -82,9 +86,18 @@
       <!-- Total stats calculated from videos -->
       <div class="flex flex-col gap-6 bg-white shadow rounded-lg mb-6 p-6">
         <!--Feedback Section -->
-        <div class="flex gap-2 place-self-end w-fit items-center">
-          <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
-          <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
+        <div class="flex items-center justify-between gap-2">
+          <!-- Aggregate rating (top-left corner) -->
+          <NarrativeRating
+            :average-score="narrativeFeedbackSummary?.average_score ?? null"
+            :score-count="narrativeFeedbackSummary?.score_count ?? 0"
+            show-count
+          />
+          <!-- Rate prompt -->
+          <div class="flex gap-2 w-fit items-center">
+            <h6 class="text-sm text-gray-500 text-center">{{ $t('narratives.feedback.narrativeGenerationQuestion') }}</h6>
+            <FiveStarsFeedback :rating="feedbackRating" :can-update="!!!narrativeFeedbackScore" @rate="handleVote" />
+          </div>
         </div>
         <!-- Total stats calculated from videos -->
         <div class="bg-white shadow rounded-lg p-6">
@@ -343,12 +356,15 @@
     <ClaimFeedbackDialog
       v-if="narrative"
     />
+    <NarrativeFeedbackDialog
+      v-if="narrative"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse } from '~/types/api';
+import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
 import { AnalysisIndicatorType } from "~/types/api";
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
@@ -359,7 +375,8 @@ import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
-import { Bell, Captions, ChevronDown, Combine, Trash, Loader2 } from 'lucide-vue-next';
+import NarrativeFeedbackDialog from '~/components/NarrativeFeedbackDialog.vue';
+import { Bell, Captions, ChevronDown, Combine, MessageCircleMore, Trash, Loader2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { calculateNarrativeStats, formatNumber as formatNum } from '~/utils/narrativeStats';
@@ -388,13 +405,14 @@ const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
 const contextExpanded = ref(true);
 const narrativeFeedbackScore = ref<number | null>(null);
+const narrativeFeedbackSummary = ref<NarrativeFeedbackSummary | null>(null);
 
 // Pagination state for claims
 const allClaims = ref<Claim[]>([]);
 const claimsLoading = ref(false);
 
 // Pagination state for videos
-const allVideos = ref<typeof narrative.value extends { videos: infer V } ? V : never[]>([]);
+const allVideos = ref<Video[]>([]);
 const videosLoading = ref(false);
 
 // Constants
@@ -486,16 +504,18 @@ onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
 
-    // Fetch narrative detail, stats, and feedback in parallel. Indicators
-    // are fetched by the NarrativeAnalysisIndicators component itself.
-    const [narrativeData, statsData, feedbackResponse] = await Promise.all([
+    // Fetch narrative detail, stats, feedback and feedback summary in parallel.
+    // Indicators are fetched by the NarrativeAnalysisIndicators component itself.
+    const [narrativeData, statsData, feedbackResponse, feedbackSummary] = await Promise.all([
       apiService.getNarrative(narrativeId),
       apiService.getNarrativeStats(narrativeId),
       apiService.getNarrativeFeedback(narrativeId),
+      apiService.getNarrativeFeedbackSummary(narrativeId)
     ]);
 
     narrative.value = narrativeData;
     narrativeStats.value = statsData;
+    narrativeFeedbackSummary.value = feedbackSummary;
 
     // Initialize displayed items with preview data
     allClaims.value = narrativeData.claims || [];
@@ -578,11 +598,15 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
   if (!narrative.value) return;
 
   try {
-    const body = {
-      claim_ids: narrative.value.claims?.filter(c => c.id !== claim.id).map(c => c.id) || []
+    await apiService.deleteClaimFromNarrative(narrative.value.id, claim.id);
+    allClaims.value = allClaims.value.filter(c => c.id !== claim.id);
+    allVideos.value = allVideos.value.filter(v => v.id !== claim.video_id);
+    narrative.value = {
+      ...narrative.value,
+      claim_count: narrative.value.claim_count - 1,
+      claims: narrative.value.claims?.filter(c => c.id !== claim.id) || [],
+      videos: narrative.value.videos?.filter(v => v.id !== claim.video_id) || []
     };
-    const updatedNarrative = await apiService.updateNarrative(narrative.value.id, body);
-    narrative.value = updatedNarrative;
 
     toast.add({
       title: t('common.success'),
@@ -596,6 +620,11 @@ const unlinkClaimFromNarrative = async (claim: Claim) => {
     });
     throw err; // Re-throw to let the store handle it
   }
+};
+
+const openNarrativeFeedbackDialog = () => {
+  if (!narrative.value) return;
+  dialogsStore.openNarrativeFeedbackDialog(narrative.value);
 };
 
 const handleVote = async (rating: number) => {
@@ -629,6 +658,9 @@ const handleVote = async (rating: number) => {
       progress: true,
     }
   );
+
+  // Refresh the aggregate so the new rating is reflected in the summary
+  narrativeFeedbackSummary.value = await apiService.getNarrativeFeedbackSummary(narrative.value!.id);
 };
 
 const onFeedbackClick = (claim: Claim) => {

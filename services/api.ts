@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeAlertLevel } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeAlertLevel } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 
 // API calls now go through our frontend proxy to hide the API key
@@ -946,13 +946,27 @@ export const apiService = {
     }
   },
 
-  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number) {
+  async getNarrativeFeedbackSummary(narrativeId: string): Promise<NarrativeFeedbackSummary | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeFeedbackSummary>>(`/api/feedback/narratives/${narrativeId}/summary`, {
+        method: 'GET'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch narrative feedback summary:', error);
+      return null;
+    }
+  },
+
+  async sendNarrativeFeedback(narrativeId: string, feedbackScore: number, comment: string | null = null) {
     try {
       const { apiFetch } = useApi();
 
       return await apiFetch(`/api/feedback/narratives/${narrativeId}`, {
         method: 'POST',
-        body: { feedback_score: feedbackScore }
+        body: { feedback_score: feedbackScore, feedback_text: comment }
       });
     } catch (error) {
       console.error('Failed to send narrative feedback:', error);
@@ -975,12 +989,12 @@ export const apiService = {
     }
   },
 
-  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number) {
+  async sendClaimFeedback(claimId: string, narrativeId: string, feedbackScore: number, comment: string | null = null) {
     try {
       const { apiFetch } = useApi();
       return await apiFetch(`/api/feedback/claims/${claimId}/narratives/${narrativeId}`, {
         method: 'POST',
-        body: { feedback_score: feedbackScore }
+        body: { feedback_score: feedbackScore, feedback_text: comment }
       });
     } catch (error) {
       console.error('Failed to send claim feedback:', error);
@@ -1013,6 +1027,18 @@ export const apiService = {
         console.error('Failed to fetch narrative analysis indicators:', error);
       }
       return null;
+    }
+  },
+
+  async deleteClaimFromNarrative(narrativeId: string, claimId: string) {
+    try {
+      const { apiFetch } = useApi();
+      await apiFetch(`/api/narratives/${narrativeId}/claims/${claimId}`, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error('Failed to delete claim from narrative:', error);
+      throw error;
     }
   }
 
