@@ -184,6 +184,7 @@
     "skipForNow": "Vorerst überspringen"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Dashboard",
     "topics": "Themen",
     "entities": "Entitäten",
@@ -259,6 +260,20 @@
     "keywordsPlaceholder": "Schlüsselwort eingeben und Enter drücken",
     "text": "Text",
     "textPlaceholder": "Suchtext eingeben",
+    "alertLevel": "Alarmstufe",
+    "alertLevelDescriptions": {
+      "viral": "Sehr populär und stark beschleunigend.",
+      "alert": "Populär und stark wachsend von Tag zu Tag.",
+      "early_surge": "Noch klein, aber explosiv wachsend.",
+      "watch": "Moderat wachsend oder populär, aber stabil."
+    },
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alarm",
+      "early_surge": "Frühanstieg",
+      "watch": "Beobachten",
+      "none": "Keine"
+    },
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
     "selectStartDate": "Startdatum auswählen",
@@ -316,7 +331,90 @@
     },
     "adminActions": "Admin-Aktionen",
     "loadMoreClaims": "Mehr Behauptungen laden",
-    "loadMoreVideos": "Mehr Videos laden"
+    "loadMoreVideos": "Mehr Videos laden",
+    "analysisIndicators": "Analyseindikatoren",
+    "analysisIndicatorsDate": "Analyseindikatoren (Stand {date})",
+    "compositeViralityIndex": "Zusammengesetzter Viralitätsindex",
+    "compositeViralityIndexAcronym": "ZVI",
+    "rangeLabel": "Bereich: 0.0 - 1.0",
+    "engagementScore": "Engagement-Bewertung",
+    "engagementScoreAcronym": "EB",
+    "reachScore": "Reichweite-Bewertung",
+    "reachScoreAcronym": "RB",
+    "velocityScore": "Geschwindigkeits-Bewertung",
+    "velocityScoreAcronym": "GB",
+    "compositeViralityFormula": "ZVI = (EB × {engagementWeight}) + (RB × {reachWeight}) + (GB × {velocityWeight})",
+    "accelerationIndex": "Beschleunigungsindex",
+    "accelerationIndexAcronym": "BI",
+    "baselineLabel": "Basislinie: 1.0 (keine Änderung)",
+    "engagementChange": "Engagement-Änderung",
+    "engagementChangeAcronym": "ΔEng",
+    "videoVolumeChange": "Videovolumen-Änderung",
+    "videoVolumeChangeAcronym": "ΔVol",
+    "viewsChange": "Ansichten-Änderung",
+    "viewsChangeAcronym": "ΔAns",
+    "accelerationFormula": "BI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔAns × {viewsWeight})",
+    "alertLevel": "Alarmstufe",
+    "alertLevelNONE": "Keine",
+    "alertLevelEARLY_SURGE": "Früher Anstieg",
+    "alertLevelALERT": "Alarm",
+    "alertLevelWATCH": "Beobachten",
+    "alertLevelVIRAL": "Viral",
+    "alertLevelDescriptionNONE": "Keine signifikante Aktivität erkannt",
+    "alertLevelDescriptionEARLY_SURGE": "Frühes Wachstumsmuster erkannt",
+    "alertLevelDescriptionALERT": "Bemerkenswerter Aktivitätsanstieg",
+    "alertLevelDescriptionWATCH": "Signifikantes Wachstum erfordert Aufmerksamkeit",
+    "alertLevelDescriptionVIRAL": "Viraler Status - Sofortige Aufmerksamkeit erforderlich",
+    "alertThresholds": "Alarmschwellen",
+    "alertLevelConditionEARLY_SURGE": "ZVI {'<'} 0.65 und BI > 2.0",
+    "alertLevelConditionALERT": "ZVI > 0.70 und BI > 1.5",
+    "alertLevelConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
+    "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0",
+    "indicators": {
+      "empty": "Für dieses Narrativ wurden noch keine Analyseindikatoren berechnet.",
+      "asOf": "Aktualisiert {when}",
+      "today": "heute",
+      "yesterday": "gestern",
+      "daysAgo": "vor {n} Tagen",
+      "technicalDetails": "Technische Details",
+      "thresholds": "Alarmschwellen",
+      "verdict": {
+        "viral": "Dieses Narrativ gehört zu den populärsten UND beschleunigt sich rapide.",
+        "alert": "Populär und merklich wachsend von Tag zu Tag.",
+        "early_surge": "Explosives Wachstum aus kleiner Basis.",
+        "watch": "Populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
+        "none": "Aktuell keine bemerkenswerte Aktivität."
+      },
+      "composite": {
+        "label": "Popularität",
+        "howCalculated": "gewichtetes Perzentil aus Engagement, Reichweite und Geschwindigkeit",
+        "engagement": "Engagement",
+        "reach": "Reichweite",
+        "velocity": "Geschwindigkeit",
+        "context": {
+          "top5": "Top 5 % aller Narrative",
+          "top15": "Top 15 % aller Narrative",
+          "top30": "Top 30 % aller Narrative",
+          "top45": "über dem Median",
+          "middle": "um den Median",
+          "low": "unter dem Median"
+        }
+      },
+      "acceleration": {
+        "label": "Beschleunigung",
+        "howCalculated": "gewichtete prozentuale Änderung gegenüber Vortag, pro Dimension auf +500 % gedeckelt",
+        "engagement": "Engagement-Rate",
+        "videoVolume": "Videovolumen",
+        "views": "Aufrufe",
+        "context": {
+          "explosive": "explosives Wachstum vs gestern",
+          "fast": "schnelles Wachstum vs gestern",
+          "notable": "merkliches Wachstum vs gestern",
+          "modest": "moderates Wachstum vs gestern",
+          "flat": "praktisch unverändert vs gestern"
+        }
+      }
+    }
   },
   "feedback": {
     "send": "Feedback senden",

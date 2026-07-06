@@ -59,6 +59,7 @@ export interface NarrativeSummary {
   average_score?: number | null;
   created_at?: string;
   updated_at?: string;
+  alert_level?: NarrativeAlertLevel | null;
 }
 
 export interface Narrative {
@@ -432,4 +433,52 @@ export interface NarrativeDetail {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
+  alert_level: NarrativeAlertLevel | null;
+}
+
+export enum NarrativeAlertLevel {
+  NONE='none',
+  VIRAL='viral',
+  EARLY_SURGE='early_surge',
+  ALERT='alert',
+  WATCH='watch'
+}
+
+export enum AnalysisIndicatorType {
+  COMPOSITE_VIRALITY = 'composite_virality',
+  ACCELERATION_RATE = 'acceleration_rate',
+}
+
+export interface AnalysisIndicator<IndicatorMetadata> {
+  id: string;
+  indicator_value: number;
+  indicator_type: AnalysisIndicatorType;
+  calculated_at: string;
+  metadata?: IndicatorMetadata;
+}
+
+export interface NarrativeAnalysisIndicatorsResponse {
+  narrative_id: string;
+  composite_virality: AnalysisIndicator<CompositeViralityMetadata>;
+  acceleration_rate: AnalysisIndicator<AccelerationRateMetadata>;
+  date: string;
+}
+
+
+interface CompositeViralityMetadata {
+  engagement_percentile: number;
+  reach_percentile: number;
+  velocity_percentile: number;
+  engagement_weight: number;
+  reach_weight: number;
+  velocity_weight: number;
+}
+
+interface AccelerationRateMetadata {
+  change_engagement: number;
+  change_video_count: number;
+  change_views: number;
+  engagement_weight: number;
+  video_volume_weight: number;
+  views_weight: number;
 }

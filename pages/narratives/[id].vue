@@ -139,6 +139,12 @@
           </div>
         </div>
 
+        <NarrativeAnalysisIndicators
+          v-if="narrative?.id"
+          :narrative-id="narrative.id"
+          :alert-level="narrative.alert_level ?? null"
+        />
+
         <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->
         <div class="bg-white shadow rounded-lg mb-6 p-6" v-if="narrativeStats?.time_series?.length">
           <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('narratives.evolutionOfNarrative') }}</h3>
@@ -359,6 +365,7 @@
 <script setup lang="ts">
 import { apiService } from '~/services/api';
 import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
+import { AnalysisIndicatorType } from "~/types/api";
 import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
@@ -497,7 +504,8 @@ onMounted(async () => {
   try {
     const narrativeId = route.params.id as string;
 
-    // Fetch narrative detail, stats, feedback and feedback summary in parallel
+    // Fetch narrative detail, stats, feedback and feedback summary in parallel.
+    // Indicators are fetched by the NarrativeAnalysisIndicators component itself.
     const [narrativeData, statsData, feedbackResponse, feedbackSummary] = await Promise.all([
       apiService.getNarrative(narrativeId),
       apiService.getNarrativeStats(narrativeId),

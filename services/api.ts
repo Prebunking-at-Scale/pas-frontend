@@ -1,8 +1,6 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeAlertLevel } from '~/types/api';
 import { useApi } from '~/composables/useApi';
-import { differenceInHours } from 'date-fns';
-import type { IntervalResult } from 'date-fns';
 
 // API calls now go through our frontend proxy to hide the API key
 // The proxy handles authentication with the backend
@@ -241,6 +239,8 @@ export const apiService = {
     entity_id?: string;
     text?: string;
     language?: string;
+    alert_level?: NarrativeAlertLevel[];
+    sort?: string;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -266,6 +266,14 @@ export const apiService = {
       // Add language filter if provided
       if (params?.language && params.language !== 'all') {
         query.language = params.language;
+      }
+      // alert_level is a repeatable query parameter: ?alert_level=viral&alert_level=alert
+      if (params?.alert_level && params.alert_level.length > 0) {
+        query.alert_level = params.alert_level;
+      }
+      // sort=composite ranks by latest composite virality score (top first)
+      if (params?.sort) {
+        query.sort = params.sort;
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -415,52 +423,6 @@ export const apiService = {
     }
   },
 
-  // Viral narratives with hours parameter - uses summary endpoint optimized for dashboard display
-  async getViralNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
-    const { $config } = useNuxtApp();
-    try {
-      const { apiFetch } = useApi();
-      const response = await apiFetch('/api/narratives/viral/summary', {
-        method: 'GET',
-        query: {
-          hours: hours ?? undefined,
-          limit: limit || $config.public.viralNarrativesLimit
-        }
-      });
-
-      const data = response as { data: NarrativeSummary[] };
-      // Already sorted by views from the API
-      return data.data;
-    } catch (error) {
-      console.error('Failed to fetch viral narratives:', error);
-      return [];
-    }
-  },
-
-  // Prevalent narratives - narratives with most videos in a time frame
-  // Endpoint: GET /api/narratives/prevalent/summary
-  // Returns narrative summaries sorted by video count in specified time period
-  async getPrevalentNarratives(hours: number | null, limit?: number): Promise<NarrativeSummary[]> {
-    const { $config } = useNuxtApp();
-    try {
-      const { apiFetch } = useApi();
-      const response = await apiFetch('/api/narratives/prevalent/summary', {
-        method: 'GET',
-        query: {
-          hours: hours ?? undefined,
-          limit: limit || $config.public.prevalentNarrativesLimit
-        }
-      });
-
-      const data = response as { data: NarrativeSummary[] };
-      // Already sorted by video count from the API
-      return data.data;
-    } catch (error) {
-      console.error('Failed to fetch prevalent narratives:', error);
-      return [];
-    }
-  },
-
   async deleteNarrative(narrativeId: string): Promise<void> {
     try {
       const { apiFetch } = useApi();
@@ -472,52 +434,6 @@ export const apiService = {
       throw error;
     }
   },
-
-  // Dashboard data
-  async getDashboardStats(
-    timeframeInterval: IntervalResult<Date, Date, undefined> | null // null = all time, no date filter
-  ): Promise<{
-    topics: TopicWithStats[];
-    entities: Entity[];
-    actors: any[];
-    viralNarratives: NarrativeSummary[];
-    prevalentNarratives: NarrativeSummary[];
-  }> {
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    const hours = timeframeInterval ? differenceInHours(timeframeInterval.end, timeframeInterval.start) : null;
-
-    // Get real topics data from the API
-    let topicsData: TopicWithStats[] = [];
-    try {
-      const topicsResponse = await this.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end });
-      topicsData = topicsResponse.data || [];
-    } catch (error) {
-      console.error('Failed to fetch topics for dashboard:', error);
-      // Use fallback mock data if API fails
-      topicsData = [];
-    }
-
-    // Get entities data from the API
-    let entitiesData: Entity[] = [];
-    try {
-      const entitiesResponse = await this.getEntities({ limit: 10, hours });
-      entitiesData = entitiesResponse.data || [];
-    } catch (error) {
-      console.error('Failed to fetch entities for dashboard:', error);
-      // Use fallback empty data if API fails
-      entitiesData = [];
-    }
-
-    return {
-      topics: topicsData,
-      entities: entitiesData,
-      actors: [],
-      viralNarratives: await this.getViralNarratives(hours),
-      prevalentNarratives: await this.getPrevalentNarratives(hours)
-    };
-  },
-
 
   // Alerts endpoints - using authenticated fetch
   async getAlerts(params?: {
@@ -1083,6 +999,34 @@ export const apiService = {
     } catch (error) {
       console.error('Failed to send claim feedback:', error);
       throw error;
+    }
+  },
+
+  async getNarrativeAnalysisIndicators(
+    narrativeId: string,
+    date?: string,
+  ): Promise<NarrativeAnalysisIndicatorsResponse | null> {
+    try {
+      const { apiFetch } = useApi();
+      const response = await apiFetch<JSONResponse<NarrativeAnalysisIndicatorsResponse>>(
+        `/api/narratives/${narrativeId}/indicators`,
+        {
+          method: 'GET',
+          query: date ? { date } : undefined,
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      // 404 just means there are no indicators for that day yet — common when
+      // walking back several days for the trend sparkline. Don't pollute the
+      // console with one error per missing day.
+      const status = (error as { statusCode?: number; status?: number })?.statusCode
+        ?? (error as { statusCode?: number; status?: number })?.status;
+      if (status !== 404) {
+        console.error('Failed to fetch narrative analysis indicators:', error);
+      }
+      return null;
     }
   },
 

@@ -215,6 +215,7 @@
     "skipForNow": "Skip for now"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Dashboard",
     "topics": "Topics",
     "entities": "Entities",
@@ -292,6 +293,20 @@
     "textPlaceholder": "Enter search text",
     "entity": "Entity",
     "selectEntity": "Select entity",
+    "alertLevel": "Alert level",
+    "alertLevelDescriptions": {
+      "viral": "Highly popular and accelerating fast.",
+      "alert": "Popular and growing strongly day over day.",
+      "early_surge": "Still small but growing explosively.",
+      "watch": "Growing modestly, or popular but stable."
+    },
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alert",
+      "early_surge": "Early surge",
+      "watch": "Watch",
+      "none": "None"
+    },
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
     "selectStartDate": "Select start date",
@@ -349,7 +364,90 @@
     },
     "adminActions": "Admin actions",
     "loadMoreClaims": "Load more claims",
-    "loadMoreVideos": "Load more videos"
+    "loadMoreVideos": "Load more videos",
+    "analysisIndicators": "Analysis Indicators",
+    "analysisIndicatorsDate": "Analysis Indicators (as of {date})",
+    "compositeViralityIndex": "Composite Virality Index",
+    "compositeViralityIndexAcronym": "CVI",
+    "rangeLabel": "Range: 0.0 - 1.0",
+    "engagementScore": "Engagement Score",
+    "engagementScoreAcronym": "ES",
+    "reachScore": "Reach Score",
+    "reachScoreAcronym": "RS",
+    "velocityScore": "Velocity Score",
+    "velocityScoreAcronym": "VS",
+    "compositeViralityFormula": "CVI = (ES × {engagementWeight}) + (RS × {reachWeight}) + (VS × {velocityWeight})",
+    "accelerationIndex": "Acceleration Index",
+    "accelerationIndexAcronym": "AI",
+    "baselineLabel": "Baseline: 1.0 (no change)",
+    "engagementChange": "Engagement Change",
+    "engagementChangeAcronym": "ΔEng",
+    "videoVolumeChange": "Video Volume Change",
+    "videoVolumeChangeAcronym": "ΔVol",
+    "viewsChange": "Views Change",
+    "viewsChangeAcronym": "ΔViews",
+    "accelerationFormula": "AI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔViews × {viewsWeight})",
+    "alertLevel": "Alert Level",
+    "alertLevelNONE": "None",
+    "alertLevelEARLY_SURGE": "Early Surge",
+    "alertLevelALERT": "Alert",
+    "alertLevelWATCH": "Watch",
+    "alertLevelVIRAL": "Viral",
+    "alertLevelDescriptionNONE": "No significant activity detected",
+    "alertLevelDescriptionEARLY_SURGE": "Early growth pattern detected",
+    "alertLevelDescriptionALERT": "Notable increase in activity",
+    "alertLevelDescriptionWATCH": "Significant growth requiring attention",
+    "alertLevelDescriptionVIRAL": "Viral status - Immediate attention required",
+    "alertThresholds": "Alert Thresholds",
+    "alertLevelConditionEARLY_SURGE": "CVI {'<'} 0.65 and AI > 2.0",
+    "alertLevelConditionALERT": "CVI > 0.70 and AI > 1.5",
+    "alertLevelConditionWATCH": "CVI > 0.55 or AI > 1.2",
+    "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0",
+    "indicators": {
+      "empty": "No analysis indicators have been computed for this narrative yet.",
+      "asOf": "Updated {when}",
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo": "{n} days ago",
+      "technicalDetails": "Technical details",
+      "thresholds": "Alert thresholds",
+      "verdict": {
+        "viral": "This narrative is among the most popular AND accelerating fast.",
+        "alert": "Popular and growing notably day over day.",
+        "early_surge": "Explosive growth from a small base.",
+        "watch": "Popular but stable, or growing modestly from a smaller base.",
+        "none": "No significant activity right now."
+      },
+      "composite": {
+        "label": "Popularity",
+        "howCalculated": "weighted percentile of engagement, reach and velocity",
+        "engagement": "Engagement",
+        "reach": "Reach",
+        "velocity": "Velocity",
+        "context": {
+          "top5": "top 5% across narratives",
+          "top15": "top 15% across narratives",
+          "top30": "top 30% across narratives",
+          "top45": "above the median",
+          "middle": "around the median",
+          "low": "below the median"
+        }
+      },
+      "acceleration": {
+        "label": "Acceleration",
+        "howCalculated": "weighted percent change vs the previous day, capped at +500% per dimension",
+        "engagement": "Engagement rate",
+        "videoVolume": "Video volume",
+        "views": "Views",
+        "context": {
+          "explosive": "explosive growth vs yesterday",
+          "fast": "fast growth vs yesterday",
+          "notable": "notable growth vs yesterday",
+          "modest": "modest growth vs yesterday",
+          "flat": "roughly flat vs yesterday"
+        }
+      }
+    }
   },
   "feedback": {
     "send": "Send Feedback",

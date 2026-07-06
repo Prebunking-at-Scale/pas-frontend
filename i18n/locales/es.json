@@ -215,6 +215,7 @@
     "skipForNow": "Omitir por ahora"
   },
   "dashboard": {
+    "topN": "Top {n}",
     "title": "Panel",
     "topics": "Temas",
     "entities": "Entidades",
@@ -290,6 +291,20 @@
     "keywordsPlaceholder": "Ingrese palabra clave y presione Enter",
     "text": "Texto",
     "textPlaceholder": "Ingrese texto de búsqueda",
+    "alertLevel": "Nivel de alerta",
+    "alertLevelDescriptions": {
+      "viral": "Muy popular y acelerando rápido.",
+      "alert": "Popular y creciendo con fuerza día a día.",
+      "early_surge": "Aún pequeña pero con crecimiento explosivo.",
+      "watch": "Crecimiento moderado, o popular pero estable."
+    },
+    "alertLevels": {
+      "viral": "Viral",
+      "alert": "Alerta",
+      "early_surge": "Subida temprana",
+      "watch": "Vigilar",
+      "none": "Ninguno"
+    },
     "clearFilters": "Limpiar filtros",
     "applyFilters": "Aplicar filtros",
     "selectStartDate": "Seleccionar fecha de inicio",
@@ -347,7 +362,90 @@
     },
     "adminActions": "Acciones de administrador",
     "loadMoreClaims": "Cargar más afirmaciones",
-    "loadMoreVideos": "Cargar más videos"
+    "loadMoreVideos": "Cargar más videos",
+    "analysisIndicators": "Indicadores de Análisis",
+    "analysisIndicatorsDate": "Indicadores de Análisis (a fecha de {date})",
+    "compositeViralityIndex": "Índice de Viralidad Compuesto",
+    "compositeViralityIndexAcronym": "IVC",
+    "rangeLabel": "Rango: 0.0 - 1.0",
+    "engagementScore": "Puntuación de Engagement",
+    "engagementScoreAcronym": "PE",
+    "reachScore": "Puntuación de Alcance",
+    "reachScoreAcronym": "PA",
+    "velocityScore": "Puntuación de Velocidad",
+    "velocityScoreAcronym": "PV",
+    "compositeViralityFormula": "IVC = (PE × {engagementWeight}) + (PA × {reachWeight}) + (PV × {velocityWeight})",
+    "accelerationIndex": "Índice de Aceleración",
+    "accelerationIndexAcronym": "IA",
+    "baselineLabel": "Línea base: 1.0 (sin cambio)",
+    "engagementChange": "Cambio en Engagement",
+    "engagementChangeAcronym": "ΔEng",
+    "videoVolumeChange": "Cambio en Volumen de Videos",
+    "videoVolumeChangeAcronym": "ΔVol",
+    "viewsChange": "Cambio en Visualizaciones",
+    "viewsChangeAcronym": "ΔVis",
+    "accelerationFormula": "IA = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔVis × {viewsWeight})",
+    "alertLevel": "Nivel de Alerta",
+    "alertLevelNONE": "Ninguna",
+    "alertLevelEARLY_SURGE": "Aumento Temprano",
+    "alertLevelALERT": "Alerta",
+    "alertLevelWATCH": "Vigilar",
+    "alertLevelVIRAL": "Viral",
+    "alertLevelDescriptionNONE": "No se detectó actividad significativa",
+    "alertLevelDescriptionEARLY_SURGE": "Patrón de crecimiento temprano detectado",
+    "alertLevelDescriptionALERT": "Aumento notable en la actividad",
+    "alertLevelDescriptionWATCH": "Crecimiento significativo que requiere atención",
+    "alertLevelDescriptionVIRAL": "Estado viral - Se requiere atención inmediata",
+    "alertThresholds": "Umbrales de Alerta",
+    "alertLevelConditionEARLY_SURGE": "IVC {'<'} 0.65 y IA > 2.0",
+    "alertLevelConditionALERT": "IVC > 0,70 y IA > 1.5",
+    "alertLevelConditionWATCH": "IVC > 0.55 o IA > 1.2",
+    "alertLevelConditionVIRAL": "IVC > 0.85 y IA > 1.0",
+    "indicators": {
+      "empty": "Aún no se han calculado indicadores de análisis para esta narrativa.",
+      "asOf": "Actualizado {when}",
+      "today": "hoy",
+      "yesterday": "ayer",
+      "daysAgo": "hace {n} días",
+      "technicalDetails": "Detalles técnicos",
+      "thresholds": "Umbrales de alerta",
+      "verdict": {
+        "viral": "Esta narrativa está entre las más populares Y acelerando rápido.",
+        "alert": "Popular y creciendo notablemente día a día.",
+        "early_surge": "Crecimiento explosivo desde una base pequeña.",
+        "watch": "Popular pero estable, o creciendo de forma moderada desde una base menor.",
+        "none": "Sin actividad destacable ahora mismo."
+      },
+      "composite": {
+        "label": "Popularidad",
+        "howCalculated": "percentil ponderado de engagement, alcance y velocidad",
+        "engagement": "Engagement",
+        "reach": "Alcance",
+        "velocity": "Velocidad",
+        "context": {
+          "top5": "top 5% entre todas las narrativas",
+          "top15": "top 15% entre todas las narrativas",
+          "top30": "top 30% entre todas las narrativas",
+          "top45": "por encima de la mediana",
+          "middle": "en torno a la mediana",
+          "low": "por debajo de la mediana"
+        }
+      },
+      "acceleration": {
+        "label": "Aceleración",
+        "howCalculated": "cambio porcentual ponderado respecto al día anterior, capado al +500% por dimensión",
+        "engagement": "Tasa de engagement",
+        "videoVolume": "Volumen de vídeos",
+        "views": "Vistas",
+        "context": {
+          "explosive": "crecimiento explosivo vs ayer",
+          "fast": "crecimiento rápido vs ayer",
+          "notable": "crecimiento notable vs ayer",
+          "modest": "crecimiento moderado vs ayer",
+          "flat": "prácticamente plano vs ayer"
+        }
+      }
+    }
   },
   "feedback": {
     "send": "Enviar comentarios",
