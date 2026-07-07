@@ -26,9 +26,9 @@
 
       <div v-else>
 
-      <!-- Top narratives per alert level. Only the prebunking-priority levels
-           (early surge first, then viral) are surfaced, ranked by composite
-           virality score. alert_level is the current daily classification, so
+      <!-- Top narratives per alert level, ordered by severity (viral, alert,
+           early surge, watch), ranked by composite virality score (early surge
+           by acceleration). alert_level is the current daily classification, so
            these sections are not scoped by the timeframe selector (which still
            drives Topics and Entities below). Each box is tinted towards its
            alert colour. -->
@@ -139,25 +139,31 @@ enum AVAILABLE_TIMEFRAMES {
 
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
-// Alert-level sections, ordered by prebunking priority: emerging narratives
-// first (the window to act early), then the already-viral ones.
+// Alert-level sections, ordered by severity: viral first, then alert,
+// early surge and watch.
 const ALERT_SECTIONS = [
-  NarrativeAlertLevel.EARLY_SURGE,
   NarrativeAlertLevel.VIRAL,
+  NarrativeAlertLevel.ALERT,
+  NarrativeAlertLevel.EARLY_SURGE,
+  NarrativeAlertLevel.WATCH,
 ] as const;
-const SECTION_LIMIT = 3;
+const SECTION_LIMIT = 6;
 
 // Box background tinted towards each level's alert colour (translucent).
 const SECTION_BG: Record<string, string> = {
-  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
   [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
+  [NarrativeAlertLevel.ALERT]: 'bg-amber-500/10',
+  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
+  [NarrativeAlertLevel.WATCH]: 'bg-blue-500/10',
 };
 
 // Ranking score per level: early surge is defined by acceleration (the
-// emerging signal), viral by overall composite virality.
+// emerging signal), the rest by overall composite virality.
 const SECTION_SORT: Record<string, string> = {
-  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
   [NarrativeAlertLevel.VIRAL]: 'composite',
+  [NarrativeAlertLevel.ALERT]: 'composite',
+  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
+  [NarrativeAlertLevel.WATCH]: 'composite',
 };
 
 // Initialize from localStorage when component mounts (client-side only)
