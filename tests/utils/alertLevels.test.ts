@@ -13,6 +13,7 @@ import { describe, it, expect } from 'vitest';
 import { NarrativeAlertLevel } from '~/types/api';
 import {
   ALERT_LEVEL_ORDER,
+  ALERT_LEVEL_OVERVIEW,
   ALERT_LEVEL_VARIANT,
   ALERT_REGIONS,
   classifyAlertLevel,
@@ -74,6 +75,27 @@ describe('the renderable set', () => {
     for (const level of ALERT_LEVEL_ORDER) {
       expect(ALERT_LEVEL_VARIANT[level]).toBeTruthy();
     }
+  });
+});
+
+describe('the dashboard overview', () => {
+  it('omits trending — the broad middle does not get a section', () => {
+    expect(ALERT_LEVEL_OVERVIEW).not.toContain(NarrativeAlertLevel.TRENDING);
+  });
+
+  it('still surfaces the three levels that make a specific claim', () => {
+    expect(ALERT_LEVEL_OVERVIEW).toEqual([
+      NarrativeAlertLevel.VIRAL,
+      NarrativeAlertLevel.EARLY_SURGE,
+      NarrativeAlertLevel.CONSOLIDATED,
+    ]);
+  });
+
+  it('keeps trending reachable as a badge and a filter', () => {
+    // Excluding it from the overview must not make it unreachable — it still needs a
+    // colour to render with and a chip to filter by.
+    expect(ALERT_LEVEL_ORDER).toContain(NarrativeAlertLevel.TRENDING);
+    expect(ALERT_LEVEL_VARIANT[NarrativeAlertLevel.TRENDING]).toBeTruthy();
   });
 });
 

@@ -120,7 +120,7 @@ import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
 import { NarrativeAlertLevel } from '~/types/api';
-import { ALERT_LEVEL_ORDER, ALERT_LEVEL_SORT, ALERT_LEVEL_TINT } from '~/utils/alertLevels';
+import { ALERT_LEVEL_OVERVIEW, ALERT_LEVEL_SORT, ALERT_LEVEL_TINT } from '~/utils/alertLevels';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -141,7 +141,7 @@ enum AVAILABLE_TIMEFRAMES {
 
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
-const ALERT_SECTIONS = ALERT_LEVEL_ORDER;
+const ALERT_SECTIONS = ALERT_LEVEL_OVERVIEW;
 const SECTION_LIMIT = 6;
 
 // Initialize from localStorage when component mounts (client-side only)

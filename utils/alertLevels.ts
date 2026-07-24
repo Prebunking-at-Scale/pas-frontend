@@ -14,7 +14,7 @@
 import type { RawNarrativeAlertLevel } from '~/types/api';
 import { NarrativeAlertLevel } from '~/types/api';
 
-export type AlertBadgeVariant = 'destructive' | 'orange' | 'secondary' | 'blue';
+export type AlertBadgeVariant = 'destructive' | 'orange' | 'warning' | 'blue';
 
 /**
  * Region boundaries on the percentile plane. Both axes are percentiles (0..1), so a
@@ -76,15 +76,15 @@ export const ALERT_LEVEL_ORDER: NarrativeAlertLevel[] = [
 ];
 
 /**
- * Colour by meaning rather than by severity: red and orange for the two that are
- * climbing, neutral grey for the broad middle, blue for large-and-settled. The old
- * palette ran a red→yellow→orange→grey ladder, which misread `consolidated` as a
- * lesser alarm when it is simply a different statement.
+ * Colour by meaning rather than by severity: red, orange and yellow for the three that
+ * are moving, blue for large-and-settled. The old palette ran a red→yellow→orange→grey
+ * ladder, which misread `consolidated` as a lesser alarm when it is simply a different
+ * statement about a narrative.
  */
 export const ALERT_LEVEL_VARIANT: Record<NarrativeAlertLevel, AlertBadgeVariant> = {
   [NarrativeAlertLevel.VIRAL]: 'destructive',
   [NarrativeAlertLevel.EARLY_SURGE]: 'orange',
-  [NarrativeAlertLevel.TRENDING]: 'secondary',
+  [NarrativeAlertLevel.TRENDING]: 'warning',
   [NarrativeAlertLevel.CONSOLIDATED]: 'blue',
 };
 
@@ -92,7 +92,7 @@ export const ALERT_LEVEL_VARIANT: Record<NarrativeAlertLevel, AlertBadgeVariant>
 export const ALERT_LEVEL_TINT: Record<NarrativeAlertLevel, string> = {
   [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
   [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
-  [NarrativeAlertLevel.TRENDING]: 'bg-gray-500/10',
+  [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500/10',
   [NarrativeAlertLevel.CONSOLIDATED]: 'bg-blue-500/10',
 };
 
@@ -100,9 +100,22 @@ export const ALERT_LEVEL_TINT: Record<NarrativeAlertLevel, string> = {
 export const ALERT_LEVEL_FILL: Record<NarrativeAlertLevel, string> = {
   [NarrativeAlertLevel.VIRAL]: 'bg-red-600 text-white',
   [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500 text-white',
-  [NarrativeAlertLevel.TRENDING]: 'bg-gray-500 text-white',
+  [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500 text-white',
   [NarrativeAlertLevel.CONSOLIDATED]: 'bg-blue-600 text-white',
 };
+
+/**
+ * The levels the dashboard overview gives a section to.
+ *
+ * `trending` is excluded. It is the broad middle by construction — the largest region
+ * on the plane and roughly 43% of the classifiable cohort — so a "top 6 trending" box
+ * is a near-arbitrary sample of the majority, and it crowds out the three sections that
+ * make a specific claim. It remains a badge and a filter, so nothing becomes
+ * unreachable; it just stops competing for the overview.
+ */
+export const ALERT_LEVEL_OVERVIEW: NarrativeAlertLevel[] = ALERT_LEVEL_ORDER.filter(
+  (level) => level !== NarrativeAlertLevel.TRENDING,
+);
 
 /**
  * Which axis ranks a level's narratives in a list. `early_surge` is defined by movement

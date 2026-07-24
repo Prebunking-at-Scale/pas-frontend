@@ -114,7 +114,7 @@ const sy = (v: number) => (1 - v) * VB;
 const REGION_CLASS: Record<NarrativeAlertLevel, string> = {
   viral: 'fill-red-500',
   early_surge: 'fill-orange-500',
-  trending: 'fill-gray-500',
+  trending: 'fill-yellow-500',
   consolidated: 'fill-blue-500',
 } as Record<NarrativeAlertLevel, string>;
 
