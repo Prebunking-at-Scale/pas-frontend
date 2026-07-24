@@ -31,56 +31,49 @@
         </div>
       </div>
 
-      <!-- 2) POSITION ON THE PLANE -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        <NarrativeAlertQuadrant
-          :composite-pct="compositePct"
-          :accel-pct="accelPct"
-          :level="level"
-        />
-
-        <div class="space-y-4">
-          <!-- Composite — a level, carried forward, known for every measured narrative -->
-          <div>
-            <div class="flex items-baseline justify-between mb-1">
-              <span class="text-sm font-medium text-gray-700">
-                {{ $t('narratives.indicators.composite.label') }}
-              </span>
-              <span class="text-2xl font-semibold tabular-nums text-gray-900">
-                {{ formatPercentile(compositePct) }}
-              </span>
-            </div>
-            <div class="h-2 bg-gray-100 rounded overflow-hidden">
-              <div class="h-full bg-gray-700 transition-all" :style="{ width: `${compositePct * 100}%` }" />
-            </div>
-            <div class="mt-2 text-xs text-gray-500">
-              {{ compositeContextLabel }}
-            </div>
+      <!-- 2) THE TWO AXES. Kept on the surface: the numbers are the answer, and the
+              quadrant behind the toggle is the explanation of how they combine. -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Composite — a level, carried forward, known for every measured narrative -->
+        <div>
+          <div class="flex items-baseline justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">
+              {{ $t('narratives.indicators.composite.label') }}
+            </span>
+            <span class="text-2xl font-semibold tabular-nums text-gray-900">
+              {{ formatPercentile(compositePct) }}
+            </span>
           </div>
+          <div class="h-2 bg-gray-100 rounded overflow-hidden">
+            <div class="h-full bg-gray-700 transition-all" :style="{ width: `${compositePct * 100}%` }" />
+          </div>
+          <div class="mt-2 text-xs text-gray-500">
+            {{ compositeContextLabel }}
+          </div>
+        </div>
 
-          <!-- Acceleration — a rate, and only for narratives visited that day -->
-          <div>
-            <div class="flex items-baseline justify-between mb-1">
-              <span class="text-sm font-medium text-gray-700">
-                {{ $t('narratives.indicators.acceleration.label') }}
-              </span>
-              <span
-                class="text-2xl font-semibold tabular-nums"
-                :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
-              >
-                {{ accelPct === null ? '—' : formatPercentile(accelPct) }}
-              </span>
-            </div>
-            <div class="h-2 bg-gray-100 rounded overflow-hidden">
-              <div
-                v-if="accelPct !== null"
-                class="h-full bg-gray-700 transition-all"
-                :style="{ width: `${accelPct * 100}%` }"
-              />
-            </div>
-            <div class="mt-2 text-xs" :class="accelPct === null ? 'text-amber-700' : 'text-gray-500'">
-              {{ accelContextLabel }}
-            </div>
+        <!-- Acceleration — a rate, and only for narratives visited that day -->
+        <div>
+          <div class="flex items-baseline justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">
+              {{ $t('narratives.indicators.acceleration.label') }}
+            </span>
+            <span
+              class="text-2xl font-semibold tabular-nums"
+              :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
+            >
+              {{ accelPct === null ? '—' : formatPercentile(accelPct) }}
+            </span>
+          </div>
+          <div class="h-2 bg-gray-100 rounded overflow-hidden">
+            <div
+              v-if="accelPct !== null"
+              class="h-full bg-gray-700 transition-all"
+              :style="{ width: `${accelPct * 100}%` }"
+            />
+          </div>
+          <div class="mt-2 text-xs" :class="accelPct === null ? 'text-amber-700' : 'text-gray-500'">
+            {{ accelContextLabel }}
           </div>
         </div>
       </div>
@@ -97,6 +90,15 @@
         </button>
 
         <div v-if="detailsOpen" class="mt-4 space-y-4 text-xs text-gray-600">
+          <!-- Where the narrative sits on the percentile plane. This is what the two
+               bars above cannot show: `viral` is a conjunction of both axes, and
+               `early_surge` is capped on spread rather than being "anything climbing". -->
+          <NarrativeAlertQuadrant
+            :composite-pct="compositePct"
+            :accel-pct="accelPct"
+            :level="level"
+          />
+
           <!-- Component breakdowns. Rendered from whatever `*_weight` keys the API
                sends rather than from a hardcoded list, so a reweighting on the backend
                (velocity being dropped, engagement demoted) needs no change here. -->
