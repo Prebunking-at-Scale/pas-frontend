@@ -421,7 +421,6 @@
       },
       "composite": {
         "label": "Spread",
-        "howCalculated": "how far it has spread — a state, ranked against every narrative we have ever measured",
         "context": {
           "top5": "top 5% across all narratives",
           "top15": "top 15% across all narratives",
@@ -433,7 +432,6 @@
       },
       "acceleration": {
         "label": "Acceleration",
-        "howCalculated": "how fast that spread is changing per day — a rate, ranked only against the narratives re-measured the same day",
         "notMeasured": "not re-measured on this date — the rate is unknown, not zero",
         "context": {
           "fastest": "among the fastest-moving measured today",
@@ -441,12 +439,6 @@
           "middle": "moving about as fast as the rest measured today",
           "slower": "barely moving compared with the rest measured today"
         }
-      },
-      "components": {
-        "engagement": "Engagement",
-        "reach": "Reach",
-        "videoVolume": "Video volume",
-        "views": "Views"
       },
       "quadrant": {
         "xAxis": "→ spread percentile",

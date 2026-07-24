@@ -420,7 +420,6 @@
       },
       "composite": {
         "label": "Diffusion",
-        "howCalculated": "jusqu'où il s'est répandu — un état, classé face à tous les récits jamais mesurés",
         "context": {
           "top5": "top 5 % parmi tous les récits",
           "top15": "top 15 % parmi tous les récits",
@@ -432,7 +431,6 @@
       },
       "acceleration": {
         "label": "Accélération",
-        "howCalculated": "à quelle vitesse cette diffusion change par jour — un taux, classé uniquement face aux récits remesurés le même jour",
         "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
         "context": {
           "fastest": "parmi les plus rapides des récits mesurés aujourd'hui",
@@ -440,12 +438,6 @@
           "middle": "progresse au même rythme que les autres récits mesurés aujourd'hui",
           "slower": "bouge à peine par rapport aux autres récits mesurés aujourd'hui"
         }
-      },
-      "components": {
-        "engagement": "Engagement",
-        "reach": "Portée",
-        "videoVolume": "Volume vidéo",
-        "views": "Vues"
       },
       "quadrant": {
         "xAxis": "→ centile de diffusion",

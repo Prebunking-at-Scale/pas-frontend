@@ -388,7 +388,6 @@
       },
       "composite": {
         "label": "Verbreitung",
-        "howCalculated": "wie weit es sich verbreitet hat — ein Zustand, gereiht gegen jedes je gemessene Narrativ",
         "context": {
           "top5": "Top 5 % aller Narrative",
           "top15": "Top 15 % aller Narrative",
@@ -400,7 +399,6 @@
       },
       "acceleration": {
         "label": "Beschleunigung",
-        "howCalculated": "wie schnell sich diese Verbreitung pro Tag ändert — eine Rate, gereiht nur gegen die am selben Tag erneut gemessenen Narrative",
         "notMeasured": "an diesem Datum nicht erneut gemessen — die Rate ist unbekannt, nicht null",
         "context": {
           "fastest": "unter den heute gemessenen mit am schnellsten",
@@ -408,12 +406,6 @@
           "middle": "etwa so schnell wie die übrigen heute gemessenen",
           "slower": "kaum in Bewegung im Vergleich zu den übrigen heute gemessenen"
         }
-      },
-      "components": {
-        "engagement": "Engagement",
-        "reach": "Reichweite",
-        "videoVolume": "Videovolumen",
-        "views": "Aufrufe"
       },
       "quadrant": {
         "xAxis": "→ Verbreitungsperzentil",

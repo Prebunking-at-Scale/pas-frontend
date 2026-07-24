@@ -6,23 +6,31 @@
       role="img"
       :aria-label="ariaLabel"
     >
-      <!-- The unbadged corner, in neutral ink. The four regions do not tile the plane
-           and this is the gap: small AND flat earns no label. Worth showing, because an
-           unbadged narrative is a result, not a missing one. -->
+      <!-- Base layer: the unbadged region. The four labels do not tile the plane, so
+           whatever no region claims stays neutral — "small AND flat earns no label" is
+           a result, not an empty space. -->
       <rect
         :x="sx(0)"
-        :y="sy(BOUNDS.accel.lo)"
-        :width="sx(BOUNDS.composite.lo) - sx(0)"
-        :height="sy(0) - sy(BOUNDS.accel.lo)"
-        class="fill-gray-100"
+        :y="sy(1)"
+        :width="sx(1) - sx(0)"
+        :height="sy(0) - sy(1)"
+        class="fill-gray-200"
       />
 
-      <!-- Threshold lines. Recessive: they are scaffolding for reading the position,
-           not the subject. -->
-      <g class="stroke-gray-200" stroke-width="1">
-        <line v-for="c in TICKS" :key="`v${c}`" :x1="sx(c)" :y1="sy(1)" :x2="sx(c)" :y2="sy(0)" />
-        <line v-for="a in TICKS" :key="`h${a}`" :x1="sx(0)" :y1="sy(a)" :x2="sx(1)" :y2="sy(a)" />
-      </g>
+      <!-- The four regions, each in its own colour. Painted in REVERSE classification
+           order with opaque fills: later regions only claim what earlier ones did not,
+           so `viral` lands on top of the `trending` box it is carved out of. Opaque
+           rather than translucent is the whole trick — alpha over overlapping
+           rectangles is what produced muddy in-between tones before. -->
+      <rect
+        v-for="region in paintOrder"
+        :key="region.level"
+        :x="sx(region.composite[0])"
+        :y="sy(region.accel[1])"
+        :width="sx(region.composite[1]) - sx(region.composite[0])"
+        :height="sy(region.accel[0]) - sy(region.accel[1])"
+        :class="REGION_FILL[region.level]"
+      />
 
       <!-- Plot frame -->
       <rect
@@ -30,13 +38,12 @@
         :y="sy(1)"
         :width="sx(1) - sx(0)"
         :height="sy(0) - sy(1)"
-        class="fill-none stroke-slate-300"
+        class="fill-none stroke-slate-400"
         stroke-width="1"
       />
 
-      <!-- Region names in muted ink, never in the series colour: the label carries the
-           identity, so the plot never depends on colour alone to be read. The one the
-           narrative occupies is darkened and bolded. -->
+      <!-- Region names. Every label carries a halo so a marker landing on one cannot
+           destroy it, and identity never rests on colour alone. -->
       <text
         v-for="label in LABELS"
         :key="label.level ?? 'unbadged'"
@@ -44,17 +51,18 @@
         :y="sy(label.y)"
         :text-anchor="label.anchor"
         :dominant-baseline="label.baseline"
-        :class="label.level === level ? 'fill-gray-900 font-semibold' : 'fill-gray-400'"
+        :class="[
+          label.level ? 'fill-white stroke-black/30' : 'fill-gray-500 stroke-white',
+          label.level === level ? 'font-bold' : 'font-medium',
+        ]"
         font-size="10"
         stroke-width="2.5"
         paint-order="stroke"
         stroke-linejoin="round"
-        class="select-none stroke-white"
+        class="select-none"
       >{{ label.level ? $t(`narratives.alertLevels.${label.level}`) : $t('narratives.alertLevels.unbadged') }}</text>
 
-      <!-- The narrative's own region, outlined at full strength. Colour appears exactly
-           once in this chart, which is what keeps it legible: no translucent fills, so
-           no muddy blend where `viral` overlaps `trending`. -->
+      <!-- The narrative's own region, outlined in a darker step of its own hue. -->
       <rect
         v-if="activeRegion"
         :x="sx(activeRegion.composite[0])"
@@ -62,25 +70,24 @@
         :width="sx(activeRegion.composite[1]) - sx(activeRegion.composite[0])"
         :height="sy(activeRegion.accel[0]) - sy(activeRegion.accel[1])"
         class="fill-none"
-        :class="REGION_STROKE[activeRegion.level]"
-        stroke-width="2.5"
+        :class="REGION_EDGE[activeRegion.level]"
+        stroke-width="3"
       />
 
-      <!-- The narrative. With no acceleration there is no point to plot, only a known
-           spread: a column says "somewhere on this line, height unknown" rather than
-           dropping the marker to zero and implying flat. -->
-      <template v-if="accelPct !== null">
-        <circle
-          :cx="sx(compositePct)"
-          :cy="sy(accelPct)"
-          r="7"
-          class="stroke-white"
-          :class="level ? REGION_FILL[level] : 'fill-gray-900'"
-          stroke-width="2.5"
-        >
-          <title>{{ ariaLabel }}</title>
-        </circle>
-      </template>
+      <!-- The narrative. Dark ink with a white ring, so it reads against any region.
+           With no acceleration there is no point to plot, only a known spread: a column
+           says "somewhere on this line, height unknown" rather than dropping the marker
+           to zero and implying flat. -->
+      <circle
+        v-if="accelPct !== null"
+        :cx="sx(compositePct)"
+        :cy="sy(accelPct)"
+        r="7"
+        class="fill-gray-900 stroke-white"
+        stroke-width="3"
+      >
+        <title>{{ ariaLabel }}</title>
+      </circle>
       <line
         v-else
         :x1="sx(compositePct)"
@@ -88,7 +95,7 @@
         :x2="sx(compositePct)"
         :y2="sy(0)"
         class="stroke-gray-900"
-        stroke-width="2"
+        stroke-width="2.5"
         stroke-dasharray="3 3"
       >
         <title>{{ ariaLabel }}</title>
@@ -131,8 +138,6 @@ const props = defineProps<Props>();
 
 const { $i18n } = useNuxtApp();
 
-const BOUNDS = ALERT_BOUNDS;
-
 // Plot box plus room for tick labels on the left and under the baseline.
 const PLOT = 200;
 const PAD = { left: 22, top: 8, right: 8, bottom: 16 };
@@ -143,18 +148,10 @@ const H = PAD.top + PLOT + PAD.bottom;
 const sx = (v: number) => PAD.left + v * PLOT;
 const sy = (v: number) => PAD.top + (1 - v) * PLOT;
 
-const TICKS = [BOUNDS.composite.lo, BOUNDS.composite.mid, BOUNDS.composite.hi];
 // 0.50 is a real boundary but sits 10 points from 0.40; labelling both crowds the axis,
-// so the line is drawn and only the outer two are numbered.
-const AXIS_TICKS = [BOUNDS.composite.lo, BOUNDS.composite.hi];
+// so only the outer two are numbered.
+const AXIS_TICKS = [ALERT_BOUNDS.composite.lo, ALERT_BOUNDS.composite.hi];
 const fmt = (v: number) => v.toFixed(1);
-
-const REGION_STROKE: Record<NarrativeAlertLevel, string> = {
-  viral: 'stroke-red-600',
-  early_surge: 'stroke-orange-600',
-  trending: 'stroke-yellow-600',
-  consolidated: 'stroke-purple-600',
-} as Record<NarrativeAlertLevel, string>;
 
 const REGION_FILL: Record<NarrativeAlertLevel, string> = {
   viral: 'fill-red-600',
@@ -162,6 +159,17 @@ const REGION_FILL: Record<NarrativeAlertLevel, string> = {
   trending: 'fill-yellow-600',
   consolidated: 'fill-purple-600',
 } as Record<NarrativeAlertLevel, string>;
+
+const REGION_EDGE: Record<NarrativeAlertLevel, string> = {
+  viral: 'stroke-red-900',
+  early_surge: 'stroke-orange-900',
+  trending: 'stroke-yellow-900',
+  consolidated: 'stroke-purple-900',
+} as Record<NarrativeAlertLevel, string>;
+
+// Reversed: ALERT_REGIONS is in classification order, so painting back to front lets
+// the carve-outs land on top of the boxes they were cut from.
+const paintOrder = computed(() => [...ALERT_REGIONS].reverse());
 
 /**
  * Label anchors sit in each region's *exclusive* corner — the part no other region

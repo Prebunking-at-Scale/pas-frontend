@@ -419,7 +419,6 @@
       },
       "composite": {
         "label": "Difusión",
-        "howCalculated": "hasta dónde se ha extendido: un estado, ordenado frente a todas las narrativas que hemos medido alguna vez",
         "context": {
           "top5": "top 5% entre todas las narrativas",
           "top15": "top 15% entre todas las narrativas",
@@ -431,7 +430,6 @@
       },
       "acceleration": {
         "label": "Aceleración",
-        "howCalculated": "a qué velocidad cambia esa difusión por día: una tasa, ordenada solo frente a las narrativas vueltas a medir el mismo día",
         "notMeasured": "no se ha vuelto a medir en esta fecha: la tasa se desconoce, no es cero",
         "context": {
           "fastest": "entre las que más rápido se mueven de las medidas hoy",
@@ -439,12 +437,6 @@
           "middle": "se mueve a un ritmo parecido al resto de las medidas hoy",
           "slower": "apenas se mueve en comparación con el resto de las medidas hoy"
         }
-      },
-      "components": {
-        "engagement": "Engagement",
-        "reach": "Alcance",
-        "videoVolume": "Volumen de vídeos",
-        "views": "Visualizaciones"
       },
       "quadrant": {
         "xAxis": "→ percentil de difusión",

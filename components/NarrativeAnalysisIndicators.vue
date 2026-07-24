@@ -99,24 +99,6 @@
             :level="level"
           />
 
-          <!-- Component breakdowns. Rendered from whatever `*_weight` keys the API
-               sends rather than from a hardcoded list, so a reweighting on the backend
-               (velocity being dropped, engagement demoted) needs no change here. -->
-          <div v-for="axis in axisBreakdowns" :key="axis.key">
-            <p class="font-medium text-gray-700 mb-1">
-              {{ $t(`narratives.indicators.${axis.key}.label`) }}
-              <span class="font-normal text-gray-500">— {{ $t(`narratives.indicators.${axis.key}.howCalculated`) }}</span>
-            </p>
-            <div v-if="axis.parts.length" class="grid grid-cols-3 gap-2">
-              <div v-for="part in axis.parts" :key="part.key" class="bg-gray-50 rounded p-2">
-                <div class="text-gray-500">{{ componentLabel(part.key) }}</div>
-                <div class="text-sm font-semibold text-gray-900">{{ part.display }}</div>
-                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(3) }}</div>
-              </div>
-            </div>
-            <p v-else class="text-gray-400 italic">{{ $t('narratives.indicators.acceleration.notMeasured') }}</p>
-          </div>
-
           <!-- How much of the narrative was actually re-measured. A rate computed from
                four of forty videos deserves less confidence than one from all forty. -->
           <p v-if="coverage" class="text-gray-500">
@@ -216,70 +198,6 @@ const accelContextLabel = computed(() => {
 });
 
 // ── Technical details ─────────────────────────────────────────────────────
-// A weight and the value it weights are not always named alike: acceleration weights
-// `video_volume` but reports the change as `change_video_count`. Only the mismatches
-// need an entry.
-const VALUE_KEY_ALIASES: Record<string, string> = {
-  video_volume: 'video_count',
-};
-
-/**
- * Pair each `<name>_weight` in the metadata with its value. The two axes name their
- * value keys differently (composite has `<name>_percentile`, acceleration has
- * `change_<name>`), so both spellings are tried.
- */
-function partsFrom(metadata: Record<string, unknown> | null | undefined, asPercent: boolean) {
-  if (!metadata) return [];
-  return Object.keys(metadata)
-    .filter((key) => key.endsWith('_weight'))
-    .map((weightKey) => {
-      const key = weightKey.slice(0, -'_weight'.length);
-      const valueKey = VALUE_KEY_ALIASES[key] ?? key;
-      const raw = metadata[`${valueKey}_percentile`] ?? metadata[`change_${valueKey}`];
-      const value = typeof raw === 'number' ? raw : null;
-      return {
-        key,
-        weight: metadata[weightKey] as number,
-        display: value === null
-          ? '—'
-          : asPercent
-            ? `${value >= 0 ? '+' : ''}${(value * 100).toFixed(1)}%`
-            : value.toFixed(2),
-      };
-    });
-}
-
-const axisBreakdowns = computed(() => [
-  {
-    key: 'composite',
-    parts: partsFrom(current.value?.composite_virality.metadata as Record<string, unknown>, false),
-  },
-  {
-    key: 'acceleration',
-    parts: partsFrom(current.value?.acceleration_rate?.metadata as Record<string, unknown>, true),
-  },
-]);
-
-// Map the component names that differ from their i18n key to that key.
-const COMPONENT_LABELS: Record<string, string> = {
-  engagement: 'engagement',
-  reach: 'reach',
-  video_volume: 'videoVolume',
-  views: 'views',
-};
-
-/**
- * Rendering the breakdown from whatever weights arrive means a component we have no
- * label for can turn up — indicator rows written before the redesign still carry
- * `velocity_weight`, and a future backend may add a term before this repo knows its
- * name. Fall back to a humanised key rather than printing the i18n path at the user.
- */
-function componentLabel(key: string): string {
-  const path = `narratives.indicators.components.${COMPONENT_LABELS[key] ?? key}`;
-  if ($i18n.te(path)) return $i18n.t(path);
-  return key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
-}
-
 const coverage = computed(() => {
   const metadata = current.value?.acceleration_rate?.metadata;
   if (!metadata?.refreshed_videos) return null;
@@ -293,12 +211,19 @@ function formatPercentile(v: number): string {
   return `${(v * 100).toFixed(0)}%`;
 }
 
+/**
+ * The region's definition in words. The axes are named with the same labels the bars
+ * above use — a reader should not have to learn that "composite" and "Spread" are the
+ * same axis, and the internal name is not the one on screen.
+ */
 function regionCondition(region: typeof ALERT_REGIONS[number]): string {
+  const spread = $i18n.t('narratives.indicators.composite.label');
+  const acceleration = $i18n.t('narratives.indicators.acceleration.label');
   const parts: string[] = [];
-  if (region.composite[0] > 0) parts.push(`composite ≥ ${region.composite[0].toFixed(2)}`);
-  if (region.composite[1] < 1) parts.push(`composite ≤ ${region.composite[1].toFixed(2)}`);
-  if (region.accel[0] > 0) parts.push(`accel ≥ ${region.accel[0].toFixed(2)}`);
-  if (region.accel[1] < 1) parts.push(`accel ≤ ${region.accel[1].toFixed(2)}`);
+  if (region.composite[0] > 0) parts.push(`${spread} ≥ ${region.composite[0].toFixed(2)}`);
+  if (region.composite[1] < 1) parts.push(`${spread} ≤ ${region.composite[1].toFixed(2)}`);
+  if (region.accel[0] > 0) parts.push(`${acceleration} ≥ ${region.accel[0].toFixed(2)}`);
+  if (region.accel[1] < 1) parts.push(`${acceleration} ≤ ${region.accel[1].toFixed(2)}`);
   return parts.join('  ∧  ');
 }
 
