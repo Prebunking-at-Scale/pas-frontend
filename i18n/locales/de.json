@@ -43,8 +43,7 @@
     "error": "Fehler",
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
-    "daysAgo": "vor {count} T.",
-    "deleting": "Wird gelöscht..."
+    "daysAgo": "vor {count} T."
   },
   "nav": {
     "overview": "Übersicht",
@@ -262,17 +261,17 @@
     "textPlaceholder": "Suchtext eingeben",
     "alertLevel": "Alarmstufe",
     "alertLevelDescriptions": {
-      "viral": "Sehr populär und stark beschleunigend.",
-      "alert": "Populär und stark wachsend von Tag zu Tag.",
-      "early_surge": "Noch klein, aber explosiv wachsend.",
-      "watch": "Moderat wachsend oder populär, aber stabil."
+      "viral": "Unter den größten Narrativen — und weiter steigend.",
+      "early_surge": "Noch klein, aber schnell steigend.",
+      "trending": "Von spürbarer Größe und in Bewegung — das breite Mittelfeld.",
+      "consolidated": "Groß, aber nicht mehr wachsend."
     },
     "alertLevels": {
       "viral": "Viral",
-      "alert": "Alarm",
       "early_surge": "Frühanstieg",
-      "watch": "Beobachten",
-      "none": "Keine"
+      "trending": "In Umlauf",
+      "consolidated": "Etabliert",
+      "unbadged": "Keine Einstufung"
     },
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
@@ -354,7 +353,6 @@
     "viewsChange": "Ansichten-Änderung",
     "viewsChangeAcronym": "ΔAns",
     "accelerationFormula": "BI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔAns × {viewsWeight})",
-    "alertLevel": "Alarmstufe",
     "alertLevelNONE": "Keine",
     "alertLevelEARLY_SURGE": "Früher Anstieg",
     "alertLevelALERT": "Alarm",
@@ -371,26 +369,26 @@
     "alertLevelConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
     "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0",
     "indicators": {
-      "empty": "Für dieses Narrativ wurden noch keine Analyseindikatoren berechnet.",
-      "asOf": "Aktualisiert {when}",
+      "empty": "Dieses Narrativ wurde nie gemessen, es gibt also noch nichts zu bewerten.",
+      "asOf": "Gemessen {when}",
       "today": "heute",
       "yesterday": "gestern",
       "daysAgo": "vor {n} Tagen",
       "technicalDetails": "Technische Details",
-      "thresholds": "Alarmschwellen",
+      "thresholds": "Wie die Einstufungen gezogen werden",
+      "unbadgedCondition": "klein und unbewegt — alles, was die vier Regionen auslassen",
+      "coverage": "Rate berechnet aus {videos} erneut gemessenen Video(s), im Mittel {days} Tage seit der vorigen Erhebung.",
       "verdict": {
-        "viral": "Dieses Narrativ gehört zu den populärsten UND beschleunigt sich rapide.",
-        "alert": "Populär und merklich wachsend von Tag zu Tag.",
-        "early_surge": "Explosives Wachstum aus kleiner Basis.",
-        "watch": "Populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
-        "none": "Aktuell keine bemerkenswerte Aktivität."
+        "viral": "Unter den größten Narrativen — und weiter steigend.",
+        "early_surge": "Noch klein, aber schnell steigend.",
+        "trending": "Von spürbarer Größe und in Bewegung — das breite Mittelfeld des Korpus.",
+        "consolidated": "Groß, aber das Wachstum ist zum Stillstand gekommen.",
+        "unbadged": "Heute gemessen: klein und ohne Bewegung. Keine Einstufung trifft zu.",
+        "unmeasured": "An diesem Datum nicht erneut gemessen, daher ist unbekannt, wie schnell es sich bewegt. Die Größe unten ist der zuletzt erfasste Stand."
       },
       "composite": {
-        "label": "Popularität",
-        "howCalculated": "gewichtetes Perzentil aus Engagement, Reichweite und Geschwindigkeit",
-        "engagement": "Engagement",
-        "reach": "Reichweite",
-        "velocity": "Geschwindigkeit",
+        "label": "Verbreitung",
+        "howCalculated": "wie weit es sich verbreitet hat — ein Zustand, gereiht gegen jedes je gemessene Narrativ",
         "context": {
           "top5": "Top 5 % aller Narrative",
           "top15": "Top 15 % aller Narrative",
@@ -402,17 +400,26 @@
       },
       "acceleration": {
         "label": "Beschleunigung",
-        "howCalculated": "gewichtete prozentuale Änderung gegenüber Vortag, pro Dimension auf +500 % gedeckelt",
-        "engagement": "Engagement-Rate",
-        "videoVolume": "Videovolumen",
-        "views": "Aufrufe",
+        "howCalculated": "wie schnell sich diese Verbreitung pro Tag ändert — eine Rate, gereiht nur gegen die am selben Tag erneut gemessenen Narrative",
+        "notMeasured": "an diesem Datum nicht erneut gemessen — die Rate ist unbekannt, nicht null",
         "context": {
-          "explosive": "explosives Wachstum vs gestern",
-          "fast": "schnelles Wachstum vs gestern",
-          "notable": "merkliches Wachstum vs gestern",
-          "modest": "moderates Wachstum vs gestern",
-          "flat": "praktisch unverändert vs gestern"
+          "fastest": "unter den heute gemessenen mit am schnellsten",
+          "faster": "schneller als die meisten heute gemessenen",
+          "middle": "etwa so schnell wie die übrigen heute gemessenen",
+          "slower": "kaum in Bewegung im Vergleich zu den übrigen heute gemessenen"
         }
+      },
+      "components": {
+        "engagement": "Engagement",
+        "reach": "Reichweite",
+        "videoVolume": "Videovolumen",
+        "views": "Aufrufe"
+      },
+      "quadrant": {
+        "xAxis": "→ Verbreitungsperzentil",
+        "yAxis": "↑ Beschleunigungsperzentil",
+        "aria": "Verbreitung im {composite}. Perzentil, Beschleunigung im {accel}.",
+        "ariaNoAccel": "Verbreitung im {composite}. Perzentil; Beschleunigung an diesem Datum nicht gemessen."
       }
     }
   },

@@ -59,7 +59,7 @@ export interface NarrativeSummary {
   average_score?: number | null;
   created_at?: string;
   updated_at?: string;
-  alert_level?: NarrativeAlertLevel | null;
+  alert_level?: RawNarrativeAlertLevel | null;
 }
 
 export interface Narrative {
@@ -433,16 +433,30 @@ export interface NarrativeDetail {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-  alert_level: NarrativeAlertLevel | null;
+  alert_level: RawNarrativeAlertLevel | null;
 }
 
+/**
+ * The four regions of the percentile plane (core/config.py, D1 of the redesign).
+ *
+ * They do NOT tile the plane: a narrative that is small *and* flat gets no badge at
+ * all, and no badge is `null` rather than a level. Only narratives the backend could
+ * measure on both axes are classifiable, so most narratives carry no level — that is
+ * the design, not missing data.
+ *
+ * `none`, `alert` and `watch` are retired. They survive in the Postgres enum so that a
+ * stale query parameter returns an empty result instead of a 400, but the classifier no
+ * longer emits them; `normalizeAlertLevel` maps them to null.
+ */
 export enum NarrativeAlertLevel {
-  NONE='none',
   VIRAL='viral',
   EARLY_SURGE='early_surge',
-  ALERT='alert',
-  WATCH='watch'
+  CONSOLIDATED='consolidated',
+  TRENDING='trending'
 }
+
+/** What the API may actually put in `alert_level`, retired values included. */
+export type RawNarrativeAlertLevel = NarrativeAlertLevel | 'none' | 'alert' | 'watch';
 
 export enum AnalysisIndicatorType {
   COMPOSITE_VIRALITY = 'composite_virality',
@@ -460,25 +474,40 @@ export interface AnalysisIndicator<IndicatorMetadata> {
 export interface NarrativeAnalysisIndicatorsResponse {
   narrative_id: string;
   composite_virality: AnalysisIndicator<CompositeViralityMetadata>;
-  acceleration_rate: AnalysisIndicator<AccelerationRateMetadata>;
+  /**
+   * Absent when the narrative was not visited on this date, which is the common case:
+   * composite ranks every narrative ever measured (~22k), acceleration only those
+   * re-measured that day (~2k). Read `null` as "not measured", NEVER as zero — a rate
+   * we did not observe is uncomputable, not flat.
+   */
+  acceleration_rate: AnalysisIndicator<AccelerationRateMetadata> | null;
   date: string;
 }
 
 
-interface CompositeViralityMetadata {
+/**
+ * `percentile` is the narrative's rank across the run's cohort and is the number the
+ * classifier reads. `indicator_value` is a weighted blend of two ranks and is not
+ * itself a rank, so anything positional ("top 5%") must use `percentile`.
+ */
+export interface CompositeViralityMetadata {
   engagement_percentile: number;
   reach_percentile: number;
-  velocity_percentile: number;
   engagement_weight: number;
   reach_weight: number;
-  velocity_weight: number;
+  percentile?: number | null;
 }
 
-interface AccelerationRateMetadata {
+export interface AccelerationRateMetadata {
   change_engagement: number;
   change_video_count: number;
   change_views: number;
   engagement_weight: number;
   video_volume_weight: number;
   views_weight: number;
+  /** Ranked over the day's visited cohort only — never comparable to the composite one. */
+  percentile?: number | null;
+  /** How much of the narrative was actually re-measured, i.e. how much weight the rate deserves. */
+  refreshed_videos?: number | null;
+  mean_gap_days?: number | null;
 }

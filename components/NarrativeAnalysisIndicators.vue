@@ -8,20 +8,22 @@
       <div class="h-12 bg-gray-200 rounded" />
     </div>
 
-    <!-- Empty state -->
+    <!-- Empty state: no composite at all, i.e. the narrative has never been measured. -->
     <div v-else-if="!current" class="text-sm text-gray-500 italic">
       {{ $t('narratives.indicators.empty') }}
     </div>
 
     <div v-else class="space-y-6">
-      <!-- 1) VERDICT -->
+      <!-- 1) VERDICT. A narrative with no badge still shows its measurements: it was
+              scored and simply fell in the unbadged region, or it was not re-measured
+              today. Both are worth saying out loud. -->
       <div class="flex items-start gap-4 flex-wrap">
-        <div class="shrink-0">
-          <AlertLevelBadge :level="levelKey" class="text-base px-3 py-1" />
+        <div v-if="level" class="shrink-0">
+          <AlertLevelBadge :level="level" class="text-base px-3 py-1" />
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-gray-900 font-medium leading-snug">
-            {{ $t(`narratives.indicators.verdict.${levelKey}`) }}
+            {{ verdict }}
           </p>
           <p class="text-sm text-gray-500 mt-1">
             {{ $t('narratives.indicators.asOf', { when: relativeDate }) }}
@@ -29,51 +31,56 @@
         </div>
       </div>
 
-      <!-- 2) TWO INDICATORS, each with bar + 7-day sparkline + plain-language context -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Composite virality (bounded 0..1) -->
-        <div>
-          <div class="flex items-baseline justify-between mb-1">
-            <span class="text-sm font-medium text-gray-700">
-              {{ $t('narratives.indicators.composite.label') }}
-            </span>
-            <span class="text-2xl font-semibold tabular-nums" :class="magnitudeColor(compositeValue)">
-              {{ compositeValue.toFixed(2) }}
-            </span>
-          </div>
-          <div class="h-2 bg-gray-100 rounded overflow-hidden">
-            <div
-              class="h-full transition-all"
-              :class="magnitudeBg(compositeValue)"
-              :style="{ width: `${Math.min(compositeValue, 1) * 100}%` }"
-            />
-          </div>
-          <div class="mt-2 text-xs text-gray-500">
-            {{ compositeContextLabel }}
-          </div>
-        </div>
+      <!-- 2) POSITION ON THE PLANE -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <NarrativeAlertQuadrant
+          :composite-pct="compositePct"
+          :accel-pct="accelPct"
+          :level="level"
+        />
 
-        <!-- Acceleration (unbounded, baseline 0) -->
-        <div>
-          <div class="flex items-baseline justify-between mb-1">
-            <span class="text-sm font-medium text-gray-700">
-              {{ $t('narratives.indicators.acceleration.label') }}
-            </span>
-            <span class="text-2xl font-semibold tabular-nums" :class="accelColor(accelerationValue)">
-              {{ accelerationValue >= 0 ? '+' : '' }}{{ accelerationValue.toFixed(2) }}
-            </span>
+        <div class="space-y-4">
+          <!-- Composite — a level, carried forward, known for every measured narrative -->
+          <div>
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700">
+                {{ $t('narratives.indicators.composite.label') }}
+              </span>
+              <span class="text-2xl font-semibold tabular-nums text-gray-900">
+                {{ formatPercentile(compositePct) }}
+              </span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded overflow-hidden">
+              <div class="h-full bg-gray-700 transition-all" :style="{ width: `${compositePct * 100}%` }" />
+            </div>
+            <div class="mt-2 text-xs text-gray-500">
+              {{ compositeContextLabel }}
+            </div>
           </div>
-          <div class="relative h-2 bg-gray-100 rounded overflow-hidden">
-            <!-- Baseline marker at 0 -->
-            <div class="absolute top-0 bottom-0 w-px bg-gray-400" :style="{ left: `${ACCEL_ZERO_POS}%` }" />
-            <div
-              class="absolute top-0 h-full transition-all"
-              :class="accelBg(accelerationValue)"
-              :style="accelBarStyle"
-            />
-          </div>
-          <div class="mt-2 text-xs text-gray-500">
-            {{ accelContextLabel }}
+
+          <!-- Acceleration — a rate, and only for narratives visited that day -->
+          <div>
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-sm font-medium text-gray-700">
+                {{ $t('narratives.indicators.acceleration.label') }}
+              </span>
+              <span
+                class="text-2xl font-semibold tabular-nums"
+                :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
+              >
+                {{ accelPct === null ? '—' : formatPercentile(accelPct) }}
+              </span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded overflow-hidden">
+              <div
+                v-if="accelPct !== null"
+                class="h-full bg-gray-700 transition-all"
+                :style="{ width: `${accelPct * 100}%` }"
+              />
+            </div>
+            <div class="mt-2 text-xs" :class="accelPct === null ? 'text-amber-700' : 'text-gray-500'">
+              {{ accelContextLabel }}
+            </div>
           </div>
         </div>
       </div>
@@ -90,48 +97,44 @@
         </button>
 
         <div v-if="detailsOpen" class="mt-4 space-y-4 text-xs text-gray-600">
-          <!-- Composite breakdown -->
-          <div>
+          <!-- Component breakdowns. Rendered from whatever `*_weight` keys the API
+               sends rather than from a hardcoded list, so a reweighting on the backend
+               (velocity being dropped, engagement demoted) needs no change here. -->
+          <div v-for="axis in axisBreakdowns" :key="axis.key">
             <p class="font-medium text-gray-700 mb-1">
-              {{ $t('narratives.indicators.composite.label') }}
-              <span class="font-normal text-gray-500">— {{ $t('narratives.indicators.composite.howCalculated') }}</span>
+              {{ $t(`narratives.indicators.${axis.key}.label`) }}
+              <span class="font-normal text-gray-500">— {{ $t(`narratives.indicators.${axis.key}.howCalculated`) }}</span>
             </p>
-            <div class="grid grid-cols-3 gap-2">
-              <div v-for="part in compositeParts" :key="part.key" class="bg-gray-50 rounded p-2">
-                <div class="text-gray-500">{{ $t(`narratives.indicators.composite.${part.key}`) }}</div>
-                <div class="text-sm font-semibold text-gray-900">{{ part.value.toFixed(2) }}</div>
-                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(2) }}</div>
+            <div v-if="axis.parts.length" class="grid grid-cols-3 gap-2">
+              <div v-for="part in axis.parts" :key="part.key" class="bg-gray-50 rounded p-2">
+                <div class="text-gray-500">{{ componentLabel(part.key) }}</div>
+                <div class="text-sm font-semibold text-gray-900">{{ part.display }}</div>
+                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(3) }}</div>
               </div>
             </div>
+            <p v-else class="text-gray-400 italic">{{ $t('narratives.indicators.acceleration.notMeasured') }}</p>
           </div>
 
-          <!-- Acceleration breakdown -->
-          <div>
-            <p class="font-medium text-gray-700 mb-1">
-              {{ $t('narratives.indicators.acceleration.label') }}
-              <span class="font-normal text-gray-500">— {{ $t('narratives.indicators.acceleration.howCalculated') }}</span>
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-              <div v-for="part in accelerationParts" :key="part.key" class="bg-gray-50 rounded p-2">
-                <div class="text-gray-500">{{ $t(`narratives.indicators.acceleration.${part.key}`) }}</div>
-                <div class="text-sm font-semibold text-gray-900">
-                  {{ part.value >= 0 ? '+' : '' }}{{ formatPercent(part.value) }}
-                </div>
-                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(2) }}</div>
-              </div>
-            </div>
-          </div>
+          <!-- How much of the narrative was actually re-measured. A rate computed from
+               four of forty videos deserves less confidence than one from all forty. -->
+          <p v-if="coverage" class="text-gray-500">
+            {{ $t('narratives.indicators.coverage', coverage) }}
+          </p>
 
-          <!-- All thresholds reference table -->
+          <!-- The region definitions, derived from the same constants the plot uses. -->
           <div>
             <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
             <table class="w-full text-[11px]">
               <tbody>
-                <tr v-for="t in THRESHOLDS" :key="t.level" class="border-b border-gray-100 last:border-0">
+                <tr v-for="region in ALERT_REGIONS" :key="region.level" class="border-b border-gray-100 last:border-0">
                   <td class="py-1 pr-2">
-                    <AlertLevelBadge :level="t.level" />
+                    <AlertLevelBadge :level="region.level" />
                   </td>
-                  <td class="py-1 text-gray-600">{{ t.condition }}</td>
+                  <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 pr-2 text-gray-500">{{ $t('narratives.alertLevels.unbadged') }}</td>
+                  <td class="py-1 text-gray-600">{{ $t('narratives.indicators.unbadgedCondition') }}</td>
                 </tr>
               </tbody>
             </table>
@@ -146,72 +149,53 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { ChevronRight } from 'lucide-vue-next';
 import { apiService } from '~/services/api';
-import { NarrativeAlertLevel, type NarrativeAnalysisIndicatorsResponse } from '~/types/api';
+import type { NarrativeAlertLevel, NarrativeAnalysisIndicatorsResponse, RawNarrativeAlertLevel } from '~/types/api';
 import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
+import NarrativeAlertQuadrant from '~/components/NarrativeAlertQuadrant.vue';
+import { ALERT_REGIONS, normalizeAlertLevel } from '~/utils/alertLevels';
 
 interface Props {
   narrativeId: string;
-  alertLevel?: NarrativeAlertLevel | null;
+  alertLevel?: RawNarrativeAlertLevel | string | null;
 }
 const props = defineProps<Props>();
 
 const { $i18n } = useNuxtApp();
 
-// Acceleration is unbounded but we render it on a [-cap, +cap] visual scale.
-// The backend caps each change_* at 5 (ACCELERATION_CHANGE_CAP), so weighted
-// acceleration_rate can't reach 5 either. 3.0 covers the realistic range for
-// "viral" without making the bar look empty for normal values.
-const ACCEL_VISUAL_CAP = 3.0;
-const ACCEL_ZERO_POS = 0; // baseline at the LEFT edge — accel >= 0 in practice
-
 const loading = ref(true);
 const current = ref<NarrativeAnalysisIndicatorsResponse | null>(null);
 const detailsOpen = ref(false);
 
-const compositeValue = computed(() => current.value?.composite_virality.indicator_value ?? 0);
-const accelerationValue = computed(() => current.value?.acceleration_rate.indicator_value ?? 0);
+/**
+ * Both axes are read from `metadata.percentile`, which is the rank the classifier uses.
+ * `indicator_value` is a weighted blend of two ranks and is not itself a rank, so it
+ * cannot carry a positional claim like "top 5%".
+ */
+const compositePct = computed(() => current.value?.composite_virality.metadata?.percentile ?? 0);
 
-const levelKey = computed<NarrativeAlertLevel>(() => props.alertLevel ?? NarrativeAlertLevel.NONE);
-
-// ── Visual styling helpers ────────────────────────────────────────────────
-function magnitudeColor(v: number): string {
-  if (v >= 0.85) return 'text-red-600';
-  if (v >= 0.70) return 'text-orange-600';
-  if (v >= 0.55) return 'text-yellow-600';
-  return 'text-gray-700';
-}
-function magnitudeBg(v: number): string {
-  if (v >= 0.85) return 'bg-red-500';
-  if (v >= 0.70) return 'bg-orange-500';
-  if (v >= 0.55) return 'bg-yellow-500';
-  return 'bg-gray-400';
-}
-function accelColor(v: number): string {
-  if (v >= 2.0) return 'text-red-600';
-  if (v >= 1.5) return 'text-orange-600';
-  if (v >= 1.0) return 'text-yellow-600';
-  if (v >= 0.5) return 'text-gray-700';
-  return 'text-gray-500';
-}
-function accelBg(v: number): string {
-  if (v >= 2.0) return 'bg-red-500';
-  if (v >= 1.5) return 'bg-orange-500';
-  if (v >= 1.0) return 'bg-yellow-500';
-  return 'bg-gray-400';
-}
-
-const accelBarStyle = computed(() => {
-  const v = accelerationValue.value;
-  const pct = Math.min(Math.abs(v) / ACCEL_VISUAL_CAP, 1) * 100;
-  // All practical values are >= 0, so the bar grows rightward from 0.
-  return { left: `${ACCEL_ZERO_POS}%`, width: `${pct}%` };
+/**
+ * Null means the narrative was not visited on this date, so its rate is uncomputable —
+ * NOT that it was flat. Composite ranks every narrative measured at least once (~22k),
+ * acceleration only the ~2k re-measured that day, so this is the common case and must
+ * never be rendered as a zero.
+ */
+const accelPct = computed<number | null>(() => {
+  const accel = current.value?.acceleration_rate;
+  if (!accel) return null;
+  return accel.metadata?.percentile ?? null;
 });
 
-// ── Plain-language context labels ─────────────────────────────────────────
+const level = computed<NarrativeAlertLevel | null>(() => normalizeAlertLevel(props.alertLevel));
+
+// ── Plain-language context ────────────────────────────────────────────────
+const verdict = computed(() => {
+  if (level.value) return $i18n.t(`narratives.indicators.verdict.${level.value}`);
+  if (accelPct.value === null) return $i18n.t('narratives.indicators.verdict.unmeasured');
+  return $i18n.t('narratives.indicators.verdict.unbadged');
+});
+
 const compositeContextLabel = computed(() => {
-  const v = compositeValue.value;
-  // Percentile-based: composite is itself a percentile composite so it already
-  // ranks the narrative against the whole population for the day.
+  const v = compositePct.value;
   if (v >= 0.95) return $i18n.t('narratives.indicators.composite.context.top5');
   if (v >= 0.85) return $i18n.t('narratives.indicators.composite.context.top15');
   if (v >= 0.70) return $i18n.t('narratives.indicators.composite.context.top30');
@@ -221,40 +205,93 @@ const compositeContextLabel = computed(() => {
 });
 
 const accelContextLabel = computed(() => {
-  const v = accelerationValue.value;
-  if (v >= 2.0) return $i18n.t('narratives.indicators.acceleration.context.explosive');
-  if (v >= 1.5) return $i18n.t('narratives.indicators.acceleration.context.fast');
-  if (v >= 1.0) return $i18n.t('narratives.indicators.acceleration.context.notable');
-  if (v >= 0.5) return $i18n.t('narratives.indicators.acceleration.context.modest');
-  return $i18n.t('narratives.indicators.acceleration.context.flat');
+  const v = accelPct.value;
+  if (v === null) return $i18n.t('narratives.indicators.acceleration.notMeasured');
+  if (v >= 0.80) return $i18n.t('narratives.indicators.acceleration.context.fastest');
+  if (v >= 0.50) return $i18n.t('narratives.indicators.acceleration.context.faster');
+  if (v >= 0.40) return $i18n.t('narratives.indicators.acceleration.context.middle');
+  return $i18n.t('narratives.indicators.acceleration.context.slower');
 });
 
 // ── Technical details ─────────────────────────────────────────────────────
-const compositeParts = computed(() => {
-  const m = current.value?.composite_virality.metadata;
-  return [
-    { key: 'engagement', value: m?.engagement_percentile ?? 0, weight: m?.engagement_weight ?? 0 },
-    { key: 'reach',      value: m?.reach_percentile ?? 0,      weight: m?.reach_weight ?? 0 },
-    { key: 'velocity',   value: m?.velocity_percentile ?? 0,   weight: m?.velocity_weight ?? 0 },
-  ];
+// A weight and the value it weights are not always named alike: acceleration weights
+// `video_volume` but reports the change as `change_video_count`. Only the mismatches
+// need an entry.
+const VALUE_KEY_ALIASES: Record<string, string> = {
+  video_volume: 'video_count',
+};
+
+/**
+ * Pair each `<name>_weight` in the metadata with its value. The two axes name their
+ * value keys differently (composite has `<name>_percentile`, acceleration has
+ * `change_<name>`), so both spellings are tried.
+ */
+function partsFrom(metadata: Record<string, unknown> | null | undefined, asPercent: boolean) {
+  if (!metadata) return [];
+  return Object.keys(metadata)
+    .filter((key) => key.endsWith('_weight'))
+    .map((weightKey) => {
+      const key = weightKey.slice(0, -'_weight'.length);
+      const valueKey = VALUE_KEY_ALIASES[key] ?? key;
+      const raw = metadata[`${valueKey}_percentile`] ?? metadata[`change_${valueKey}`];
+      const value = typeof raw === 'number' ? raw : null;
+      return {
+        key,
+        weight: metadata[weightKey] as number,
+        display: value === null
+          ? '—'
+          : asPercent
+            ? `${value >= 0 ? '+' : ''}${(value * 100).toFixed(1)}%`
+            : value.toFixed(2),
+      };
+    });
+}
+
+const axisBreakdowns = computed(() => [
+  {
+    key: 'composite',
+    parts: partsFrom(current.value?.composite_virality.metadata as Record<string, unknown>, false),
+  },
+  {
+    key: 'acceleration',
+    parts: partsFrom(current.value?.acceleration_rate?.metadata as Record<string, unknown>, true),
+  },
+]);
+
+// `video_volume_weight` has no matching `change_video_volume`; the API calls the value
+// `change_video_count`. Map the handful of names that differ to their i18n keys.
+const COMPONENT_LABELS: Record<string, string> = {
+  engagement: 'engagement',
+  reach: 'reach',
+  video_volume: 'videoVolume',
+  views: 'views',
+};
+function componentLabel(key: string): string {
+  const slug = COMPONENT_LABELS[key] ?? key;
+  return $i18n.t(`narratives.indicators.components.${slug}`);
+}
+
+const coverage = computed(() => {
+  const metadata = current.value?.acceleration_rate?.metadata;
+  if (!metadata?.refreshed_videos) return null;
+  return {
+    videos: metadata.refreshed_videos,
+    days: (metadata.mean_gap_days ?? 1).toFixed(1),
+  };
 });
 
-const accelerationParts = computed(() => {
-  const m = current.value?.acceleration_rate.metadata;
-  return [
-    { key: 'engagement', value: m?.change_engagement ?? 0,   weight: m?.engagement_weight ?? 0 },
-    { key: 'videoVolume', value: m?.change_video_count ?? 0, weight: m?.video_volume_weight ?? 0 },
-    { key: 'views',      value: m?.change_views ?? 0,        weight: m?.views_weight ?? 0 },
-  ];
-});
+function formatPercentile(v: number): string {
+  return `${(v * 100).toFixed(0)}%`;
+}
 
-const THRESHOLDS = [
-  { level: NarrativeAlertLevel.VIRAL,       condition: 'composite > 0.85  ∧  acceleration > 1.0' },
-  { level: NarrativeAlertLevel.ALERT,       condition: 'composite > 0.70  ∧  acceleration > 1.5' },
-  { level: NarrativeAlertLevel.EARLY_SURGE, condition: 'composite < 0.65  ∧  acceleration > 2.0' },
-  { level: NarrativeAlertLevel.WATCH,       condition: '(composite > 0.55  ∧  accel > 1.2)  ∨  composite > 0.85' },
-  { level: NarrativeAlertLevel.NONE,        condition: '—' },
-];
+function regionCondition(region: typeof ALERT_REGIONS[number]): string {
+  const parts: string[] = [];
+  if (region.composite[0] > 0) parts.push(`composite ≥ ${region.composite[0].toFixed(2)}`);
+  if (region.composite[1] < 1) parts.push(`composite ≤ ${region.composite[1].toFixed(2)}`);
+  if (region.accel[0] > 0) parts.push(`accel ≥ ${region.accel[0].toFixed(2)}`);
+  if (region.accel[1] < 1) parts.push(`accel ≤ ${region.accel[1].toFixed(2)}`);
+  return parts.join('  ∧  ');
+}
 
 // ── Relative date display ─────────────────────────────────────────────────
 const relativeDate = computed(() => {
@@ -269,16 +306,13 @@ const relativeDate = computed(() => {
   return $i18n.t('narratives.indicators.daysAgo', { n: diff });
 });
 
-function formatPercent(v: number): string {
-  return `${(v * 100).toFixed(0)}%`;
-}
-
 // ── Data loading ──────────────────────────────────────────────────────────
 async function load() {
   loading.value = true;
   try {
-    // Latest indicators for this narrative (the endpoint returns the most
-    // recent available entry, regardless of whether today's recalc has run).
+    // Latest indicators for this narrative (the endpoint returns the most recent
+    // available entry, regardless of whether today's recalc has run). Composite is
+    // required; acceleration comes back null for narratives not visited that day.
     current.value = await apiService.getNarrativeAnalysisIndicators(props.narrativeId);
   } catch (e) {
     console.error('Failed to load indicators:', e);

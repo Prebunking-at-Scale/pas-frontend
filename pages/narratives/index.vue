@@ -112,7 +112,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { NarrativeSummary } from '~/types/api';
+import type { NarrativeAlertLevel, NarrativeSummary } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
@@ -122,7 +122,7 @@ import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import AlertLevelFilter from '~/components/filters/AlertLevelFilter.vue';
-import { NarrativeAlertLevel } from '~/types/api';
+import { normalizeAlertLevels } from '~/utils/alertLevels';
 
 definePageMeta({
   layout: 'default',
@@ -319,9 +319,15 @@ onMounted(async () => {
 
     // Check if we have an alert-level filter from query params (e.g. from the
     // dashboard triage chips). Accepts a single value or a repeated param.
+    //
+    // Normalised rather than cast: a bookmark or an old dashboard link may still carry
+    // a retired level (`alert`, `watch`, `none`), and sending one on would filter the
+    // list down to nothing with no visible reason. Dropping it shows every narrative,
+    // which is the honest reading of a filter we can no longer apply.
     const alertLevelParam = route.query.alert_level;
     if (alertLevelParam) {
-      const levels = (Array.isArray(alertLevelParam) ? alertLevelParam : [alertLevelParam]) as NarrativeAlertLevel[];
+      const raw = Array.isArray(alertLevelParam) ? alertLevelParam : [alertLevelParam];
+      const levels = normalizeAlertLevels(raw.filter((value): value is string => typeof value === 'string'));
       filters.value.alert_level = levels;
       appliedFilters.value.alert_level = levels;
     }

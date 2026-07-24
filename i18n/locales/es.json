@@ -43,8 +43,7 @@
     "error": "Error",
     "minutesAgo": "hace {count} min",
     "hoursAgo": "hace {count}h",
-    "daysAgo": "hace {count}d",
-    "deleting": "Eliminando..."
+    "daysAgo": "hace {count}d"
   },
   "nav": {
     "overview": "Vista general",
@@ -291,19 +290,19 @@
     "keywordsPlaceholder": "Ingrese palabra clave y presione Enter",
     "text": "Texto",
     "textPlaceholder": "Ingrese texto de búsqueda",
-    "alertLevel": "Nivel de alerta",
+    "alertLevel": "Nivel de Alerta",
     "alertLevelDescriptions": {
-      "viral": "Muy popular y acelerando rápido.",
-      "alert": "Popular y creciendo con fuerza día a día.",
-      "early_surge": "Aún pequeña pero con crecimiento explosivo.",
-      "watch": "Crecimiento moderado, o popular pero estable."
+      "viral": "Entre las narrativas más extendidas, y sigue subiendo.",
+      "early_surge": "Todavía pequeña, pero subiendo rápido.",
+      "trending": "De tamaño apreciable y en movimiento: el grueso del corpus.",
+      "consolidated": "Grande, pero ya no crece."
     },
     "alertLevels": {
       "viral": "Viral",
-      "alert": "Alerta",
       "early_surge": "Subida temprana",
-      "watch": "Vigilar",
-      "none": "Ninguno"
+      "trending": "En circulación",
+      "consolidated": "Consolidada",
+      "unbadged": "Sin etiqueta"
     },
     "clearFilters": "Limpiar filtros",
     "applyFilters": "Aplicar filtros",
@@ -385,7 +384,6 @@
     "viewsChange": "Cambio en Visualizaciones",
     "viewsChangeAcronym": "ΔVis",
     "accelerationFormula": "IA = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔVis × {viewsWeight})",
-    "alertLevel": "Nivel de Alerta",
     "alertLevelNONE": "Ninguna",
     "alertLevelEARLY_SURGE": "Aumento Temprano",
     "alertLevelALERT": "Alerta",
@@ -402,26 +400,26 @@
     "alertLevelConditionWATCH": "IVC > 0.55 o IA > 1.2",
     "alertLevelConditionVIRAL": "IVC > 0.85 y IA > 1.0",
     "indicators": {
-      "empty": "Aún no se han calculado indicadores de análisis para esta narrativa.",
-      "asOf": "Actualizado {when}",
+      "empty": "Esta narrativa nunca se ha medido, así que aún no hay nada que puntuar.",
+      "asOf": "Medido {when}",
       "today": "hoy",
       "yesterday": "ayer",
       "daysAgo": "hace {n} días",
       "technicalDetails": "Detalles técnicos",
-      "thresholds": "Umbrales de alerta",
+      "thresholds": "Cómo se trazan las etiquetas",
+      "unbadgedCondition": "pequeña y plana: todo lo que las cuatro regiones dejan fuera",
+      "coverage": "Tasa calculada sobre {videos} vídeo(s) vueltos a medir, con {days} días de media desde su lectura anterior.",
       "verdict": {
-        "viral": "Esta narrativa está entre las más populares Y acelerando rápido.",
-        "alert": "Popular y creciendo notablemente día a día.",
-        "early_surge": "Crecimiento explosivo desde una base pequeña.",
-        "watch": "Popular pero estable, o creciendo de forma moderada desde una base menor.",
-        "none": "Sin actividad destacable ahora mismo."
+        "viral": "Entre las narrativas más extendidas, y sigue subiendo.",
+        "early_surge": "Todavía pequeña, pero subiendo rápido.",
+        "trending": "De tamaño apreciable y en movimiento: el grueso del corpus.",
+        "consolidated": "Grande, pero ha dejado de crecer.",
+        "unbadged": "Medida hoy: pequeña y sin movimiento. No le corresponde ninguna etiqueta.",
+        "unmeasured": "No se ha vuelto a medir en esta fecha, así que se desconoce a qué velocidad se mueve. El tamaño que aparece abajo es el último que registramos."
       },
       "composite": {
-        "label": "Popularidad",
-        "howCalculated": "percentil ponderado de engagement, alcance y velocidad",
-        "engagement": "Engagement",
-        "reach": "Alcance",
-        "velocity": "Velocidad",
+        "label": "Difusión",
+        "howCalculated": "hasta dónde se ha extendido: un estado, ordenado frente a todas las narrativas que hemos medido alguna vez",
         "context": {
           "top5": "top 5% entre todas las narrativas",
           "top15": "top 15% entre todas las narrativas",
@@ -433,17 +431,26 @@
       },
       "acceleration": {
         "label": "Aceleración",
-        "howCalculated": "cambio porcentual ponderado respecto al día anterior, capado al +500% por dimensión",
-        "engagement": "Tasa de engagement",
-        "videoVolume": "Volumen de vídeos",
-        "views": "Vistas",
+        "howCalculated": "a qué velocidad cambia esa difusión por día: una tasa, ordenada solo frente a las narrativas vueltas a medir el mismo día",
+        "notMeasured": "no se ha vuelto a medir en esta fecha: la tasa se desconoce, no es cero",
         "context": {
-          "explosive": "crecimiento explosivo vs ayer",
-          "fast": "crecimiento rápido vs ayer",
-          "notable": "crecimiento notable vs ayer",
-          "modest": "crecimiento moderado vs ayer",
-          "flat": "prácticamente plano vs ayer"
+          "fastest": "entre las que más rápido se mueven de las medidas hoy",
+          "faster": "se mueve más rápido que la mayoría de las medidas hoy",
+          "middle": "se mueve a un ritmo parecido al resto de las medidas hoy",
+          "slower": "apenas se mueve en comparación con el resto de las medidas hoy"
         }
+      },
+      "components": {
+        "engagement": "Engagement",
+        "reach": "Alcance",
+        "videoVolume": "Volumen de vídeos",
+        "views": "Visualizaciones"
+      },
+      "quadrant": {
+        "xAxis": "→ percentil de difusión",
+        "yAxis": "↑ percentil de aceleración",
+        "aria": "Difusión en el percentil {composite}, aceleración en el {accel}.",
+        "ariaNoAccel": "Difusión en el percentil {composite}; aceleración no medida en esta fecha."
       }
     }
   },

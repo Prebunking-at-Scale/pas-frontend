@@ -43,8 +43,7 @@
     "error": "Error",
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago",
-    "deleting": "Deleting..."
+    "daysAgo": "{count}d ago"
   },
   "nav": {
     "overview": "Overview",
@@ -293,19 +292,19 @@
     "textPlaceholder": "Enter search text",
     "entity": "Entity",
     "selectEntity": "Select entity",
-    "alertLevel": "Alert level",
+    "alertLevel": "Alert Level",
     "alertLevelDescriptions": {
-      "viral": "Highly popular and accelerating fast.",
-      "alert": "Popular and growing strongly day over day.",
-      "early_surge": "Still small but growing explosively.",
-      "watch": "Growing modestly, or popular but stable."
+      "viral": "Among the largest narratives, and still climbing.",
+      "early_surge": "Still small, but climbing fast.",
+      "trending": "Sizeable and moving — the broad middle.",
+      "consolidated": "Large, but no longer growing."
     },
     "alertLevels": {
       "viral": "Viral",
-      "alert": "Alert",
       "early_surge": "Early surge",
-      "watch": "Watch",
-      "none": "None"
+      "trending": "Trending",
+      "consolidated": "Consolidated",
+      "unbadged": "No label"
     },
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
@@ -387,7 +386,6 @@
     "viewsChange": "Views Change",
     "viewsChangeAcronym": "ΔViews",
     "accelerationFormula": "AI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔViews × {viewsWeight})",
-    "alertLevel": "Alert Level",
     "alertLevelNONE": "None",
     "alertLevelEARLY_SURGE": "Early Surge",
     "alertLevelALERT": "Alert",
@@ -404,30 +402,30 @@
     "alertLevelConditionWATCH": "CVI > 0.55 or AI > 1.2",
     "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0",
     "indicators": {
-      "empty": "No analysis indicators have been computed for this narrative yet.",
-      "asOf": "Updated {when}",
+      "empty": "This narrative has never been measured, so there is nothing to score yet.",
+      "asOf": "Measured {when}",
       "today": "today",
       "yesterday": "yesterday",
       "daysAgo": "{n} days ago",
       "technicalDetails": "Technical details",
-      "thresholds": "Alert thresholds",
+      "thresholds": "How the labels are drawn",
+      "unbadgedCondition": "small and flat — everything the four regions leave out",
+      "coverage": "Rate computed from {videos} re-measured video(s), {days} days since their previous reading on average.",
       "verdict": {
-        "viral": "This narrative is among the most popular AND accelerating fast.",
-        "alert": "Popular and growing notably day over day.",
-        "early_surge": "Explosive growth from a small base.",
-        "watch": "Popular but stable, or growing modestly from a smaller base.",
-        "none": "No significant activity right now."
+        "viral": "Among the largest narratives, and still climbing.",
+        "early_surge": "Still small, but climbing fast.",
+        "trending": "Sizeable and moving — the broad middle of the corpus.",
+        "consolidated": "Large, but it has stopped growing.",
+        "unbadged": "Measured today: small, and not moving. No label applies.",
+        "unmeasured": "Not re-measured on this date, so how fast it is moving is unknown. Its size below is still what we last recorded."
       },
       "composite": {
-        "label": "Popularity",
-        "howCalculated": "weighted percentile of engagement, reach and velocity",
-        "engagement": "Engagement",
-        "reach": "Reach",
-        "velocity": "Velocity",
+        "label": "Spread",
+        "howCalculated": "how far it has spread — a state, ranked against every narrative we have ever measured",
         "context": {
-          "top5": "top 5% across narratives",
-          "top15": "top 15% across narratives",
-          "top30": "top 30% across narratives",
+          "top5": "top 5% across all narratives",
+          "top15": "top 15% across all narratives",
+          "top30": "top 30% across all narratives",
           "top45": "above the median",
           "middle": "around the median",
           "low": "below the median"
@@ -435,17 +433,26 @@
       },
       "acceleration": {
         "label": "Acceleration",
-        "howCalculated": "weighted percent change vs the previous day, capped at +500% per dimension",
-        "engagement": "Engagement rate",
-        "videoVolume": "Video volume",
-        "views": "Views",
+        "howCalculated": "how fast that spread is changing per day — a rate, ranked only against the narratives re-measured the same day",
+        "notMeasured": "not re-measured on this date — the rate is unknown, not zero",
         "context": {
-          "explosive": "explosive growth vs yesterday",
-          "fast": "fast growth vs yesterday",
-          "notable": "notable growth vs yesterday",
-          "modest": "modest growth vs yesterday",
-          "flat": "roughly flat vs yesterday"
+          "fastest": "among the fastest-moving measured today",
+          "faster": "moving faster than most measured today",
+          "middle": "moving about as fast as the rest measured today",
+          "slower": "barely moving compared with the rest measured today"
         }
+      },
+      "components": {
+        "engagement": "Engagement",
+        "reach": "Reach",
+        "videoVolume": "Video volume",
+        "views": "Views"
+      },
+      "quadrant": {
+        "xAxis": "→ spread percentile",
+        "yAxis": "↑ acceleration percentile",
+        "aria": "Spread in the {composite}th percentile, acceleration in the {accel}th.",
+        "ariaNoAccel": "Spread in the {composite}th percentile; acceleration not measured on this date."
       }
     }
   },

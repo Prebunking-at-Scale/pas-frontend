@@ -292,17 +292,17 @@
     "textPlaceholder": "Entrez le texte de recherche",
     "alertLevel": "Niveau d'alerte",
     "alertLevelDescriptions": {
-      "viral": "Très populaire et en forte accélération.",
-      "alert": "Populaire et en forte croissance au jour le jour.",
-      "early_surge": "Encore petite mais en croissance explosive.",
-      "watch": "Croissance modérée, ou populaire mais stable."
+      "viral": "Parmi les récits les plus répandus, et toujours en hausse.",
+      "early_surge": "Encore modeste, mais en forte hausse.",
+      "trending": "De taille notable et en mouvement — le gros du corpus.",
+      "consolidated": "Vaste, mais il ne croît plus."
     },
     "alertLevels": {
       "viral": "Viral",
-      "alert": "Alerte",
       "early_surge": "Montée précoce",
-      "watch": "Surveiller",
-      "none": "Aucun"
+      "trending": "En circulation",
+      "consolidated": "Consolidé",
+      "unbadged": "Sans étiquette"
     },
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
@@ -401,26 +401,26 @@
     "alertLevelConditionWATCH": "IVC > 0.55 ou IA > 1.2",
     "alertLevelConditionVIRAL": "IVC > 0.85 et IA > 1.0",
     "indicators": {
-      "empty": "Aucun indicateur d'analyse n'a encore été calculé pour ce récit.",
-      "asOf": "Mis à jour {when}",
+      "empty": "Ce récit n'a jamais été mesuré, il n'y a donc rien à évaluer pour l'instant.",
+      "asOf": "Mesuré {when}",
       "today": "aujourd'hui",
       "yesterday": "hier",
       "daysAgo": "il y a {n} jours",
       "technicalDetails": "Détails techniques",
-      "thresholds": "Seuils d'alerte",
+      "thresholds": "Comment les étiquettes sont tracées",
+      "unbadgedCondition": "modeste et immobile — tout ce que les quatre régions laissent de côté",
+      "coverage": "Taux calculé à partir de {videos} vidéo(s) remesurée(s), {days} jours en moyenne depuis leur relevé précédent.",
       "verdict": {
-        "viral": "Ce récit est parmi les plus populaires ET s'accélère rapidement.",
-        "alert": "Populaire et en croissance notable d'un jour à l'autre.",
-        "early_surge": "Croissance explosive à partir d'une base modeste.",
-        "watch": "Populaire mais stable, ou en croissance modérée depuis une base plus faible.",
-        "none": "Aucune activité notable pour le moment."
+        "viral": "Parmi les récits les plus répandus, et toujours en hausse.",
+        "early_surge": "Encore modeste, mais en forte hausse.",
+        "trending": "De taille notable et en mouvement — le gros du corpus.",
+        "consolidated": "Vaste, mais sa croissance s'est arrêtée.",
+        "unbadged": "Mesuré aujourd'hui : modeste et sans mouvement. Aucune étiquette ne s'applique.",
+        "unmeasured": "Non remesuré à cette date : sa vitesse de progression est donc inconnue. La taille indiquée ci-dessous reste le dernier relevé."
       },
       "composite": {
-        "label": "Popularité",
-        "howCalculated": "centile pondéré d'engagement, portée et vélocité",
-        "engagement": "Engagement",
-        "reach": "Portée",
-        "velocity": "Vélocité",
+        "label": "Diffusion",
+        "howCalculated": "jusqu'où il s'est répandu — un état, classé face à tous les récits jamais mesurés",
         "context": {
           "top5": "top 5 % parmi tous les récits",
           "top15": "top 15 % parmi tous les récits",
@@ -432,17 +432,26 @@
       },
       "acceleration": {
         "label": "Accélération",
-        "howCalculated": "variation en % pondérée vs la veille, plafonnée à +500 % par dimension",
-        "engagement": "Taux d'engagement",
-        "videoVolume": "Volume vidéo",
-        "views": "Vues",
+        "howCalculated": "à quelle vitesse cette diffusion change par jour — un taux, classé uniquement face aux récits remesurés le même jour",
+        "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
         "context": {
-          "explosive": "croissance explosive vs hier",
-          "fast": "croissance rapide vs hier",
-          "notable": "croissance notable vs hier",
-          "modest": "croissance modérée vs hier",
-          "flat": "quasiment plat vs hier"
+          "fastest": "parmi les plus rapides des récits mesurés aujourd'hui",
+          "faster": "progresse plus vite que la plupart des récits mesurés aujourd'hui",
+          "middle": "progresse au même rythme que les autres récits mesurés aujourd'hui",
+          "slower": "bouge à peine par rapport aux autres récits mesurés aujourd'hui"
         }
+      },
+      "components": {
+        "engagement": "Engagement",
+        "reach": "Portée",
+        "videoVolume": "Volume vidéo",
+        "views": "Vues"
+      },
+      "quadrant": {
+        "xAxis": "→ centile de diffusion",
+        "yAxis": "↑ centile d'accélération",
+        "aria": "Diffusion au {composite}e centile, accélération au {accel}e.",
+        "ariaNoAccel": "Diffusion au {composite}e centile ; accélération non mesurée à cette date."
       }
     }
   },

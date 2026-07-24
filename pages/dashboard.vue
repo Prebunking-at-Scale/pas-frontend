@@ -26,14 +26,15 @@
 
       <div v-else>
 
-      <!-- Top narratives per alert level, ordered by severity (viral, alert,
-           early surge, watch), ranked by composite virality score (early surge
-           by acceleration). alert_level is the current daily classification, so
-           these sections are not scoped by the timeframe selector (which still
-           drives Topics and Entities below). Each box is tinted towards its
-           alert colour. -->
+      <!-- Top narratives per alert level. The four labels are regions of a plane, not
+           rungs of a severity ladder, so the order here is a reading order: the two
+           that are climbing first, then the two that describe a settled state. Each is
+           ranked by the axis that defines it (early surge by acceleration, the rest by
+           composite). alert_level is the current daily classification, so these sections
+           are not scoped by the timeframe selector, which still drives Topics and
+           Entities below. -->
       <template v-for="level in ALERT_SECTIONS" :key="level">
-        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="SECTION_BG[level]">
+        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="ALERT_LEVEL_TINT[level]">
           <div class="flex items-center justify-between gap-4 mb-4">
             <h3 class="text-lg font-medium text-gray-900">
               {{ $t('dashboard.topN', { n: sections[level].length }) }}
@@ -119,6 +120,7 @@ import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
 import { NarrativeAlertLevel } from '~/types/api';
+import { ALERT_LEVEL_ORDER, ALERT_LEVEL_SORT, ALERT_LEVEL_TINT } from '~/utils/alertLevels';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -139,32 +141,8 @@ enum AVAILABLE_TIMEFRAMES {
 
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
-// Alert-level sections, ordered by severity: viral first, then alert,
-// early surge and watch.
-const ALERT_SECTIONS = [
-  NarrativeAlertLevel.VIRAL,
-  NarrativeAlertLevel.ALERT,
-  NarrativeAlertLevel.EARLY_SURGE,
-  NarrativeAlertLevel.WATCH,
-] as const;
+const ALERT_SECTIONS = ALERT_LEVEL_ORDER;
 const SECTION_LIMIT = 6;
-
-// Box background tinted towards each level's alert colour (translucent).
-const SECTION_BG: Record<string, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
-  [NarrativeAlertLevel.ALERT]: 'bg-amber-500/10',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
-  [NarrativeAlertLevel.WATCH]: 'bg-blue-500/10',
-};
-
-// Ranking score per level: early surge is defined by acceleration (the
-// emerging signal), the rest by overall composite virality.
-const SECTION_SORT: Record<string, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'composite',
-  [NarrativeAlertLevel.ALERT]: 'composite',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
-  [NarrativeAlertLevel.WATCH]: 'composite',
-};
 
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
@@ -186,18 +164,16 @@ const stats = ref<{
 
 // Narratives and totals per alert level.
 const sections = ref<Record<NarrativeAlertLevel, NarrativeSummary[]>>({
-  [NarrativeAlertLevel.NONE]: [],
   [NarrativeAlertLevel.VIRAL]: [],
   [NarrativeAlertLevel.EARLY_SURGE]: [],
-  [NarrativeAlertLevel.ALERT]: [],
-  [NarrativeAlertLevel.WATCH]: [],
+  [NarrativeAlertLevel.TRENDING]: [],
+  [NarrativeAlertLevel.CONSOLIDATED]: [],
 });
 const counts = ref<Record<NarrativeAlertLevel, number>>({
-  [NarrativeAlertLevel.NONE]: 0,
   [NarrativeAlertLevel.VIRAL]: 0,
   [NarrativeAlertLevel.EARLY_SURGE]: 0,
-  [NarrativeAlertLevel.ALERT]: 0,
-  [NarrativeAlertLevel.WATCH]: 0,
+  [NarrativeAlertLevel.TRENDING]: 0,
+  [NarrativeAlertLevel.CONSOLIDATED]: 0,
 });
 
 const loading = ref(true);
@@ -261,7 +237,7 @@ const loadData = async () => {
       apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
       apiService.getEntities({ limit: 12, hours }),
       ...ALERT_SECTIONS.map((level) =>
-        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: SECTION_SORT[level] })
+        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: ALERT_LEVEL_SORT[level] })
       ),
     ]);
 
