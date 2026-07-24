@@ -258,17 +258,24 @@ const axisBreakdowns = computed(() => [
   },
 ]);
 
-// `video_volume_weight` has no matching `change_video_volume`; the API calls the value
-// `change_video_count`. Map the handful of names that differ to their i18n keys.
+// Map the component names that differ from their i18n key to that key.
 const COMPONENT_LABELS: Record<string, string> = {
   engagement: 'engagement',
   reach: 'reach',
   video_volume: 'videoVolume',
   views: 'views',
 };
+
+/**
+ * Rendering the breakdown from whatever weights arrive means a component we have no
+ * label for can turn up — indicator rows written before the redesign still carry
+ * `velocity_weight`, and a future backend may add a term before this repo knows its
+ * name. Fall back to a humanised key rather than printing the i18n path at the user.
+ */
 function componentLabel(key: string): string {
-  const slug = COMPONENT_LABELS[key] ?? key;
-  return $i18n.t(`narratives.indicators.components.${slug}`);
+  const path = `narratives.indicators.components.${COMPONENT_LABELS[key] ?? key}`;
+  if ($i18n.te(path)) return $i18n.t(path);
+  return key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
 }
 
 const coverage = computed(() => {
