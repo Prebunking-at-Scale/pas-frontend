@@ -404,7 +404,9 @@
           "faster": "schneller als die meisten heute gemessenen",
           "middle": "etwa so schnell wie die übrigen heute gemessenen",
           "slower": "kaum in Bewegung im Vergleich zu den übrigen heute gemessenen"
-        }
+        },
+        "perDay": "pro Tag, bei den Aufrufen",
+        "rankContext": "Rang {rank} — {context}"
       },
       "quadrant": {
         "xAxis": "Verbreitungsperzentil",

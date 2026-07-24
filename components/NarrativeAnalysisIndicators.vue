@@ -58,11 +58,21 @@
             <span class="text-sm font-medium text-gray-700">
               {{ $t('narratives.indicators.acceleration.label') }}
             </span>
-            <span
-              class="text-2xl font-semibold tabular-nums"
-              :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
-            >
-              {{ accelPct === null ? '—' : formatPercentile(accelPct) }}
+            <!-- The headline is the narrative's actual daily view growth, not its rank.
+                 A rank answers "faster than whom", which reads as a magnitude when it is
+                 not one: five views above an otherwise flat cohort ranks around the
+                 quarter mark while having grown 0.005%. The rank is what earns the badge,
+                 so it moves to the line below rather than disappearing. -->
+            <span class="flex items-baseline gap-1">
+              <span
+                class="text-2xl font-semibold tabular-nums"
+                :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
+              >
+                {{ accelHeadline }}
+              </span>
+              <span v-if="accelGrowth !== null" class="text-xs text-gray-500">
+                {{ $t('narratives.indicators.acceleration.perDay') }}
+              </span>
             </span>
           </div>
           <div class="h-2 bg-gray-100 rounded overflow-hidden">
@@ -170,6 +180,31 @@ const accelPct = computed<number | null>(() => {
   return accel.metadata?.percentile ?? null;
 });
 
+/**
+ * The narrative's actual view growth per day, as a fraction of the baseline it grew
+ * from — `change_views`, the largest of the three components acceleration blends.
+ *
+ * This is the only part of the rate that is a plain growth figure. The other two are a
+ * change in how many videos we have linked and a change in engagement ratio, neither of
+ * which is "how fast is this spreading", so neither belongs in a headline that reads as
+ * a percentage. The consequence is that a narrative whose rank came from gaining videos
+ * shows a small headline beside a high rank; the rank on the line below is what the
+ * badge was read from, and the two are answering different questions.
+ *
+ * Null for a narrative not re-measured on this date, and also for rows written before
+ * the redesign, which carry no components — hence the fallback to the rank.
+ */
+const accelGrowth = computed<number | null>(() => {
+  const value = current.value?.acceleration_rate?.metadata?.change_views;
+  return typeof value === 'number' ? value : null;
+});
+
+const accelHeadline = computed(() => {
+  if (accelPct.value === null) return '—';
+  if (accelGrowth.value === null) return formatPercentile(accelPct.value);
+  return formatGrowth(accelGrowth.value);
+});
+
 const level = computed<NarrativeAlertLevel | null>(() => normalizeAlertLevel(props.alertLevel));
 
 // ── Plain-language context ────────────────────────────────────────────────
@@ -192,10 +227,17 @@ const compositeContextLabel = computed(() => {
 const accelContextLabel = computed(() => {
   const v = accelPct.value;
   if (v === null) return $i18n.t('narratives.indicators.acceleration.notMeasured');
-  if (v >= 0.80) return $i18n.t('narratives.indicators.acceleration.context.fastest');
-  if (v >= 0.50) return $i18n.t('narratives.indicators.acceleration.context.faster');
-  if (v >= 0.40) return $i18n.t('narratives.indicators.acceleration.context.middle');
-  return $i18n.t('narratives.indicators.acceleration.context.slower');
+  const context
+    = v >= 0.80 ? $i18n.t('narratives.indicators.acceleration.context.fastest')
+    : v >= 0.50 ? $i18n.t('narratives.indicators.acceleration.context.faster')
+    : v >= 0.40 ? $i18n.t('narratives.indicators.acceleration.context.middle')
+    : $i18n.t('narratives.indicators.acceleration.context.slower');
+  // The rank is no longer the headline, but it is what the classifier read, so a reader
+  // asking why a badge landed still needs to see it.
+  return $i18n.t('narratives.indicators.acceleration.rankContext', {
+    rank: formatPercentile(v),
+    context,
+  });
 });
 
 // ── Technical details ─────────────────────────────────────────────────────
@@ -210,6 +252,20 @@ const coverage = computed(() => {
 
 function formatPercentile(v: number): string {
   return `${(v * 100).toFixed(0)}%`;
+}
+
+/**
+ * A daily growth fraction as a percentage, with enough precision that a near-flat
+ * narrative reads as near-flat rather than rounding to a confident "0.0%". Below
+ * 0.001% there is nothing honest left to show, so say that instead of a number.
+ */
+function formatGrowth(v: number): string {
+  const magnitude = Math.abs(v) * 100;
+  if (magnitude === 0) return '0%';
+  const sign = v > 0 ? '+' : '−';
+  if (magnitude < 0.001) return `${sign}<0.001%`;
+  const decimals = magnitude >= 10 ? 0 : magnitude >= 1 ? 1 : magnitude >= 0.1 ? 2 : 3;
+  return `${sign}${magnitude.toFixed(decimals)}%`;
 }
 
 /**

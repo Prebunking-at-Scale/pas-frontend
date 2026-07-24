@@ -431,6 +431,8 @@
       "acceleration": {
         "label": "Accélération",
         "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
+        "perDay": "par jour, en vues",
+        "rankContext": "rang {rank} — {context}",
         "context": {
           "fastest": "parmi les plus rapides des récits mesurés aujourd'hui",
           "faster": "progresse plus vite que la plupart des récits mesurés aujourd'hui",

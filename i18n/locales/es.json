@@ -435,7 +435,9 @@
           "faster": "se mueve más rápido que la mayoría de las medidas hoy",
           "middle": "se mueve a un ritmo parecido al resto de las medidas hoy",
           "slower": "apenas se mueve en comparación con el resto de las medidas hoy"
-        }
+        },
+        "perDay": "al día, en visualizaciones",
+        "rankContext": "puesto {rank} — {context}"
       },
       "quadrant": {
         "xAxis": "Percentil de difusión",

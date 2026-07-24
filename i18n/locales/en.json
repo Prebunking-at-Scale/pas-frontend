@@ -437,7 +437,9 @@
           "faster": "moving faster than most measured today",
           "middle": "moving about as fast as the rest measured today",
           "slower": "barely moving compared with the rest measured today"
-        }
+        },
+        "perDay": "per day, in views",
+        "rankContext": "rank {rank} — {context}"
       },
       "quadrant": {
         "xAxis": "Spread percentile",
