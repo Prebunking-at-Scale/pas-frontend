@@ -440,8 +440,8 @@
         }
       },
       "quadrant": {
-        "xAxis": "→ centile de diffusion",
-        "yAxis": "↑ centile d'accélération",
+        "xAxis": "Centile de diffusion",
+        "yAxis": "Centile d'accélération",
         "aria": "Diffusion au {composite}e centile, accélération au {accel}e.",
         "ariaNoAccel": "Diffusion au {composite}e centile ; accélération non mesurée à cette date."
       }

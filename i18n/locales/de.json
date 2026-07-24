@@ -408,8 +408,8 @@
         }
       },
       "quadrant": {
-        "xAxis": "→ Verbreitungsperzentil",
-        "yAxis": "↑ Beschleunigungsperzentil",
+        "xAxis": "Verbreitungsperzentil",
+        "yAxis": "Beschleunigungsperzentil",
         "aria": "Verbreitung im {composite}. Perzentil, Beschleunigung im {accel}.",
         "ariaNoAccel": "Verbreitung im {composite}. Perzentil; Beschleunigung an diesem Datum nicht gemessen."
       }

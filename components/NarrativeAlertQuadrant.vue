@@ -100,12 +100,26 @@
         <text v-for="c in AXIS_TICKS" :key="`vt${c}`" :x="sx(c)" :y="sy(0) + 11" text-anchor="middle">{{ fmt(c) }}</text>
         <text v-for="a in AXIS_TICKS" :key="`ht${a}`" :x="sx(0) - 5" :y="sy(a) + 3" text-anchor="end">{{ fmt(a) }}</text>
       </g>
-    </svg>
 
-    <figcaption class="mt-2 flex justify-between gap-4 text-[11px] text-gray-500">
-      <span>{{ $t('narratives.indicators.quadrant.yAxis') }}</span>
-      <span>{{ $t('narratives.indicators.quadrant.xAxis') }}</span>
-    </figcaption>
+      <!-- Axis names, sitting on their own axis. Naming them here rather than in a
+           caption keeps the label attached to the thing it names, so a reader never has
+           to work out which of two captions belongs to which direction. -->
+      <text
+        :x="sx(0.5)"
+        :y="H - 5"
+        text-anchor="middle"
+        class="fill-gray-500 select-none"
+        font-size="10"
+      >{{ $t('narratives.indicators.quadrant.xAxis') }}</text>
+      <text
+        :x="-(PAD.top + PLOT / 2)"
+        y="11"
+        transform="rotate(-90)"
+        text-anchor="middle"
+        class="fill-gray-500 select-none"
+        font-size="10"
+      >{{ $t('narratives.indicators.quadrant.yAxis') }}</text>
+    </svg>
   </figure>
 </template>
 
@@ -133,9 +147,10 @@ const { $i18n } = useNuxtApp();
 
 const BOUNDS = ALERT_BOUNDS;
 
-// Plot box plus room for tick labels on the left and under the baseline.
+// Plot box plus margins: each side carries its tick numbers and then its axis name,
+// which is why left and bottom are deeper than top and right.
 const PLOT = 200;
-const PAD = { left: 22, top: 8, right: 8, bottom: 16 };
+const PAD = { left: 40, top: 8, right: 8, bottom: 32 };
 const W = PAD.left + PLOT + PAD.right;
 const H = PAD.top + PLOT + PAD.bottom;
 

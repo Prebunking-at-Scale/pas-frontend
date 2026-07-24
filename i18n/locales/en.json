@@ -441,8 +441,8 @@
         }
       },
       "quadrant": {
-        "xAxis": "→ spread percentile",
-        "yAxis": "↑ acceleration percentile",
+        "xAxis": "Spread percentile",
+        "yAxis": "Acceleration percentile",
         "aria": "Spread in the {composite}th percentile, acceleration in the {accel}th.",
         "ariaNoAccel": "Spread in the {composite}th percentile; acceleration not measured on this date."
       }
