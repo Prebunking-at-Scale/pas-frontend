@@ -14,7 +14,7 @@
 import type { RawNarrativeAlertLevel } from '~/types/api';
 import { NarrativeAlertLevel } from '~/types/api';
 
-export type AlertBadgeVariant = 'destructive' | 'orange' | 'warning' | 'blue';
+export type AlertBadgeVariant = 'destructive' | 'orange' | 'warning' | 'purple';
 
 /**
  * Region boundaries on the percentile plane. Both axes are percentiles (0..1), so a
@@ -77,7 +77,7 @@ export const ALERT_LEVEL_ORDER: NarrativeAlertLevel[] = [
 
 /**
  * Colour by meaning rather than by severity: red, orange and yellow for the three that
- * are moving, blue for large-and-settled. The old palette ran a red→yellow→orange→grey
+ * are moving, purple for large-and-settled. The old palette ran a red→yellow→orange→grey
  * ladder, which misread `consolidated` as a lesser alarm when it is simply a different
  * statement about a narrative.
  */
@@ -85,7 +85,7 @@ export const ALERT_LEVEL_VARIANT: Record<NarrativeAlertLevel, AlertBadgeVariant>
   [NarrativeAlertLevel.VIRAL]: 'destructive',
   [NarrativeAlertLevel.EARLY_SURGE]: 'orange',
   [NarrativeAlertLevel.TRENDING]: 'warning',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'blue',
+  [NarrativeAlertLevel.CONSOLIDATED]: 'purple',
 };
 
 /** Translucent tints for section backgrounds, keyed to the badge colours. */
@@ -93,7 +93,7 @@ export const ALERT_LEVEL_TINT: Record<NarrativeAlertLevel, string> = {
   [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
   [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
   [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500/10',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-blue-500/10',
+  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-purple-500/10',
 };
 
 /** Solid fills, for the filter checkboxes and the quadrant regions. */
@@ -101,7 +101,7 @@ export const ALERT_LEVEL_FILL: Record<NarrativeAlertLevel, string> = {
   [NarrativeAlertLevel.VIRAL]: 'bg-red-600 text-white',
   [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500 text-white',
   [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500 text-white',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-blue-600 text-white',
+  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-purple-600 text-white',
 };
 
 /**

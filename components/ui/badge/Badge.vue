@@ -25,8 +25,6 @@ const badgeVariants = cva(
           'border-transparent bg-yellow-500 text-white hover:bg-yellow-600',
         purple:
           'border-transparent bg-purple-500 text-white hover:bg-purple-600',
-        blue:
-          'border-transparent bg-blue-600 text-white hover:bg-blue-700',
         outline: 'text-foreground',
       },
     },
@@ -37,7 +35,7 @@ const badgeVariants = cva(
 )
 
 interface BadgeProps {
-  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'orange' | 'warning' | 'purple' | 'blue'
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'orange' | 'warning' | 'purple'
   textSize?: string
 }
 

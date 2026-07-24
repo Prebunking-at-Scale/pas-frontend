@@ -1,91 +1,122 @@
 <template>
   <figure class="w-full">
     <svg
-      :viewBox="`0 0 ${VB} ${VB}`"
-      class="w-full max-w-sm mx-auto overflow-visible"
+      :viewBox="`0 0 ${W} ${H}`"
+      class="w-full max-w-xs mx-auto"
       role="img"
       :aria-label="ariaLabel"
     >
-      <!-- Regions, painted in reverse classification order so the ones carved out of
-           the others (viral out of trending) end up on top. -->
-      <g>
-        <rect
-          v-for="region in paintOrder"
-          :key="region.level"
-          :x="region.x"
-          :y="region.y"
-          :width="region.w"
-          :height="region.h"
-          :class="REGION_CLASS[region.level]"
-          :fill-opacity="level === region.level ? 0.42 : 0.13"
-        />
+      <!-- The unbadged corner, in neutral ink. The four regions do not tile the plane
+           and this is the gap: small AND flat earns no label. Worth showing, because an
+           unbadged narrative is a result, not a missing one. -->
+      <rect
+        :x="sx(0)"
+        :y="sy(BOUNDS.accel.lo)"
+        :width="sx(BOUNDS.composite.lo) - sx(0)"
+        :height="sy(0) - sy(BOUNDS.accel.lo)"
+        class="fill-gray-100"
+      />
+
+      <!-- Threshold lines. Recessive: they are scaffolding for reading the position,
+           not the subject. -->
+      <g class="stroke-gray-200" stroke-width="1">
+        <line v-for="c in TICKS" :key="`v${c}`" :x1="sx(c)" :y1="sy(1)" :x2="sx(c)" :y2="sy(0)" />
+        <line v-for="a in TICKS" :key="`h${a}`" :x1="sx(0)" :y1="sy(a)" :x2="sx(1)" :y2="sy(a)" />
       </g>
 
-      <!-- Region labels, only where the rectangle can hold one. -->
+      <!-- Plot frame -->
+      <rect
+        :x="sx(0)"
+        :y="sy(1)"
+        :width="sx(1) - sx(0)"
+        :height="sy(0) - sy(1)"
+        class="fill-none stroke-slate-300"
+        stroke-width="1"
+      />
+
+      <!-- Region names in muted ink, never in the series colour: the label carries the
+           identity, so the plot never depends on colour alone to be read. The one the
+           narrative occupies is darkened and bolded. -->
       <text
-        v-for="region in paintOrder"
-        :key="`label-${region.level}`"
-        :x="region.labelX"
-        :y="region.labelY"
-        :text-anchor="region.labelAnchor"
-        class="fill-gray-600 select-none"
-        :class="level === region.level ? 'font-semibold' : ''"
-        :font-size="LABEL_SIZE"
-      >
-        {{ $t(`narratives.alertLevels.${region.level}`) }}
-      </text>
+        v-for="label in LABELS"
+        :key="label.level ?? 'unbadged'"
+        :x="sx(label.x)"
+        :y="sy(label.y)"
+        :text-anchor="label.anchor"
+        :dominant-baseline="label.baseline"
+        :class="label.level === level ? 'fill-gray-900 font-semibold' : 'fill-gray-400'"
+        font-size="10"
+        stroke-width="2.5"
+        paint-order="stroke"
+        stroke-linejoin="round"
+        class="select-none stroke-white"
+      >{{ label.level ? $t(`narratives.alertLevels.${label.level}`) : $t('narratives.alertLevels.unbadged') }}</text>
 
-      <!-- Frame and the two boundary grids. -->
-      <rect :x="0" :y="0" :width="VB" :height="VB" class="fill-none stroke-gray-300" stroke-width="1" />
-      <g class="stroke-gray-300" stroke-width="0.5" stroke-dasharray="2 2">
-        <line v-for="c in COMPOSITE_TICKS" :key="`v${c}`" :x1="sx(c)" :y1="0" :x2="sx(c)" :y2="VB" />
-        <line v-for="a in ACCEL_TICKS" :key="`h${a}`" :x1="0" :y1="sy(a)" :x2="VB" :y2="sy(a)" />
-      </g>
+      <!-- The narrative's own region, outlined at full strength. Colour appears exactly
+           once in this chart, which is what keeps it legible: no translucent fills, so
+           no muddy blend where `viral` overlaps `trending`. -->
+      <rect
+        v-if="activeRegion"
+        :x="sx(activeRegion.composite[0])"
+        :y="sy(activeRegion.accel[1])"
+        :width="sx(activeRegion.composite[1]) - sx(activeRegion.composite[0])"
+        :height="sy(activeRegion.accel[0]) - sy(activeRegion.accel[1])"
+        class="fill-none"
+        :class="REGION_STROKE[activeRegion.level]"
+        stroke-width="2.5"
+      />
 
-      <!-- The narrative itself. With no acceleration there is no point to plot, only a
-           known composite: a vertical line says "somewhere on this column, we don't
-           know how high" rather than dropping the dot to zero and implying flat. -->
+      <!-- The narrative. With no acceleration there is no point to plot, only a known
+           spread: a column says "somewhere on this line, height unknown" rather than
+           dropping the marker to zero and implying flat. -->
       <template v-if="accelPct !== null">
-        <circle :cx="sx(compositePct)" :cy="sy(accelPct)" :r="6" class="fill-white stroke-gray-900" stroke-width="2" />
-        <circle :cx="sx(compositePct)" :cy="sy(accelPct)" :r="2.5" class="fill-gray-900" />
+        <circle
+          :cx="sx(compositePct)"
+          :cy="sy(accelPct)"
+          r="7"
+          class="stroke-white"
+          :class="level ? REGION_FILL[level] : 'fill-gray-900'"
+          stroke-width="2.5"
+        >
+          <title>{{ ariaLabel }}</title>
+        </circle>
       </template>
-      <template v-else>
-        <line
-          :x1="sx(compositePct)"
-          :y1="0"
-          :x2="sx(compositePct)"
-          :y2="VB"
-          class="stroke-gray-900"
-          stroke-width="2"
-          stroke-dasharray="4 3"
-        />
-      </template>
+      <line
+        v-else
+        :x1="sx(compositePct)"
+        :y1="sy(1)"
+        :x2="sx(compositePct)"
+        :y2="sy(0)"
+        class="stroke-gray-900"
+        stroke-width="2"
+        stroke-dasharray="3 3"
+      >
+        <title>{{ ariaLabel }}</title>
+      </line>
 
-      <!-- Axis ticks. -->
-      <g class="fill-gray-400" :font-size="TICK_SIZE">
-        <text v-for="c in COMPOSITE_TICKS" :key="`vt${c}`" :x="sx(c)" :y="VB + 12" text-anchor="middle">
-          {{ c.toFixed(1) }}
-        </text>
-        <text v-for="a in ACCEL_TICKS" :key="`ht${a}`" :x="-6" :y="sy(a) + 3" text-anchor="end">
-          {{ a.toFixed(1) }}
-        </text>
+      <!-- Axis ticks at the thresholds themselves — the only values on these axes that
+           change what a narrative is called. -->
+      <g class="fill-gray-400" font-size="8">
+        <text v-for="c in AXIS_TICKS" :key="`vt${c}`" :x="sx(c)" :y="sy(0) + 11" text-anchor="middle">{{ fmt(c) }}</text>
+        <text v-for="a in AXIS_TICKS" :key="`ht${a}`" :x="sx(0) - 5" :y="sy(a) + 3" text-anchor="end">{{ fmt(a) }}</text>
       </g>
     </svg>
 
-    <figcaption class="mt-6 flex justify-between text-xs text-gray-500 gap-4">
-      <span>{{ $t('narratives.indicators.quadrant.xAxis') }}</span>
+    <figcaption class="mt-2 flex justify-between gap-4 text-[11px] text-gray-500">
       <span>{{ $t('narratives.indicators.quadrant.yAxis') }}</span>
+      <span>{{ $t('narratives.indicators.quadrant.xAxis') }}</span>
     </figcaption>
   </figure>
 </template>
 
 <script setup lang="ts">
 /**
- * The narrative's position on the percentile plane, with the four regions drawn.
+ * Where the narrative sits on the percentile plane, with the four regions drawn.
  *
- * Two bars cannot show this: `viral` is a conjunction (top of BOTH axes) and
- * `early_surge` is capped on composite — a small narrative climbing, never a large one.
- * Read as two independent readings, both look like "high-ish on something".
+ * Two bars cannot show this. `viral` is a conjunction — top of BOTH axes — and
+ * `early_surge` is capped on spread, so it means "small and climbing" rather than
+ * "anything climbing". Read as two independent readings, both look like "high-ish on
+ * something", which is exactly the confusion the plane resolves.
  */
 import type { NarrativeAlertLevel } from '~/types/api';
 import { ALERT_BOUNDS, ALERT_REGIONS } from '~/utils/alertLevels';
@@ -100,45 +131,63 @@ const props = defineProps<Props>();
 
 const { $i18n } = useNuxtApp();
 
-const VB = 200;
-const LABEL_SIZE = 9;
-const TICK_SIZE = 8;
+const BOUNDS = ALERT_BOUNDS;
 
-const COMPOSITE_TICKS = [ALERT_BOUNDS.composite.lo, ALERT_BOUNDS.composite.mid, ALERT_BOUNDS.composite.hi];
-const ACCEL_TICKS = [ALERT_BOUNDS.accel.lo, ALERT_BOUNDS.accel.mid, ALERT_BOUNDS.accel.hi];
+// Plot box plus room for tick labels on the left and under the baseline.
+const PLOT = 200;
+const PAD = { left: 22, top: 8, right: 8, bottom: 16 };
+const W = PAD.left + PLOT + PAD.right;
+const H = PAD.top + PLOT + PAD.bottom;
 
-// Percentile space is [0,1]; SVG y grows downward, so the accel axis is flipped.
-const sx = (v: number) => v * VB;
-const sy = (v: number) => (1 - v) * VB;
+// Percentile space is [0,1]; SVG y grows downward, so the acceleration axis is flipped.
+const sx = (v: number) => PAD.left + v * PLOT;
+const sy = (v: number) => PAD.top + (1 - v) * PLOT;
 
-const REGION_CLASS: Record<NarrativeAlertLevel, string> = {
-  viral: 'fill-red-500',
-  early_surge: 'fill-orange-500',
-  trending: 'fill-yellow-500',
-  consolidated: 'fill-blue-500',
+const TICKS = [BOUNDS.composite.lo, BOUNDS.composite.mid, BOUNDS.composite.hi];
+// 0.50 is a real boundary but sits 10 points from 0.40; labelling both crowds the axis,
+// so the line is drawn and only the outer two are numbered.
+const AXIS_TICKS = [BOUNDS.composite.lo, BOUNDS.composite.hi];
+const fmt = (v: number) => v.toFixed(1);
+
+const REGION_STROKE: Record<NarrativeAlertLevel, string> = {
+  viral: 'stroke-red-600',
+  early_surge: 'stroke-orange-600',
+  trending: 'stroke-yellow-600',
+  consolidated: 'stroke-purple-600',
 } as Record<NarrativeAlertLevel, string>;
 
-const paintOrder = computed(() =>
-  // Reversed: ALERT_REGIONS is in classification order (viral first, because it is
-  // carved out of trending), so painting back to front puts the carve-outs on top.
-  [...ALERT_REGIONS].reverse().map((region) => {
-    const [c0, c1] = region.composite;
-    const [a0, a1] = region.accel;
-    const x = sx(c0);
-    const y = sy(a1);
-    const w = sx(c1) - sx(c0);
-    const h = sy(a0) - sy(a1);
-    return {
-      level: region.level,
-      x, y, w, h,
-      // Labels sit in the top-left of their rectangle, inset, so overlapping regions
-      // (trending under viral) keep their captions visible.
-      labelX: x + 4,
-      labelY: y + LABEL_SIZE + 2,
-      labelAnchor: 'start' as const,
-    };
-  }),
-);
+const REGION_FILL: Record<NarrativeAlertLevel, string> = {
+  viral: 'fill-red-600',
+  early_surge: 'fill-orange-600',
+  trending: 'fill-yellow-600',
+  consolidated: 'fill-purple-600',
+} as Record<NarrativeAlertLevel, string>;
+
+/**
+ * Label anchors sit in each region's *exclusive* corner — the part no other region
+ * overlaps — so `viral` inside the `trending` box does not collide with it.
+ */
+const LABELS: {
+  level: NarrativeAlertLevel | null;
+  x: number;
+  y: number;
+  anchor: 'start' | 'end';
+  baseline: string;
+}[] = [
+  { level: 'early_surge' as NarrativeAlertLevel,  x: 0.035, y: 0.965, anchor: 'start', baseline: 'hanging' },
+  { level: 'viral' as NarrativeAlertLevel,        x: 0.965, y: 0.965, anchor: 'end',   baseline: 'hanging' },
+  { level: 'trending' as NarrativeAlertLevel,     x: 0.435, y: 0.455, anchor: 'start', baseline: 'auto' },
+  { level: 'consolidated' as NarrativeAlertLevel, x: 0.965, y: 0.045, anchor: 'end',   baseline: 'auto' },
+  { level: null,                                  x: 0.035, y: 0.045, anchor: 'start', baseline: 'auto' },
+];
+
+// Only outline a region when both coordinates are known: without a rate we cannot say
+// which row of the plane the narrative is on, and a stored badge from an earlier run is
+// not evidence about today.
+const activeRegion = computed(() => {
+  if (props.accelPct === null || !props.level) return null;
+  return ALERT_REGIONS.find((region) => region.level === props.level) ?? null;
+});
 
 const ariaLabel = computed(() => {
   const composite = (props.compositePct * 100).toFixed(0);
