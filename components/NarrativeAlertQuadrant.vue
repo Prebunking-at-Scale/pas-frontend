@@ -6,23 +6,19 @@
       role="img"
       :aria-label="ariaLabel"
     >
-      <!-- The unbadged corner, in neutral ink. The four regions do not tile the plane
-           and this is the gap: small AND flat earns no label. Worth showing, because an
-           unbadged narrative is a result, not a missing one. -->
+      <!-- The unbadged region, in neutral ink. It is an L, not a square: a narrative
+           below the `early_surge` floor but left of the `trending` floor is unbadged,
+           and so is one left of the `consolidated` floor but below `trending`. Drawing
+           it as a corner square understated it by a visible slice of the plane. -->
       <rect
-        :x="sx(0)"
-        :y="sy(BOUNDS.accel.lo)"
-        :width="sx(BOUNDS.composite.lo) - sx(0)"
-        :height="sy(0) - sy(BOUNDS.accel.lo)"
+        v-for="(box, i) in UNBADGED"
+        :key="`u${i}`"
+        :x="sx(box.composite[0])"
+        :y="sy(box.accel[1])"
+        :width="sx(box.composite[1]) - sx(box.composite[0])"
+        :height="sy(box.accel[0]) - sy(box.accel[1])"
         class="fill-gray-100"
       />
-
-      <!-- Threshold lines. Recessive: they are scaffolding for reading the position,
-           not the subject. -->
-      <g class="stroke-gray-200" stroke-width="1">
-        <line v-for="c in TICKS" :key="`v${c}`" :x1="sx(c)" :y1="sy(1)" :x2="sx(c)" :y2="sy(0)" />
-        <line v-for="a in TICKS" :key="`h${a}`" :x1="sx(0)" :y1="sy(a)" :x2="sx(1)" :y2="sy(a)" />
-      </g>
 
       <!-- Plot frame -->
       <rect
@@ -31,6 +27,22 @@
         :width="sx(1) - sx(0)"
         :height="sy(0) - sy(1)"
         class="fill-none stroke-slate-300"
+        stroke-width="1"
+      />
+
+      <!-- One outline per region, rather than a grid line per threshold. A grid draws
+           six full-span lines and leaves the reader to reassemble which crossings bound
+           which label; the boxes ARE the definition, so drawing them directly shows
+           that the regions are rectangles that overlap — `viral` sits inside the
+           `trending` box it is carved out of — which a grid actively hides. -->
+      <rect
+        v-for="region in ALERT_REGIONS"
+        :key="region.level"
+        :x="sx(region.composite[0])"
+        :y="sy(region.accel[1])"
+        :width="sx(region.composite[1]) - sx(region.composite[0])"
+        :height="sy(region.accel[0]) - sy(region.accel[1])"
+        class="fill-none stroke-gray-300"
         stroke-width="1"
       />
 
@@ -158,10 +170,22 @@ const H = PAD.top + PLOT + PAD.bottom;
 const sx = (v: number) => PAD.left + v * PLOT;
 const sy = (v: number) => PAD.top + (1 - v) * PLOT;
 
-const TICKS = [BOUNDS.composite.lo, BOUNDS.composite.mid, BOUNDS.composite.hi];
-// 0.50 is a real boundary but sits 10 points from 0.40; labelling both crowds the axis,
-// so the line is drawn and only the outer two are numbered.
+// 0.50 is a real boundary but sits 10 points from 0.40; numbering both crowds the axis,
+// so only the outer two are labelled — the region outlines show where 0.50 falls.
 const AXIS_TICKS = [BOUNDS.composite.lo, BOUNDS.composite.hi];
+
+/**
+ * The unbadged region, as two rectangles.
+ *
+ * It is an L rather than a corner square, and the difference is not cosmetic: the strip
+ * between the `trending` acceleration floor and the `early_surge` floor is unbadged, and
+ * so is the strip between the `trending` and `consolidated` spread floors. Expressed in
+ * terms of the bounds so it tracks a retune of the thresholds.
+ */
+const UNBADGED: { composite: [number, number]; accel: [number, number] }[] = [
+  { composite: [0, BOUNDS.composite.lo], accel: [0, BOUNDS.accel.mid] },
+  { composite: [BOUNDS.composite.lo, BOUNDS.composite.mid], accel: [0, BOUNDS.accel.lo] },
+];
 const fmt = (v: number) => v.toFixed(1);
 
 const REGION_STROKE: Record<NarrativeAlertLevel, string> = {
