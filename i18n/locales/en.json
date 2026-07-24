@@ -409,7 +409,6 @@
       "daysAgo": "{n} days ago",
       "technicalDetails": "Technical details",
       "thresholds": "How the labels are drawn",
-      "unbadgedCondition": "small and flat — everything the four regions leave out",
       "coverage": "Rate computed from {videos} re-measured video(s), {days} days since their previous reading on average.",
       "verdict": {
         "viral": "Among the largest narratives, and still climbing.",

@@ -90,39 +90,40 @@
         </button>
 
         <div v-if="detailsOpen" class="mt-4 space-y-4 text-xs text-gray-600">
-          <!-- Where the narrative sits on the percentile plane. This is what the two
-               bars above cannot show: `viral` is a conjunction of both axes, and
-               `early_surge` is capped on spread rather than being "anything climbing". -->
-          <NarrativeAlertQuadrant
-            :composite-pct="compositePct"
-            :accel-pct="accelPct"
-            :level="level"
-          />
+          <!-- The plot and the definitions it draws, side by side: the table names the
+               boundaries and the plot shows where they fall, so reading one against the
+               other should not cost a scroll. -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- Where the narrative sits on the percentile plane. This is what the two
+                 bars above cannot show: `viral` is a conjunction of both axes, and
+                 `early_surge` is capped on spread rather than being "anything climbing". -->
+            <NarrativeAlertQuadrant
+              :composite-pct="compositePct"
+              :accel-pct="accelPct"
+              :level="level"
+            />
+
+            <!-- The region definitions, derived from the same constants the plot uses. -->
+            <div>
+              <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
+              <table class="w-full text-[11px]">
+                <tbody>
+                  <tr v-for="region in ALERT_REGIONS" :key="region.level" class="border-b border-gray-100 last:border-0">
+                    <td class="py-1 pr-2">
+                      <AlertLevelBadge :level="region.level" />
+                    </td>
+                    <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
           <!-- How much of the narrative was actually re-measured. A rate computed from
                four of forty videos deserves less confidence than one from all forty. -->
           <p v-if="coverage" class="text-gray-500">
             {{ $t('narratives.indicators.coverage', coverage) }}
           </p>
-
-          <!-- The region definitions, derived from the same constants the plot uses. -->
-          <div>
-            <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
-            <table class="w-full text-[11px]">
-              <tbody>
-                <tr v-for="region in ALERT_REGIONS" :key="region.level" class="border-b border-gray-100 last:border-0">
-                  <td class="py-1 pr-2">
-                    <AlertLevelBadge :level="region.level" />
-                  </td>
-                  <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
-                </tr>
-                <tr>
-                  <td class="py-1 pr-2 text-gray-500">{{ $t('narratives.alertLevels.unbadged') }}</td>
-                  <td class="py-1 text-gray-600">{{ $t('narratives.indicators.unbadgedCondition') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
     </div>

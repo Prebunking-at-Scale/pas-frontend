@@ -407,7 +407,6 @@
       "daysAgo": "hace {n} días",
       "technicalDetails": "Detalles técnicos",
       "thresholds": "Cómo se trazan las etiquetas",
-      "unbadgedCondition": "pequeña y plana: todo lo que las cuatro regiones dejan fuera",
       "coverage": "Tasa calculada sobre {videos} vídeo(s) vueltos a medir, con {days} días de media desde su lectura anterior.",
       "verdict": {
         "viral": "Entre las narrativas más extendidas, y sigue subiendo.",
