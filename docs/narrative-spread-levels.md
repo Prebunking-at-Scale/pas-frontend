@@ -23,13 +23,41 @@ absolute bar would mean something different every week.
 | `viral` | ≥ 0.80 | ≥ 0.80 | among the largest, and still climbing |
 | `early_surge` | ≤ 0.40 | ≥ 0.50 | still small, climbing fast |
 | `consolidated` | ≥ 0.50 | ≤ 0.40 | large, no longer growing |
-| `trending` | ≥ 0.40 | ≥ 0.40 | the broad middle |
+| `trending` | ≥ 0.40 | ≥ 0.40 | the broad middle, **excluding** the `viral` corner |
 | *(no label)* | — | — | small **and** flat: everything the four leave out |
 
 Two things a quadrant reading gets wrong. The regions are **rectangles, not quadrants**,
 evaluated in the order above — `viral` is carved out of the `trending` box. And they do
 **not tile the plane**: the bottom-left corner gets no label at all, and no label is
 `spread_level === null`, not a level named "none".
+
+### The quadrant draws `trending` with the `viral` corner carved out
+
+`trending`'s rectangle strictly contains `viral`'s: anything at `≥ 0.80` on both axes
+satisfies `≥ 0.40` on both too. Classification resolves it because `viral` is tested
+first — but the plot has no evaluation order, so drawing both as plain rectangles made
+the outlines cross and asserted that the top-right corner was trending.
+
+`ALERT_REGIONS` therefore carries an optional `excludes`, and `regionPath()` in
+`NarrativeSpreadQuadrant.vue` renders `trending` as an L rather than a box:
+
+```
+(0.40,0.40) → (1,0.40) → (1,0.80) → (0.80,0.80) → (0.80,1) → (0.40,1)
+```
+
+No two region outlines overlap now, so every region encloses exactly the area it owns
+and the reader does not need to know the evaluation order to read the plot. The
+highlight drawn for the narrative's own region uses the same path — outlining
+`trending` as a full rectangle would light up the `viral` corner it does not own,
+which is exactly the case someone is most likely to be checking.
+
+The excluded region always shares the parent's upper bounds on both axes, so the result
+is an L traced in six points and never a shape with a hole. `excludes` is geometry and
+description only: `classifySpreadLevel` ignores it, because order already decides the
+answer and two sources of truth for the same overlap is how they drift apart.
+
+The technical-details table is deliberately left showing the plain bounds. It is a
+statement of each region's thresholds, and the plot is where the carve-out is legible.
 
 `early_surge` is capped on composite on purpose. It is not "anything climbing" — a large
 climber is `viral` if it clears both tops and `trending` otherwise.

@@ -36,11 +36,23 @@ export const ALERT_REGIONS: {
   level: NarrativeSpreadLevel;
   composite: [number, number];
   accel: [number, number];
+  /**
+   * A region whose area this one contains but does not own, because that region is
+   * tested first. Only affects how the region is *described*: classification order
+   * already resolves the overlap, so `classifySpreadLevel` does not read this.
+   *
+   * Written down because the rectangle alone is a true but incomplete account of
+   * `trending`. "Virality ≥ 0.40 ∧ Acceleration ≥ 0.40" reads as though the top-right
+   * corner were trending, when every narrative in it is viral. A reader checking a
+   * `viral` narrative against the table would find it satisfies the trending row too
+   * and conclude the table is wrong, rather than that one row is a superset.
+   */
+  excludes?: NarrativeSpreadLevel;
 }[] = [
   { level: NarrativeSpreadLevel.VIRAL,        composite: [ALERT_BOUNDS.composite.hi, 1], accel: [ALERT_BOUNDS.accel.hi, 1] },
   { level: NarrativeSpreadLevel.EARLY_SURGE,  composite: [0, ALERT_BOUNDS.composite.lo], accel: [ALERT_BOUNDS.accel.mid, 1] },
   { level: NarrativeSpreadLevel.CONSOLIDATED, composite: [ALERT_BOUNDS.composite.mid, 1], accel: [0, ALERT_BOUNDS.accel.lo] },
-  { level: NarrativeSpreadLevel.TRENDING,     composite: [ALERT_BOUNDS.composite.lo, 1], accel: [ALERT_BOUNDS.accel.lo, 1] },
+  { level: NarrativeSpreadLevel.TRENDING,     composite: [ALERT_BOUNDS.composite.lo, 1], accel: [ALERT_BOUNDS.accel.lo, 1], excludes: NarrativeSpreadLevel.VIRAL },
 ];
 
 /**

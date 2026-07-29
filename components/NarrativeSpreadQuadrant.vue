@@ -32,16 +32,14 @@
 
       <!-- One outline per region, rather than a grid line per threshold. A grid draws
            six full-span lines and leaves the reader to reassemble which crossings bound
-           which label; the boxes ARE the definition, so drawing them directly shows
-           that the regions are rectangles that overlap — `viral` sits inside the
-           `trending` box it is carved out of — which a grid actively hides. -->
-      <rect
+           which label; the shapes ARE the definition, so drawing them directly shows
+           which area carries which label. `trending` is drawn with the `viral` corner
+           carved out — see regionPath — so no two outlines overlap and the plot never
+           asserts that an area belongs to a label that does not own it. -->
+      <path
         v-for="region in ALERT_REGIONS"
         :key="region.level"
-        :x="sx(region.composite[0])"
-        :y="sy(region.accel[1])"
-        :width="sx(region.composite[1]) - sx(region.composite[0])"
-        :height="sy(region.accel[0]) - sy(region.accel[1])"
+        :d="regionPath(region)"
         class="fill-none stroke-gray-300"
         stroke-width="1"
       />
@@ -66,13 +64,12 @@
 
       <!-- The narrative's own region, outlined at full strength. Colour appears exactly
            once in this chart, which is what keeps it legible: no translucent fills, so
-           no muddy blend where `viral` overlaps `trending`. -->
-      <rect
+           nothing to blend. Uses the same carved path as the grey outlines: highlighting
+           `trending` as a full rectangle would light up the `viral` corner it does not
+           own, which is precisely the case a reader is most likely to be checking. -->
+      <path
         v-if="activeRegion"
-        :x="sx(activeRegion.composite[0])"
-        :y="sy(activeRegion.accel[1])"
-        :width="sx(activeRegion.composite[1]) - sx(activeRegion.composite[0])"
-        :height="sy(activeRegion.accel[0]) - sy(activeRegion.accel[1])"
+        :d="regionPath(activeRegion)"
         class="fill-none"
         :class="REGION_STROKE[activeRegion.level]"
         stroke-width="2.5"
@@ -187,6 +184,44 @@ const UNBADGED: { composite: [number, number]; accel: [number, number] }[] = [
   { composite: [BOUNDS.composite.lo, BOUNDS.composite.mid], accel: [0, BOUNDS.accel.lo] },
 ];
 const fmt = (v: number) => v.toFixed(1);
+
+/**
+ * A region's outline, with any region it `excludes` carved out of it.
+ *
+ * `trending` is stated as a rectangle that contains the whole `viral` corner; it only
+ * loses that corner because `viral` is tested first. Drawn as a plain rectangle the plot
+ * asserted the corner was trending, so the two outlines crossed and the reader had to
+ * know the evaluation order to resolve which label the overlap belonged to. Drawing the
+ * carve-out means the outlines never cross and every region owns exactly the area it is
+ * responsible for.
+ *
+ * The excluded region always shares this one's upper bounds on both axes — it is carved
+ * from a corner, not punched out of the middle — so the result is an L traced in six
+ * points, never a shape with a hole.
+ */
+function regionPath(region: typeof ALERT_REGIONS[number]): string {
+  const [c0, c1] = region.composite;
+  const [a0, a1] = region.accel;
+  const excluded = region.excludes
+    ? ALERT_REGIONS.find((r) => r.level === region.excludes)
+    : undefined;
+
+  if (!excluded) {
+    return `M${sx(c0)} ${sy(a0)}H${sx(c1)}V${sy(a1)}H${sx(c0)}Z`;
+  }
+
+  const [e0] = excluded.composite;
+  const [f0] = excluded.accel;
+  return [
+    `M${sx(c0)} ${sy(a0)}`, // bottom-left
+    `H${sx(c1)}`, // along the floor to the right edge
+    `V${sy(f0)}`, // up the right edge, stopping at the excluded region's floor
+    `H${sx(e0)}`, // left, under the excluded corner
+    `V${sy(a1)}`, // up its left edge to the ceiling
+    `H${sx(c0)}`, // back along the ceiling
+    'Z',
+  ].join('');
+}
 
 const REGION_STROKE: Record<NarrativeSpreadLevel, string> = {
   viral: 'stroke-red-600',
