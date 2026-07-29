@@ -418,7 +418,7 @@
         "unmeasured": "Non remesuré à cette date : sa vitesse de progression est donc inconnue. La taille indiquée ci-dessous reste le dernier relevé."
       },
       "composite": {
-        "label": "Diffusion",
+        "label": "Viralité",
         "context": {
           "top5": "top 5 % parmi tous les récits",
           "top15": "top 15 % parmi tous les récits",
@@ -441,10 +441,10 @@
         }
       },
       "quadrant": {
-        "xAxis": "Centile de diffusion",
+        "xAxis": "Centile de viralité",
         "yAxis": "Centile d'accélération",
-        "aria": "Diffusion au {composite}e centile, accélération au {accel}e.",
-        "ariaNoAccel": "Diffusion au {composite}e centile ; accélération non mesurée à cette date."
+        "aria": "Viralité au {composite}e centile, accélération au {accel}e.",
+        "ariaNoAccel": "Viralité au {composite}e centile ; accélération non mesurée à cette date."
       }
     }
   },

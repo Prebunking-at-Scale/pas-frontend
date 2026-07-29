@@ -79,7 +79,7 @@
       />
 
       <!-- The narrative. With no acceleration there is no point to plot, only a known
-           spread: a column says "somewhere on this line, height unknown" rather than
+           virality: a column says "somewhere on this line, height unknown" rather than
            dropping the marker to zero and implying flat. -->
       <template v-if="accelPct !== null">
         <circle
@@ -140,7 +140,7 @@
  * Where the narrative sits on the percentile plane, with the four regions drawn.
  *
  * Two bars cannot show this. `viral` is a conjunction — top of BOTH axes — and
- * `early_surge` is capped on spread, so it means "small and climbing" rather than
+ * `early_surge` is capped on virality, so it means "small and climbing" rather than
  * "anything climbing". Read as two independent readings, both look like "high-ish on
  * something", which is exactly the confusion the plane resolves.
  */
@@ -179,7 +179,7 @@ const AXIS_TICKS = [BOUNDS.composite.lo, BOUNDS.composite.hi];
  *
  * It is an L rather than a corner square, and the difference is not cosmetic: the strip
  * between the `trending` acceleration floor and the `early_surge` floor is unbadged, and
- * so is the strip between the `trending` and `consolidated` spread floors. Expressed in
+ * so is the strip between the `trending` and `consolidated` virality floors. Expressed in
  * terms of the bounds so it tracks a retune of the thresholds.
  */
 const UNBADGED: { composite: [number, number]; accel: [number, number] }[] = [

@@ -419,7 +419,7 @@
         "unmeasured": "Not re-measured on this date, so how fast it is moving is unknown. Its size below is still what we last recorded."
       },
       "composite": {
-        "label": "Spread",
+        "label": "Virality",
         "context": {
           "top5": "top 5% across all narratives",
           "top15": "top 15% across all narratives",
@@ -442,10 +442,10 @@
         "rankContext": "rank {rank} — {context}"
       },
       "quadrant": {
-        "xAxis": "Spread percentile",
+        "xAxis": "Virality percentile",
         "yAxis": "Acceleration percentile",
-        "aria": "Spread in the {composite}th percentile, acceleration in the {accel}th.",
-        "ariaNoAccel": "Spread in the {composite}th percentile; acceleration not measured on this date."
+        "aria": "Virality in the {composite}th percentile, acceleration in the {accel}th.",
+        "ariaNoAccel": "Virality in the {composite}th percentile; acceleration not measured on this date."
       }
     }
   },

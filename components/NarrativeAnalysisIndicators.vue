@@ -106,7 +106,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <!-- Where the narrative sits on the percentile plane. This is what the two
                  bars above cannot show: `viral` is a conjunction of both axes, and
-                 `early_surge` is capped on spread rather than being "anything climbing". -->
+                 `early_surge` is capped on virality rather than being "anything climbing". -->
             <NarrativeSpreadQuadrant
               :composite-pct="compositePct"
               :accel-pct="accelPct"
@@ -270,15 +270,15 @@ function formatGrowth(v: number): string {
 
 /**
  * The region's definition in words. The axes are named with the same labels the bars
- * above use — a reader should not have to learn that "composite" and "Spread" are the
+ * above use — a reader should not have to learn that "composite" and "Virality" are the
  * same axis, and the internal name is not the one on screen.
  */
 function regionCondition(region: typeof ALERT_REGIONS[number]): string {
-  const spread = $i18n.t('narratives.indicators.composite.label');
+  const virality = $i18n.t('narratives.indicators.composite.label');
   const acceleration = $i18n.t('narratives.indicators.acceleration.label');
   const parts: string[] = [];
-  if (region.composite[0] > 0) parts.push(`${spread} ≥ ${region.composite[0].toFixed(2)}`);
-  if (region.composite[1] < 1) parts.push(`${spread} ≤ ${region.composite[1].toFixed(2)}`);
+  if (region.composite[0] > 0) parts.push(`${virality} ≥ ${region.composite[0].toFixed(2)}`);
+  if (region.composite[1] < 1) parts.push(`${virality} ≤ ${region.composite[1].toFixed(2)}`);
   if (region.accel[0] > 0) parts.push(`${acceleration} ≥ ${region.accel[0].toFixed(2)}`);
   if (region.accel[1] < 1) parts.push(`${acceleration} ≤ ${region.accel[1].toFixed(2)}`);
   return parts.join('  ∧  ');

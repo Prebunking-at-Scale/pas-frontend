@@ -417,7 +417,7 @@
         "unmeasured": "No se ha vuelto a medir en esta fecha, así que se desconoce a qué velocidad se mueve. El tamaño que aparece abajo es el último que registramos."
       },
       "composite": {
-        "label": "Difusión",
+        "label": "Viralidad",
         "context": {
           "top5": "top 5% entre todas las narrativas",
           "top15": "top 15% entre todas las narrativas",
@@ -440,10 +440,10 @@
         "rankContext": "puesto {rank} — {context}"
       },
       "quadrant": {
-        "xAxis": "Percentil de difusión",
+        "xAxis": "Percentil de viralidad",
         "yAxis": "Percentil de aceleración",
-        "aria": "Difusión en el percentil {composite}, aceleración en el {accel}.",
-        "ariaNoAccel": "Difusión en el percentil {composite}; aceleración no medida en esta fecha."
+        "aria": "Viralidad en el percentil {composite}, aceleración en el {accel}.",
+        "ariaNoAccel": "Viralidad en el percentil {composite}; aceleración no medida en esta fecha."
       }
     }
   },
