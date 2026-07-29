@@ -30,18 +30,18 @@
            rungs of a severity ladder, so the order here is a reading order: the two
            that are climbing first, then the two that describe a settled state. Each is
            ranked by the axis that defines it (early surge by acceleration, the rest by
-           composite). alert_level is the current daily classification, so these sections
+           composite). spread_level is the current daily classification, so these sections
            are not scoped by the timeframe selector, which still drives Topics and
            Entities below. -->
       <template v-for="level in ALERT_SECTIONS" :key="level">
-        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="ALERT_LEVEL_TINT[level]">
+        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="SPREAD_LEVEL_TINT[level]">
           <div class="flex items-center justify-between gap-4 mb-4">
             <h3 class="text-lg font-medium text-gray-900">
               {{ $t('dashboard.topN', { n: sections[level].length }) }}
-              <span class="lowercase">{{ $t(`narratives.alertLevels.${level}`) }}</span>
+              <span class="lowercase">{{ $t(`narratives.spreadLevels.${level}`) }}</span>
             </h3>
             <button
-              @click="goToAlertLevel(level)"
+              @click="goToSpreadLevel(level)"
               class="shrink-0 text-sm text-gray-700 hover:text-gray-900 underline underline-offset-2 cursor-pointer"
             >
               {{ $t('entities.viewAllNarratives', { count: counts[level] }) }}
@@ -119,8 +119,8 @@
 import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
-import { NarrativeAlertLevel } from '~/types/api';
-import { ALERT_LEVEL_OVERVIEW, ALERT_LEVEL_SORT, ALERT_LEVEL_TINT } from '~/utils/alertLevels';
+import { NarrativeSpreadLevel } from '~/types/api';
+import { SPREAD_LEVEL_OVERVIEW, SPREAD_LEVEL_SORT, SPREAD_LEVEL_TINT } from '~/utils/spreadLevels';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -141,7 +141,7 @@ enum AVAILABLE_TIMEFRAMES {
 
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
-const ALERT_SECTIONS = ALERT_LEVEL_OVERVIEW;
+const ALERT_SECTIONS = SPREAD_LEVEL_OVERVIEW;
 const SECTION_LIMIT = 6;
 
 // Initialize from localStorage when component mounts (client-side only)
@@ -163,17 +163,17 @@ const stats = ref<{
 });
 
 // Narratives and totals per alert level.
-const sections = ref<Record<NarrativeAlertLevel, NarrativeSummary[]>>({
-  [NarrativeAlertLevel.VIRAL]: [],
-  [NarrativeAlertLevel.EARLY_SURGE]: [],
-  [NarrativeAlertLevel.TRENDING]: [],
-  [NarrativeAlertLevel.CONSOLIDATED]: [],
+const sections = ref<Record<NarrativeSpreadLevel, NarrativeSummary[]>>({
+  [NarrativeSpreadLevel.VIRAL]: [],
+  [NarrativeSpreadLevel.EARLY_SURGE]: [],
+  [NarrativeSpreadLevel.TRENDING]: [],
+  [NarrativeSpreadLevel.CONSOLIDATED]: [],
 });
-const counts = ref<Record<NarrativeAlertLevel, number>>({
-  [NarrativeAlertLevel.VIRAL]: 0,
-  [NarrativeAlertLevel.EARLY_SURGE]: 0,
-  [NarrativeAlertLevel.TRENDING]: 0,
-  [NarrativeAlertLevel.CONSOLIDATED]: 0,
+const counts = ref<Record<NarrativeSpreadLevel, number>>({
+  [NarrativeSpreadLevel.VIRAL]: 0,
+  [NarrativeSpreadLevel.EARLY_SURGE]: 0,
+  [NarrativeSpreadLevel.TRENDING]: 0,
+  [NarrativeSpreadLevel.CONSOLIDATED]: 0,
 });
 
 const loading = ref(true);
@@ -182,8 +182,8 @@ const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
 };
 
-const goToAlertLevel = (level: NarrativeAlertLevel) => {
-  router.push(`/narratives?alert_level=${level}`);
+const goToSpreadLevel = (level: NarrativeSpreadLevel) => {
+  router.push(`/narratives?spread_level=${level}`);
 };
 
 const goToTopic = (id: string) => {
@@ -237,7 +237,7 @@ const loadData = async () => {
       apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
       apiService.getEntities({ limit: 12, hours }),
       ...ALERT_SECTIONS.map((level) =>
-        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: ALERT_LEVEL_SORT[level] })
+        apiService.getNarratives({ spread_level: [level], limit: SECTION_LIMIT, sort: SPREAD_LEVEL_SORT[level] })
       ),
     ]);
 

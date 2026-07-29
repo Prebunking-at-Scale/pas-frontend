@@ -11,7 +11,7 @@
           <p class="text-gray-900 text-xl font-semibold leading-tight flex-1">
             {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
           </p>
-          <AlertLevelBadge :level="alertLevel" class="shrink-0" />
+          <SpreadLevelBadge :level="spreadLevel" class="shrink-0" />
         </div>
         <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
@@ -77,10 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Narrative, NarrativeSummary, NarrativeAlertLevel } from '~/types/api';
+import type { Narrative, NarrativeSummary, NarrativeSpreadLevel } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
-import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
-import { normalizeAlertLevel } from '~/utils/alertLevels';
+import SpreadLevelBadge from '~/components/SpreadLevelBadge.vue';
+import { normalizeSpreadLevel } from '~/utils/spreadLevels';
 
 interface Props {
   narrative: Narrative | NarrativeSummary;
@@ -153,11 +153,11 @@ const platforms = computed(() => {
 // in the list response shape used here. Most narratives have none — the badge simply
 // does not render, and the card says nothing about why. The detail view is where the
 // measurements behind (or missing from) a classification are explained.
-const alertLevel = computed<NarrativeAlertLevel | null>(() => {
+const spreadLevel = computed<NarrativeSpreadLevel | null>(() => {
   if (isSummary.value) {
-    return normalizeAlertLevel((props.narrative as NarrativeSummary).alert_level);
+    return normalizeSpreadLevel((props.narrative as NarrativeSummary).spread_level);
   }
-  return normalizeAlertLevel((props.narrative as { alert_level?: string | null }).alert_level);
+  return normalizeSpreadLevel((props.narrative as { spread_level?: string | null }).spread_level);
 });
 
 // Calculate unique languages from claims or use pre-calculated value

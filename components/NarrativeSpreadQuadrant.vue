@@ -62,7 +62,7 @@
         paint-order="stroke"
         stroke-linejoin="round"
         class="select-none stroke-white"
-      >{{ label.level ? $t(`narratives.alertLevels.${label.level}`) : $t('narratives.alertLevels.unbadged') }}</text>
+      >{{ label.level ? $t(`narratives.spreadLevels.${label.level}`) : $t('narratives.spreadLevels.unbadged') }}</text>
 
       <!-- The narrative's own region, outlined at full strength. Colour appears exactly
            once in this chart, which is what keeps it legible: no translucent fills, so
@@ -144,14 +144,14 @@
  * "anything climbing". Read as two independent readings, both look like "high-ish on
  * something", which is exactly the confusion the plane resolves.
  */
-import type { NarrativeAlertLevel } from '~/types/api';
-import { ALERT_BOUNDS, ALERT_REGIONS } from '~/utils/alertLevels';
+import type { NarrativeSpreadLevel } from '~/types/api';
+import { ALERT_BOUNDS, ALERT_REGIONS } from '~/utils/spreadLevels';
 
 interface Props {
   compositePct: number;
   /** Null when the narrative was not re-measured on this date — drawn as a column, not a dot. */
   accelPct: number | null;
-  level: NarrativeAlertLevel | null;
+  level: NarrativeSpreadLevel | null;
 }
 const props = defineProps<Props>();
 
@@ -188,35 +188,35 @@ const UNBADGED: { composite: [number, number]; accel: [number, number] }[] = [
 ];
 const fmt = (v: number) => v.toFixed(1);
 
-const REGION_STROKE: Record<NarrativeAlertLevel, string> = {
+const REGION_STROKE: Record<NarrativeSpreadLevel, string> = {
   viral: 'stroke-red-600',
   early_surge: 'stroke-orange-600',
   trending: 'stroke-yellow-600',
   consolidated: 'stroke-purple-600',
-} as Record<NarrativeAlertLevel, string>;
+} as Record<NarrativeSpreadLevel, string>;
 
-const REGION_FILL: Record<NarrativeAlertLevel, string> = {
+const REGION_FILL: Record<NarrativeSpreadLevel, string> = {
   viral: 'fill-red-600',
   early_surge: 'fill-orange-600',
   trending: 'fill-yellow-600',
   consolidated: 'fill-purple-600',
-} as Record<NarrativeAlertLevel, string>;
+} as Record<NarrativeSpreadLevel, string>;
 
 /**
  * Label anchors sit in each region's *exclusive* corner — the part no other region
  * overlaps — so `viral` inside the `trending` box does not collide with it.
  */
 const LABELS: {
-  level: NarrativeAlertLevel | null;
+  level: NarrativeSpreadLevel | null;
   x: number;
   y: number;
   anchor: 'start' | 'end';
   baseline: string;
 }[] = [
-  { level: 'early_surge' as NarrativeAlertLevel,  x: 0.035, y: 0.965, anchor: 'start', baseline: 'hanging' },
-  { level: 'viral' as NarrativeAlertLevel,        x: 0.965, y: 0.965, anchor: 'end',   baseline: 'hanging' },
-  { level: 'trending' as NarrativeAlertLevel,     x: 0.435, y: 0.455, anchor: 'start', baseline: 'auto' },
-  { level: 'consolidated' as NarrativeAlertLevel, x: 0.965, y: 0.045, anchor: 'end',   baseline: 'auto' },
+  { level: 'early_surge' as NarrativeSpreadLevel,  x: 0.035, y: 0.965, anchor: 'start', baseline: 'hanging' },
+  { level: 'viral' as NarrativeSpreadLevel,        x: 0.965, y: 0.965, anchor: 'end',   baseline: 'hanging' },
+  { level: 'trending' as NarrativeSpreadLevel,     x: 0.435, y: 0.455, anchor: 'start', baseline: 'auto' },
+  { level: 'consolidated' as NarrativeSpreadLevel, x: 0.965, y: 0.045, anchor: 'end',   baseline: 'auto' },
   { level: null,                                  x: 0.035, y: 0.045, anchor: 'start', baseline: 'auto' },
 ];
 

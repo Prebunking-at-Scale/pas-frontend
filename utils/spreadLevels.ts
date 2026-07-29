@@ -9,10 +9,10 @@
  * That duplication is deliberate: the frontend draws the regions, so it needs the
  * geometry locally, and one definition that drifts is better than four.
  *
- * See docs/narrative-alert-levels.md.
+ * See docs/narrative-spread-levels.md.
  */
-import type { RawNarrativeAlertLevel } from '~/types/api';
-import { NarrativeAlertLevel } from '~/types/api';
+import type { RawNarrativeSpreadLevel } from '~/types/api';
+import { NarrativeSpreadLevel } from '~/types/api';
 
 export type AlertBadgeVariant = 'destructive' | 'orange' | 'warning' | 'purple';
 
@@ -33,25 +33,25 @@ export const ALERT_BOUNDS = {
  * axis's percentile, which is what lets the two rank over different cohorts.
  */
 export const ALERT_REGIONS: {
-  level: NarrativeAlertLevel;
+  level: NarrativeSpreadLevel;
   composite: [number, number];
   accel: [number, number];
 }[] = [
-  { level: NarrativeAlertLevel.VIRAL,        composite: [ALERT_BOUNDS.composite.hi, 1], accel: [ALERT_BOUNDS.accel.hi, 1] },
-  { level: NarrativeAlertLevel.EARLY_SURGE,  composite: [0, ALERT_BOUNDS.composite.lo], accel: [ALERT_BOUNDS.accel.mid, 1] },
-  { level: NarrativeAlertLevel.CONSOLIDATED, composite: [ALERT_BOUNDS.composite.mid, 1], accel: [0, ALERT_BOUNDS.accel.lo] },
-  { level: NarrativeAlertLevel.TRENDING,     composite: [ALERT_BOUNDS.composite.lo, 1], accel: [ALERT_BOUNDS.accel.lo, 1] },
+  { level: NarrativeSpreadLevel.VIRAL,        composite: [ALERT_BOUNDS.composite.hi, 1], accel: [ALERT_BOUNDS.accel.hi, 1] },
+  { level: NarrativeSpreadLevel.EARLY_SURGE,  composite: [0, ALERT_BOUNDS.composite.lo], accel: [ALERT_BOUNDS.accel.mid, 1] },
+  { level: NarrativeSpreadLevel.CONSOLIDATED, composite: [ALERT_BOUNDS.composite.mid, 1], accel: [0, ALERT_BOUNDS.accel.lo] },
+  { level: NarrativeSpreadLevel.TRENDING,     composite: [ALERT_BOUNDS.composite.lo, 1], accel: [ALERT_BOUNDS.accel.lo, 1] },
 ];
 
 /**
  * Mirror of `NarrativeService._classify`. The backend's answer is authoritative — this
  * exists so the quadrant can shade its regions and so a reader can see why a narrative
- * landed where it did, not to second-guess the stored `alert_level`.
+ * landed where it did, not to second-guess the stored `spread_level`.
  */
-export function classifyAlertLevel(
+export function classifySpreadLevel(
   compositePct: number,
   accelPct: number,
-): NarrativeAlertLevel | null {
+): NarrativeSpreadLevel | null {
   for (const region of ALERT_REGIONS) {
     if (
       compositePct >= region.composite[0] && compositePct <= region.composite[1]
@@ -68,11 +68,11 @@ export function classifyAlertLevel(
  * state. This is a reading order, not a severity ranking — the taxonomy has no ladder,
  * `consolidated` is not a milder `viral`.
  */
-export const ALERT_LEVEL_ORDER: NarrativeAlertLevel[] = [
-  NarrativeAlertLevel.VIRAL,
-  NarrativeAlertLevel.EARLY_SURGE,
-  NarrativeAlertLevel.TRENDING,
-  NarrativeAlertLevel.CONSOLIDATED,
+export const SPREAD_LEVEL_ORDER: NarrativeSpreadLevel[] = [
+  NarrativeSpreadLevel.VIRAL,
+  NarrativeSpreadLevel.EARLY_SURGE,
+  NarrativeSpreadLevel.TRENDING,
+  NarrativeSpreadLevel.CONSOLIDATED,
 ];
 
 /**
@@ -81,27 +81,27 @@ export const ALERT_LEVEL_ORDER: NarrativeAlertLevel[] = [
  * ladder, which misread `consolidated` as a lesser alarm when it is simply a different
  * statement about a narrative.
  */
-export const ALERT_LEVEL_VARIANT: Record<NarrativeAlertLevel, AlertBadgeVariant> = {
-  [NarrativeAlertLevel.VIRAL]: 'destructive',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'orange',
-  [NarrativeAlertLevel.TRENDING]: 'warning',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'purple',
+export const SPREAD_LEVEL_VARIANT: Record<NarrativeSpreadLevel, AlertBadgeVariant> = {
+  [NarrativeSpreadLevel.VIRAL]: 'destructive',
+  [NarrativeSpreadLevel.EARLY_SURGE]: 'orange',
+  [NarrativeSpreadLevel.TRENDING]: 'warning',
+  [NarrativeSpreadLevel.CONSOLIDATED]: 'purple',
 };
 
 /** Translucent tints for section backgrounds, keyed to the badge colours. */
-export const ALERT_LEVEL_TINT: Record<NarrativeAlertLevel, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
-  [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500/10',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-purple-500/10',
+export const SPREAD_LEVEL_TINT: Record<NarrativeSpreadLevel, string> = {
+  [NarrativeSpreadLevel.VIRAL]: 'bg-red-500/10',
+  [NarrativeSpreadLevel.EARLY_SURGE]: 'bg-orange-500/10',
+  [NarrativeSpreadLevel.TRENDING]: 'bg-yellow-500/10',
+  [NarrativeSpreadLevel.CONSOLIDATED]: 'bg-purple-500/10',
 };
 
 /** Solid fills, for the filter checkboxes and the quadrant regions. */
-export const ALERT_LEVEL_FILL: Record<NarrativeAlertLevel, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'bg-red-600 text-white',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500 text-white',
-  [NarrativeAlertLevel.TRENDING]: 'bg-yellow-500 text-white',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'bg-purple-600 text-white',
+export const SPREAD_LEVEL_FILL: Record<NarrativeSpreadLevel, string> = {
+  [NarrativeSpreadLevel.VIRAL]: 'bg-red-600 text-white',
+  [NarrativeSpreadLevel.EARLY_SURGE]: 'bg-orange-500 text-white',
+  [NarrativeSpreadLevel.TRENDING]: 'bg-yellow-500 text-white',
+  [NarrativeSpreadLevel.CONSOLIDATED]: 'bg-purple-600 text-white',
 };
 
 /**
@@ -113,8 +113,8 @@ export const ALERT_LEVEL_FILL: Record<NarrativeAlertLevel, string> = {
  * make a specific claim. It remains a badge and a filter, so nothing becomes
  * unreachable; it just stops competing for the overview.
  */
-export const ALERT_LEVEL_OVERVIEW: NarrativeAlertLevel[] = ALERT_LEVEL_ORDER.filter(
-  (level) => level !== NarrativeAlertLevel.TRENDING,
+export const SPREAD_LEVEL_OVERVIEW: NarrativeSpreadLevel[] = SPREAD_LEVEL_ORDER.filter(
+  (level) => level !== NarrativeSpreadLevel.TRENDING,
 );
 
 /**
@@ -122,14 +122,14 @@ export const ALERT_LEVEL_OVERVIEW: NarrativeAlertLevel[] = ALERT_LEVEL_ORDER.fil
  * from a small base, so composite would sort it backwards; everything else reads better
  * biggest-first.
  */
-export const ALERT_LEVEL_SORT: Record<NarrativeAlertLevel, 'composite' | 'acceleration'> = {
-  [NarrativeAlertLevel.VIRAL]: 'composite',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
-  [NarrativeAlertLevel.TRENDING]: 'composite',
-  [NarrativeAlertLevel.CONSOLIDATED]: 'composite',
+export const SPREAD_LEVEL_SORT: Record<NarrativeSpreadLevel, 'composite' | 'acceleration'> = {
+  [NarrativeSpreadLevel.VIRAL]: 'composite',
+  [NarrativeSpreadLevel.EARLY_SURGE]: 'acceleration',
+  [NarrativeSpreadLevel.TRENDING]: 'composite',
+  [NarrativeSpreadLevel.CONSOLIDATED]: 'composite',
 };
 
-const ACTIVE_LEVELS = new Set<string>(Object.values(NarrativeAlertLevel));
+const ACTIVE_LEVELS = new Set<string>(Object.values(NarrativeSpreadLevel));
 
 /**
  * Coerce whatever the API sent into a level we can render, or null.
@@ -139,17 +139,17 @@ const ACTIVE_LEVELS = new Set<string>(Object.values(NarrativeAlertLevel));
  * such equivalent exists — a narrative still holding one is simply unbadged until the
  * next pipeline run reclassifies it, which is at most a day.
  */
-export function normalizeAlertLevel(
-  raw: RawNarrativeAlertLevel | string | null | undefined,
-): NarrativeAlertLevel | null {
+export function normalizeSpreadLevel(
+  raw: RawNarrativeSpreadLevel | string | null | undefined,
+): NarrativeSpreadLevel | null {
   if (!raw || !ACTIVE_LEVELS.has(raw)) return null;
-  return raw as NarrativeAlertLevel;
+  return raw as NarrativeSpreadLevel;
 }
 
 /** Drop retired and unknown values from a list of filter selections. */
-export function normalizeAlertLevels(
-  raw: readonly (RawNarrativeAlertLevel | string)[] | null | undefined,
-): NarrativeAlertLevel[] {
+export function normalizeSpreadLevels(
+  raw: readonly (RawNarrativeSpreadLevel | string)[] | null | undefined,
+): NarrativeSpreadLevel[] {
   if (!raw) return [];
-  return raw.map(normalizeAlertLevel).filter((level): level is NarrativeAlertLevel => level !== null);
+  return raw.map(normalizeSpreadLevel).filter((level): level is NarrativeSpreadLevel => level !== null);
 }

@@ -1,7 +1,7 @@
 # Narrative alert levels
 
 How the frontend renders the narrative alert taxonomy, and what it depends on from
-core-api. The design itself lives in core-api's `docs/narrative-alert-redesign.md`; this
+core-api. The design itself lives in core-api's `docs/narrative-spread-level-redesign.md`; this
 file records the decisions that are ours.
 
 ## The taxonomy
@@ -29,14 +29,14 @@ absolute bar would mean something different every week.
 Two things a quadrant reading gets wrong. The regions are **rectangles, not quadrants**,
 evaluated in the order above — `viral` is carved out of the `trending` box. And they do
 **not tile the plane**: the bottom-left corner gets no label at all, and no label is
-`alert_level === null`, not a level named "none".
+`spread_level === null`, not a level named "none".
 
 `early_surge` is capped on composite on purpose. It is not "anything climbing" — a large
 climber is `viral` if it clears both tops and `trending` otherwise.
 
 ## Decisions taken here
 
-**Boundaries are mirrored, not fetched.** `utils/alertLevels.ts` holds the same six
+**Boundaries are mirrored, not fetched.** `utils/spreadLevels.ts` holds the same six
 numbers as core-api's `core/config.py` (`ALERT_COMPOSITE_LO/MID/HI`,
 `ALERT_ACCEL_LO/MID/HI`). The frontend draws the regions, so it needs the geometry
 locally. Those constants are environment-overridable on the backend: a deployment that
@@ -60,8 +60,8 @@ red→yellow→orange→grey ladder, which reads `consolidated` as a milder alar
 simply a different statement about a narrative.
 
 **Retired levels map to null.** `none`, `alert` and `watch` still exist in the Postgres
-enum so a stale `?alert_level=alert` returns an empty result instead of a 400, but the
-classifier no longer emits them. `normalizeAlertLevel` maps them to null rather than to
+enum so a stale `?spread_level=alert` returns an empty result instead of a 400, but the
+classifier no longer emits them. `normalizeSpreadLevel` maps them to null rather than to
 a nearest equivalent, because the new regions sit on different boundaries and no
 equivalent exists. A narrative still holding one is unbadged until the next pipeline
 run, at most a day. Query parameters are normalised on read, so an old bookmark shows
@@ -100,8 +100,8 @@ table; both went stale the moment the pipeline changed.
 
 ## Related
 
-- `utils/alertLevels.ts` — regions, colours, order, normalisation
-- `components/NarrativeAlertQuadrant.vue` — the percentile plane
+- `utils/spreadLevels.ts` — regions, colours, order, normalisation
+- `components/NarrativeSpreadQuadrant.vue` — the percentile plane
 - `components/NarrativeAnalysisIndicators.vue` — the detail panel
-- `narrative-alert-redesign.md` (repo root; originally core-api `docs/`) — why the axes
+- `narrative-spread-level-redesign.md` (repo root; originally core-api `docs/`) — why the axes
   are what they are, and the five questions still open on the backend side

@@ -59,7 +59,7 @@ export interface NarrativeSummary {
   average_score?: number | null;
   created_at?: string;
   updated_at?: string;
-  alert_level?: RawNarrativeAlertLevel | null;
+  spread_level?: RawNarrativeSpreadLevel | null;
 }
 
 export interface Narrative {
@@ -433,7 +433,7 @@ export interface NarrativeDetail {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-  alert_level: RawNarrativeAlertLevel | null;
+  spread_level: RawNarrativeSpreadLevel | null;
 }
 
 /**
@@ -446,17 +446,17 @@ export interface NarrativeDetail {
  *
  * `none`, `alert` and `watch` are retired. They survive in the Postgres enum so that a
  * stale query parameter returns an empty result instead of a 400, but the classifier no
- * longer emits them; `normalizeAlertLevel` maps them to null.
+ * longer emits them; `normalizeSpreadLevel` maps them to null.
  */
-export enum NarrativeAlertLevel {
+export enum NarrativeSpreadLevel {
   VIRAL='viral',
   EARLY_SURGE='early_surge',
   CONSOLIDATED='consolidated',
   TRENDING='trending'
 }
 
-/** What the API may actually put in `alert_level`, retired values included. */
-export type RawNarrativeAlertLevel = NarrativeAlertLevel | 'none' | 'alert' | 'watch';
+/** What the API may actually put in `spread_level`, retired values included. */
+export type RawNarrativeSpreadLevel = NarrativeSpreadLevel | 'none' | 'alert' | 'watch';
 
 export enum AnalysisIndicatorType {
   COMPOSITE_VIRALITY = 'composite_virality',

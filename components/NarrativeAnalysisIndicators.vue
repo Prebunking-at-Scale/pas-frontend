@@ -19,7 +19,7 @@
               today. Both are worth saying out loud. -->
       <div class="flex items-start gap-4 flex-wrap">
         <div v-if="level" class="shrink-0">
-          <AlertLevelBadge :level="level" class="text-base px-3 py-1" />
+          <SpreadLevelBadge :level="level" class="text-base px-3 py-1" />
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-gray-900 font-medium leading-snug">
@@ -107,7 +107,7 @@
             <!-- Where the narrative sits on the percentile plane. This is what the two
                  bars above cannot show: `viral` is a conjunction of both axes, and
                  `early_surge` is capped on spread rather than being "anything climbing". -->
-            <NarrativeAlertQuadrant
+            <NarrativeSpreadQuadrant
               :composite-pct="compositePct"
               :accel-pct="accelPct"
               :level="level"
@@ -120,7 +120,7 @@
                 <tbody>
                   <tr v-for="region in ALERT_REGIONS" :key="region.level" class="border-b border-gray-100 last:border-0">
                     <td class="py-1 pr-2">
-                      <AlertLevelBadge :level="region.level" />
+                      <SpreadLevelBadge :level="region.level" />
                     </td>
                     <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
                   </tr>
@@ -144,14 +144,14 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { ChevronRight } from 'lucide-vue-next';
 import { apiService } from '~/services/api';
-import type { NarrativeAlertLevel, NarrativeAnalysisIndicatorsResponse, RawNarrativeAlertLevel } from '~/types/api';
-import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
-import NarrativeAlertQuadrant from '~/components/NarrativeAlertQuadrant.vue';
-import { ALERT_REGIONS, normalizeAlertLevel } from '~/utils/alertLevels';
+import type { NarrativeSpreadLevel, NarrativeAnalysisIndicatorsResponse, RawNarrativeSpreadLevel } from '~/types/api';
+import SpreadLevelBadge from '~/components/SpreadLevelBadge.vue';
+import NarrativeSpreadQuadrant from '~/components/NarrativeSpreadQuadrant.vue';
+import { ALERT_REGIONS, normalizeSpreadLevel } from '~/utils/spreadLevels';
 
 interface Props {
   narrativeId: string;
-  alertLevel?: RawNarrativeAlertLevel | string | null;
+  spreadLevel?: RawNarrativeSpreadLevel | string | null;
 }
 const props = defineProps<Props>();
 
@@ -205,7 +205,7 @@ const accelHeadline = computed(() => {
   return formatGrowth(accelGrowth.value);
 });
 
-const level = computed<NarrativeAlertLevel | null>(() => normalizeAlertLevel(props.alertLevel));
+const level = computed<NarrativeSpreadLevel | null>(() => normalizeSpreadLevel(props.spreadLevel));
 
 // ── Plain-language context ────────────────────────────────────────────────
 const verdict = computed(() => {

@@ -39,9 +39,9 @@
             type="select"
           />
 
-          <AlertLevelFilter
+          <SpreadLevelFilter
             class="w-full md:w-auto md:shrink-0"
-            v-model="filters.alert_level"
+            v-model="filters.spread_level"
           />
         </div>
       </FilterCard>
@@ -112,7 +112,7 @@
 
 <script setup lang="ts">
 import { apiService } from '~/services/api';
-import type { NarrativeAlertLevel, NarrativeSummary } from '~/types/api';
+import type { NarrativeSpreadLevel, NarrativeSummary } from '~/types/api';
 import { useTopicsStore } from '~/stores/topics';
 import { Button } from '~/components/ui/button';
 import { Pagination, PaginationContent, PaginationItem, PaginationFirst, PaginationPrevious, PaginationNext, PaginationLast, PaginationEllipsis } from '~/components/ui/pagination';
@@ -121,8 +121,8 @@ import TopicFilter from '~/components/filters/TopicFilter.vue';
 import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
-import AlertLevelFilter from '~/components/filters/AlertLevelFilter.vue';
-import { normalizeAlertLevels } from '~/utils/alertLevels';
+import SpreadLevelFilter from '~/components/filters/SpreadLevelFilter.vue';
+import { normalizeSpreadLevels } from '~/utils/spreadLevels';
 
 definePageMeta({
   layout: 'default',
@@ -150,7 +150,7 @@ const filters = ref({
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  alert_level: [] as NarrativeAlertLevel[]
+  spread_level: [] as NarrativeSpreadLevel[]
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -159,7 +159,7 @@ const appliedFilters = ref({
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  alert_level: [] as NarrativeAlertLevel[]
+  spread_level: [] as NarrativeSpreadLevel[]
 });
 
 const currentTopicName = ref('');
@@ -169,7 +169,7 @@ const hasActiveFilters = computed(() => {
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
     (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0 ||
-    appliedFilters.value.alert_level.length > 0;
+    appliedFilters.value.spread_level.length > 0;
 });
 
 
@@ -198,8 +198,8 @@ const loadNarratives = async () => {
       params.language = appliedFilters.value.language;
     }
 
-    if (appliedFilters.value.alert_level.length > 0) {
-      params.alert_level = appliedFilters.value.alert_level;
+    if (appliedFilters.value.spread_level.length > 0) {
+      params.spread_level = appliedFilters.value.spread_level;
     }
 
     const result = await apiService.getNarratives(params);
@@ -227,14 +227,14 @@ const resetFilters = () => {
     entity_id: null,
     text: [],
     language: 'all',
-    alert_level: []
+    spread_level: []
   };
   appliedFilters.value = {
     topic_id: null,
     entity_id: null,
     text: [],
     language: 'all',
-    alert_level: []
+    spread_level: []
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -317,19 +317,19 @@ onMounted(async () => {
       appliedFilters.value.entity_id = entityId;
     }
 
-    // Check if we have an alert-level filter from query params (e.g. from the
+    // Check if we have a spread-level filter from query params (e.g. from the
     // dashboard triage chips). Accepts a single value or a repeated param.
     //
     // Normalised rather than cast: a bookmark or an old dashboard link may still carry
     // a retired level (`alert`, `watch`, `none`), and sending one on would filter the
     // list down to nothing with no visible reason. Dropping it shows every narrative,
     // which is the honest reading of a filter we can no longer apply.
-    const alertLevelParam = route.query.alert_level;
-    if (alertLevelParam) {
-      const raw = Array.isArray(alertLevelParam) ? alertLevelParam : [alertLevelParam];
-      const levels = normalizeAlertLevels(raw.filter((value): value is string => typeof value === 'string'));
-      filters.value.alert_level = levels;
-      appliedFilters.value.alert_level = levels;
+    const spreadLevelParam = route.query.spread_level;
+    if (spreadLevelParam) {
+      const raw = Array.isArray(spreadLevelParam) ? spreadLevelParam : [spreadLevelParam];
+      const levels = normalizeSpreadLevels(raw.filter((value): value is string => typeof value === 'string'));
+      filters.value.spread_level = levels;
+      appliedFilters.value.spread_level = levels;
     }
   }
   
