@@ -82,6 +82,20 @@ no acceleration shows its composite and says the rate was not measured. What it 
 never do is render a missing rate as zero — "we did not look" and "it did not move" are
 different claims, and only one of them is ours to make.
 
+**Both axes headline a magnitude, not a rank.** The virality tile shows the narrative's
+own reach — its summed view count — with the percentile on the small line beneath it,
+matching what acceleration already did with its daily view growth. A percentile in the
+headline answers "larger than whom" while reading as a size: 88% is not 88 of anything,
+and two narratives 30M views apart can sit a single percentile point away from each
+other. The rank stays visible because it, not the raw score, is what the classifier read
+and therefore the only answer to "why this badge".
+
+The cost is the one acceleration already pays: the headline is the axis's dominant
+component, not the whole axis. Reach is 62.5% of composite and engagement — a per-view
+ratio, deliberately size-neutral — is the rest, so a narrative that ranks high on
+engagement shows a modest headline beside a high rank. Both numbers are on screen, and
+the technical panel holds the split.
+
 **Colours follow meaning, not severity.** Red for `viral`, orange for `early_surge`,
 neutral grey for `trending`, blue for `consolidated`. The old palette ran a
 red→yellow→orange→grey ladder, which reads `consolidated` as a milder alarm when it is
@@ -104,8 +118,10 @@ an unfiltered list rather than an empty one.
   "composite_virality": {
     "indicator_value": 0.62,          // the weighted blend — NOT a rank
     "metadata": {
-      "engagement_percentile": 0.7, "engagement_weight": 0.625,
-      "reach_percentile": 0.5,      "reach_weight": 0.375,
+      "engagement_percentile": 0.7, "engagement_weight": 0.375,
+      "reach_percentile": 0.5,      "reach_weight": 0.625,
+      "engagement_score": 0.0325,   // <- the raw scores the ranks came from. Reach is a
+      "reach_score": 77000000,      //    view count; the detail view headlines it.
       "percentile": 0.83            // <- the rank. This is what the classifier reads.
     }
   },
@@ -120,6 +136,9 @@ Two traps:
    `indicator_value` is a weighted blend of two ranks and is not itself a rank.
 2. **`acceleration_rate: null` means unmeasured, not zero.** Composite covers ~22k
    narratives and acceleration ~2k, so null is the common case.
+3. **`reach_score`/`engagement_score` are optional.** Rows written before the backend
+   recorded them carry only the ranks, so the virality headline falls back to the
+   percentile. They fill in on the next pipeline run.
 
 The component breakdowns in the technical-details panel are rendered from whatever
 `<name>_weight` keys arrive rather than from a hardcoded list, so a backend reweighting

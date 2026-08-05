@@ -434,14 +434,8 @@
       },
       "composite": {
         "label": "Viralidad",
-        "context": {
-          "top5": "top 5% entre todas las narrativas",
-          "top15": "top 15% entre todas las narrativas",
-          "top30": "top 30% entre todas las narrativas",
-          "top45": "por encima de la mediana",
-          "middle": "en torno a la mediana",
-          "low": "por debajo de la mediana"
-        }
+        "unit": "visualizaciones en total",
+        "rankContext": "puesto {rank} entre todas las narrativas"
       },
       "acceleration": {
         "label": "Aceleración",

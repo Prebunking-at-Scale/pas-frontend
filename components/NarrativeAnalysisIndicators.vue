@@ -40,8 +40,17 @@
             <span class="text-sm font-medium text-gray-700">
               {{ $t('narratives.indicators.composite.label') }}
             </span>
-            <span class="text-2xl font-semibold tabular-nums text-gray-900">
-              {{ formatPercentile(compositePct) }}
+            <!-- Read as acceleration reads: the narrative's own size in the headline,
+                 its position among the others on the line below. A percentile alone
+                 answers "larger than whom", which reads as a magnitude when it is not
+                 one — 88% is not 88 of anything. -->
+            <span class="flex items-baseline gap-1">
+              <span class="text-2xl font-semibold tabular-nums text-gray-900">
+                {{ viralityHeadline }}
+              </span>
+              <span v-if="reachViews !== null" class="text-xs text-gray-500">
+                {{ $t('narratives.indicators.composite.unit') }}
+              </span>
             </span>
           </div>
           <div class="h-2 bg-gray-100 rounded overflow-hidden">
@@ -148,6 +157,7 @@ import type { NarrativeSpreadLevel, NarrativeAnalysisIndicatorsResponse, RawNarr
 import SpreadLevelBadge from '~/components/SpreadLevelBadge.vue';
 import NarrativeSpreadQuadrant from '~/components/NarrativeSpreadQuadrant.vue';
 import { ALERT_REGIONS, normalizeSpreadLevel } from '~/utils/spreadLevels';
+import { formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
   narrativeId: string;
@@ -167,6 +177,30 @@ const detailsOpen = ref(false);
  * cannot carry a positional claim like "top 5%".
  */
 const compositePct = computed(() => current.value?.composite_virality.metadata?.percentile ?? 0);
+
+/**
+ * The narrative's own size on the virality axis: `reach_score`, its summed view count
+ * and the largest of the two terms composite blends.
+ *
+ * Reach is shown rather than the blend for the same reason acceleration headlines
+ * `change_views` rather than its rank — it is the only component that is a plain
+ * magnitude. Engagement is a per-view ratio and deliberately size-neutral, so it cannot
+ * headline an axis that asks how far something has spread. The consequence is the same
+ * one acceleration lives with: a narrative ranked high on engagement shows a modest
+ * headline beside a high rank, and the rank on the line below is what the badge read.
+ *
+ * Null for rows written before the backend recorded the raw scores — hence the fallback
+ * to the percentile.
+ */
+const reachViews = computed<number | null>(() => {
+  const value = current.value?.composite_virality.metadata?.reach_score;
+  return typeof value === 'number' ? value : null;
+});
+
+const viralityHeadline = computed(() => {
+  if (reachViews.value === null) return formatPercentile(compositePct.value);
+  return formatNumber(reachViews.value);
+});
 
 /**
  * Null means the narrative was not visited on this date, so its rate is uncomputable —
@@ -214,15 +248,21 @@ const verdict = computed(() => {
   return $i18n.t('narratives.indicators.verdict.unbadged');
 });
 
-const compositeContextLabel = computed(() => {
-  const v = compositePct.value;
-  if (v >= 0.95) return $i18n.t('narratives.indicators.composite.context.top5');
-  if (v >= 0.85) return $i18n.t('narratives.indicators.composite.context.top15');
-  if (v >= 0.70) return $i18n.t('narratives.indicators.composite.context.top30');
-  if (v >= 0.55) return $i18n.t('narratives.indicators.composite.context.top45');
-  if (v >= 0.30) return $i18n.t('narratives.indicators.composite.context.middle');
-  return $i18n.t('narratives.indicators.composite.context.low');
-});
+/**
+ * The rank, and nothing that restates it.
+ *
+ * This line used to gloss the percentile into a band — "rank 88% — top 15% across all
+ * narratives" — which is one fact told twice, and the vaguer telling was the one in
+ * words: 88% *is* the top 12%, rounded up to a band boundary. All that the number
+ * cannot say on its own is which cohort it ranks within, and that is worth keeping,
+ * because it is precisely what differs from acceleration's line: composite ranks every
+ * narrative ever measured, acceleration only those measured that day.
+ */
+const compositeContextLabel = computed(() =>
+  $i18n.t('narratives.indicators.composite.rankContext', {
+    rank: formatPercentile(compositePct.value),
+  }),
+);
 
 const accelContextLabel = computed(() => {
   const v = accelPct.value;

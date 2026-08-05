@@ -496,6 +496,17 @@ export interface CompositeViralityMetadata {
   engagement_weight: number;
   reach_weight: number;
   percentile?: number | null;
+  /**
+   * The raw scores the two percentiles were ranked from: `reach_score` is the
+   * narrative's summed view count, `engagement_score` its (likes + 5×comments) / views
+   * ratio. The detail view headlines reach and keeps the rank on the line below, since a
+   * percentile answers "larger than whom" and never "how large".
+   *
+   * Optional: rows written before the backend recorded them carry only the ranks, and
+   * the headline falls back to the percentile as it did before.
+   */
+  reach_score?: number | null;
+  engagement_score?: number | null;
 }
 
 export interface AccelerationRateMetadata {

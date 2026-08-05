@@ -436,14 +436,8 @@
       },
       "composite": {
         "label": "Virality",
-        "context": {
-          "top5": "top 5% across all narratives",
-          "top15": "top 15% across all narratives",
-          "top30": "top 30% across all narratives",
-          "top45": "above the median",
-          "middle": "around the median",
-          "low": "below the median"
-        }
+        "unit": "views in total",
+        "rankContext": "rank {rank} across all narratives"
       },
       "acceleration": {
         "label": "Acceleration",

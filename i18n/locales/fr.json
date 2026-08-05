@@ -435,14 +435,8 @@
       },
       "composite": {
         "label": "Viralité",
-        "context": {
-          "top5": "top 5 % parmi tous les récits",
-          "top15": "top 15 % parmi tous les récits",
-          "top30": "top 30 % parmi tous les récits",
-          "top45": "au-dessus de la médiane",
-          "middle": "autour de la médiane",
-          "low": "en dessous de la médiane"
-        }
+        "unit": "vues au total",
+        "rankContext": "rang {rank} parmi tous les récits"
       },
       "acceleration": {
         "label": "Accélération",
