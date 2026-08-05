@@ -288,6 +288,22 @@
     "entities": "Entitäten",
     "timelineContentRecurrences": "Zeitleiste, Inhalt und Wiederholungen",
     "evolutionOfNarrative": "Entwicklung des Narrativs",
+    "evolution": {
+      "reach": "Reichweite",
+      "engagement": "Engagement",
+      "date": "Datum",
+      "reachExplanation": "Die Reichweite ist die Gesamtzahl der Aufrufe, die das Narrativ bis zum jeweiligen Datum gesammelt hat (linke Achse).",
+      "engagementExplanation": "Das Engagement ist die Gesamtzahl der Likes und Kommentare als Prozentsatz der Gesamtzahl der Aufrufe (rechte Achse).",
+      "tooltipBreakdown": "{likes} Likes · {comments} Kommentare",
+      "reachExplanationPlain": "Die Reichweite ist die Gesamtzahl der Aufrufe, die das Narrativ bis zum jeweiligen Datum gesammelt hat.",
+      "engagementExplanationPlain": "Das Engagement ist die Gesamtzahl der Likes und Kommentare als Prozentsatz der Gesamtzahl der Aufrufe.",
+      "tab": {
+        "absolute": "Absolute Zahlen",
+        "normalised": "Normalisiert"
+      },
+      "standardDeviations": "Standardabweichungen vom Mittelwert (σ)",
+      "normalisedNote": "Beide Variablen sind zum leichteren Vergleich normalisiert."
+    },
     "narrativeContext": "Kontext der Narrative",
     "showingNarrativesFor": "Zeige Narrative für Thema:",
     "showingResults": "Zeige {count} Narrative",

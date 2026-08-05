@@ -321,6 +321,22 @@
     "entities": "Entities",
     "timelineContentRecurrences": "Timeline, content and recurrences",
     "evolutionOfNarrative": "Evolution of the narrative",
+    "evolution": {
+      "reach": "Reach",
+      "engagement": "Engagement",
+      "date": "Date",
+      "reachExplanation": "Reach is the total number of views the narrative had accumulated on each date (left axis).",
+      "engagementExplanation": "Engagement is the total number of likes and comments as a percentage of the total number of views (right axis).",
+      "tooltipBreakdown": "{likes} likes · {comments} comments",
+      "reachExplanationPlain": "Reach is the total number of views the narrative had accumulated on each date.",
+      "engagementExplanationPlain": "Engagement is the total number of likes and comments as a percentage of the total number of views.",
+      "tab": {
+        "absolute": "Absolute numbers",
+        "normalised": "Normalised"
+      },
+      "standardDeviations": "Standard deviations from the mean (σ)",
+      "normalisedNote": "Both variables are normalized for ease of comparison."
+    },
     "narrativeContext": "Narrative context",
     "showingNarrativesFor": "Showing narratives for topic:",
     "showingResults": "Showing {count} narratives",

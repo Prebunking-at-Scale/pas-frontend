@@ -319,6 +319,22 @@
     "entities": "Entidades",
     "timelineContentRecurrences": "Línea de tiempo, contenido y recurrencias",
     "evolutionOfNarrative": "Evolución de la narrativa",
+    "evolution": {
+      "reach": "Alcance",
+      "engagement": "Engagement",
+      "date": "Fecha",
+      "reachExplanation": "El alcance es el número total de visualizaciones acumuladas por la narrativa en cada fecha (eje izquierdo).",
+      "engagementExplanation": "El engagement es el número total de me gusta y comentarios como porcentaje del número total de visualizaciones (eje derecho).",
+      "tooltipBreakdown": "{likes} me gusta · {comments} comentarios",
+      "reachExplanationPlain": "El alcance es el número total de visualizaciones acumuladas por la narrativa en cada fecha.",
+      "engagementExplanationPlain": "El engagement es el número total de me gusta y comentarios como porcentaje del número total de visualizaciones.",
+      "tab": {
+        "absolute": "Números absolutos",
+        "normalised": "Normalizado"
+      },
+      "standardDeviations": "Desviaciones típicas respecto a la media (σ)",
+      "normalisedNote": "Ambas variables están normalizadas para facilitar la comparación."
+    },
     "narrativeContext": "Contexto de la narrativa",
     "showingNarrativesFor": "Mostrando narrativas para el tema:",
     "showingResults": "Mostrando {count} narrativas",

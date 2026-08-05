@@ -319,6 +319,22 @@
     "entities": "Entités",
     "timelineContentRecurrences": "Chronologie, contenu et récurrences",
     "evolutionOfNarrative": "Évolution du récit",
+    "evolution": {
+      "reach": "Portée",
+      "engagement": "Engagement",
+      "date": "Date",
+      "reachExplanation": "La portée correspond au nombre total de vues cumulées par le récit à chaque date (axe de gauche).",
+      "engagementExplanation": "L'engagement est le nombre total de j'aime et de commentaires en pourcentage du nombre total de vues (axe de droite).",
+      "tooltipBreakdown": "{likes} j'aime · {comments} commentaires",
+      "reachExplanationPlain": "La portée correspond au nombre total de vues cumulées par le récit à chaque date.",
+      "engagementExplanationPlain": "L'engagement est le nombre total de j'aime et de commentaires en pourcentage du nombre total de vues.",
+      "tab": {
+        "absolute": "Nombres absolus",
+        "normalised": "Normalisé"
+      },
+      "standardDeviations": "Écarts types par rapport à la moyenne (σ)",
+      "normalisedNote": "Les deux variables sont normalisées pour faciliter la comparaison."
+    },
     "narrativeContext": "Contexte du récit",
     "showingNarrativesFor": "Affichage des récits pour le sujet :",
     "showingResults": "Affichage de {count} récits",

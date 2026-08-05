@@ -26,6 +26,10 @@ export default defineNuxtConfig({
     public: {
       viralNarrativesLimit: process.env.VIRAL_NARRATIVES_LIMIT ? parseInt(process.env.VIRAL_NARRATIVES_LIMIT) : 9,
       prevalentNarrativesLimit: process.env.PREVALENT_NARRATIVES_LIMIT ? parseInt(process.env.PREVALENT_NARRATIVES_LIMIT) : 10,
+      // Same env var names (and defaults) as core-api's core/config.py, so the engagement
+      // we plot is the engagement the Composite Virality Index scores.
+      viralityScoreLikesWeight: process.env.VIRALITY_SCORE_LIKES_WEIGHT ? parseInt(process.env.VIRALITY_SCORE_LIKES_WEIGHT) : 1,
+      viralityScoreCommentsWeight: process.env.VIRALITY_SCORE_COMMENTS_WEIGHT ? parseInt(process.env.VIRALITY_SCORE_COMMENTS_WEIGHT) : 5,
       testModeEnabled: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
     }
   },
