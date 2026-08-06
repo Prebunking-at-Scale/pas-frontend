@@ -442,14 +442,8 @@
       "acceleration": {
         "label": "Acceleration",
         "notMeasured": "not re-measured on this date — the rate is unknown, not zero",
-        "context": {
-          "fastest": "among the fastest-moving measured today",
-          "faster": "moving faster than most measured today",
-          "middle": "moving about as fast as the rest measured today",
-          "slower": "barely moving compared with the rest measured today"
-        },
         "perDay": "per day, in views",
-        "rankContext": "rank {rank} — {context}"
+        "rankContext": "rank {rank} across narratives measured today"
       },
       "quadrant": {
         "xAxis": "Virality percentile",

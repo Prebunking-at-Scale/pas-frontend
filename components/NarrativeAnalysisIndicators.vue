@@ -256,7 +256,8 @@ const verdict = computed(() => {
  * words: 88% *is* the top 12%, rounded up to a band boundary. All that the number
  * cannot say on its own is which cohort it ranks within, and that is worth keeping,
  * because it is precisely what differs from acceleration's line: composite ranks every
- * narrative ever measured, acceleration only those measured that day.
+ * narrative ever measured, acceleration only those measured that day. Both lines now
+ * name their cohort in the same shape, so the difference reads off the words themselves.
  */
 const compositeContextLabel = computed(() =>
   $i18n.t('narratives.indicators.composite.rankContext', {
@@ -264,19 +265,21 @@ const compositeContextLabel = computed(() =>
   }),
 );
 
+/**
+ * The same line as composite's, over acceleration's narrower cohort.
+ *
+ * This used to gloss the rank into a band in words — "rank 62% — among the fastest-moving
+ * measured today" — the same one-fact-told-twice the composite line dropped. What the
+ * number cannot say for itself is the cohort, and here the cohort is the whole point:
+ * acceleration ranks only the narratives re-measured on this date, never all of them.
+ */
 const accelContextLabel = computed(() => {
   const v = accelPct.value;
   if (v === null) return $i18n.t('narratives.indicators.acceleration.notMeasured');
-  const context
-    = v >= 0.80 ? $i18n.t('narratives.indicators.acceleration.context.fastest')
-    : v >= 0.50 ? $i18n.t('narratives.indicators.acceleration.context.faster')
-    : v >= 0.40 ? $i18n.t('narratives.indicators.acceleration.context.middle')
-    : $i18n.t('narratives.indicators.acceleration.context.slower');
   // The rank is no longer the headline, but it is what the classifier read, so a reader
   // asking why a badge landed still needs to see it.
   return $i18n.t('narratives.indicators.acceleration.rankContext', {
     rank: formatPercentile(v),
-    context,
   });
 });
 

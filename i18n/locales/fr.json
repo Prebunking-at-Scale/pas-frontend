@@ -442,13 +442,7 @@
         "label": "Accélération",
         "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
         "perDay": "par jour, en vues",
-        "rankContext": "rang {rank} — {context}",
-        "context": {
-          "fastest": "parmi les plus rapides des récits mesurés aujourd'hui",
-          "faster": "progresse plus vite que la plupart des récits mesurés aujourd'hui",
-          "middle": "progresse au même rythme que les autres récits mesurés aujourd'hui",
-          "slower": "bouge à peine par rapport aux autres récits mesurés aujourd'hui"
-        }
+        "rankContext": "rang {rank} parmi les récits mesurés aujourd'hui"
       },
       "quadrant": {
         "xAxis": "Centile de viralité",
