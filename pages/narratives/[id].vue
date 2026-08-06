@@ -142,7 +142,7 @@
         <NarrativeAnalysisIndicators
           v-if="narrative?.id"
           :narrative-id="narrative.id"
-          :spread-level="narrative.spread_level ?? null"
+          :spread-pattern="narrative.spread_pattern ?? null"
         />
 
         <!-- Evolution of the narrative: Chart showing cumulative views, likes, comments -->

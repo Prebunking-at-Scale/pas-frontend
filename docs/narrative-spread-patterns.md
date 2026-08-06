@@ -1,7 +1,7 @@
-# Narrative alert levels
+# Narrative spread patterns
 
-How the frontend renders the narrative alert taxonomy, and what it depends on from
-core-api. The design itself lives in core-api's `docs/narrative-spread-level-redesign.md`; this
+How the frontend renders the narrative spread-pattern taxonomy, and what it depends on from
+core-api. The design itself lives in core-api's `docs/narrative-spread-pattern-redesign.md`; this
 file records the decisions that are ours.
 
 ## The taxonomy
@@ -18,7 +18,7 @@ Two axes, four regions.
 Both are percentiles, never raw magnitudes: the scraper's coverage drifts, so an
 absolute bar would mean something different every week.
 
-| level | composite | acceleration | meaning |
+| pattern | composite | acceleration | meaning |
 |---|---|---|---|
 | `viral` | ≥ 0.80 | ≥ 0.80 | among the largest, and still climbing |
 | `early_surge` | ≤ 0.40 | ≥ 0.50 | still small, climbing fast |
@@ -29,7 +29,7 @@ absolute bar would mean something different every week.
 Two things a quadrant reading gets wrong. The regions are **rectangles, not quadrants**,
 evaluated in the order above — `viral` is carved out of the `trending` box. And they do
 **not tile the plane**: the bottom-left corner gets no label at all, and no label is
-`spread_level === null`, not a level named "none".
+`spread_pattern === null`, not a pattern named "none".
 
 ### The quadrant draws `trending` with the `viral` corner carved out
 
@@ -38,7 +38,7 @@ satisfies `≥ 0.40` on both too. Classification resolves it because `viral` is 
 first — but the plot has no evaluation order, so drawing both as plain rectangles made
 the outlines cross and asserted that the top-right corner was trending.
 
-`ALERT_REGIONS` therefore carries an optional `excludes`, and `regionPath()` in
+`SPREAD_REGIONS` therefore carries an optional `excludes`, and `regionPath()` in
 `NarrativeSpreadQuadrant.vue` renders `trending` as an L rather than a box:
 
 ```
@@ -53,7 +53,7 @@ which is exactly the case someone is most likely to be checking.
 
 The excluded region always shares the parent's upper bounds on both axes, so the result
 is an L traced in six points and never a shape with a hole. `excludes` is geometry and
-description only: `classifySpreadLevel` ignores it, because order already decides the
+description only: `classifySpreadPattern` ignores it, because order already decides the
 answer and two sources of truth for the same overlap is how they drift apart.
 
 The technical-details table is deliberately left showing the plain bounds. It is a
@@ -64,9 +64,9 @@ climber is `viral` if it clears both tops and `trending` otherwise.
 
 ## Decisions taken here
 
-**Boundaries are mirrored, not fetched.** `utils/spreadLevels.ts` holds the same six
-numbers as core-api's `core/config.py` (`ALERT_COMPOSITE_LO/MID/HI`,
-`ALERT_ACCEL_LO/MID/HI`). The frontend draws the regions, so it needs the geometry
+**Boundaries are mirrored, not fetched.** `utils/spreadPatterns.ts` holds the same six
+numbers as core-api's `core/config.py` (`SPREAD_COMPOSITE_LO/MID/HI`,
+`SPREAD_ACCEL_LO/MID/HI`). The frontend draws the regions, so it needs the geometry
 locally. Those constants are environment-overridable on the backend: a deployment that
 retunes them must update this file too. One definition that can drift is still better
 than the four copies this replaced (badge, filter, dashboard, thresholds table).
@@ -101,9 +101,9 @@ neutral grey for `trending`, blue for `consolidated`. The old palette ran a
 red→yellow→orange→grey ladder, which reads `consolidated` as a milder alarm when it is
 simply a different statement about a narrative.
 
-**Retired levels map to null.** `none`, `alert` and `watch` still exist in the Postgres
-enum so a stale `?spread_level=alert` returns an empty result instead of a 400, but the
-classifier no longer emits them. `normalizeSpreadLevel` maps them to null rather than to
+**Retired patterns map to null.** `none`, `alert` and `watch` still exist in the Postgres
+enum so a stale `?spread_pattern=alert` returns an empty result instead of a 400, but the
+classifier no longer emits them. `normalizeSpreadPattern` maps them to null rather than to
 a nearest equivalent, because the new regions sit on different boundaries and no
 equivalent exists. A narrative still holding one is unbadged until the next pipeline
 run, at most a day. Query parameters are normalised on read, so an old bookmark shows
@@ -147,8 +147,8 @@ table; both went stale the moment the pipeline changed.
 
 ## Related
 
-- `utils/spreadLevels.ts` — regions, colours, order, normalisation
+- `utils/spreadPatterns.ts` — regions, colours, order, normalisation
 - `components/NarrativeSpreadQuadrant.vue` — the percentile plane
 - `components/NarrativeAnalysisIndicators.vue` — the detail panel
-- `narrative-spread-level-redesign.md` (repo root; originally core-api `docs/`) — why the axes
+- `narrative-spread-pattern-redesign.md` (repo root; originally core-api `docs/`) — why the axes
   are what they are, and the five questions still open on the backend side

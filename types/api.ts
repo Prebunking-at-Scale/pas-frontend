@@ -59,7 +59,7 @@ export interface NarrativeSummary {
   average_score?: number | null;
   created_at?: string;
   updated_at?: string;
-  spread_level?: RawNarrativeSpreadLevel | null;
+  spread_pattern?: RawNarrativeSpreadPattern | null;
 }
 
 export interface Narrative {
@@ -433,30 +433,30 @@ export interface NarrativeDetail {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-  spread_level: RawNarrativeSpreadLevel | null;
+  spread_pattern: RawNarrativeSpreadPattern | null;
 }
 
 /**
  * The four regions of the percentile plane (core/config.py, D1 of the redesign).
  *
  * They do NOT tile the plane: a narrative that is small *and* flat gets no badge at
- * all, and no badge is `null` rather than a level. Only narratives the backend could
- * measure on both axes are classifiable, so most narratives carry no level — that is
+ * all, and no badge is `null` rather than a pattern. Only narratives the backend could
+ * measure on both axes are classifiable, so most narratives carry no pattern — that is
  * the design, not missing data.
  *
  * `none`, `alert` and `watch` are retired. They survive in the Postgres enum so that a
  * stale query parameter returns an empty result instead of a 400, but the classifier no
- * longer emits them; `normalizeSpreadLevel` maps them to null.
+ * longer emits them; `normalizeSpreadPattern` maps them to null.
  */
-export enum NarrativeSpreadLevel {
+export enum NarrativeSpreadPattern {
   VIRAL='viral',
   EARLY_SURGE='early_surge',
   CONSOLIDATED='consolidated',
   TRENDING='trending'
 }
 
-/** What the API may actually put in `spread_level`, retired values included. */
-export type RawNarrativeSpreadLevel = NarrativeSpreadLevel | 'none' | 'alert' | 'watch';
+/** What the API may actually put in `spread_pattern`, retired values included. */
+export type RawNarrativeSpreadPattern = NarrativeSpreadPattern | 'none' | 'alert' | 'watch';
 
 export enum AnalysisIndicatorType {
   COMPOSITE_VIRALITY = 'composite_virality',

@@ -18,8 +18,8 @@
               scored and simply fell in the unbadged region, or it was not re-measured
               today. Both are worth saying out loud. -->
       <div class="flex items-start gap-4 flex-wrap">
-        <div v-if="level" class="shrink-0">
-          <SpreadLevelBadge :level="level" class="text-base px-3 py-1" />
+        <div v-if="pattern" class="shrink-0">
+          <SpreadPatternBadge :pattern="pattern" class="text-base px-3 py-1" />
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-gray-900 font-medium leading-snug">
@@ -119,7 +119,7 @@
             <NarrativeSpreadQuadrant
               :composite-pct="compositePct"
               :accel-pct="accelPct"
-              :level="level"
+              :pattern="pattern"
             />
 
             <!-- The region definitions, derived from the same constants the plot uses. -->
@@ -127,9 +127,9 @@
               <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
               <table class="w-full text-[11px]">
                 <tbody>
-                  <tr v-for="region in ALERT_REGIONS" :key="region.level" class="border-b border-gray-100 last:border-0">
+                  <tr v-for="region in SPREAD_REGIONS" :key="region.pattern" class="border-b border-gray-100 last:border-0">
                     <td class="py-1 pr-2">
-                      <SpreadLevelBadge :level="region.level" />
+                      <SpreadPatternBadge :pattern="region.pattern" />
                     </td>
                     <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
                   </tr>
@@ -153,15 +153,15 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { ChevronRight } from 'lucide-vue-next';
 import { apiService } from '~/services/api';
-import type { NarrativeSpreadLevel, NarrativeAnalysisIndicatorsResponse, RawNarrativeSpreadLevel } from '~/types/api';
-import SpreadLevelBadge from '~/components/SpreadLevelBadge.vue';
+import type { NarrativeSpreadPattern, NarrativeAnalysisIndicatorsResponse, RawNarrativeSpreadPattern } from '~/types/api';
+import SpreadPatternBadge from '~/components/SpreadPatternBadge.vue';
 import NarrativeSpreadQuadrant from '~/components/NarrativeSpreadQuadrant.vue';
-import { ALERT_REGIONS, normalizeSpreadLevel } from '~/utils/spreadLevels';
+import { SPREAD_REGIONS, normalizeSpreadPattern } from '~/utils/spreadPatterns';
 import { formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
   narrativeId: string;
-  spreadLevel?: RawNarrativeSpreadLevel | string | null;
+  spreadPattern?: RawNarrativeSpreadPattern | string | null;
 }
 const props = defineProps<Props>();
 
@@ -239,11 +239,11 @@ const accelHeadline = computed(() => {
   return formatGrowth(accelGrowth.value);
 });
 
-const level = computed<NarrativeSpreadLevel | null>(() => normalizeSpreadLevel(props.spreadLevel));
+const pattern = computed<NarrativeSpreadPattern | null>(() => normalizeSpreadPattern(props.spreadPattern));
 
 // ── Plain-language context ────────────────────────────────────────────────
 const verdict = computed(() => {
-  if (level.value) return $i18n.t(`narratives.indicators.verdict.${level.value}`);
+  if (pattern.value) return $i18n.t(`narratives.indicators.verdict.${pattern.value}`);
   if (accelPct.value === null) return $i18n.t('narratives.indicators.verdict.unmeasured');
   return $i18n.t('narratives.indicators.verdict.unbadged');
 });
@@ -316,7 +316,7 @@ function formatGrowth(v: number): string {
  * above use — a reader should not have to learn that "composite" and "Virality" are the
  * same axis, and the internal name is not the one on screen.
  */
-function regionCondition(region: typeof ALERT_REGIONS[number]): string {
+function regionCondition(region: typeof SPREAD_REGIONS[number]): string {
   const virality = $i18n.t('narratives.indicators.composite.label');
   const acceleration = $i18n.t('narratives.indicators.acceleration.label');
   const parts: string[] = [];
