@@ -27,13 +27,21 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          # 10, not 9: pnpm-workspace.yaml here holds onlyBuiltDependencies and no
+          # `packages:` field, which is a pnpm 10 settings file. pnpm 9 reads it as a
+          # workspace definition and fails with "packages field missing or empty".
+          version: 10
           run_install: false
 
       - name: Get pnpm store directory
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          # Assigned first, then echoed. Inlining the substitution into echo throws the
+          # inner exit code away, so a failure here used to set STORE_PATH empty, pass,
+          # and surface two steps later as actions/cache "Input required and not
+          # supplied: path". Under bash -e an assignment does carry the failure.
+          STORE_PATH="$(pnpm store path --silent)"
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
         uses: actions/cache@v4

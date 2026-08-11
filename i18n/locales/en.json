@@ -43,8 +43,7 @@
     "error": "Error",
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago",
-    "deleting": "Deleting..."
+    "daysAgo": "{count}d ago"
   },
   "nav": {
     "overview": "Overview",
@@ -293,19 +292,19 @@
     "textPlaceholder": "Enter search text",
     "entity": "Entity",
     "selectEntity": "Select entity",
-    "alertLevel": "Alert level",
-    "alertLevelDescriptions": {
-      "viral": "Highly popular and accelerating fast.",
-      "alert": "Popular and growing strongly day over day.",
-      "early_surge": "Still small but growing explosively.",
-      "watch": "Growing modestly, or popular but stable."
+    "spreadPattern": "Spread Pattern",
+    "spreadPatternDescriptions": {
+      "viral": "Among the largest narratives, and still climbing.",
+      "early_surge": "Still small, but climbing fast.",
+      "trending": "Sizeable and moving — the broad middle.",
+      "consolidated": "Large, but relatively slow growth."
     },
-    "alertLevels": {
+    "spreadPatterns": {
       "viral": "Viral",
-      "alert": "Alert",
       "early_surge": "Early surge",
-      "watch": "Watch",
-      "none": "None"
+      "trending": "Trending",
+      "consolidated": "Consolidated",
+      "unbadged": "No label"
     },
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
@@ -322,6 +321,22 @@
     "entities": "Entities",
     "timelineContentRecurrences": "Timeline, content and recurrences",
     "evolutionOfNarrative": "Evolution of the narrative",
+    "evolution": {
+      "reach": "Reach",
+      "engagement": "Engagement",
+      "date": "Date",
+      "reachExplanation": "Reach is the total number of views the narrative had accumulated on each date (left axis).",
+      "engagementExplanation": "Engagement is the total number of likes and comments as a percentage of the total number of views (right axis).",
+      "tooltipBreakdown": "{likes} likes · {comments} comments",
+      "reachExplanationPlain": "Reach is the total number of views the narrative had accumulated on each date.",
+      "engagementExplanationPlain": "Engagement is the total number of likes and comments as a percentage of the total number of views.",
+      "tab": {
+        "absolute": "Absolute numbers",
+        "normalised": "Normalised"
+      },
+      "standardDeviations": "Standard deviations from the mean (σ)",
+      "normalisedNote": "Both variables are normalized for ease of comparison."
+    },
     "narrativeContext": "Narrative context",
     "showingNarrativesFor": "Showing narratives for topic:",
     "showingResults": "Showing {count} narratives",
@@ -387,65 +402,54 @@
     "viewsChange": "Views Change",
     "viewsChangeAcronym": "ΔViews",
     "accelerationFormula": "AI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔViews × {viewsWeight})",
-    "alertLevel": "Alert Level",
-    "alertLevelNONE": "None",
-    "alertLevelEARLY_SURGE": "Early Surge",
-    "alertLevelALERT": "Alert",
-    "alertLevelWATCH": "Watch",
-    "alertLevelVIRAL": "Viral",
-    "alertLevelDescriptionNONE": "No significant activity detected",
-    "alertLevelDescriptionEARLY_SURGE": "Early growth pattern detected",
-    "alertLevelDescriptionALERT": "Notable increase in activity",
-    "alertLevelDescriptionWATCH": "Significant growth requiring attention",
-    "alertLevelDescriptionVIRAL": "Viral status - Immediate attention required",
-    "alertThresholds": "Alert Thresholds",
-    "alertLevelConditionEARLY_SURGE": "CVI {'<'} 0.65 and AI > 2.0",
-    "alertLevelConditionALERT": "CVI > 0.70 and AI > 1.5",
-    "alertLevelConditionWATCH": "CVI > 0.55 or AI > 1.2",
-    "alertLevelConditionVIRAL": "CVI > 0.85 and AI > 1.0",
+    "spreadPatternNONE": "None",
+    "spreadPatternEARLY_SURGE": "Early Surge",
+    "spreadPatternALERT": "Alert",
+    "spreadPatternWATCH": "Watch",
+    "spreadPatternVIRAL": "Viral",
+    "spreadPatternDescriptionNONE": "No significant activity detected",
+    "spreadPatternDescriptionEARLY_SURGE": "Early growth pattern detected",
+    "spreadPatternDescriptionALERT": "Notable increase in activity",
+    "spreadPatternDescriptionWATCH": "Significant growth requiring attention",
+    "spreadPatternDescriptionVIRAL": "Viral status - Immediate attention required",
+    "spreadThresholds": "Spread Thresholds",
+    "spreadPatternConditionEARLY_SURGE": "CVI {'<'} 0.65 and AI > 2.0",
+    "spreadPatternConditionALERT": "CVI > 0.70 and AI > 1.5",
+    "spreadPatternConditionWATCH": "CVI > 0.55 or AI > 1.2",
+    "spreadPatternConditionVIRAL": "CVI > 0.85 and AI > 1.0",
     "indicators": {
-      "empty": "No analysis indicators have been computed for this narrative yet.",
-      "asOf": "Updated {when}",
+      "empty": "This narrative has never been measured, so there is nothing to score yet.",
+      "asOf": "Measured {when}",
       "today": "today",
       "yesterday": "yesterday",
       "daysAgo": "{n} days ago",
       "technicalDetails": "Technical details",
-      "thresholds": "Alert thresholds",
+      "thresholds": "How the labels are drawn",
+      "coverage": "Rate computed from {videos} re-measured video(s), {days} days since their previous reading on average.",
       "verdict": {
-        "viral": "This narrative is among the most popular AND accelerating fast.",
-        "alert": "Popular and growing notably day over day.",
-        "early_surge": "Explosive growth from a small base.",
-        "watch": "Popular but stable, or growing modestly from a smaller base.",
-        "none": "No significant activity right now."
+        "viral": "Among the largest narratives, and still climbing.",
+        "early_surge": "Still small, but climbing fast.",
+        "trending": "Sizeable and moving — the broad middle of the corpus.",
+        "consolidated": "Large, but relatively slow growth.",
+        "unbadged": "Measured today: small, and not moving. No label applies.",
+        "unmeasured": "Not re-measured on this date, so how fast it is moving is unknown. Its size below is still what we last recorded."
       },
       "composite": {
-        "label": "Popularity",
-        "howCalculated": "weighted percentile of engagement, reach and velocity",
-        "engagement": "Engagement",
-        "reach": "Reach",
-        "velocity": "Velocity",
-        "context": {
-          "top5": "top 5% across narratives",
-          "top15": "top 15% across narratives",
-          "top30": "top 30% across narratives",
-          "top45": "above the median",
-          "middle": "around the median",
-          "low": "below the median"
-        }
+        "label": "Virality",
+        "unit": "views in total",
+        "rankContext": "rank {rank} across all narratives"
       },
       "acceleration": {
         "label": "Acceleration",
-        "howCalculated": "weighted percent change vs the previous day, capped at +500% per dimension",
-        "engagement": "Engagement rate",
-        "videoVolume": "Video volume",
-        "views": "Views",
-        "context": {
-          "explosive": "explosive growth vs yesterday",
-          "fast": "fast growth vs yesterday",
-          "notable": "notable growth vs yesterday",
-          "modest": "modest growth vs yesterday",
-          "flat": "roughly flat vs yesterday"
-        }
+        "notMeasured": "not re-measured on this date — the rate is unknown, not zero",
+        "perDay": "per day, in views",
+        "rankContext": "rank {rank} across narratives measured today"
+      },
+      "quadrant": {
+        "xAxis": "Virality percentile",
+        "yAxis": "Acceleration percentile",
+        "aria": "Virality in the {composite}th percentile, acceleration in the {accel}th.",
+        "ariaNoAccel": "Virality in the {composite}th percentile; acceleration not measured on this date."
       }
     }
   },

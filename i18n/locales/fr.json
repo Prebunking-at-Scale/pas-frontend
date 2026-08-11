@@ -290,19 +290,19 @@
     "keywordsPlaceholder": "Entrez un mot-clé et appuyez sur Entrée",
     "text": "Texte",
     "textPlaceholder": "Entrez le texte de recherche",
-    "alertLevel": "Niveau d'alerte",
-    "alertLevelDescriptions": {
-      "viral": "Très populaire et en forte accélération.",
-      "alert": "Populaire et en forte croissance au jour le jour.",
-      "early_surge": "Encore petite mais en croissance explosive.",
-      "watch": "Croissance modérée, ou populaire mais stable."
+    "spreadPattern": "Schéma de diffusion",
+    "spreadPatternDescriptions": {
+      "viral": "Parmi les récits les plus répandus, et toujours en hausse.",
+      "early_surge": "Encore modeste, mais en forte hausse.",
+      "trending": "De taille notable et en mouvement — le gros du corpus.",
+      "consolidated": "Vaste, mais avec une croissance relativement lente."
     },
-    "alertLevels": {
+    "spreadPatterns": {
       "viral": "Viral",
-      "alert": "Alerte",
       "early_surge": "Montée précoce",
-      "watch": "Surveiller",
-      "none": "Aucun"
+      "trending": "En circulation",
+      "consolidated": "Consolidé",
+      "unbadged": "Sans étiquette"
     },
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
@@ -319,6 +319,22 @@
     "entities": "Entités",
     "timelineContentRecurrences": "Chronologie, contenu et récurrences",
     "evolutionOfNarrative": "Évolution du récit",
+    "evolution": {
+      "reach": "Portée",
+      "engagement": "Engagement",
+      "date": "Date",
+      "reachExplanation": "La portée correspond au nombre total de vues cumulées par le récit à chaque date (axe de gauche).",
+      "engagementExplanation": "L'engagement est le nombre total de j'aime et de commentaires en pourcentage du nombre total de vues (axe de droite).",
+      "tooltipBreakdown": "{likes} j'aime · {comments} commentaires",
+      "reachExplanationPlain": "La portée correspond au nombre total de vues cumulées par le récit à chaque date.",
+      "engagementExplanationPlain": "L'engagement est le nombre total de j'aime et de commentaires en pourcentage du nombre total de vues.",
+      "tab": {
+        "absolute": "Nombres absolus",
+        "normalised": "Normalisé"
+      },
+      "standardDeviations": "Écarts types par rapport à la moyenne (σ)",
+      "normalisedNote": "Les deux variables sont normalisées pour faciliter la comparaison."
+    },
     "narrativeContext": "Contexte du récit",
     "showingNarrativesFor": "Affichage des récits pour le sujet :",
     "showingResults": "Affichage de {count} récits",
@@ -384,65 +400,55 @@
     "viewsChange": "Changement de Vues",
     "viewsChangeAcronym": "ΔVues",
     "accelerationFormula": "IA = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔVues × {viewsWeight})",
-    "alertLevel": "Niveau d'Alerte",
-    "alertLevelNONE": "Aucun",
-    "alertLevelEARLY_SURGE": "Surge Précoce",
-    "alertLevelALERT": "Alerte",
-    "alertLevelWATCH": "Surveillance",
-    "alertLevelVIRAL": "Viral",
-    "alertLevelDescriptionNONE": "Aucune activité significative détectée",
-    "alertLevelDescriptionEARLY_SURGE": "Modèle de croissance précoce détecté",
-    "alertLevelDescriptionALERT": "Augmentation notable de l'activité",
-    "alertLevelDescriptionWATCH": "Croissance significative nécessitant une attention",
-    "alertLevelDescriptionVIRAL": "Statut viral - Attention immédiate requise",
-    "alertThresholds": "Seuils d'Alerte",
-    "alertLevelConditionEARLY_SURGE": "IVC {'<'} 0.65 et IA > 2.0",
-    "alertLevelConditionALERT": "IVC > 0.70 et IA > 1.5",
-    "alertLevelConditionWATCH": "IVC > 0.55 ou IA > 1.2",
-    "alertLevelConditionVIRAL": "IVC > 0.85 et IA > 1.0",
+    "spreadPattern": "Schéma de Diffusion",
+    "spreadPatternNONE": "Aucun",
+    "spreadPatternEARLY_SURGE": "Surge Précoce",
+    "spreadPatternALERT": "Alerte",
+    "spreadPatternWATCH": "Surveillance",
+    "spreadPatternVIRAL": "Viral",
+    "spreadPatternDescriptionNONE": "Aucune activité significative détectée",
+    "spreadPatternDescriptionEARLY_SURGE": "Modèle de croissance précoce détecté",
+    "spreadPatternDescriptionALERT": "Augmentation notable de l'activité",
+    "spreadPatternDescriptionWATCH": "Croissance significative nécessitant une attention",
+    "spreadPatternDescriptionVIRAL": "Statut viral - Attention immédiate requise",
+    "spreadThresholds": "Seuils de Diffusion",
+    "spreadPatternConditionEARLY_SURGE": "IVC {'<'} 0.65 et IA > 2.0",
+    "spreadPatternConditionALERT": "IVC > 0.70 et IA > 1.5",
+    "spreadPatternConditionWATCH": "IVC > 0.55 ou IA > 1.2",
+    "spreadPatternConditionVIRAL": "IVC > 0.85 et IA > 1.0",
     "indicators": {
-      "empty": "Aucun indicateur d'analyse n'a encore été calculé pour ce récit.",
-      "asOf": "Mis à jour {when}",
+      "empty": "Ce récit n'a jamais été mesuré, il n'y a donc rien à évaluer pour l'instant.",
+      "asOf": "Mesuré {when}",
       "today": "aujourd'hui",
       "yesterday": "hier",
       "daysAgo": "il y a {n} jours",
       "technicalDetails": "Détails techniques",
-      "thresholds": "Seuils d'alerte",
+      "thresholds": "Comment les étiquettes sont tracées",
+      "coverage": "Taux calculé à partir de {videos} vidéo(s) remesurée(s), {days} jours en moyenne depuis leur relevé précédent.",
       "verdict": {
-        "viral": "Ce récit est parmi les plus populaires ET s'accélère rapidement.",
-        "alert": "Populaire et en croissance notable d'un jour à l'autre.",
-        "early_surge": "Croissance explosive à partir d'une base modeste.",
-        "watch": "Populaire mais stable, ou en croissance modérée depuis une base plus faible.",
-        "none": "Aucune activité notable pour le moment."
+        "viral": "Parmi les récits les plus répandus, et toujours en hausse.",
+        "early_surge": "Encore modeste, mais en forte hausse.",
+        "trending": "De taille notable et en mouvement — le gros du corpus.",
+        "consolidated": "Vaste, mais avec une croissance relativement lente.",
+        "unbadged": "Mesuré aujourd'hui : modeste et sans mouvement. Aucune étiquette ne s'applique.",
+        "unmeasured": "Non remesuré à cette date : sa vitesse de progression est donc inconnue. La taille indiquée ci-dessous reste le dernier relevé."
       },
       "composite": {
-        "label": "Popularité",
-        "howCalculated": "centile pondéré d'engagement, portée et vélocité",
-        "engagement": "Engagement",
-        "reach": "Portée",
-        "velocity": "Vélocité",
-        "context": {
-          "top5": "top 5 % parmi tous les récits",
-          "top15": "top 15 % parmi tous les récits",
-          "top30": "top 30 % parmi tous les récits",
-          "top45": "au-dessus de la médiane",
-          "middle": "autour de la médiane",
-          "low": "en dessous de la médiane"
-        }
+        "label": "Viralité",
+        "unit": "vues au total",
+        "rankContext": "rang {rank} parmi tous les récits"
       },
       "acceleration": {
         "label": "Accélération",
-        "howCalculated": "variation en % pondérée vs la veille, plafonnée à +500 % par dimension",
-        "engagement": "Taux d'engagement",
-        "videoVolume": "Volume vidéo",
-        "views": "Vues",
-        "context": {
-          "explosive": "croissance explosive vs hier",
-          "fast": "croissance rapide vs hier",
-          "notable": "croissance notable vs hier",
-          "modest": "croissance modérée vs hier",
-          "flat": "quasiment plat vs hier"
-        }
+        "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
+        "perDay": "par jour, en vues",
+        "rankContext": "rang {rank} parmi les récits mesurés aujourd'hui"
+      },
+      "quadrant": {
+        "xAxis": "Centile de viralité",
+        "yAxis": "Centile d'accélération",
+        "aria": "Viralité au {composite}e centile, accélération au {accel}e.",
+        "ariaNoAccel": "Viralité au {composite}e centile ; accélération non mesurée à cette date."
       }
     }
   },

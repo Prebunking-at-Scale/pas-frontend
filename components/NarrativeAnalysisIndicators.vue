@@ -8,20 +8,22 @@
       <div class="h-12 bg-gray-200 rounded" />
     </div>
 
-    <!-- Empty state -->
+    <!-- Empty state: no composite at all, i.e. the narrative has never been measured. -->
     <div v-else-if="!current" class="text-sm text-gray-500 italic">
       {{ $t('narratives.indicators.empty') }}
     </div>
 
     <div v-else class="space-y-6">
-      <!-- 1) VERDICT -->
+      <!-- 1) VERDICT. A narrative with no badge still shows its measurements: it was
+              scored and simply fell in the unbadged region, or it was not re-measured
+              today. Both are worth saying out loud. -->
       <div class="flex items-start gap-4 flex-wrap">
-        <div class="shrink-0">
-          <AlertLevelBadge :level="levelKey" class="text-base px-3 py-1" />
+        <div v-if="pattern" class="shrink-0">
+          <SpreadPatternBadge :pattern="pattern" class="text-base px-3 py-1" />
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-gray-900 font-medium leading-snug">
-            {{ $t(`narratives.indicators.verdict.${levelKey}`) }}
+            {{ verdict }}
           </p>
           <p class="text-sm text-gray-500 mt-1">
             {{ $t('narratives.indicators.asOf', { when: relativeDate }) }}
@@ -29,50 +31,67 @@
         </div>
       </div>
 
-      <!-- 2) TWO INDICATORS, each with bar + 7-day sparkline + plain-language context -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Composite virality (bounded 0..1) -->
+      <!-- 2) THE TWO AXES. Kept on the surface: the numbers are the answer, and the
+              quadrant behind the toggle is the explanation of how they combine. -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Composite — a level, carried forward, known for every measured narrative -->
         <div>
           <div class="flex items-baseline justify-between mb-1">
             <span class="text-sm font-medium text-gray-700">
               {{ $t('narratives.indicators.composite.label') }}
             </span>
-            <span class="text-2xl font-semibold tabular-nums" :class="magnitudeColor(compositeValue)">
-              {{ compositeValue.toFixed(2) }}
+            <!-- Read as acceleration reads: the narrative's own size in the headline,
+                 its position among the others on the line below. A percentile alone
+                 answers "larger than whom", which reads as a magnitude when it is not
+                 one — 88% is not 88 of anything. -->
+            <span class="flex items-baseline gap-1">
+              <span class="text-2xl font-semibold tabular-nums text-gray-900">
+                {{ viralityHeadline }}
+              </span>
+              <span v-if="reachViews !== null" class="text-xs text-gray-500">
+                {{ $t('narratives.indicators.composite.unit') }}
+              </span>
             </span>
           </div>
           <div class="h-2 bg-gray-100 rounded overflow-hidden">
-            <div
-              class="h-full transition-all"
-              :class="magnitudeBg(compositeValue)"
-              :style="{ width: `${Math.min(compositeValue, 1) * 100}%` }"
-            />
+            <div class="h-full bg-gray-700 transition-all" :style="{ width: `${compositePct * 100}%` }" />
           </div>
           <div class="mt-2 text-xs text-gray-500">
             {{ compositeContextLabel }}
           </div>
         </div>
 
-        <!-- Acceleration (unbounded, baseline 0) -->
+        <!-- Acceleration — a rate, and only for narratives visited that day -->
         <div>
           <div class="flex items-baseline justify-between mb-1">
             <span class="text-sm font-medium text-gray-700">
               {{ $t('narratives.indicators.acceleration.label') }}
             </span>
-            <span class="text-2xl font-semibold tabular-nums" :class="accelColor(accelerationValue)">
-              {{ accelerationValue >= 0 ? '+' : '' }}{{ accelerationValue.toFixed(2) }}
+            <!-- The headline is the narrative's actual daily view growth, not its rank.
+                 A rank answers "faster than whom", which reads as a magnitude when it is
+                 not one: five views above an otherwise flat cohort ranks around the
+                 quarter mark while having grown 0.005%. The rank is what earns the badge,
+                 so it moves to the line below rather than disappearing. -->
+            <span class="flex items-baseline gap-1">
+              <span
+                class="text-2xl font-semibold tabular-nums"
+                :class="accelPct === null ? 'text-gray-300' : 'text-gray-900'"
+              >
+                {{ accelHeadline }}
+              </span>
+              <span v-if="accelGrowth !== null" class="text-xs text-gray-500">
+                {{ $t('narratives.indicators.acceleration.perDay') }}
+              </span>
             </span>
           </div>
-          <div class="relative h-2 bg-gray-100 rounded overflow-hidden">
-            <!-- Baseline marker at 0 -->
-            <div class="absolute top-0 bottom-0 w-px bg-gray-400" :style="{ left: `${ACCEL_ZERO_POS}%` }" />
+          <div class="h-2 bg-gray-100 rounded overflow-hidden">
             <div
-              class="absolute top-0 h-full transition-all"
-              :class="accelBg(accelerationValue)"
-              :style="accelBarStyle"
+              v-if="accelPct !== null"
+              class="h-full bg-gray-700 transition-all"
+              :style="{ width: `${accelPct * 100}%` }"
             />
           </div>
-          <div class="mt-2 text-xs text-gray-500">
+          <div class="mt-2 text-xs" :class="accelPct === null ? 'text-amber-700' : 'text-gray-500'">
             {{ accelContextLabel }}
           </div>
         </div>
@@ -90,52 +109,40 @@
         </button>
 
         <div v-if="detailsOpen" class="mt-4 space-y-4 text-xs text-gray-600">
-          <!-- Composite breakdown -->
-          <div>
-            <p class="font-medium text-gray-700 mb-1">
-              {{ $t('narratives.indicators.composite.label') }}
-              <span class="font-normal text-gray-500">— {{ $t('narratives.indicators.composite.howCalculated') }}</span>
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-              <div v-for="part in compositeParts" :key="part.key" class="bg-gray-50 rounded p-2">
-                <div class="text-gray-500">{{ $t(`narratives.indicators.composite.${part.key}`) }}</div>
-                <div class="text-sm font-semibold text-gray-900">{{ part.value.toFixed(2) }}</div>
-                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(2) }}</div>
-              </div>
+          <!-- The plot and the definitions it draws, side by side: the table names the
+               boundaries and the plot shows where they fall, so reading one against the
+               other should not cost a scroll. -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- Where the narrative sits on the percentile plane. This is what the two
+                 bars above cannot show: `viral` is a conjunction of both axes, and
+                 `early_surge` is capped on virality rather than being "anything climbing". -->
+            <NarrativeSpreadQuadrant
+              :composite-pct="compositePct"
+              :accel-pct="accelPct"
+              :pattern="pattern"
+            />
+
+            <!-- The region definitions, derived from the same constants the plot uses. -->
+            <div>
+              <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
+              <table class="w-full text-[11px]">
+                <tbody>
+                  <tr v-for="region in SPREAD_REGIONS" :key="region.pattern" class="border-b border-gray-100 last:border-0">
+                    <td class="py-1 pr-2">
+                      <SpreadPatternBadge :pattern="region.pattern" />
+                    </td>
+                    <td class="py-1 text-gray-600 tabular-nums">{{ regionCondition(region) }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <!-- Acceleration breakdown -->
-          <div>
-            <p class="font-medium text-gray-700 mb-1">
-              {{ $t('narratives.indicators.acceleration.label') }}
-              <span class="font-normal text-gray-500">— {{ $t('narratives.indicators.acceleration.howCalculated') }}</span>
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-              <div v-for="part in accelerationParts" :key="part.key" class="bg-gray-50 rounded p-2">
-                <div class="text-gray-500">{{ $t(`narratives.indicators.acceleration.${part.key}`) }}</div>
-                <div class="text-sm font-semibold text-gray-900">
-                  {{ part.value >= 0 ? '+' : '' }}{{ formatPercent(part.value) }}
-                </div>
-                <div class="text-[10px] text-gray-400">× {{ part.weight.toFixed(2) }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- All thresholds reference table -->
-          <div>
-            <p class="font-medium text-gray-700 mb-1">{{ $t('narratives.indicators.thresholds') }}</p>
-            <table class="w-full text-[11px]">
-              <tbody>
-                <tr v-for="t in THRESHOLDS" :key="t.level" class="border-b border-gray-100 last:border-0">
-                  <td class="py-1 pr-2">
-                    <AlertLevelBadge :level="t.level" />
-                  </td>
-                  <td class="py-1 text-gray-600">{{ t.condition }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <!-- How much of the narrative was actually re-measured. A rate computed from
+               four of forty videos deserves less confidence than one from all forty. -->
+          <p v-if="coverage" class="text-gray-500">
+            {{ $t('narratives.indicators.coverage', coverage) }}
+          </p>
         </div>
       </div>
     </div>
@@ -146,115 +153,179 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { ChevronRight } from 'lucide-vue-next';
 import { apiService } from '~/services/api';
-import { NarrativeAlertLevel, type NarrativeAnalysisIndicatorsResponse } from '~/types/api';
-import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
+import type { NarrativeSpreadPattern, NarrativeAnalysisIndicatorsResponse, RawNarrativeSpreadPattern } from '~/types/api';
+import SpreadPatternBadge from '~/components/SpreadPatternBadge.vue';
+import NarrativeSpreadQuadrant from '~/components/NarrativeSpreadQuadrant.vue';
+import { SPREAD_REGIONS, normalizeSpreadPattern } from '~/utils/spreadPatterns';
+import { formatNumber } from '~/utils/narrativeStats';
 
 interface Props {
   narrativeId: string;
-  alertLevel?: NarrativeAlertLevel | null;
+  spreadPattern?: RawNarrativeSpreadPattern | string | null;
 }
 const props = defineProps<Props>();
 
 const { $i18n } = useNuxtApp();
 
-// Acceleration is unbounded but we render it on a [-cap, +cap] visual scale.
-// The backend caps each change_* at 5 (ACCELERATION_CHANGE_CAP), so weighted
-// acceleration_rate can't reach 5 either. 3.0 covers the realistic range for
-// "viral" without making the bar look empty for normal values.
-const ACCEL_VISUAL_CAP = 3.0;
-const ACCEL_ZERO_POS = 0; // baseline at the LEFT edge — accel >= 0 in practice
-
 const loading = ref(true);
 const current = ref<NarrativeAnalysisIndicatorsResponse | null>(null);
 const detailsOpen = ref(false);
 
-const compositeValue = computed(() => current.value?.composite_virality.indicator_value ?? 0);
-const accelerationValue = computed(() => current.value?.acceleration_rate.indicator_value ?? 0);
+/**
+ * Both axes are read from `metadata.percentile`, which is the rank the classifier uses.
+ * `indicator_value` is a weighted blend of two ranks and is not itself a rank, so it
+ * cannot carry a positional claim like "top 5%".
+ */
+const compositePct = computed(() => current.value?.composite_virality.metadata?.percentile ?? 0);
 
-const levelKey = computed<NarrativeAlertLevel>(() => props.alertLevel ?? NarrativeAlertLevel.NONE);
-
-// ── Visual styling helpers ────────────────────────────────────────────────
-function magnitudeColor(v: number): string {
-  if (v >= 0.85) return 'text-red-600';
-  if (v >= 0.70) return 'text-orange-600';
-  if (v >= 0.55) return 'text-yellow-600';
-  return 'text-gray-700';
-}
-function magnitudeBg(v: number): string {
-  if (v >= 0.85) return 'bg-red-500';
-  if (v >= 0.70) return 'bg-orange-500';
-  if (v >= 0.55) return 'bg-yellow-500';
-  return 'bg-gray-400';
-}
-function accelColor(v: number): string {
-  if (v >= 2.0) return 'text-red-600';
-  if (v >= 1.5) return 'text-orange-600';
-  if (v >= 1.0) return 'text-yellow-600';
-  if (v >= 0.5) return 'text-gray-700';
-  return 'text-gray-500';
-}
-function accelBg(v: number): string {
-  if (v >= 2.0) return 'bg-red-500';
-  if (v >= 1.5) return 'bg-orange-500';
-  if (v >= 1.0) return 'bg-yellow-500';
-  return 'bg-gray-400';
-}
-
-const accelBarStyle = computed(() => {
-  const v = accelerationValue.value;
-  const pct = Math.min(Math.abs(v) / ACCEL_VISUAL_CAP, 1) * 100;
-  // All practical values are >= 0, so the bar grows rightward from 0.
-  return { left: `${ACCEL_ZERO_POS}%`, width: `${pct}%` };
+/**
+ * The narrative's own size on the virality axis: `reach_score`, its summed view count
+ * and the largest of the two terms composite blends.
+ *
+ * Reach is shown rather than the blend for the same reason acceleration headlines
+ * `change_views` rather than its rank — it is the only component that is a plain
+ * magnitude. Engagement is a per-view ratio and deliberately size-neutral, so it cannot
+ * headline an axis that asks how far something has spread. The consequence is the same
+ * one acceleration lives with: a narrative ranked high on engagement shows a modest
+ * headline beside a high rank, and the rank on the line below is what the badge read.
+ *
+ * Null for rows written before the backend recorded the raw scores — hence the fallback
+ * to the percentile.
+ */
+const reachViews = computed<number | null>(() => {
+  const value = current.value?.composite_virality.metadata?.reach_score;
+  return typeof value === 'number' ? value : null;
 });
 
-// ── Plain-language context labels ─────────────────────────────────────────
-const compositeContextLabel = computed(() => {
-  const v = compositeValue.value;
-  // Percentile-based: composite is itself a percentile composite so it already
-  // ranks the narrative against the whole population for the day.
-  if (v >= 0.95) return $i18n.t('narratives.indicators.composite.context.top5');
-  if (v >= 0.85) return $i18n.t('narratives.indicators.composite.context.top15');
-  if (v >= 0.70) return $i18n.t('narratives.indicators.composite.context.top30');
-  if (v >= 0.55) return $i18n.t('narratives.indicators.composite.context.top45');
-  if (v >= 0.30) return $i18n.t('narratives.indicators.composite.context.middle');
-  return $i18n.t('narratives.indicators.composite.context.low');
+const viralityHeadline = computed(() => {
+  if (reachViews.value === null) return formatPercentile(compositePct.value);
+  return formatNumber(reachViews.value);
 });
 
+/**
+ * Null means the narrative was not visited on this date, so its rate is uncomputable —
+ * NOT that it was flat. Composite ranks every narrative measured at least once (~22k),
+ * acceleration only the ~2k re-measured that day, so this is the common case and must
+ * never be rendered as a zero.
+ */
+const accelPct = computed<number | null>(() => {
+  const accel = current.value?.acceleration_rate;
+  if (!accel) return null;
+  return accel.metadata?.percentile ?? null;
+});
+
+/**
+ * The narrative's actual view growth per day, as a fraction of the baseline it grew
+ * from — `change_views`, the largest of the three components acceleration blends.
+ *
+ * This is the only part of the rate that is a plain growth figure. The other two are a
+ * change in how many videos we have linked and a change in engagement ratio, neither of
+ * which is "how fast is this spreading", so neither belongs in a headline that reads as
+ * a percentage. The consequence is that a narrative whose rank came from gaining videos
+ * shows a small headline beside a high rank; the rank on the line below is what the
+ * badge was read from, and the two are answering different questions.
+ *
+ * Null for a narrative not re-measured on this date, and also for rows written before
+ * the redesign, which carry no components — hence the fallback to the rank.
+ */
+const accelGrowth = computed<number | null>(() => {
+  const value = current.value?.acceleration_rate?.metadata?.change_views;
+  return typeof value === 'number' ? value : null;
+});
+
+const accelHeadline = computed(() => {
+  if (accelPct.value === null) return '—';
+  if (accelGrowth.value === null) return formatPercentile(accelPct.value);
+  return formatGrowth(accelGrowth.value);
+});
+
+const pattern = computed<NarrativeSpreadPattern | null>(() => normalizeSpreadPattern(props.spreadPattern));
+
+// ── Plain-language context ────────────────────────────────────────────────
+const verdict = computed(() => {
+  if (pattern.value) return $i18n.t(`narratives.indicators.verdict.${pattern.value}`);
+  if (accelPct.value === null) return $i18n.t('narratives.indicators.verdict.unmeasured');
+  return $i18n.t('narratives.indicators.verdict.unbadged');
+});
+
+/**
+ * The rank, and nothing that restates it.
+ *
+ * This line used to gloss the percentile into a band — "rank 88% — top 15% across all
+ * narratives" — which is one fact told twice, and the vaguer telling was the one in
+ * words: 88% *is* the top 12%, rounded up to a band boundary. All that the number
+ * cannot say on its own is which cohort it ranks within, and that is worth keeping,
+ * because it is precisely what differs from acceleration's line: composite ranks every
+ * narrative ever measured, acceleration only those measured that day. Both lines now
+ * name their cohort in the same shape, so the difference reads off the words themselves.
+ */
+const compositeContextLabel = computed(() =>
+  $i18n.t('narratives.indicators.composite.rankContext', {
+    rank: formatPercentile(compositePct.value),
+  }),
+);
+
+/**
+ * The same line as composite's, over acceleration's narrower cohort.
+ *
+ * This used to gloss the rank into a band in words — "rank 62% — among the fastest-moving
+ * measured today" — the same one-fact-told-twice the composite line dropped. What the
+ * number cannot say for itself is the cohort, and here the cohort is the whole point:
+ * acceleration ranks only the narratives re-measured on this date, never all of them.
+ */
 const accelContextLabel = computed(() => {
-  const v = accelerationValue.value;
-  if (v >= 2.0) return $i18n.t('narratives.indicators.acceleration.context.explosive');
-  if (v >= 1.5) return $i18n.t('narratives.indicators.acceleration.context.fast');
-  if (v >= 1.0) return $i18n.t('narratives.indicators.acceleration.context.notable');
-  if (v >= 0.5) return $i18n.t('narratives.indicators.acceleration.context.modest');
-  return $i18n.t('narratives.indicators.acceleration.context.flat');
+  const v = accelPct.value;
+  if (v === null) return $i18n.t('narratives.indicators.acceleration.notMeasured');
+  // The rank is no longer the headline, but it is what the classifier read, so a reader
+  // asking why a badge landed still needs to see it.
+  return $i18n.t('narratives.indicators.acceleration.rankContext', {
+    rank: formatPercentile(v),
+  });
 });
 
 // ── Technical details ─────────────────────────────────────────────────────
-const compositeParts = computed(() => {
-  const m = current.value?.composite_virality.metadata;
-  return [
-    { key: 'engagement', value: m?.engagement_percentile ?? 0, weight: m?.engagement_weight ?? 0 },
-    { key: 'reach',      value: m?.reach_percentile ?? 0,      weight: m?.reach_weight ?? 0 },
-    { key: 'velocity',   value: m?.velocity_percentile ?? 0,   weight: m?.velocity_weight ?? 0 },
-  ];
+const coverage = computed(() => {
+  const metadata = current.value?.acceleration_rate?.metadata;
+  if (!metadata?.refreshed_videos) return null;
+  return {
+    videos: metadata.refreshed_videos,
+    days: (metadata.mean_gap_days ?? 1).toFixed(1),
+  };
 });
 
-const accelerationParts = computed(() => {
-  const m = current.value?.acceleration_rate.metadata;
-  return [
-    { key: 'engagement', value: m?.change_engagement ?? 0,   weight: m?.engagement_weight ?? 0 },
-    { key: 'videoVolume', value: m?.change_video_count ?? 0, weight: m?.video_volume_weight ?? 0 },
-    { key: 'views',      value: m?.change_views ?? 0,        weight: m?.views_weight ?? 0 },
-  ];
-});
+function formatPercentile(v: number): string {
+  return `${(v * 100).toFixed(0)}%`;
+}
 
-const THRESHOLDS = [
-  { level: NarrativeAlertLevel.VIRAL,       condition: 'composite > 0.85  ∧  acceleration > 1.0' },
-  { level: NarrativeAlertLevel.ALERT,       condition: 'composite > 0.70  ∧  acceleration > 1.5' },
-  { level: NarrativeAlertLevel.EARLY_SURGE, condition: 'composite < 0.65  ∧  acceleration > 2.0' },
-  { level: NarrativeAlertLevel.WATCH,       condition: '(composite > 0.55  ∧  accel > 1.2)  ∨  composite > 0.85' },
-  { level: NarrativeAlertLevel.NONE,        condition: '—' },
-];
+/**
+ * A daily growth fraction as a percentage, with enough precision that a near-flat
+ * narrative reads as near-flat rather than rounding to a confident "0.0%". Below
+ * 0.001% there is nothing honest left to show, so say that instead of a number.
+ */
+function formatGrowth(v: number): string {
+  const magnitude = Math.abs(v) * 100;
+  if (magnitude === 0) return '0%';
+  const sign = v > 0 ? '+' : '−';
+  if (magnitude < 0.001) return `${sign}<0.001%`;
+  const decimals = magnitude >= 10 ? 0 : magnitude >= 1 ? 1 : magnitude >= 0.1 ? 2 : 3;
+  return `${sign}${magnitude.toFixed(decimals)}%`;
+}
+
+/**
+ * The region's definition in words. The axes are named with the same labels the bars
+ * above use — a reader should not have to learn that "composite" and "Virality" are the
+ * same axis, and the internal name is not the one on screen.
+ */
+function regionCondition(region: typeof SPREAD_REGIONS[number]): string {
+  const virality = $i18n.t('narratives.indicators.composite.label');
+  const acceleration = $i18n.t('narratives.indicators.acceleration.label');
+  const parts: string[] = [];
+  if (region.composite[0] > 0) parts.push(`${virality} ≥ ${region.composite[0].toFixed(2)}`);
+  if (region.composite[1] < 1) parts.push(`${virality} ≤ ${region.composite[1].toFixed(2)}`);
+  if (region.accel[0] > 0) parts.push(`${acceleration} ≥ ${region.accel[0].toFixed(2)}`);
+  if (region.accel[1] < 1) parts.push(`${acceleration} ≤ ${region.accel[1].toFixed(2)}`);
+  return parts.join('  ∧  ');
+}
 
 // ── Relative date display ─────────────────────────────────────────────────
 const relativeDate = computed(() => {
@@ -269,16 +340,13 @@ const relativeDate = computed(() => {
   return $i18n.t('narratives.indicators.daysAgo', { n: diff });
 });
 
-function formatPercent(v: number): string {
-  return `${(v * 100).toFixed(0)}%`;
-}
-
 // ── Data loading ──────────────────────────────────────────────────────────
 async function load() {
   loading.value = true;
   try {
-    // Latest indicators for this narrative (the endpoint returns the most
-    // recent available entry, regardless of whether today's recalc has run).
+    // Latest indicators for this narrative (the endpoint returns the most recent
+    // available entry, regardless of whether today's recalc has run). Composite is
+    // required; acceleration comes back null for narratives not visited that day.
     current.value = await apiService.getNarrativeAnalysisIndicators(props.narrativeId);
   } catch (e) {
     console.error('Failed to load indicators:', e);

@@ -11,11 +11,7 @@
           <p class="text-gray-900 text-xl font-semibold leading-tight flex-1">
             {{ narrative.title.endsWith('.') ? narrative.title.slice(0, -1) : narrative.title }}
           </p>
-          <AlertLevelBadge
-            v-if="alertLevel && alertLevel !== 'none'"
-            :level="alertLevel"
-            class="shrink-0"
-          />
+          <SpreadPatternBadge :pattern="spreadPattern" class="shrink-0" />
         </div>
         <div
           class="text-gray-600 text-xs mt-2 flex items-center gap-2"
@@ -81,9 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Narrative, NarrativeSummary, NarrativeAlertLevel } from '~/types/api';
+import type { Narrative, NarrativeSummary, NarrativeSpreadPattern } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
-import AlertLevelBadge from '~/components/AlertLevelBadge.vue';
+import SpreadPatternBadge from '~/components/SpreadPatternBadge.vue';
+import { normalizeSpreadPattern } from '~/utils/spreadPatterns';
 
 interface Props {
   narrative: Narrative | NarrativeSummary;
@@ -152,13 +149,15 @@ const platforms = computed(() => {
   return [...new Set(narrative.videos?.map(v => v.platform) || [])];
 });
 
-// Alert level lives on summaries only; detail-shaped narratives don't carry it
-// in the list response shape used here.
-const alertLevel = computed<NarrativeAlertLevel | null | undefined>(() => {
+// The spread pattern lives on summaries only; detail-shaped narratives don't carry it
+// in the list response shape used here. Most narratives have none — the badge simply
+// does not render, and the card says nothing about why. The detail view is where the
+// measurements behind (or missing from) a classification are explained.
+const spreadPattern = computed<NarrativeSpreadPattern | null>(() => {
   if (isSummary.value) {
-    return (props.narrative as NarrativeSummary).alert_level ?? null;
+    return normalizeSpreadPattern((props.narrative as NarrativeSummary).spread_pattern);
   }
-  return (props.narrative as any).alert_level ?? null;
+  return normalizeSpreadPattern((props.narrative as { spread_pattern?: string | null }).spread_pattern);
 });
 
 // Calculate unique languages from claims or use pre-calculated value

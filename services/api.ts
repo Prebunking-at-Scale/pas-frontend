@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeAlertLevel } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeSpreadPattern } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 
 // API calls now go through our frontend proxy to hide the API key
@@ -239,7 +239,7 @@ export const apiService = {
     entity_id?: string;
     text?: string;
     language?: string;
-    alert_level?: NarrativeAlertLevel[];
+    spread_pattern?: NarrativeSpreadPattern[];
     sort?: string;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
@@ -267,9 +267,9 @@ export const apiService = {
       if (params?.language && params.language !== 'all') {
         query.language = params.language;
       }
-      // alert_level is a repeatable query parameter: ?alert_level=viral&alert_level=alert
-      if (params?.alert_level && params.alert_level.length > 0) {
-        query.alert_level = params.alert_level;
+      // spread_pattern is a repeatable query parameter: ?spread_pattern=viral&spread_pattern=alert
+      if (params?.spread_pattern && params.spread_pattern.length > 0) {
+        query.spread_pattern = params.spread_pattern;
       }
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {

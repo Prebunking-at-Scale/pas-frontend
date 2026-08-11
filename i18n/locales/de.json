@@ -43,8 +43,7 @@
     "error": "Fehler",
     "minutesAgo": "vor {count} Min.",
     "hoursAgo": "vor {count} Std.",
-    "daysAgo": "vor {count} T.",
-    "deleting": "Wird gelöscht..."
+    "daysAgo": "vor {count} T."
   },
   "nav": {
     "overview": "Übersicht",
@@ -260,19 +259,19 @@
     "keywordsPlaceholder": "Schlüsselwort eingeben und Enter drücken",
     "text": "Text",
     "textPlaceholder": "Suchtext eingeben",
-    "alertLevel": "Alarmstufe",
-    "alertLevelDescriptions": {
-      "viral": "Sehr populär und stark beschleunigend.",
-      "alert": "Populär und stark wachsend von Tag zu Tag.",
-      "early_surge": "Noch klein, aber explosiv wachsend.",
-      "watch": "Moderat wachsend oder populär, aber stabil."
+    "spreadPattern": "Verbreitungsmuster",
+    "spreadPatternDescriptions": {
+      "viral": "Unter den größten Narrativen — und weiter steigend.",
+      "early_surge": "Noch klein, aber schnell steigend.",
+      "trending": "Von spürbarer Größe und in Bewegung — das breite Mittelfeld.",
+      "consolidated": "Groß, aber mit relativ langsamem Wachstum."
     },
-    "alertLevels": {
+    "spreadPatterns": {
       "viral": "Viral",
-      "alert": "Alarm",
       "early_surge": "Frühanstieg",
-      "watch": "Beobachten",
-      "none": "Keine"
+      "trending": "In Umlauf",
+      "consolidated": "Etabliert",
+      "unbadged": "Keine Einstufung"
     },
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
@@ -289,6 +288,22 @@
     "entities": "Entitäten",
     "timelineContentRecurrences": "Zeitleiste, Inhalt und Wiederholungen",
     "evolutionOfNarrative": "Entwicklung des Narrativs",
+    "evolution": {
+      "reach": "Reichweite",
+      "engagement": "Engagement",
+      "date": "Datum",
+      "reachExplanation": "Die Reichweite ist die Gesamtzahl der Aufrufe, die das Narrativ bis zum jeweiligen Datum gesammelt hat (linke Achse).",
+      "engagementExplanation": "Das Engagement ist die Gesamtzahl der Likes und Kommentare als Prozentsatz der Gesamtzahl der Aufrufe (rechte Achse).",
+      "tooltipBreakdown": "{likes} Likes · {comments} Kommentare",
+      "reachExplanationPlain": "Die Reichweite ist die Gesamtzahl der Aufrufe, die das Narrativ bis zum jeweiligen Datum gesammelt hat.",
+      "engagementExplanationPlain": "Das Engagement ist die Gesamtzahl der Likes und Kommentare als Prozentsatz der Gesamtzahl der Aufrufe.",
+      "tab": {
+        "absolute": "Absolute Zahlen",
+        "normalised": "Normalisiert"
+      },
+      "standardDeviations": "Standardabweichungen vom Mittelwert (σ)",
+      "normalisedNote": "Beide Variablen sind zum leichteren Vergleich normalisiert."
+    },
     "narrativeContext": "Kontext der Narrative",
     "showingNarrativesFor": "Zeige Narrative für Thema:",
     "showingResults": "Zeige {count} Narrative",
@@ -354,65 +369,54 @@
     "viewsChange": "Ansichten-Änderung",
     "viewsChangeAcronym": "ΔAns",
     "accelerationFormula": "BI = (ΔEng × {engagementWeight}) + (ΔVol × {videoVolumeWeight}) + (ΔAns × {viewsWeight})",
-    "alertLevel": "Alarmstufe",
-    "alertLevelNONE": "Keine",
-    "alertLevelEARLY_SURGE": "Früher Anstieg",
-    "alertLevelALERT": "Alarm",
-    "alertLevelWATCH": "Beobachten",
-    "alertLevelVIRAL": "Viral",
-    "alertLevelDescriptionNONE": "Keine signifikante Aktivität erkannt",
-    "alertLevelDescriptionEARLY_SURGE": "Frühes Wachstumsmuster erkannt",
-    "alertLevelDescriptionALERT": "Bemerkenswerter Aktivitätsanstieg",
-    "alertLevelDescriptionWATCH": "Signifikantes Wachstum erfordert Aufmerksamkeit",
-    "alertLevelDescriptionVIRAL": "Viraler Status - Sofortige Aufmerksamkeit erforderlich",
-    "alertThresholds": "Alarmschwellen",
-    "alertLevelConditionEARLY_SURGE": "ZVI {'<'} 0.65 und BI > 2.0",
-    "alertLevelConditionALERT": "ZVI > 0.70 und BI > 1.5",
-    "alertLevelConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
-    "alertLevelConditionVIRAL": "ZVI > 0.85 und BI > 1.0",
+    "spreadPatternNONE": "Keine",
+    "spreadPatternEARLY_SURGE": "Früher Anstieg",
+    "spreadPatternALERT": "Alarm",
+    "spreadPatternWATCH": "Beobachten",
+    "spreadPatternVIRAL": "Viral",
+    "spreadPatternDescriptionNONE": "Keine signifikante Aktivität erkannt",
+    "spreadPatternDescriptionEARLY_SURGE": "Frühes Wachstumsmuster erkannt",
+    "spreadPatternDescriptionALERT": "Bemerkenswerter Aktivitätsanstieg",
+    "spreadPatternDescriptionWATCH": "Signifikantes Wachstum erfordert Aufmerksamkeit",
+    "spreadPatternDescriptionVIRAL": "Viraler Status - Sofortige Aufmerksamkeit erforderlich",
+    "spreadThresholds": "Verbreitungsschwellen",
+    "spreadPatternConditionEARLY_SURGE": "ZVI {'<'} 0.65 und BI > 2.0",
+    "spreadPatternConditionALERT": "ZVI > 0.70 und BI > 1.5",
+    "spreadPatternConditionWATCH": "ZVI > 0.55 oder BI > 1.2",
+    "spreadPatternConditionVIRAL": "ZVI > 0.85 und BI > 1.0",
     "indicators": {
-      "empty": "Für dieses Narrativ wurden noch keine Analyseindikatoren berechnet.",
-      "asOf": "Aktualisiert {when}",
+      "empty": "Dieses Narrativ wurde nie gemessen, es gibt also noch nichts zu bewerten.",
+      "asOf": "Gemessen {when}",
       "today": "heute",
       "yesterday": "gestern",
       "daysAgo": "vor {n} Tagen",
       "technicalDetails": "Technische Details",
-      "thresholds": "Alarmschwellen",
+      "thresholds": "Wie die Einstufungen gezogen werden",
+      "coverage": "Rate berechnet aus {videos} erneut gemessenen Video(s), im Mittel {days} Tage seit der vorigen Erhebung.",
       "verdict": {
-        "viral": "Dieses Narrativ gehört zu den populärsten UND beschleunigt sich rapide.",
-        "alert": "Populär und merklich wachsend von Tag zu Tag.",
-        "early_surge": "Explosives Wachstum aus kleiner Basis.",
-        "watch": "Populär aber stabil, oder moderat wachsend aus kleinerer Basis.",
-        "none": "Aktuell keine bemerkenswerte Aktivität."
+        "viral": "Unter den größten Narrativen — und weiter steigend.",
+        "early_surge": "Noch klein, aber schnell steigend.",
+        "trending": "Von spürbarer Größe und in Bewegung — das breite Mittelfeld des Korpus.",
+        "consolidated": "Groß, aber mit relativ langsamem Wachstum.",
+        "unbadged": "Heute gemessen: klein und ohne Bewegung. Keine Einstufung trifft zu.",
+        "unmeasured": "An diesem Datum nicht erneut gemessen, daher ist unbekannt, wie schnell es sich bewegt. Die Größe unten ist der zuletzt erfasste Stand."
       },
       "composite": {
-        "label": "Popularität",
-        "howCalculated": "gewichtetes Perzentil aus Engagement, Reichweite und Geschwindigkeit",
-        "engagement": "Engagement",
-        "reach": "Reichweite",
-        "velocity": "Geschwindigkeit",
-        "context": {
-          "top5": "Top 5 % aller Narrative",
-          "top15": "Top 15 % aller Narrative",
-          "top30": "Top 30 % aller Narrative",
-          "top45": "über dem Median",
-          "middle": "um den Median",
-          "low": "unter dem Median"
-        }
+        "label": "Viralität",
+        "unit": "Aufrufe insgesamt",
+        "rankContext": "Rang {rank} aller Narrative"
       },
       "acceleration": {
         "label": "Beschleunigung",
-        "howCalculated": "gewichtete prozentuale Änderung gegenüber Vortag, pro Dimension auf +500 % gedeckelt",
-        "engagement": "Engagement-Rate",
-        "videoVolume": "Videovolumen",
-        "views": "Aufrufe",
-        "context": {
-          "explosive": "explosives Wachstum vs gestern",
-          "fast": "schnelles Wachstum vs gestern",
-          "notable": "merkliches Wachstum vs gestern",
-          "modest": "moderates Wachstum vs gestern",
-          "flat": "praktisch unverändert vs gestern"
-        }
+        "notMeasured": "an diesem Datum nicht erneut gemessen — die Rate ist unbekannt, nicht null",
+        "perDay": "pro Tag, bei den Aufrufen",
+        "rankContext": "Rang {rank} unter den heute gemessenen Narrativen"
+      },
+      "quadrant": {
+        "xAxis": "Viralitätsperzentil",
+        "yAxis": "Beschleunigungsperzentil",
+        "aria": "Viralität im {composite}. Perzentil, Beschleunigung im {accel}.",
+        "ariaNoAccel": "Viralität im {composite}. Perzentil; Beschleunigung an diesem Datum nicht gemessen."
       }
     }
   },

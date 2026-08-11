@@ -26,29 +26,30 @@
 
       <div v-else>
 
-      <!-- Top narratives per alert level, ordered by severity (viral, alert,
-           early surge, watch), ranked by composite virality score (early surge
-           by acceleration). alert_level is the current daily classification, so
-           these sections are not scoped by the timeframe selector (which still
-           drives Topics and Entities below). Each box is tinted towards its
-           alert colour. -->
-      <template v-for="level in ALERT_SECTIONS" :key="level">
-        <div v-if="sections[level].length" class="mb-6 rounded-lg p-6" :class="SECTION_BG[level]">
+      <!-- Top narratives per spread pattern. The four labels are regions of a plane, not
+           rungs of a severity ladder, so the order here is a reading order: the two
+           that are climbing first, then the two that describe a settled state. Each is
+           ranked by the axis that defines it (early surge by acceleration, the rest by
+           composite). spread_pattern is the current daily classification, so these sections
+           are not scoped by the timeframe selector, which still drives Topics and
+           Entities below. -->
+      <template v-for="pattern in SPREAD_SECTIONS" :key="pattern">
+        <div v-if="sections[pattern].length" class="mb-6 rounded-lg p-6" :class="SPREAD_PATTERN_TINT[pattern]">
           <div class="flex items-center justify-between gap-4 mb-4">
             <h3 class="text-lg font-medium text-gray-900">
-              {{ $t('dashboard.topN', { n: sections[level].length }) }}
-              <span class="lowercase">{{ $t(`narratives.alertLevels.${level}`) }}</span>
+              {{ $t('dashboard.topN', { n: sections[pattern].length }) }}
+              <span class="lowercase">{{ $t(`narratives.spreadPatterns.${pattern}`) }}</span>
             </h3>
             <button
-              @click="goToAlertLevel(level)"
+              @click="goToSpreadPattern(pattern)"
               class="shrink-0 text-sm text-gray-700 hover:text-gray-900 underline underline-offset-2 cursor-pointer"
             >
-              {{ $t('entities.viewAllNarratives', { count: counts[level] }) }}
+              {{ $t('entities.viewAllNarratives', { count: counts[pattern] }) }}
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <NarrativeCard
-              v-for="narrative in sections[level]"
+              v-for="narrative in sections[pattern]"
               :key="narrative.id"
               :narrative="narrative"
               @click="goToNarrative(narrative.id)"
@@ -118,7 +119,8 @@
 import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
-import { NarrativeAlertLevel } from '~/types/api';
+import { NarrativeSpreadPattern } from '~/types/api';
+import { SPREAD_PATTERN_OVERVIEW, SPREAD_PATTERN_SORT, SPREAD_PATTERN_TINT } from '~/utils/spreadPatterns';
 import { useTopicsStore } from '~/stores/topics';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
@@ -139,32 +141,8 @@ enum AVAILABLE_TIMEFRAMES {
 
 const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
 
-// Alert-level sections, ordered by severity: viral first, then alert,
-// early surge and watch.
-const ALERT_SECTIONS = [
-  NarrativeAlertLevel.VIRAL,
-  NarrativeAlertLevel.ALERT,
-  NarrativeAlertLevel.EARLY_SURGE,
-  NarrativeAlertLevel.WATCH,
-] as const;
+const SPREAD_SECTIONS = SPREAD_PATTERN_OVERVIEW;
 const SECTION_LIMIT = 6;
-
-// Box background tinted towards each level's alert colour (translucent).
-const SECTION_BG: Record<string, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'bg-red-500/10',
-  [NarrativeAlertLevel.ALERT]: 'bg-amber-500/10',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'bg-orange-500/10',
-  [NarrativeAlertLevel.WATCH]: 'bg-blue-500/10',
-};
-
-// Ranking score per level: early surge is defined by acceleration (the
-// emerging signal), the rest by overall composite virality.
-const SECTION_SORT: Record<string, string> = {
-  [NarrativeAlertLevel.VIRAL]: 'composite',
-  [NarrativeAlertLevel.ALERT]: 'composite',
-  [NarrativeAlertLevel.EARLY_SURGE]: 'acceleration',
-  [NarrativeAlertLevel.WATCH]: 'composite',
-};
 
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
@@ -184,20 +162,18 @@ const stats = ref<{
   entities: []
 });
 
-// Narratives and totals per alert level.
-const sections = ref<Record<NarrativeAlertLevel, NarrativeSummary[]>>({
-  [NarrativeAlertLevel.NONE]: [],
-  [NarrativeAlertLevel.VIRAL]: [],
-  [NarrativeAlertLevel.EARLY_SURGE]: [],
-  [NarrativeAlertLevel.ALERT]: [],
-  [NarrativeAlertLevel.WATCH]: [],
+// Narratives and totals per spread pattern.
+const sections = ref<Record<NarrativeSpreadPattern, NarrativeSummary[]>>({
+  [NarrativeSpreadPattern.VIRAL]: [],
+  [NarrativeSpreadPattern.EARLY_SURGE]: [],
+  [NarrativeSpreadPattern.TRENDING]: [],
+  [NarrativeSpreadPattern.CONSOLIDATED]: [],
 });
-const counts = ref<Record<NarrativeAlertLevel, number>>({
-  [NarrativeAlertLevel.NONE]: 0,
-  [NarrativeAlertLevel.VIRAL]: 0,
-  [NarrativeAlertLevel.EARLY_SURGE]: 0,
-  [NarrativeAlertLevel.ALERT]: 0,
-  [NarrativeAlertLevel.WATCH]: 0,
+const counts = ref<Record<NarrativeSpreadPattern, number>>({
+  [NarrativeSpreadPattern.VIRAL]: 0,
+  [NarrativeSpreadPattern.EARLY_SURGE]: 0,
+  [NarrativeSpreadPattern.TRENDING]: 0,
+  [NarrativeSpreadPattern.CONSOLIDATED]: 0,
 });
 
 const loading = ref(true);
@@ -206,8 +182,8 @@ const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
 };
 
-const goToAlertLevel = (level: NarrativeAlertLevel) => {
-  router.push(`/narratives?alert_level=${level}`);
+const goToSpreadPattern = (pattern: NarrativeSpreadPattern) => {
+  router.push(`/narratives?spread_pattern=${pattern}`);
 };
 
 const goToTopic = (id: string) => {
@@ -257,11 +233,11 @@ const loadData = async () => {
       ? Math.round((timeframeInterval.end.getTime() - timeframeInterval.start.getTime()) / 3_600_000)
       : null;
 
-    const [topicsResponse, entitiesResponse, ...levelResponses] = await Promise.all([
+    const [topicsResponse, entitiesResponse, ...patternResponses] = await Promise.all([
       apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
       apiService.getEntities({ limit: 12, hours }),
-      ...ALERT_SECTIONS.map((level) =>
-        apiService.getNarratives({ alert_level: [level], limit: SECTION_LIMIT, sort: SECTION_SORT[level] })
+      ...SPREAD_SECTIONS.map((pattern) =>
+        apiService.getNarratives({ spread_pattern: [pattern], limit: SECTION_LIMIT, sort: SPREAD_PATTERN_SORT[pattern] })
       ),
     ]);
 
@@ -270,9 +246,9 @@ const loadData = async () => {
       entities: entitiesResponse.data || [],
     };
 
-    ALERT_SECTIONS.forEach((level, i) => {
-      sections.value[level] = levelResponses[i]?.data || [];
-      counts.value[level] = levelResponses[i]?.total || 0;
+    SPREAD_SECTIONS.forEach((pattern, i) => {
+      sections.value[pattern] = patternResponses[i]?.data || [];
+      counts.value[pattern] = patternResponses[i]?.total || 0;
     });
 
     // Populate the topics store so the narratives filter has them ready.
