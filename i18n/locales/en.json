@@ -425,7 +425,6 @@
       "daysAgo": "{n} days ago",
       "technicalDetails": "Technical details",
       "thresholds": "How the labels are drawn",
-      "coverage": "Rate computed from {videos} re-measured video(s), {days} days since their previous reading on average.",
       "verdict": {
         "viral": "Among the largest narratives, and still climbing.",
         "early_surge": "Still small, but climbing fast.",
@@ -442,6 +441,9 @@
       "acceleration": {
         "label": "Acceleration",
         "notMeasured": "not re-measured on this date — the rate is unknown, not zero",
+        "notObserved": "no video re-measured or newly linked on this date — the rate is unknown, not zero",
+        "evidenceRefreshed": "{refreshed} of {total} videos re-measured",
+        "evidenceNew": "{count} newly linked video(s)",
         "perDay": "per day, in views",
         "rankContext": "rank {rank} across narratives measured today"
       },

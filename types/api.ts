@@ -514,11 +514,34 @@ export interface AccelerationRateMetadata {
   change_video_count: number;
   change_views: number;
   engagement_weight: number;
-  video_volume_weight: number;
   views_weight: number;
+  /** Absent on rows written while the term was out of the rate (2026-08-13 → 08-14). */
+  video_volume_weight?: number | null;
   /** Ranked over the day's visited cohort only — never comparable to the composite one. */
   percentile?: number | null;
-  /** How much of the narrative was actually re-measured, i.e. how much weight the rate deserves. */
+  /**
+   * The day's evidence. The rate moves when a video is re-fetched OR when a video is
+   * newly linked and arrives with its views, so `refreshed_videos` alone no longer
+   * says whether anything was observed — both being zero is what means "unmeasured".
+   *
+   * All optional: the endpoint serves the most recent row per type with no recency
+   * bound, so rows written by earlier versions of the pipeline are still returned and
+   * carry none of these.
+   */
   refreshed_videos?: number | null;
+  new_videos?: number | null;
+  new_video_views?: number | null;
+  refreshed_view_gain?: number | null;
+  /** Share of yesterday's views re-fetched. Says nothing about arrivals. */
+  coverage?: number | null;
+  /** Descriptive only — nothing divides by it. */
   mean_gap_days?: number | null;
+  /** Component ranks behind `percentile`, and the two states the rate compares. */
+  views_percentile?: number | null;
+  video_count_percentile?: number | null;
+  engagement_percentile?: number | null;
+  prev_views_total?: number | null;
+  cur_views_total?: number | null;
+  cur_videos?: number | null;
+  prev_videos?: number | null;
 }

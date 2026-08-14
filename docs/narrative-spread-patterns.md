@@ -82,6 +82,25 @@ no acceleration shows its composite and says the rate was not measured. What it 
 never do is render a missing rate as zero — "we did not look" and "it did not move" are
 different claims, and only one of them is ours to make.
 
+**The evidence sits with the number, not in the collapsed panel.** Under the acceleration
+figure, a line names what the day's rate was actually built from: how many of the
+narrative's videos were re-measured, and how many were newly linked. Both halves matter
+because either can be the entire rate — a re-fetch measures views we already had, an
+arrival brings views we did not — and without them a rate computed over 2 of 63 videos
+reads exactly like one computed over all 63. Counts only, deliberately: the share of
+yesterday's views those videos cover is a second and harder number, and two proportions
+on one line read as noise rather than as context. This replaces a line that lived inside
+*Technical details*, where it was both unread and, worse, hidden precisely when it was
+most needed: it required a re-fetch to render, so a narrative that grew purely by gaining
+videos showed no evidence at all.
+
+**Nothing observed is not zero growth.** A narrative can sit inside the day's cohort with
+no video re-measured and none newly linked, in which case the two states the rate compares
+are the same state and `change_views` is a hard zero for want of an observation. The panel
+shows a dash and says so, rather than printing "0%", which is the same claim-we-cannot-make
+the missing-rate case has always been careful about. It is a narrower test than it looks:
+`refreshed_videos` alone stopped being the question when arrivals started counting.
+
 **Both axes headline a magnitude, not a rank.** The virality tile shows the narrative's
 own reach — its summed view count — with the percentile on the small line beneath it,
 matching what acceleration already did with its daily view growth. A percentile in the
@@ -97,9 +116,10 @@ engagement shows a modest headline beside a high rank. Both numbers are on scree
 the technical panel holds the split.
 
 **Colours follow meaning, not severity.** Red for `viral`, orange for `early_surge`,
-neutral grey for `trending`, blue for `consolidated`. The old palette ran a
-red→yellow→orange→grey ladder, which reads `consolidated` as a milder alarm when it is
-simply a different statement about a narrative.
+yellow for `trending`, purple for `consolidated` — `red-600`, `orange-600`, `yellow-500`
+and `purple-600` as the components set them. The old palette ran a red→yellow→orange→grey
+ladder, which reads `consolidated` as a milder alarm when it is simply a different
+statement about a narrative; purple is outside that ladder on purpose.
 
 **Retired patterns map to null.** `none`, `alert` and `watch` still exist in the Postgres
 enum so a stale `?spread_pattern=alert` returns an empty result instead of a 400, but the

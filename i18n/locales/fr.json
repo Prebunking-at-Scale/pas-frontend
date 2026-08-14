@@ -424,7 +424,6 @@
       "daysAgo": "il y a {n} jours",
       "technicalDetails": "Détails techniques",
       "thresholds": "Comment les étiquettes sont tracées",
-      "coverage": "Taux calculé à partir de {videos} vidéo(s) remesurée(s), {days} jours en moyenne depuis leur relevé précédent.",
       "verdict": {
         "viral": "Parmi les récits les plus répandus, et toujours en hausse.",
         "early_surge": "Encore modeste, mais en forte hausse.",
@@ -441,6 +440,9 @@
       "acceleration": {
         "label": "Accélération",
         "notMeasured": "non remesuré à cette date — le taux est inconnu, pas nul",
+        "notObserved": "aucune vidéo remesurée ni nouvellement liée à cette date — le taux est inconnu, pas nul",
+        "evidenceRefreshed": "{refreshed} vidéos sur {total} remesurées",
+        "evidenceNew": "{count} vidéo(s) nouvellement liée(s)",
         "perDay": "par jour, en vues",
         "rankContext": "rang {rank} parmi les récits mesurés aujourd'hui"
       },
