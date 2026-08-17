@@ -392,7 +392,6 @@
       "daysAgo": "vor {n} Tagen",
       "technicalDetails": "Technische Details",
       "thresholds": "Wie die Einstufungen gezogen werden",
-      "coverage": "Rate berechnet aus {videos} erneut gemessenen Video(s), im Mittel {days} Tage seit der vorigen Erhebung.",
       "verdict": {
         "viral": "Unter den größten Narrativen — und weiter steigend.",
         "early_surge": "Noch klein, aber schnell steigend.",
@@ -409,6 +408,9 @@
       "acceleration": {
         "label": "Beschleunigung",
         "notMeasured": "an diesem Datum nicht erneut gemessen — die Rate ist unbekannt, nicht null",
+        "notObserved": "an diesem Datum wurde kein Video erneut gemessen oder neu verknüpft — die Rate ist unbekannt, nicht null",
+        "evidenceRefreshed": "{refreshed} von {total} Videos erneut gemessen",
+        "evidenceNew": "{count} neu verknüpfte(s) Video(s)",
         "perDay": "pro Tag, bei den Aufrufen",
         "rankContext": "Rang {rank} unter den heute gemessenen Narrativen"
       },

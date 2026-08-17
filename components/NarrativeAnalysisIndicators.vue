@@ -91,8 +91,14 @@
               :style="{ width: `${accelPct * 100}%` }"
             />
           </div>
-          <div class="mt-2 text-xs" :class="accelPct === null ? 'text-amber-700' : 'text-gray-500'">
+          <div class="mt-2 text-xs" :class="accelPct === null || unobserved ? 'text-amber-700' : 'text-gray-500'">
             {{ accelContextLabel }}
+          </div>
+          <!-- What was actually observed. Sits with the number it qualifies rather than
+               in the collapsed panel: a rate measured over 2 of 63 videos and one
+               measured over all 63 read identically without it. -->
+          <div v-if="evidenceLabel" class="mt-1 text-xs text-gray-400">
+            {{ evidenceLabel }}
           </div>
         </div>
       </div>
@@ -138,11 +144,6 @@
             </div>
           </div>
 
-          <!-- How much of the narrative was actually re-measured. A rate computed from
-               four of forty videos deserves less confidence than one from all forty. -->
-          <p v-if="coverage" class="text-gray-500">
-            {{ $t('narratives.indicators.coverage', coverage) }}
-          </p>
         </div>
       </div>
     </div>
@@ -215,15 +216,9 @@ const accelPct = computed<number | null>(() => {
 });
 
 /**
- * The narrative's actual view growth per day, as a fraction of the baseline it grew
- * from — `change_views`, the largest of the three components acceleration blends.
- *
- * This is the only part of the rate that is a plain growth figure. The other two are a
- * change in how many videos we have linked and a change in engagement ratio, neither of
- * which is "how fast is this spreading", so neither belongs in a headline that reads as
- * a percentage. The consequence is that a narrative whose rank came from gaining videos
- * shows a small headline beside a high rank; the rank on the line below is what the
- * badge was read from, and the two are answering different questions.
+ * The narrative's own view growth per day: the day's movement over the whole of what
+ * we knew yesterday, which is the same quantity the evolution chart draws. It is the
+ * larger of the two components the rate blends, engagement being the other.
  *
  * Null for a narrative not re-measured on this date, and also for rows written before
  * the redesign, which carry no components — hence the fallback to the rank.
@@ -233,8 +228,36 @@ const accelGrowth = computed<number | null>(() => {
   return typeof value === 'number' ? value : null;
 });
 
+/**
+ * What was actually observed about this narrative on this date: videos re-fetched, and
+ * videos newly linked that arrived carrying their views. Either moves the rate.
+ *
+ * Null for rows that predate these fields, where the question cannot be answered — and
+ * an unanswerable question must not be rendered as a "no".
+ */
+const evidence = computed(() => {
+  const metadata = current.value?.acceleration_rate?.metadata;
+  if (!metadata || typeof metadata.refreshed_videos !== 'number') return null;
+  return {
+    refreshed: metadata.refreshed_videos,
+    newVideos: metadata.new_videos ?? 0,
+    total: metadata.prev_videos ?? null,
+  };
+});
+
+/**
+ * In the cohort, but with two identical states behind it: nothing re-fetched and nothing
+ * new. Its `change_views` is a hard zero for want of an observation, not because the
+ * narrative stopped growing, and the panel must not print that zero as a growth figure.
+ * This is the C1 rule the backend applies when it decides whether a badge is earned.
+ */
+const unobserved = computed(() =>
+  evidence.value !== null && evidence.value.refreshed === 0 && evidence.value.newVideos === 0,
+);
+
 const accelHeadline = computed(() => {
   if (accelPct.value === null) return '—';
+  if (unobserved.value) return '—';
   if (accelGrowth.value === null) return formatPercentile(accelPct.value);
   return formatGrowth(accelGrowth.value);
 });
@@ -276,6 +299,7 @@ const compositeContextLabel = computed(() =>
 const accelContextLabel = computed(() => {
   const v = accelPct.value;
   if (v === null) return $i18n.t('narratives.indicators.acceleration.notMeasured');
+  if (unobserved.value) return $i18n.t('narratives.indicators.acceleration.notObserved');
   // The rank is no longer the headline, but it is what the classifier read, so a reader
   // asking why a badge landed still needs to see it.
   return $i18n.t('narratives.indicators.acceleration.rankContext', {
@@ -283,14 +307,31 @@ const accelContextLabel = computed(() => {
   });
 });
 
-// ── Technical details ─────────────────────────────────────────────────────
-const coverage = computed(() => {
-  const metadata = current.value?.acceleration_rate?.metadata;
-  if (!metadata?.refreshed_videos) return null;
-  return {
-    videos: metadata.refreshed_videos,
-    days: (metadata.mean_gap_days ?? 1).toFixed(1),
-  };
+/**
+ * How much of the narrative the day's number saw, on the line under the number itself
+ * rather than folded into the collapsed panel — it is what tells a reader how much
+ * weight to give everything above it, and the cases needing it most are the ones where
+ * the old line hid itself (it required a re-fetch, so a narrative that grew purely by
+ * gaining videos showed nothing at all). Counts only: the share of yesterday's views
+ * they cover is a second, harder number, and two of them on one line reads as noise.
+ *
+ * Both halves are named because either can be the whole rate: a re-fetch measures views
+ * we already had, an arrival brings views we did not.
+ */
+const evidenceLabel = computed(() => {
+  const e = evidence.value;
+  if (e === null || accelPct.value === null || unobserved.value) return null;
+  const parts: string[] = [];
+  if (e.refreshed > 0) {
+    parts.push($i18n.t('narratives.indicators.acceleration.evidenceRefreshed', {
+      refreshed: e.refreshed,
+      total: e.total ?? e.refreshed,
+    }));
+  }
+  if (e.newVideos > 0) {
+    parts.push($i18n.t('narratives.indicators.acceleration.evidenceNew', { count: e.newVideos }));
+  }
+  return parts.join(' · ');
 });
 
 function formatPercentile(v: number): string {
