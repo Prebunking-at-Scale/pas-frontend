@@ -32,12 +32,22 @@
           />
 
           <LanguageFilter
-            class="w-full"
+            class="w-full md:w-48"
             v-model="filters.language"
             :label="$t('videos.language')"
             :placeholder="$t('videos.selectLanguage')"
             type="select"
           />
+
+          <DateRangeFilter
+            class="w-full md:w-72"
+            v-model="filters.date_range"
+            id="narratives-date-range"
+          />
+
+          <!-- Takes over the w-full the language filter used to carry, keeping the row's
+               widths unchanged without pushing the date range to the far edge. -->
+          <div class="hidden md:block md:w-full" aria-hidden="true"></div>
 
           <SpreadPatternFilter
             class="w-full md:w-auto md:shrink-0"
@@ -122,7 +132,10 @@ import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue';
+import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
+import type { DateRange } from '~/types/filters';
 import { normalizeSpreadPatterns } from '~/utils/spreadPatterns';
+import { startOfDayISO, endOfDayISO } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -145,12 +158,15 @@ const totalNarratives = ref(0);
 const itemsPerPage = 20;
 
 // Filters - separate UI state from applied state
+const emptyDateRange = (): DateRange => ({ start: null, end: null });
+
 const filters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  spread_pattern: [] as NarrativeSpreadPattern[]
+  spread_pattern: [] as NarrativeSpreadPattern[],
+  date_range: emptyDateRange()
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -159,7 +175,8 @@ const appliedFilters = ref({
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  spread_pattern: [] as NarrativeSpreadPattern[]
+  spread_pattern: [] as NarrativeSpreadPattern[],
+  date_range: emptyDateRange()
 });
 
 const currentTopicName = ref('');
@@ -169,7 +186,9 @@ const hasActiveFilters = computed(() => {
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
     (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0 ||
-    appliedFilters.value.spread_pattern.length > 0;
+    appliedFilters.value.spread_pattern.length > 0 ||
+    !!appliedFilters.value.date_range.start ||
+    !!appliedFilters.value.date_range.end;
 });
 
 
@@ -202,6 +221,17 @@ const loadNarratives = async () => {
       params.spread_pattern = appliedFilters.value.spread_pattern;
     }
 
+    // Either end stands alone: a start date on its own reads as "from then on".
+    const startDate = startOfDayISO(appliedFilters.value.date_range.start);
+    if (startDate) {
+      params.start_date = startDate;
+    }
+
+    const endDate = endOfDayISO(appliedFilters.value.date_range.end);
+    if (endDate) {
+      params.end_date = endDate;
+    }
+
     const result = await apiService.getNarratives(params);
 
     narratives.value = result.data;
@@ -227,14 +257,16 @@ const resetFilters = () => {
     entity_id: null,
     text: [],
     language: 'all',
-    spread_pattern: []
+    spread_pattern: [],
+    date_range: emptyDateRange()
   };
   appliedFilters.value = {
     topic_id: null,
     entity_id: null,
     text: [],
     language: 'all',
-    spread_pattern: []
+    spread_pattern: [],
+    date_range: emptyDateRange()
   };
   currentTopicName.value = '';
   currentPage.value = 1;
