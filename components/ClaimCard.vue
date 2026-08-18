@@ -1,7 +1,7 @@
 <template>
 <Card 
   class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
-  @click="handleCardClick"
+  @click="openVideo"
 >
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
     <!-- Claim Header -->
@@ -118,25 +118,22 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'open-feedback-dialog', claim: Claim): void
-  (e: 'navigateToVideo', videoId: string): void
+  (e: 'navigateToVideo', videoId: string, startTimeSeconds?: number): void
 }>();
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
 
-const handleCardClick = () => {
+const openVideo = () => {
   const videoId = props.claim.video_id || props.claim.source_video_id;
   if (videoId) {
-    emit('navigateToVideo', videoId);
+    emit('navigateToVideo', videoId, props.claim.start_time_s);
   }
 };
 
 const goToVideo = (event: Event) => {
   event.stopPropagation();
-  const videoId = props.claim.video_id || props.claim.source_video_id;
-  if (videoId) {
-    emit('navigateToVideo', videoId);
-  }
+  openVideo();
 };
 
 const goToTopic = (topicId: string) => {
