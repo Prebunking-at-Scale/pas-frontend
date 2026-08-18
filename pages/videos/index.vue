@@ -38,6 +38,12 @@
         :placeholder="$t('videos.selectLanguage')"
         type="select"
       />
+
+      <DateRangeFilter
+        class="w-full"
+        v-model="filters.date_range"
+        id="videos-date-range"
+      />
     </FilterCard>
 
     <!-- Videos List -->
@@ -114,6 +120,9 @@ import PlatformFilter from '~/components/filters/PlatformFilter.vue';
 import ChannelFilter from '~/components/filters/ChannelFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
+import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
+import type { DateRange } from '~/types/filters';
+import { startOfDayISO, endOfDayISO } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -137,12 +146,15 @@ const videos = ref<PaginatedResponse<Video>>({
 const loading = ref(true);
 const currentPage = ref(1);
 
+const emptyDateRange = (): DateRange => ({ start: null, end: null });
+
 // Filters - separate UI state from applied state
 const filters = ref({
   platform: 'all',
   channel: '',
   text: [] as string[],
-  language: 'all'
+  language: 'all',
+  date_range: emptyDateRange()
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -150,14 +162,17 @@ const appliedFilters = ref({
   platform: 'all',
   channel: '',
   text: [] as string[],
-  language: 'all'
+  language: 'all',
+  date_range: emptyDateRange()
 });
 
 const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.platform && appliedFilters.value.platform !== 'all') || 
-         appliedFilters.value.channel || 
-         appliedFilters.value.text.length > 0;
+         appliedFilters.value.channel ||
+         appliedFilters.value.text.length > 0 ||
+         !!appliedFilters.value.date_range.start ||
+         !!appliedFilters.value.date_range.end;
 });
 
 const totalPages = computed(() => {
@@ -214,7 +229,18 @@ const loadVideos = async () => {
     if (appliedFilters.value.text.length > 0) {
       params.text = appliedFilters.value.text.join(' ');
     }
-    
+
+    // Either end stands alone: a start date on its own reads as "from then on".
+    const startDate = startOfDayISO(appliedFilters.value.date_range.start);
+    if (startDate) {
+      params.start_date = startDate;
+    }
+
+    const endDate = endOfDayISO(appliedFilters.value.date_range.end);
+    if (endDate) {
+      params.end_date = endDate;
+    }
+
     const response = await apiService.getVideos(params);
     videos.value = response;
     
@@ -245,13 +271,15 @@ const clearFilters = () => {
     platform: 'all',
     channel: '',
     text: [],
-    language: 'all'
+    language: 'all',
+    date_range: emptyDateRange()
   };
   appliedFilters.value = {
     platform: 'all',
     channel: '',
     text: [],
-    language: 'all'
+    language: 'all',
+    date_range: emptyDateRange()
   };
   currentPage.value = 1;
   loadVideos();

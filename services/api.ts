@@ -141,6 +141,9 @@ export const apiService = {
     limit?: number;
     offset?: number;
     language?: string;
+    /** ISO date-times bounding uploaded_at, the date the video was published. */
+    start_date?: string;
+    end_date?: string;
   }): Promise<PaginatedResponse<Video>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -165,6 +168,12 @@ export const apiService = {
       }
       if (params?.language && params.language !== 'all') {
         query.language = params.language;
+      }
+      if (params?.start_date) {
+        query.start_date = params.start_date;
+      }
+      if (params?.end_date) {
+        query.end_date = params.end_date;
       }
 
       const response = await apiFetch('/api/videos', {
