@@ -6,8 +6,7 @@
       <Input
         :id="startId"
         type="date"
-        class="flex-1 cursor-pointer"
-        @mousedown.prevent="openPicker"
+        class="flex-1 scheme-light"
         :value="modelValue.start ?? ''"
         :max="modelValue.end ?? undefined"
         :aria-label="$t('filters.selectStartDate')"
@@ -20,8 +19,7 @@
       <Input
         :id="endId"
         type="date"
-        class="flex-1 cursor-pointer"
-        @mousedown.prevent="openPicker"
+        class="flex-1 scheme-light"
         :value="modelValue.end ?? ''"
         :min="modelValue.start ?? undefined"
         :aria-label="$t('filters.selectEndDate')"
@@ -62,24 +60,6 @@ const isInverted = computed(() => {
   const { start, end } = props.modelValue
   return !!start && !!end && start > end
 })
-
-/**
- * Opens the calendar from anywhere in the field, not just its right-edge icon.
- *
- * On mousedown rather than click: after a click handler the browser focuses a date
- * segment, and that closes the picker again. Suppressing the default also skips the
- * automatic focus, hence the explicit call.
- */
-const openPicker = (event: MouseEvent) => {
-  const input = event.currentTarget as HTMLInputElement
-  if (typeof input.showPicker !== 'function') return
-  input.focus()
-  try {
-    input.showPicker()
-  } catch {
-    // Some browsers refuse outside a trusted gesture; the icon still works.
-  }
-}
 
 const update = (key: keyof DateRange, event: Event) => {
   const value = (event.target as HTMLInputElement).value

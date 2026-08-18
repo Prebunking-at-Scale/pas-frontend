@@ -40,7 +40,7 @@
           />
 
           <DateRangeFilter
-            class="w-full md:w-72"
+            class="w-full md:w-80"
             v-model="filters.date_range"
             id="narratives-date-range"
           />
