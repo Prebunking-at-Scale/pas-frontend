@@ -6,12 +6,12 @@
       <Input
         :id="startId"
         type="date"
-        class="flex-1 scheme-light"
-        :value="modelValue.start ?? ''"
+        class="flex-1 max-w-44 scheme-light"
+        :model-value="modelValue.start ?? ''"
         :max="modelValue.end ?? undefined"
         :aria-label="$t('filters.selectStartDate')"
         :title="$t('filters.selectStartDate')"
-        @input="update('start', $event)"
+        @update:model-value="update('start', $event)"
       />
 
       <span class="text-gray-500 shrink-0">&ndash;</span>
@@ -19,12 +19,12 @@
       <Input
         :id="endId"
         type="date"
-        class="flex-1 scheme-light"
-        :value="modelValue.end ?? ''"
+        class="flex-1 max-w-44 scheme-light"
+        :model-value="modelValue.end ?? ''"
         :min="modelValue.start ?? undefined"
         :aria-label="$t('filters.selectEndDate')"
         :title="$t('filters.selectEndDate')"
-        @input="update('end', $event)"
+        @update:model-value="update('end', $event)"
       />
     </div>
 
@@ -61,8 +61,9 @@ const isInverted = computed(() => {
   return !!start && !!end && start > end
 })
 
-const update = (key: keyof DateRange, event: Event) => {
-  const value = (event.target as HTMLInputElement).value
-  emit('update:modelValue', { ...props.modelValue, [key]: value || null })
+// Input keeps its own v-model, so passing a plain `value` attribute left both writing the
+// same field and the first change was lost.
+const update = (key: keyof DateRange, value: string | number) => {
+  emit('update:modelValue', { ...props.modelValue, [key]: String(value) || null })
 }
 </script>
