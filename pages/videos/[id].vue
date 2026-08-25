@@ -278,6 +278,12 @@ const loading = ref(true);
 const error = ref(false);
 
 // Computed
+// The `t` query parameter, set when arriving from a claim.
+const requestedStartSeconds = computed(() => {
+  const seconds = Number(route.query.t);
+  return Number.isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : null;
+});
+
 const videoEmbedUrl = computed(() => {
   if (!video.value?.source_url) return null;
   
@@ -306,6 +312,11 @@ const videoEmbedUrl = computed(() => {
         'enablejsapi': '1', // Enable JavaScript API for player control
         'origin': window.location.origin // Security parameter
       });
+      // In the embed URL rather than through seekTo(): a postMessage on load races the
+      // iframe becoming ready, and losing that race leaves the video at zero.
+      if (requestedStartSeconds.value) {
+        params.set('start', String(requestedStartSeconds.value));
+      }
       console.log('YouTube match found, videoId:', videoId);
       const embedUrl = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
       console.log('Generated embed URL:', embedUrl);
@@ -322,7 +333,8 @@ const videoEmbedUrl = computed(() => {
   // Vimeo support
   const vimeoMatch = url.match(/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/);
   if (vimeoMatch) {
-    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=0`;
+    const fragment = requestedStartSeconds.value ? `#t=${requestedStartSeconds.value}s` : '';
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=0${fragment}`;
   }
   
   return null;

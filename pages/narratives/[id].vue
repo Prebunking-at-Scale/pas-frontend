@@ -295,6 +295,7 @@
           <ClaimCard
             :show-feedback-action="true"
             @open-feedback-dialog="onFeedbackClick"
+            @navigate-to-video="goToVideo"
             v-for="claim in allClaims"
             :key="claim.id"
             :claim="claim"
@@ -553,8 +554,10 @@ const goToEntity = (entityId: string) => {
   router.push(`/entities/${entityId}`);
 };
 
-const goToVideo = (videoId: string) => {
-  router.push(`/videos/${videoId}`);
+const goToVideo = (videoId: string, startTimeSeconds?: number) => {
+  // A claim at second 0 sends no parameter: there is nothing to open on.
+  const query = startTimeSeconds ? { t: String(Math.floor(startTimeSeconds)) } : undefined;
+  router.push({ path: `/videos/${videoId}`, query });
 };
 
 const openAlertDialog = () => {
