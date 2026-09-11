@@ -44,6 +44,9 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ $t('channels.createdAt') }}
                   </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('channels.actions') }}
+                  </th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -72,6 +75,19 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(feed.created_at) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <Button
+                      v-if="!feed.is_archived"
+                      variant="ghost"
+                      size="icon"
+                      class="cursor-pointer text-red-600 hover:text-red-700"
+                      :title="$t('common.archive')"
+                      :aria-label="$t('common.archive')"
+                      @click="confirmArchiveChannel(feed)"
+                    >
+                      <Archive class="h-4 w-4" />
+                    </Button>
                   </td>
                 </tr>
               </tbody>
@@ -196,6 +212,27 @@
         @saved="loadMediaFeeds"
       />
 
+      <!-- Archive Channel Feed Confirmation -->
+      <AlertDialog :open="showArchiveChannelDialog" @update:open="showArchiveChannelDialog = $event">
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ $t('channels.archiveChannelFeedTitle') }}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ $t('channels.archiveChannelConfirmMessage', { channel: channelToArchive?.channel }) }}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
+            <AlertDialogAction
+              class="bg-destructive text-white hover:bg-destructive/80"
+              @click="archiveSelectedChannel"
+            >
+              {{ $t('common.archive') }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <!-- Archive Keyword Feed Confirmation -->
       <AlertDialog :open="showArchiveDialog" @update:open="showArchiveDialog = $event">
         <AlertDialogContent>
@@ -261,6 +298,8 @@ const showKeywordDialog = ref(false);
 const editingFeed = ref<KeywordFeed | null>(null);
 const showArchiveDialog = ref(false);
 const feedToArchive = ref<KeywordFeed | null>(null);
+const showArchiveChannelDialog = ref(false);
+const channelToArchive = ref<ChannelFeed | null>(null);
 
 onMounted(async () => {
   await loadMediaFeeds();
@@ -313,6 +352,33 @@ const archiveSelectedFeed = async () => {
     });
   } finally {
     feedToArchive.value = null;
+  }
+};
+
+const confirmArchiveChannel = (feed: ChannelFeed) => {
+  channelToArchive.value = feed;
+  showArchiveChannelDialog.value = true;
+};
+
+const archiveSelectedChannel = async () => {
+  if (!channelToArchive.value) return;
+
+  try {
+    await apiService.archiveChannelFeed(channelToArchive.value.id);
+    toast.add({
+      title: t('common.success'),
+      description: t('channels.channelFeedArchiveSuccess')
+    });
+    await loadMediaFeeds();
+  } catch (error: any) {
+    console.error('Failed to archive channel feed:', error);
+    toast.add({
+      title: t('common.error'),
+      description: error.data?.detail || error.message || t('channels.channelFeedArchiveError'),
+      color: 'error'
+    });
+  } finally {
+    channelToArchive.value = null;
   }
 };
 

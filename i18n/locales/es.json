@@ -273,7 +273,11 @@
     "archiveKeywordFeedTitle": "Archivar canal de palabras clave",
     "archiveConfirmMessage": "¿Seguro que quieres archivar el canal de palabras clave de «{topic}»? Dejará de monitorizar nuevo contenido.",
     "keywordFeedArchiveSuccess": "Canal de palabras clave archivado correctamente",
-    "keywordFeedArchiveError": "Error al archivar el canal de palabras clave"
+    "keywordFeedArchiveError": "Error al archivar el canal de palabras clave",
+    "archiveChannelFeedTitle": "Archivar canal",
+    "archiveChannelConfirmMessage": "¿Seguro que quieres archivar «{channel}»? Dejará de monitorizar nuevo contenido.",
+    "channelFeedArchiveSuccess": "Canal archivado correctamente",
+    "channelFeedArchiveError": "Error al archivar el canal"
   },
   "narratives": {
     "title": "Narrativas",

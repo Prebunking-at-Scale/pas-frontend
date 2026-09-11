@@ -273,7 +273,11 @@
     "archiveKeywordFeedTitle": "Archive keyword channel",
     "archiveConfirmMessage": "Are you sure you want to archive the keyword channel for \"{topic}\"? It will stop monitoring new content.",
     "keywordFeedArchiveSuccess": "Keyword channel archived successfully",
-    "keywordFeedArchiveError": "Failed to archive keyword channel"
+    "keywordFeedArchiveError": "Failed to archive keyword channel",
+    "archiveChannelFeedTitle": "Archive channel",
+    "archiveChannelConfirmMessage": "Are you sure you want to archive \"{channel}\"? It will stop monitoring new content.",
+    "channelFeedArchiveSuccess": "Channel archived successfully",
+    "channelFeedArchiveError": "Failed to archive channel"
   },
   "narratives": {
     "title": "Narratives",
