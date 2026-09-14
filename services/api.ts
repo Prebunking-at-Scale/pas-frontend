@@ -931,6 +931,13 @@ export const apiService = {
     });
   },
 
+  async archiveChannelFeed(feedId: string): Promise<void> {
+    const { apiFetch } = useApi();
+    await apiFetch(`/api/media_feeds/channels/${feedId}`, {
+      method: 'DELETE'
+    });
+  },
+
   async getNarrativeFeedback(narrativeId: string): Promise<NarrativeFeedback|null> {
     try {
       const { apiFetch } = useApi();

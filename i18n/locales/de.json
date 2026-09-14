@@ -242,7 +242,11 @@
     "archiveKeywordFeedTitle": "Stichwort-Kanal archivieren",
     "archiveConfirmMessage": "Möchten Sie den Stichwort-Kanal für „{topic}“ wirklich archivieren? Es werden keine neuen Inhalte mehr überwacht.",
     "keywordFeedArchiveSuccess": "Stichwort-Kanal erfolgreich archiviert",
-    "keywordFeedArchiveError": "Stichwort-Kanal konnte nicht archiviert werden"
+    "keywordFeedArchiveError": "Stichwort-Kanal konnte nicht archiviert werden",
+    "archiveChannelFeedTitle": "Kanal archivieren",
+    "archiveChannelConfirmMessage": "Möchten Sie „{channel}“ wirklich archivieren? Es werden keine neuen Inhalte mehr überwacht.",
+    "channelFeedArchiveSuccess": "Kanal erfolgreich archiviert",
+    "channelFeedArchiveError": "Kanal konnte nicht archiviert werden"
   },
   "narratives": {
     "title": "Narrative",

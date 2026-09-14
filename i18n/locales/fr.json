@@ -273,7 +273,11 @@
     "archiveKeywordFeedTitle": "Archiver le canal de mots-clés",
     "archiveConfirmMessage": "Voulez-vous vraiment archiver le canal de mots-clés pour « {topic} » ? La surveillance de nouveaux contenus sera interrompue.",
     "keywordFeedArchiveSuccess": "Canal de mots-clés archivé avec succès",
-    "keywordFeedArchiveError": "Échec de l'archivage du canal de mots-clés"
+    "keywordFeedArchiveError": "Échec de l'archivage du canal de mots-clés",
+    "archiveChannelFeedTitle": "Archiver la chaîne",
+    "archiveChannelConfirmMessage": "Voulez-vous vraiment archiver « {channel} » ? La surveillance de nouveaux contenus sera interrompue.",
+    "channelFeedArchiveSuccess": "Chaîne archivée avec succès",
+    "channelFeedArchiveError": "Échec de l'archivage de la chaîne"
   },
   "narratives": {
     "title": "Récits",
