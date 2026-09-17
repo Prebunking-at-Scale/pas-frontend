@@ -79,6 +79,7 @@ import {
 } from '~/utils/engagement';
 import { alignedBounds, bestTickCount, symmetricBounds } from '~/utils/chartAxis';
 import { zScores, formatZScore } from '~/utils/normalise';
+import { dayTimestamp, formatDayLong, formatTimeTick } from '~/utils/chartTime';
 
 // Register ChartJS components
 ChartJS.register(
@@ -119,28 +120,6 @@ const REACH_COLOR = 'rgb(59, 130, 246)'; // blue-500
 const ENGAGEMENT_COLOR = 'rgb(239, 68, 68)'; // red-500
 
 const activeTab = ref<'absolute' | 'normalised'>('absolute');
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-/**
- * Timestamp of local midnight for a date. The x-axis is a time scale whose day ticks sit
- * on local midnight, so a bare `YYYY-MM-DD` has to be read as a local date: parsed as UTC
- * it lands on the previous evening anywhere west of Greenwich.
- */
-const dayTimestamp = (dateString: string | null | undefined): number | null => {
-  if (!dateString) return null;
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
-  const date = match
-    ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-    : new Date(dateString);
-  if (isNaN(date.getTime())) return null;
-  date.setHours(0, 0, 0, 0);
-  return date.getTime();
-};
-
-const formatDate = (timestamp: number, locale: string) =>
-  new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', year: 'numeric' })
-    .format(new Date(timestamp));
 
 /**
  * One point per date: reach is the cumulative view count, engagement is the weighted
@@ -323,17 +302,11 @@ const timeAxis = computed(() => ({
     minRotation: 45,
     autoSkip: true,
     maxTicksLimit: 15, // Show max 15 dates on X-axis to prevent overcrowding
-    // Formatted with Intl in the page locale rather than date-fns display formats, which
-    // would need a date-fns locale bundle per language. Ticks a month or more apart drop
-    // the day, which would otherwise read as a misleading "1".
     callback: (value: any, _index: number, ticks: any[]) => {
-      const step = ticks && ticks.length > 1
+      const spacing = ticks && ticks.length > 1
         ? Math.abs(ticks[1].value - ticks[0].value)
         : 0;
-      const format: Intl.DateTimeFormatOptions = step >= 28 * DAY_MS
-        ? { month: 'short', year: 'numeric' }
-        : { month: 'short', day: 'numeric' };
-      return new Intl.DateTimeFormat(props.locale, format).format(new Date(value));
+      return formatTimeTick(value, spacing, props.locale);
     }
   }
 }));
@@ -341,7 +314,7 @@ const timeAxis = computed(() => ({
 // Time-scale tooltips default to the raw timestamp.
 const tooltipTitle = (contexts: any[]) => {
   const timestamp = series.value.timestamps[contexts[0]?.dataIndex];
-  return timestamp === undefined ? '' : formatDate(timestamp, props.locale);
+  return timestamp === undefined ? '' : formatDayLong(timestamp, props.locale);
 };
 
 // Custom plugin to draw colored Y-axis titles

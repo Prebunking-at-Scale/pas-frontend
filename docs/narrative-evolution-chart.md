@@ -63,6 +63,11 @@ Details that matter:
   suggest a data point on the first of the month.
 - **The tooltip title is set explicitly.** Otherwise a time scale shows the raw timestamp.
 
+The date helpers live in `utils/chartTime.ts` and are pinned by `tests/utils/chartTime.test.ts`.
+Those tests run the day checks under several timezones (New York, Madrid, UTC, Auckland), because a
+UTC parse only goes wrong west of Greenwich and the team is east of it: on a Madrid machine the bug
+is invisible. Reverting to `new Date('YYYY-MM-DD')` fails nine of them.
+
 ## Two lines, not three
 
 The chart shows **reach** and **engagement** per date. It used to show three raw
