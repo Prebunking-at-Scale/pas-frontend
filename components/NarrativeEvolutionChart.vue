@@ -121,11 +121,29 @@ const ENGAGEMENT_COLOR = 'rgb(239, 68, 68)'; // red-500
 
 const activeTab = ref<'absolute' | 'normalised'>('absolute');
 
+// A step is drawn by putting the pre-step value one second before the measurement:
+// on an axis spanning weeks that is sub-pixel, so the segment stands vertical. Any
+// larger offset would start slanting; any smaller risks the time scale collapsing
+// the two points together.
+const STEP_LEAD_MS = 1000;
+
 /**
  * One point per date: reach is the cumulative view count, engagement is the weighted
  * interactions-per-view rate computed off the *same* cumulative totals — so the rate on
  * a given date describes the narrative as it stood that day, exactly as the backend's
  * engagement score describes it today.
+ *
+ * Days when a video appeared get a second point, placed a moment earlier, holding the
+ * narrative as it stood before that video landed. The line therefore ramps to the
+ * growth the videos already present had accrued, then steps up by what the new video
+ * brought — instead of sloping across the whole gap as if the arrival had been
+ * trickling in the entire time. video_stats is scraped sparsely, so that gap can be
+ * months: drawn as one slope, a single day's event reads as a season-long trend.
+ *
+ * Only the reach line steps. Engagement is a ratio, and the backend splits views but
+ * not likes and comments, so the inserted point carries the previous rate forward
+ * rather than inventing one — invisible at a second's width, and honest about what
+ * we know.
  */
 const series = computed(() => {
   // Timestamps, not formatted labels: the x-axis is a time scale, so each point is
@@ -136,24 +154,52 @@ const series = computed(() => {
   // Kept so the tooltip can say what the rate is made of.
   const likesData: number[] = [];
   const commentsData: number[] = [];
+  // Points we inserted to draw a step. They are not measurements, so they carry no
+  // marker and no tooltip.
+  const isStepLead: boolean[] = [];
 
-  const push = (timestamp: number | null, views: number, likes: number, comments: number) => {
+  const push = (
+    timestamp: number | null,
+    views: number,
+    likes: number,
+    comments: number,
+    options: { stepLead?: boolean; engagement?: number } = {}
+  ) => {
     if (timestamp === null) return;
     timestamps.push(timestamp);
     reachData.push(views);
     // Plotted as a percentage. engagementRate mirrors the backend and returns the
     // raw 0-1 ratio, so the ×100 belongs here, at the display edge, rather than
     // in the shared helper the tests pin to core-api's formula.
-    engagementData.push(engagementRate(likes, comments, views, weights.value) * 100);
+    engagementData.push(
+      options.engagement ?? engagementRate(likes, comments, views, weights.value) * 100
+    );
     likesData.push(likes);
     commentsData.push(comments);
+    isStepLead.push(options.stepLead ?? false);
   };
 
   // Use pre-computed time series data if available (new API)
   if (props.timeSeries && props.timeSeries.length > 0) {
-    props.timeSeries.forEach(dataPoint => {
+    props.timeSeries.forEach((dataPoint, index) => {
+      const timestamp = dayTimestamp(dataPoint.date);
+      const arrived = dataPoint.views_from_new_videos ?? 0;
+
+      // The first point needs no step: there is no earlier state to step up from,
+      // and a lead point at zero would drag the engagement rate down to an
+      // undefined 0/0 on the way in.
+      if (timestamp !== null && arrived > 0 && index > 0) {
+        push(
+          timestamp - STEP_LEAD_MS,
+          dataPoint.cumulative_views - arrived,
+          likesData[likesData.length - 1] ?? 0,
+          commentsData[commentsData.length - 1] ?? 0,
+          { stepLead: true, engagement: engagementData[engagementData.length - 1] ?? 0 }
+        );
+      }
+
       push(
-        dayTimestamp(dataPoint.date),
+        timestamp,
         dataPoint.cumulative_views,
         dataPoint.cumulative_likes,
         dataPoint.cumulative_comments
@@ -217,8 +263,15 @@ const series = computed(() => {
     });
   }
 
-  return { timestamps, reachData, engagementData, likesData, commentsData };
+  return { timestamps, reachData, engagementData, likesData, commentsData, isStepLead };
 });
+
+// A marker means "we measured this". The points inserted to draw a step are not
+// measurements, so they get none — otherwise the chart grows dots on dates nobody
+// scraped, which is the same class of invention as the slope we are removing.
+const pointRadii = computed(() =>
+  series.value.isStepLead.map(lead => (lead ? 0 : 3))
+);
 
 const chartData = computed(() => ({
   labels: series.value.timestamps,
@@ -226,10 +279,15 @@ const chartData = computed(() => ({
     {
       label: $i18n.t('narratives.evolution.reach'),
       data: series.value.reachData,
+      // Straight segments. Smoothing invents a curve between two measurements that
+      // can be months apart, and on a cumulative series it can even dip below the
+      // earlier value -- a decline that cannot happen. It also rounds the arrival
+      // steps into ramps, which is the distinction this chart exists to draw.
       borderColor: REACH_COLOR,
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      tension: 0.4,
+      tension: 0,
       fill: false,
+      pointRadius: pointRadii.value,
       yAxisID: 'y' // left axis
     },
     {
@@ -237,8 +295,9 @@ const chartData = computed(() => ({
       data: series.value.engagementData,
       borderColor: ENGAGEMENT_COLOR,
       backgroundColor: 'rgba(239, 68, 68, 0.1)',
-      tension: 0.4,
+      tension: 0,
       fill: false,
+      pointRadius: pointRadii.value,
       yAxisID: 'y1' // right axis — a rate, so it cannot share the reach axis
     }
   ]
@@ -366,6 +425,9 @@ const chartOptions = computed(() => ({
     tooltip: {
       mode: 'index' as const,
       intersect: false,
+      // Step-lead points are drawing instructions, not observations: hovering one
+      // must not report a reading for a date nothing was recorded on.
+      filter: (item: any) => !series.value.isStepLead[item.dataIndex],
       callbacks: {
         title: tooltipTitle,
         label: function(context: any) {
@@ -453,9 +515,21 @@ const chartOptions = computed(() => ({
 // --------------------------------------------------------------------------
 // Normalised view: both series as z-scores, on one shared axis.
 // --------------------------------------------------------------------------
+// Scored against the measured days only. The step-lead vertices exist to make the
+// line vertical; counting them as observations would shift the mean the z-scores are
+// measured from, so they are excluded from the population and then scored with it —
+// the step still shows, it just no longer bends the statistic that describes it.
+const measured = computed(() => {
+  const keep = <T,>(values: T[]) => values.filter((_, i) => !series.value.isStepLead[i]);
+  return {
+    reach: keep(series.value.reachData),
+    engagement: keep(series.value.engagementData)
+  };
+});
+
 const normalised = computed(() => ({
-  reach: zScores(series.value.reachData),
-  engagement: zScores(series.value.engagementData)
+  reach: zScores(series.value.reachData, measured.value.reach),
+  engagement: zScores(series.value.engagementData, measured.value.engagement)
 }));
 
 // One axis for both lines, so the range has to cover whichever strays furthest.
@@ -472,16 +546,18 @@ const normalisedChartData = computed(() => ({
       data: normalised.value.reach,
       borderColor: REACH_COLOR,
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      tension: 0.4,
-      fill: false
+      tension: 0,
+      fill: false,
+      pointRadius: pointRadii.value
     },
     {
       label: $i18n.t('narratives.evolution.engagement'),
       data: normalised.value.engagement,
       borderColor: ENGAGEMENT_COLOR,
       backgroundColor: 'rgba(239, 68, 68, 0.1)',
-      tension: 0.4,
-      fill: false
+      tension: 0,
+      fill: false,
+      pointRadius: pointRadii.value
     }
   ]
 }));
@@ -497,6 +573,9 @@ const normalisedChartOptions = computed(() => ({
     tooltip: {
       mode: 'index' as const,
       intersect: false,
+      // Step-lead points are drawing instructions, not observations: hovering one
+      // must not report a reading for a date nothing was recorded on.
+      filter: (item: any) => !series.value.isStepLead[item.dataIndex],
       callbacks: {
         title: tooltipTitle,
         // The z-score is the comparable number, but on its own it is unreadable —
