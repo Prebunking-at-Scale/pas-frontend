@@ -396,6 +396,13 @@ export interface NarrativeStatsDataPoint {
   cumulative_comments: number;
   video_count: number;
   cumulative_video_count: number;
+  // `views` split by where it came from. A video appearing brought its whole view
+  // count on a day we know exactly — a step. Videos already in the narrative gained
+  // views somewhere inside the gap since we last looked — a ramp. Optional: a
+  // backend from before the split does not send them, and the chart falls back to
+  // drawing the day as one slope.
+  views_from_new_videos?: number;
+  views_from_existing?: number;
 }
 
 // Stats totals
