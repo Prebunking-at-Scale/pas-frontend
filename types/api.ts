@@ -429,6 +429,7 @@ export interface NarrativeDetail {
   total_comments: number;
   platforms: string[];
   language_count: number;
+  languages?: string[];      // Distinct raw language codes across all claims
   narrative_context?: string | null;
   metadata?: Record<string, any>;
   created_at?: string;
