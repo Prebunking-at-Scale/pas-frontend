@@ -426,20 +426,12 @@ const stats = computed(() => {
   return calculateNarrativeStats(narrative.value);
 });
 
+// Distinct language codes across every claim come from the API; the claims
+// array is only a preview so it cannot be used to derive this.
 const languages = computed(() => {
-  if (!narrative.value) return [];
-
-  const languageSet = new Set<string>();
-
-  if (narrative.value.claims) {
-    narrative.value.claims.forEach(claim => {
-      if (claim.metadata?.language) {
-        languageSet.add(getLanguageName(claim.metadata?.language));
-      }
-    });
-  }
-
-  return Array.from(languageSet).sort();
+  const codes = narrative.value?.languages ?? [];
+  const names = new Set(codes.map(code => getLanguageName(code)));
+  return Array.from(names).sort();
 });
 
 const timeTabs = [
