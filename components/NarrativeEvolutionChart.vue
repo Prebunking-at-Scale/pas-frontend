@@ -59,8 +59,8 @@
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
-  CategoryScale,
   LinearScale,
+  TimeScale,
   PointElement,
   LineElement,
   Title,
@@ -68,6 +68,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 import type { Video, NarrativeStatsDataPoint } from '~/types/api';
 import {
   engagementRate,
@@ -78,11 +79,12 @@ import {
 } from '~/utils/engagement';
 import { alignedBounds, bestTickCount, symmetricBounds } from '~/utils/chartAxis';
 import { zScores, formatZScore } from '~/utils/normalise';
+import { dayTimestamp, formatDayLong, formatTimeTick } from '~/utils/chartTime';
 
 // Register ChartJS components
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  TimeScale,
   PointElement,
   LineElement,
   Title,
@@ -119,19 +121,6 @@ const ENGAGEMENT_COLOR = 'rgb(239, 68, 68)'; // red-500
 
 const activeTab = ref<'absolute' | 'normalised'>('absolute');
 
-// Format date for display
-const formatDate = (dateString: string | null | undefined, locale: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '';
-
-  return new Intl.DateTimeFormat(locale, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  }).format(date);
-};
-
 /**
  * One point per date: reach is the cumulative view count, engagement is the weighted
  * interactions-per-view rate computed off the *same* cumulative totals — so the rate on
@@ -139,15 +128,18 @@ const formatDate = (dateString: string | null | undefined, locale: string) => {
  * engagement score describes it today.
  */
 const series = computed(() => {
-  const labels: string[] = [];
+  // Timestamps, not formatted labels: the x-axis is a time scale, so each point is
+  // placed by its date and uneven gaps between dates show as uneven gaps on the chart.
+  const timestamps: number[] = [];
   const reachData: number[] = [];
   const engagementData: number[] = [];
   // Kept so the tooltip can say what the rate is made of.
   const likesData: number[] = [];
   const commentsData: number[] = [];
 
-  const push = (dateLabel: string, views: number, likes: number, comments: number) => {
-    labels.push(dateLabel);
+  const push = (timestamp: number | null, views: number, likes: number, comments: number) => {
+    if (timestamp === null) return;
+    timestamps.push(timestamp);
     reachData.push(views);
     // Plotted as a percentage. engagementRate mirrors the backend and returns the
     // raw 0-1 ratio, so the ×100 belongs here, at the display edge, rather than
@@ -161,7 +153,7 @@ const series = computed(() => {
   if (props.timeSeries && props.timeSeries.length > 0) {
     props.timeSeries.forEach(dataPoint => {
       push(
-        formatDate(dataPoint.date, props.locale),
+        dayTimestamp(dataPoint.date),
         dataPoint.cumulative_views,
         dataPoint.cumulative_likes,
         dataPoint.cumulative_comments
@@ -217,7 +209,7 @@ const series = computed(() => {
       cumulativeComments += data.comments;
 
       push(
-        formatDate(data.date.toISOString(), props.locale),
+        dayTimestamp(data.date.toISOString()),
         cumulativeViews,
         cumulativeLikes,
         cumulativeComments
@@ -225,11 +217,11 @@ const series = computed(() => {
     });
   }
 
-  return { labels, reachData, engagementData, likesData, commentsData };
+  return { timestamps, reachData, engagementData, likesData, commentsData };
 });
 
 const chartData = computed(() => ({
-  labels: series.value.labels,
+  labels: series.value.timestamps,
   datasets: [
     {
       label: $i18n.t('narratives.evolution.reach'),
@@ -293,6 +285,38 @@ const formatReach = (value: number) => {
   return value.toLocaleString();
 };
 
+// The x-axis is shared by both tabs. A time scale rather than a category scale: each
+// point sits at its date, so a week with no data is a visible gap instead of being
+// collapsed to the same spacing as consecutive days.
+const timeAxis = computed(() => ({
+  type: 'time' as const,
+  display: true,
+  // The series is daily; without a floor a short narrative gets hour ticks.
+  time: { minUnit: 'day' as const },
+  title: {
+    display: true,
+    text: $i18n.t('narratives.evolution.date')
+  },
+  ticks: {
+    maxRotation: 45,
+    minRotation: 45,
+    autoSkip: true,
+    maxTicksLimit: 15, // Show max 15 dates on X-axis to prevent overcrowding
+    callback: (value: any, _index: number, ticks: any[]) => {
+      const spacing = ticks && ticks.length > 1
+        ? Math.abs(ticks[1].value - ticks[0].value)
+        : 0;
+      return formatTimeTick(value, spacing, props.locale);
+    }
+  }
+}));
+
+// Time-scale tooltips default to the raw timestamp.
+const tooltipTitle = (contexts: any[]) => {
+  const timestamp = series.value.timestamps[contexts[0]?.dataIndex];
+  return timestamp === undefined ? '' : formatDayLong(timestamp, props.locale);
+};
+
 // Custom plugin to draw colored Y-axis titles
 const customPlugin = {
   id: 'customYAxisTitles',
@@ -343,6 +367,7 @@ const chartOptions = computed(() => ({
       mode: 'index' as const,
       intersect: false,
       callbacks: {
+        title: tooltipTitle,
         label: function(context: any) {
           const label = context.dataset.label || '';
           if (context.parsed.y === null || context.parsed.y === undefined) return label;
@@ -369,19 +394,7 @@ const chartOptions = computed(() => ({
     }
   },
   scales: {
-    x: {
-      display: true,
-      title: {
-        display: true,
-        text: $i18n.t('narratives.evolution.date')
-      },
-      ticks: {
-        maxRotation: 45,
-        minRotation: 45,
-        autoSkip: true,
-        maxTicksLimit: 15 // Show max 15 dates on X-axis to prevent overcrowding
-      }
-    },
+    x: timeAxis.value,
     y: {
       type: 'linear' as const,
       display: true,
@@ -452,7 +465,7 @@ const normalisedScale = computed(() => {
 });
 
 const normalisedChartData = computed(() => ({
-  labels: series.value.labels,
+  labels: series.value.timestamps,
   datasets: [
     {
       label: $i18n.t('narratives.evolution.reach'),
@@ -485,6 +498,7 @@ const normalisedChartOptions = computed(() => ({
       mode: 'index' as const,
       intersect: false,
       callbacks: {
+        title: tooltipTitle,
         // The z-score is the comparable number, but on its own it is unreadable —
         // "+1.42" says nothing about what was actually reached. The raw value rides
         // along in brackets.
@@ -502,16 +516,7 @@ const normalisedChartOptions = computed(() => ({
     }
   },
   scales: {
-    x: {
-      display: true,
-      title: { display: true, text: $i18n.t('narratives.evolution.date') },
-      ticks: {
-        maxRotation: 45,
-        minRotation: 45,
-        autoSkip: true,
-        maxTicksLimit: 15
-      }
-    },
+    x: timeAxis.value,
     y: {
       type: 'linear' as const,
       display: true,
