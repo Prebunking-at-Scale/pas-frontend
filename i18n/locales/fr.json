@@ -222,15 +222,18 @@
     "viralNarratives": "Récits viraux",
     "prevalentNarratives": "Récits prévalents",
     "displayDataFrom": "Afficher les données de",
-    "selectTimeframe": "Sélectionner la période",
-    "last24Hours": "Dernières 24 heures",
-    "lastWeek": "Dernière semaine",
-    "lastMonth": "Dernier mois",
-    "allTime": "Tout le temps",
     "narratives": "Récits",
     "claims": "Affirmations",
     "narrativesCount": "Nombre de récits",
-    "claimsCount": "Nombre d'affirmations"
+    "claimsCount": "Nombre d'affirmations",
+    "noSpreadNarratives": "Aucun récit créé pendant cette période n'a encore de schéma de diffusion. Essayez une période plus longue."
+  },
+  "timeframes": {
+    "select": "Sélectionner la période",
+    "last24Hours": "Dernières 24 heures",
+    "lastWeek": "Dernière semaine",
+    "lastMonth": "Dernier mois",
+    "allTime": "Tout le temps"
   },
   "channels": {
     "title": "Chaînes",
@@ -631,6 +634,7 @@
     "clearAll": "Effacer tous les filtres",
     "clear": "Effacer",
     "apply": "Appliquer",
+    "created": "Créés",
     "topic": "Sujet",
     "allTopics": "Tous les sujets",
     "search": "Rechercher",

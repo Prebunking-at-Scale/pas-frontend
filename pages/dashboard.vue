@@ -8,11 +8,11 @@
           <SelectTrigger class="w-full bg-neutral-50 dark:bg-white text-xs"
             :disabled="loading"
           >
-            <SelectValue :placeholder="$t('dashboard.selectTimeframe')" />
+            <SelectValue :placeholder="$t('timeframes.select')" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem v-for="value in Object.values(AVAILABLE_TIMEFRAMES)" :key="value" :value="value">
-              {{ $t(`dashboard.${value}`) }}
+            <SelectItem v-for="value in TIMEFRAMES" :key="value" :value="value">
+              {{ $t(`timeframes.${value}`) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -30,9 +30,9 @@
            rungs of a severity ladder, so the order here is a reading order: the two
            that are climbing first, then the two that describe a settled state. Each is
            ranked by the axis that defines it (early surge by acceleration, the rest by
-           composite). spread_pattern is the current daily classification, so these sections
-           are not scoped by the timeframe selector, which still drives Topics and
-           Entities below. -->
+           composite). The timeframe selector picks which narratives are eligible (those
+           created inside the window); the label on each is still its current daily
+           spread_pattern. -->
       <template v-for="pattern in SPREAD_SECTIONS" :key="pattern">
         <div v-if="sections[pattern].length" class="mb-6 rounded-lg p-6" :class="SPREAD_PATTERN_TINT[pattern]">
           <div class="flex items-center justify-between gap-4 mb-4">
@@ -57,6 +57,10 @@
           </div>
         </div>
       </template>
+
+      <p v-if="!hasSpreadNarratives" class="mb-6 text-sm text-gray-600">
+        {{ $t('dashboard.noSpreadNarratives') }}
+      </p>
 
       <hr class="py-3"/>
 
@@ -116,12 +120,12 @@
 </template>
 
 <script setup lang="ts">
-import { interval, sub } from "date-fns";
 import { apiService } from '~/services/api';
 import type { TopicWithStats, Entity, NarrativeSummary } from '~/types/api';
 import { NarrativeSpreadPattern } from '~/types/api';
 import { SPREAD_PATTERN_OVERVIEW, SPREAD_PATTERN_SORT, SPREAD_PATTERN_TINT } from '~/utils/spreadPatterns';
 import { useTopicsStore } from '~/stores/topics';
+import { Timeframe, TIMEFRAMES, isTimeframe, timeframeInterval } from '~/utils/timeframes';
 import { faCircleNodes, faComment } from '@fortawesome/free-solid-svg-icons';
 
 definePageMeta({
@@ -132,14 +136,7 @@ definePageMeta({
 const router = useRouter();
 const topicsStore = useTopicsStore();
 
-enum AVAILABLE_TIMEFRAMES {
-  LAST_24_HOURS = 'last24Hours',
-  LAST_WEEK = 'lastWeek',
-  LAST_MONTH = 'lastMonth',
-  ALL_TIME = 'allTime'
-}
-
-const selectedTimeframe = ref(AVAILABLE_TIMEFRAMES.LAST_24_HOURS);
+const selectedTimeframe = ref(Timeframe.LAST_24_HOURS);
 
 const SPREAD_SECTIONS = SPREAD_PATTERN_OVERVIEW;
 const SECTION_LIMIT = 6;
@@ -147,8 +144,8 @@ const SECTION_LIMIT = 6;
 // Initialize from localStorage when component mounts (client-side only)
 onMounted(() => {
   const saved = localStorage.getItem('dashboardTimeframe');
-  if (saved && Object.values(AVAILABLE_TIMEFRAMES).includes(saved as AVAILABLE_TIMEFRAMES)) {
-    selectedTimeframe.value = saved as AVAILABLE_TIMEFRAMES;
+  if (isTimeframe(saved)) {
+    selectedTimeframe.value = saved;
   }
   loadData();
 });
@@ -176,14 +173,21 @@ const counts = ref<Record<NarrativeSpreadPattern, number>>({
   [NarrativeSpreadPattern.CONSOLIDATED]: 0,
 });
 
+const hasSpreadNarratives = computed(() => SPREAD_SECTIONS.some((pattern) => sections.value[pattern].length > 0));
+
 const loading = ref(true);
 
 const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
 };
 
+// Carries the timeframe along so the list shows the same narratives the "view all" count promised.
 const goToSpreadPattern = (pattern: NarrativeSpreadPattern) => {
-  router.push(`/narratives?spread_pattern=${pattern}`);
+  const query: Record<string, string> = { spread_pattern: pattern };
+  if (selectedTimeframe.value !== Timeframe.ALL_TIME) {
+    query.created = selectedTimeframe.value;
+  }
+  router.push({ path: '/narratives', query });
 };
 
 const goToTopic = (id: string) => {
@@ -202,22 +206,6 @@ const goToEntity = (id: string) => {
   router.push(`/entities/${id}`);
 };
 
-const getDateIntervalFromTimeframe = (timeframe: string) => {
-  const now = new Date();
-
-  switch (timeframe) {
-    case AVAILABLE_TIMEFRAMES.LAST_24_HOURS:
-      return interval(sub(now, { hours: 24 }), now);
-    case AVAILABLE_TIMEFRAMES.LAST_WEEK:
-      return interval(sub(now, { days: 7 }), now);
-    case AVAILABLE_TIMEFRAMES.LAST_MONTH:
-      return interval(sub(now, { months: 1 }), now);
-    case AVAILABLE_TIMEFRAMES.ALL_TIME:
-    default:
-      return null; // No filter
-  }
-};
-
 watch(selectedTimeframe, (newValue) => {
   if (import.meta.client) {
     localStorage.setItem('dashboardTimeframe', newValue);
@@ -228,16 +216,22 @@ watch(selectedTimeframe, (newValue) => {
 const loadData = async () => {
   loading.value = true;
   try {
-    const timeframeInterval = getDateIntervalFromTimeframe(selectedTimeframe.value);
-    const hours = timeframeInterval
-      ? Math.round((timeframeInterval.end.getTime() - timeframeInterval.start.getTime()) / 3_600_000)
+    const range = timeframeInterval(selectedTimeframe.value);
+    const hours = range
+      ? Math.round((range.end.getTime() - range.start.getTime()) / 3_600_000)
       : null;
 
     const [topicsResponse, entitiesResponse, ...patternResponses] = await Promise.all([
-      apiService.getTopicsWithStats({ limit: 5, startDate: timeframeInterval?.start, endDate: timeframeInterval?.end }),
+      apiService.getTopicsWithStats({ limit: 5, startDate: range?.start, endDate: range?.end }),
       apiService.getEntities({ limit: 12, hours }),
       ...SPREAD_SECTIONS.map((pattern) =>
-        apiService.getNarratives({ spread_pattern: [pattern], limit: SECTION_LIMIT, sort: SPREAD_PATTERN_SORT[pattern] })
+        apiService.getNarratives({
+          spread_pattern: [pattern],
+          limit: SECTION_LIMIT,
+          sort: SPREAD_PATTERN_SORT[pattern],
+          startDate: range?.start,
+          endDate: range?.end,
+        })
       ),
     ]);
 
