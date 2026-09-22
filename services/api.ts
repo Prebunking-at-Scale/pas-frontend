@@ -241,6 +241,8 @@ export const apiService = {
     language?: string;
     spread_pattern?: NarrativeSpreadPattern[];
     sort?: string;
+    startDate?: Date;
+    endDate?: Date;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -274,6 +276,13 @@ export const apiService = {
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {
         query.sort = params.sort;
+      }
+      // Bounds on the narrative's creation date (n.created_at)
+      if (params?.startDate) {
+        query.start_date = params.startDate.toISOString();
+      }
+      if (params?.endDate) {
+        query.end_date = params.endDate.toISOString();
       }
 
       const response = await apiFetch('/api/narratives', {

@@ -222,15 +222,11 @@
     "viralNarratives": "Viral narratives",
     "prevalentNarratives": "Prevalent narratives",
     "displayDataFrom": "Display data from",
-    "selectTimeframe": "Select timeframe",
-    "last24Hours": "Last 24 hours",
-    "lastWeek": "Last week",
-    "lastMonth": "Last month",
-    "allTime": "All time",
     "narratives": "Narratives",
     "claims": "Claims",
     "narrativesCount": "Number of narratives",
-    "claimsCount": "Number of claims"
+    "claimsCount": "Number of claims",
+    "noSpreadNarratives": "No narrative created in this timeframe has a spread pattern yet. Try a longer timeframe."
   },
   "channels": {
     "title": "Channels",
@@ -632,7 +628,8 @@
     "language": "Language",
     "allLanguages": "All languages",
     "keywords": "Keywords",
-    "keywordsPlaceholder": "Press Enter to add keyword"
+    "keywordsPlaceholder": "Press Enter to add keyword",
+    "created": "Created"
   },
   "footer": {
     "about": {
@@ -796,5 +793,12 @@
     },
     "noLanguageFound": "No language found",
     "viewCountryCodes": "View country codes list"
+  },
+  "timeframes": {
+    "select": "Select timeframe",
+    "last24Hours": "Last 24 hours",
+    "lastWeek": "Last week",
+    "lastMonth": "Last month",
+    "allTime": "All time"
   }
 }

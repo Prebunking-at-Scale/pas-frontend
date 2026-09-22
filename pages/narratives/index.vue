@@ -43,6 +43,11 @@
             class="w-full md:w-auto md:shrink-0"
             v-model="filters.spread_pattern"
           />
+
+          <TimeframeFilter
+            class="w-full md:w-44 md:shrink-0"
+            v-model="filters.created"
+          />
         </div>
       </FilterCard>
 
@@ -122,7 +127,9 @@ import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue';
+import TimeframeFilter from '~/components/filters/TimeframeFilter.vue';
 import { normalizeSpreadPatterns } from '~/utils/spreadPatterns';
+import { Timeframe, isTimeframe, timeframeInterval } from '~/utils/timeframes';
 
 definePageMeta({
   layout: 'default',
@@ -150,7 +157,8 @@ const filters = ref({
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  spread_pattern: [] as NarrativeSpreadPattern[]
+  spread_pattern: [] as NarrativeSpreadPattern[],
+  created: Timeframe.ALL_TIME as Timeframe
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -159,7 +167,8 @@ const appliedFilters = ref({
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
-  spread_pattern: [] as NarrativeSpreadPattern[]
+  spread_pattern: [] as NarrativeSpreadPattern[],
+  created: Timeframe.ALL_TIME as Timeframe
 });
 
 const currentTopicName = ref('');
@@ -169,7 +178,8 @@ const hasActiveFilters = computed(() => {
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
     (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0 ||
-    appliedFilters.value.spread_pattern.length > 0;
+    appliedFilters.value.spread_pattern.length > 0 ||
+    appliedFilters.value.created !== Timeframe.ALL_TIME;
 });
 
 
@@ -202,6 +212,13 @@ const loadNarratives = async () => {
       params.spread_pattern = appliedFilters.value.spread_pattern;
     }
 
+    // Resolved on every load so "last 24 hours" means the 24 hours before this fetch.
+    const createdRange = timeframeInterval(appliedFilters.value.created);
+    if (createdRange) {
+      params.startDate = createdRange.start;
+      params.endDate = createdRange.end;
+    }
+
     const result = await apiService.getNarratives(params);
 
     narratives.value = result.data;
@@ -227,14 +244,16 @@ const resetFilters = () => {
     entity_id: null,
     text: [],
     language: 'all',
-    spread_pattern: []
+    spread_pattern: [],
+    created: Timeframe.ALL_TIME
   };
   appliedFilters.value = {
     topic_id: null,
     entity_id: null,
     text: [],
     language: 'all',
-    spread_pattern: []
+    spread_pattern: [],
+    created: Timeframe.ALL_TIME
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -330,6 +349,13 @@ onMounted(async () => {
       const patterns = normalizeSpreadPatterns(raw.filter((value): value is string => typeof value === 'string'));
       filters.value.spread_pattern = patterns;
       appliedFilters.value.spread_pattern = patterns;
+    }
+
+    // Creation window, e.g. handed over by the dashboard's timeframe selector.
+    const createdParam = route.query.created;
+    if (isTimeframe(createdParam)) {
+      filters.value.created = createdParam;
+      appliedFilters.value.created = createdParam;
     }
   }
   
