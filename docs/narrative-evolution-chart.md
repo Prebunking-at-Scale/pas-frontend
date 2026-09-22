@@ -42,6 +42,32 @@ identical; the only thing its shape could show was the order in which the series
 there. Z-scores keep the shape and make the units comparable, which is what that tab was
 reaching for and failed to do.
 
+## The x-axis is a time scale
+
+Both tabs plot dates on a Chart.js **time scale** (`chartjs-adapter-date-fns`), not a
+category scale. A category scale spaces labels evenly whatever their dates, so a
+narrative with points on 1, 2 and 30 September drew the four-week gap the same width as
+the one-day gap, and the slope of every line after a gap was wrong. Now each point sits
+at its date, and a quiet stretch shows up as a long, flat segment.
+
+Details that matter:
+
+- **`YYYY-MM-DD` is read as local midnight**, not UTC (`dayTimestamp`). Day ticks fall on
+  local midnight, so a UTC parse would put each point on the previous evening anywhere
+  west of Greenwich.
+- **`minUnit: 'day'`**: the series is daily, and without a floor a two-day narrative
+  would get hour ticks.
+- **Tick labels are formatted with `Intl`** in the page locale, not with date-fns display
+  formats, which would need a date-fns locale bundle for each language. Once ticks are 28
+  days or more apart the label drops the day ("Sep 2026"), because a lone "1" would
+  suggest a data point on the first of the month.
+- **The tooltip title is set explicitly.** Otherwise a time scale shows the raw timestamp.
+
+The date helpers live in `utils/chartTime.ts` and are pinned by `tests/utils/chartTime.test.ts`.
+Those tests run the day checks under several timezones (New York, Madrid, UTC, Auckland), because a
+UTC parse only goes wrong west of Greenwich and the team is east of it: on a Madrid machine the bug
+is invisible. Reverting to `new Date('YYYY-MM-DD')` fails nine of them.
+
 ## Two lines, not three
 
 The chart shows **reach** and **engagement** per date. It used to show three raw
