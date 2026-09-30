@@ -199,10 +199,14 @@ export interface Claim {
   id: string;
   video_id: string;
   video: Video;
+  /** The narratives the claim belongs to; a claim can be in several. */
+  narratives?: { id: string; title: string }[];
   claim: string;
   start_time_s: number;
   embedding?: number[];
   topics?: Topic[];
+  /** language and score always; topics as the claim finder assigned them (topic ids). */
+  metadata?: { language?: string; score?: number; topics?: string[]; [key: string]: unknown };
   created_at?: string;
   updated_at?: string;
   // Legacy fields for compatibility

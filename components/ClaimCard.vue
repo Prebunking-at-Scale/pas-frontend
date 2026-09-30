@@ -12,6 +12,19 @@
           <p class="text-gray-900 text-xl leading-tight">
             {{ claim.claim || claim.text }}
           </p>
+          <!-- The narrative it belongs to, then the video it comes from -->
+          <p
+            v-if="firstNarrative"
+            class="mt-2 flex items-center gap-1.5 text-xs text-gray-600"
+            :title="narrativeTitles"
+          >
+            <font-awesome :icon="faCircleNodes" class="text-gray-400" />
+            <span class="truncate">{{ firstNarrative.title }}</span>
+            <span
+              v-if="otherNarratives > 0"
+              class="shrink-0 rounded-full bg-stone-100 px-1.5 font-medium text-gray-700"
+            >+{{ otherNarratives }}</span>
+          </p>
           <p
             v-if="claim.video"
             @click="goToVideo"
@@ -68,7 +81,7 @@
           </div>
 
           <!-- Language -->
-          <div v-if="claim.metadata.language" class="flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+          <div v-if="claim.metadata?.language" class="flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
             <span class="text-xs">{{ getLanguageName(claim.metadata?.language || '') }}</span>
           </div>
 
@@ -97,6 +110,7 @@
 
 <script setup lang="ts">
 import { MessageCircleMore } from 'lucide-vue-next';
+import { faCircleNodes } from '@fortawesome/free-solid-svg-icons';
 import type { Claim } from '~/types/api';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
@@ -123,6 +137,10 @@ const emit = defineEmits<{
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
+
+const firstNarrative = computed(() => props.claim.narratives?.[0] ?? null);
+const otherNarratives = computed(() => Math.max(0, (props.claim.narratives?.length ?? 0) - 1));
+const narrativeTitles = computed(() => (props.claim.narratives ?? []).map(n => n.title).join(' · '));
 
 const openVideo = () => {
   const videoId = props.claim.video_id || props.claim.source_video_id;
