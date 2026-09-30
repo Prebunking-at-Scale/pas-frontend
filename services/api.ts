@@ -240,6 +240,9 @@ export const apiService = {
     text?: string;
     language?: string;
     spread_pattern?: NarrativeSpreadPattern[];
+    /** ISO date-times bounding the dates of a narrative's claims. */
+    start_date?: string;
+    end_date?: string;
     sort?: string;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
@@ -270,6 +273,14 @@ export const apiService = {
       // spread_pattern is a repeatable query parameter: ?spread_pattern=viral&spread_pattern=alert
       if (params?.spread_pattern && params.spread_pattern.length > 0) {
         query.spread_pattern = params.spread_pattern;
+      }
+      // Bounds the claims, not the narrative record: one created long ago still matches
+      // while it keeps picking up content inside the window.
+      if (params?.start_date) {
+        query.start_date = params.start_date;
+      }
+      if (params?.end_date) {
+        query.end_date = params.end_date;
       }
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {
