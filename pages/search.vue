@@ -162,12 +162,16 @@
 
     <template v-else>
       <p v-if="totalCapped" class="mb-3 text-sm text-gray-600">{{ $t('search.narrowToSeeMore') }}</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <div v-for="(result, index) in results" :key="result.id ?? index" class="flex flex-col gap-2">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-7 pt-3">
+        <div v-for="(result, index) in results" :key="result.id ?? index" class="relative flex flex-col gap-2">
           <MatchSourceBadge
-            v-if="result.match_source !== 'direct'"
+            v-if="result.match_source === 'claims'"
+            source="claims"
+          />
+          <MatchSourceBadge
+            v-else-if="result.match_source === 'narrative'"
             class="self-start"
-            :source="result.match_source === 'narrative' ? 'narrative' : 'claims'"
+            source="narrative"
             :entities="result.via_entities"
           />
           <NarrativeCard

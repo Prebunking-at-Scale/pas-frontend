@@ -173,20 +173,21 @@ Example: with Topic = Climate and Channel = X, a narrative whose own topic is
 Climate matches if it has at least one claim from channel X, even when that claim
 has no topic.
 
-### The "Contains matching claims" label
+### The "Claims" tab
 
 A result on the Videos or Narratives tab can match on its own fields or through its
-claims. The two cases are shown differently:
+claims. The two cases are shown differently: a result found through its claims
+carries a small folder tab on its card's top-right corner reading **Claims**, which
+explains on hover that it contains matching claims.
 
 - **Narratives**: if topic, keywords and entities were all satisfied by the narrative
-  itself, no label is shown. If any of them needed a claim, the narrative shows a
-  "Contains matching claims" label.
+  itself, there is no tab. If any of them needed a claim, the narrative gets it.
 - **Videos**: if a keyword matched only through a claim and not the video title,
-  the video shows the same label.
-- **Claims** don't show it, but have their own: see below.
+  the video gets it.
+- **Claims** don't, but have their own label: see below.
 
-Language, channel, platform and date don't trigger the label. They can only be
-checked on claims, so they would put the label on almost every result.
+Language, channel, platform and date don't add the tab. They can only be
+checked on claims, so they would put it on almost every result.
 
 ### The "Via its narrative" label
 
