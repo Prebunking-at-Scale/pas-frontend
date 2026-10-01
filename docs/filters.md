@@ -36,7 +36,9 @@ Videos (120) · Claims (340) · Narratives (12)
 The channel filter has an **Ours / All** switch next to its label. **Ours** puts the
 organization's own channels (its channel feeds) into the filter, as chips, so the
 search is limited to them; **All** takes those back out and leaves any channel picked
-by hand. It starts on "All", so a search isn't silently limited. The list itself always
+by hand. The switch shows **Ours** whenever every own channel is selected, however they
+got there, and clicking the option already on does nothing. It starts on "All", so a
+search isn't silently limited. The list itself always
 holds every channel, with the organization's own first under their own heading.
 | Date | range | one range |
 

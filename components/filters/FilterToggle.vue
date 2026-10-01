@@ -14,7 +14,7 @@
       :title="option.title"
       class="flex h-full items-center rounded-full px-2 leading-none transition-colors cursor-pointer"
       :class="modelValue === option.value ? 'bg-emerald-700 text-white' : 'text-gray-600 hover:bg-stone-100'"
-      @click="emit('update:modelValue', option.value)"
+      @click="option.value !== modelValue && emit('update:modelValue', option.value)"
     >
       {{ option.label }}
     </button>

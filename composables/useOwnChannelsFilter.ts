@@ -9,16 +9,21 @@ export const useOwnChannelsFilter = (
 ) => {
   // What the switch added, so turning it off removes exactly that.
   const added = ref<string[]>([])
-  const onlyOwn = computed(() => added.value.length > 0
+  // On whenever every own channel is selected, however they got there (the switch, a
+  // link, a saved selection, one by one).
+  const onlyOwn = computed(() => ownChannels.value.length > 0
     && ownChannels.value.every(channel => selected().includes(channel)))
 
   const setOnlyOwn = (value: boolean) => {
+    if (value === onlyOwn.value) return
     if (value) {
       const missing = ownChannels.value.filter(channel => !selected().includes(channel))
       added.value = missing
       select([...selected(), ...missing])
     } else {
-      select(selected().filter(channel => !added.value.includes(channel)))
+      // Nothing recorded (they were already there): take all the own channels out.
+      const remove = added.value.length > 0 ? added.value : ownChannels.value
+      select(selected().filter(channel => !remove.includes(channel)))
       added.value = []
     }
   }
