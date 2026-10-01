@@ -45,22 +45,31 @@ export const useSearchFilterOptions = () => {
     }
   }
 
+  // Loaded once per visit, but only once it worked: a failed attempt (an expired session
+  // sends you to log in first) is tried again the next time the page asks.
+  const loading = useState('search:optionsLoading', () => false)
   const load = async () => {
-    if (loaded.value) return
-    loaded.value = true
-    const [topicList, languageList, own] = await Promise.allSettled([
-      searchService.topics(),
-      searchService.languages(),
-      searchService.channels(),
-    ])
-    if (topicList.status === 'fulfilled') topics.value = topicList.value
-    if (languageList.status === 'fulfilled') languages.value = languageList.value
-    if (own.status === 'fulfilled') {
-      ownChannelList.value = own.value
-      rememberChannels(own.value)
-    }
-    for (const result of [topicList, languageList, own]) {
-      if (result.status === 'rejected') console.error('Failed to load search options:', result.reason)
+    if (loaded.value || loading.value) return
+    loading.value = true
+    try {
+      const [topicList, languageList, own] = await Promise.allSettled([
+        searchService.topics(),
+        searchService.languages(),
+        searchService.channels(),
+      ])
+      if (topicList.status === 'fulfilled') topics.value = topicList.value
+      if (languageList.status === 'fulfilled') languages.value = languageList.value
+      if (own.status === 'fulfilled') {
+        ownChannelList.value = own.value
+        rememberChannels(own.value)
+      }
+      const results = [topicList, languageList, own]
+      for (const result of results) {
+        if (result.status === 'rejected') console.error('Failed to load search options:', result.reason)
+      }
+      loaded.value = results.every(result => result.status === 'fulfilled')
+    } finally {
+      loading.value = false
     }
   }
 

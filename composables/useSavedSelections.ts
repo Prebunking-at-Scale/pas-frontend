@@ -13,8 +13,8 @@ export const useSavedSelections = (kind: SavedSelectionKind) => {
     try {
       selections.value = await savedSelectionsService.list(kind)
     } catch (error) {
+      // Left unloaded, so the next time the menu opens it tries again
       console.error('Failed to load saved selections:', error)
-      selections.value = []
     }
   }
 

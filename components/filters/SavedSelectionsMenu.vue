@@ -121,7 +121,10 @@ const nameInput = ref<{ $el: HTMLInputElement } | null>(null)
 
 onMounted(load)
 
-watch(open, (isOpen) => { if (!isOpen) naming.value = false })
+watch(open, (isOpen) => {
+  if (isOpen) load() // does nothing once loaded; retries after a failed first load
+  else naming.value = false
+})
 
 // Ticked when all of the selection is in the filter, whatever else was added.
 const isCurrent = (values: string[]) => {
