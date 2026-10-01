@@ -61,7 +61,6 @@
         />
       </span>
     </div>
-    <p v-if="hint !== false" class="text-xs text-gray-500">{{ hint ?? $t('search.keywordsHint') }}</p>
   </div>
 </template>
 
@@ -85,8 +84,6 @@ interface Props {
   placeholder?: string
   /** Offer the organization's saved keyword selections, and saving the current one. */
   savedKind?: SavedSelectionKind
-  /** Help under the box; the keyword help by default, false for none. */
-  hint?: string | false
   /** Any keyword or all of them (v-model:mode); no switch when not bound. */
   mode?: 'any' | 'all'
   id?: string
@@ -96,7 +93,6 @@ const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   placeholder: undefined,
   savedKind: undefined,
-  hint: undefined,
   mode: undefined,
   id: undefined,
 })

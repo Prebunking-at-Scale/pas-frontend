@@ -817,7 +817,6 @@
     "selectedCount": "{first} +{count}",
     "removeKeyword": "Remove keyword {keyword}",
     "clearKeywords": "Clear all keywords",
-    "keywordsHint": "Press Enter after each keyword. Spaces are kept: “climate change” is one keyword.",
     "containsMatchingClaims": "Contains matching claims",
     "containsMatchingClaimsHint": "This result matches your search through one or more of its claims, not through its own title or topic.",
     "matchingClaims": "Matching claims",

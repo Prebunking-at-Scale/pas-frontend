@@ -814,7 +814,6 @@
     "selectedCount": "{first} +{count}",
     "removeKeyword": "Quitar palabra clave {keyword}",
     "clearKeywords": "Quitar todas las palabras clave",
-    "keywordsHint": "Pulsa Enter después de cada palabra clave. Los espacios se mantienen: “cambio climático” es una sola palabra clave.",
     "containsMatchingClaims": "Contiene afirmaciones coincidentes",
     "containsMatchingClaimsHint": "Este resultado coincide con tu búsqueda a través de una o más de sus afirmaciones, no por su propio título o tema.",
     "matchingClaims": "Afirmaciones coincidentes",

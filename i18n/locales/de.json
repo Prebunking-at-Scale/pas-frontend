@@ -762,7 +762,6 @@
     "selectedCount": "{first} +{count}",
     "removeKeyword": "Schlüsselwort {keyword} entfernen",
     "clearKeywords": "Alle Schlüsselwörter entfernen",
-    "keywordsHint": "Drücken Sie nach jedem Schlüsselwort Enter. Leerzeichen bleiben erhalten: „Klimawandel“ oder „climate change“ ist ein Schlüsselwort.",
     "containsMatchingClaims": "Enthält passende Behauptungen",
     "containsMatchingClaimsHint": "Dieses Ergebnis passt über eine oder mehrere seiner Behauptungen zu Ihrer Suche, nicht über seinen eigenen Titel oder sein Thema.",
     "matchingClaims": "Passende Behauptungen",

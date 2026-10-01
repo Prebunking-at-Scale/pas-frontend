@@ -801,7 +801,6 @@
     "selectedCount": "{first} +{count}",
     "removeKeyword": "Retirer le mot-clé {keyword}",
     "clearKeywords": "Retirer tous les mots-clés",
-    "keywordsHint": "Appuyez sur Entrée après chaque mot-clé. Les espaces sont conservés : « changement climatique » est un seul mot-clé.",
     "containsMatchingClaims": "Contient des affirmations correspondantes",
     "containsMatchingClaimsHint": "Ce résultat correspond à votre recherche par une ou plusieurs de ses affirmations, et non par son propre titre ou thème.",
     "matchingClaims": "Affirmations correspondantes",
