@@ -205,7 +205,7 @@ export interface Claim {
   start_time_s: number;
   embedding?: number[];
   topics?: Topic[];
-  /** language and score always; topics as the claim finder assigned them (topic ids). */
+  /** language and score always; topics as the claim finder assigned them (topic ids, not used: a claim's topics are `topics`). */
   metadata?: { language?: string; score?: number; topics?: string[]; [key: string]: unknown };
   created_at?: string;
   updated_at?: string;

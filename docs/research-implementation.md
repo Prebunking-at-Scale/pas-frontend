@@ -19,7 +19,7 @@ backend-feasibility review.
 |---|---|
 | **New endpoints under `/api/search/`**; the existing `/api/narratives`, `/api/claims` and `/api/videos` lists stay as they are. | Those lists feed the old list pages and the detail pages. Nothing that works today changes. |
 | **Sort:** claims and videos by the video's upload date, newest first; narratives by creation date, newest first. | What was found most recently, for content; what was grouped most recently, for narratives. |
-| **A claim's topics are its `metadata.topics`**, the topics the claim finder assigns at ingestion. Not `claim_topics`, and never the topics of the claim's narrative. | `metadata.topics` is on every claim; `claim_topics` only on claims scoring 2.5 or more (see [Topics on claims](#topics-on-claims)). |
+| **A claim's topics are its `claim_topics`**, the topics the narratives service's classifier predicts. Not the claim finder's `metadata.topics`, and never the topics of the claim's narrative. | Changed on 2026-10-01 (it was `metadata.topics`): topic classification should follow the narratives module. The cost: only claims scoring 2.5 or more have `claim_topics` (4–9% of claims), so a topic filter on claims finds those (see [Topics on claims](#topics-on-claims)). |
 | **The Claims tab shows every claim.** The only organisation-based narrowing is **Ours**, which fills the channel filter with the organisation's channel feeds. | Content is global in core-api; "Ours" is a channel choice, not a scope. |
 | **Saved selections a person creates are theirs alone**, within their organisation. The organisation's defaults (from its feeds) are shared by everyone in it. | Personal working lists shouldn't clutter colleagues' menus. A person belongs to one organisation. |
 | **Default selections are named after the organisation's `short_name`**: `<short_name>-channels`, `<short_name>-<Topic>`. | Short and already unique per organisation. |
@@ -93,6 +93,7 @@ A claim can carry two sets of topics, both its own:
   relate to no topic aren't extracted. Nothing validates the answer: a few values are
   keywords instead of topic ids ("kerncentrale"), which a filter by id simply never
   matches.
+- The search uses `claim_topics` (decided 2026-10-01); `metadata.topics` is ignored.
 - Where both exist they overlap on 26 of 31 sampled claims.
 
 ## Backend (core-api)
@@ -138,8 +139,8 @@ COMMIT;
   `organisation_id` and `user_id`. The unique index blocks duplicate names per person and
   kind, ignoring case, and serves "list my selections of this kind". Defaults aren't
   stored: see [Saved selections](#saved-selections).
-- **Topics need nothing**: `metadata.topics` lives in `video_claims.metadata`, whose
-  GIN index (migration 14) answers `metadata @> '{"topics": ["<id>"]}'`.
+- **Topics need nothing**: `claim_topics` already has indexes on `claim_id` and
+  `topic_id` (migration 9).
 
 ### Migration 25: search indexes
 
@@ -211,7 +212,7 @@ the filters into SQL, so every tab and the counts apply the same rules.
 The frontend keeps its own URL names (`date_from`/`date_to`) and maps them.
 
 **Matching rules** ([filters.md](filters.md#matching-rules-per-tab)), with *C* the
-claim-level conditions: topic in `c.metadata.topics`, keyword in `normalize_text(c.claim)`,
+claim-level conditions: topic in `claim_topics` for *c*, keyword in `normalize_text(c.claim)`,
 language on `c.metadata->>'language'`, and platform, channel and dates on the claim's video.
 
 | Tab | Matches when | `match_source` |
@@ -229,8 +230,7 @@ JOIN videos v … WHERE <all of C>)`. A claim whose own text names the entity co
 - **Narratives:** today's `NarrativeSummary` (one query, `core/narratives/repo.py:475-584`)
   plus `match_source`.
 - **Claims:** today's `EnrichedClaim` fields, loaded in batches for the whole page
-  instead of per claim. `topics` comes from `metadata.topics` (valid ids only, as
-  `{id, topic}`), so a claim found under Migration shows Migration. `narratives` lists
+  instead of per claim. `topics` comes from `claim_topics` (as `{id, topic}`), so a claim found under Migration shows Migration. `narratives` lists
   all of them (`{id, title}`); `video` as today (id, title, platform, channel,
   uploaded_at, views, likes, comments, source_url, language).
 - **Videos:** a lighter item than `AnalysedVideo`: the video's fields and its language,
@@ -276,8 +276,8 @@ change. There are no default entity selections.
   real test database: they are the acceptance list for the matching rules (direct vs
   through claims, the same-claim rule, keywords any/all with case, accents and hyphens,
   entities through narratives, tab-specific filters).
-- Counts and the 10,000 cap, paging and sort order, `topics` from `metadata.topics` on
-  claim items.
+- Counts and the 10,000 cap, paging and sort order, `topics` from `claim_topics` on
+  claim items (and `metadata.topics` ignored).
 - Saved selections: privacy (another person in the same organisation sees and deletes
   nothing of yours), name rules, defaults from feeds.
 - Before release, `EXPLAIN ANALYZE` of each tab and the counts on a copy of production

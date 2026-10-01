@@ -128,6 +128,9 @@ carries to the other levels through the video → claim → narrative links.
 | Topic, language, claim text | claim |
 | Entities, narrative title | narrative |
 
+A claim's topic is the one the narratives service's classifier predicts (`claim_topics`),
+so only claims the narratives service processed (score 2.5 or more) have one.
+
 Topic and keywords also exist at the narrative level (narrative topic, narrative
 title), so a narrative can match them directly.
 
