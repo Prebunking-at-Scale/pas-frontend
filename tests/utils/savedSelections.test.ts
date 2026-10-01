@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { sortSavedSelections, validateSavedSelection } from '~/utils/savedSelections';
 import type { SavedSelection } from '~/utils/savedSelections';
 
-const existing = [{ kind: 'channel' as const, name: 'ORG-channels' }];
+const existing = [{ kind: 'channel' as const, name: 'Channels' }];
 
 describe('validateSavedSelection', () => {
   it('accepts a named, non-empty selection', () => {
@@ -18,8 +18,8 @@ describe('validateSavedSelection', () => {
   });
 
   it('rejects a name already used for the same kind, ignoring case', () => {
-    expect(validateSavedSelection({ kind: 'channel', name: 'org-CHANNELS', values: ['x'] }, existing)).toBe('name_taken');
-    expect(validateSavedSelection({ kind: 'keyword', name: 'ORG-channels', values: ['x'] }, existing)).toBeNull();
+    expect(validateSavedSelection({ kind: 'channel', name: 'CHANNELS', values: ['x'] }, existing)).toBe('name_taken');
+    expect(validateSavedSelection({ kind: 'keyword', name: 'Channels', values: ['x'] }, existing)).toBeNull();
   });
 
   it('rejects unknown kinds', () => {
