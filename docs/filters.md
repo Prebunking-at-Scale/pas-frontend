@@ -16,7 +16,9 @@ Videos (120) · Claims (340) · Narratives (12)
 
 - Each tab shows its count for the current filters, so an empty combination is
   visible before switching to it.
-- Filters stay the same when switching tabs.
+- Filters stay the same when switching tabs. Switching tabs also applies the filters
+  as they are in the form, so a change not yet applied (a channel removed, a keyword
+  typed) isn't lost (decided 2026-10-01).
 - All filters and the active tab live in the URL query, so a search can be shared
   and the back button works.
 

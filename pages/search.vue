@@ -406,10 +406,13 @@ const applyFilters = () => {
 
 const clearFilters = () => navigate(emptySearchState(applied.value.tab));
 
-// Switching tabs keeps the applied filters (unapplied edits are discarded), and drops
-// the previous tab's specific filters, since they only exist on their own tab.
+// Switching tabs applies the form as it stands, so an edit not yet applied (a channel
+// removed, a keyword typed) isn't lost, and drops the previous tab's specific filters,
+// since they only exist on their own tab.
 const switchTab = (tab: SearchTab) => {
-  if (tab !== applied.value.tab) navigate({ ...applied.value, tab });
+  if (tab === applied.value.tab) return;
+  keywordsFilter.value?.commit();
+  nextTick(() => navigate({ ...draft.value, tab }));
 };
 
 const goToPage = (page: number) => {
