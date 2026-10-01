@@ -219,7 +219,7 @@ language on `c.metadata->>'language'`, and platform, channel and dates on the cl
 |---|---|---|
 | Claims | the claim meets every *C*, its score is in range, and (with entities) one of its narratives has one of the entities | `narrative`, with `via_entities: [{id, name}]`, when entities matched only through the narrative; `direct` otherwise |
 | Videos | the video meets platform, channel and dates, and it has one claim meeting every remaining *C* and the entity condition through that claim's narrative; a keyword may match the video title instead | `claims` when a keyword matched only through a claim |
-| Narratives | there is **one** claim *c* of the narrative such that every filter holds on the narrative or on *c*: topic on `narrative_topics` or *C*; keyword on the title or *C*; entities on `narrative_entities`; language, platform, channel, dates on *c* only; spread pattern on the narrative | `claims` when topic, keyword or entity needed the claim |
+| Narratives | there is **one** claim *c* of the narrative such that every filter holds on the narrative or on *c*: topic on `narrative_topics` or *C*; keyword on the title or *C*, but only on *C* when a language, platform, channel or date filter is set; entities on `narrative_entities`; language, platform, channel, dates on *c* only; spread pattern on the narrative | `claims` when topic, keyword or entity needed the claim |
 
 "The same claim" is one `EXISTS (SELECT 1 FROM claim_narratives … JOIN video_claims c …
 JOIN videos v … WHERE <all of C>)`. A claim whose own text names the entity counts as

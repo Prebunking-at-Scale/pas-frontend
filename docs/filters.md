@@ -176,6 +176,13 @@ Example: with Topic = Climate and Channel = X, a narrative whose own topic is
 Climate matches if it has at least one claim from channel X, even when that claim
 has no topic.
 
+**Keywords are the exception** (decided 2026-10-01): when any filter checked on c is set
+(language, channel, platform, date), the keywords must be in c's text, not N's title.
+With Keywords = Russia, Language = EN and Platform = TikTok, a narrative titled "The
+Russian invasion…" whose only English TikTok claim doesn't mention Russia does not
+match, so the Narratives tab agrees with the Claims and Videos tabs. Without those
+filters, the title still matches on its own.
+
 ### The "Matching claims" tab
 
 A result on the Videos or Narratives tab can match on its own fields or through its
