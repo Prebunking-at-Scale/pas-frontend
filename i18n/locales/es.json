@@ -821,6 +821,7 @@
     "keywordsHint": "Pulsa Enter después de cada palabra clave. Los espacios se mantienen: “cambio climático” es una sola palabra clave.",
     "containsMatchingClaims": "Contiene afirmaciones coincidentes",
     "containsMatchingClaimsHint": "Este resultado coincide con tu búsqueda a través de una o más de sus afirmaciones, no por su propio título o tema.",
+    "matchingClaims": "Afirmaciones coincidentes",
     "viaNarrative": "Por su narrativa: menciona {list}",
     "viaNarrativeHint": "Esta afirmación no menciona la entidad: pertenece a una narrativa que sí lo hace. Las entidades se detectan en las narrativas, no en cada afirmación.",
     "viaNarrativeShort": "Por su narrativa",

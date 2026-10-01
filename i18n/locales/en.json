@@ -824,6 +824,7 @@
     "keywordsHint": "Press Enter after each keyword. Spaces are kept: “climate change” is one keyword.",
     "containsMatchingClaims": "Contains matching claims",
     "containsMatchingClaimsHint": "This result matches your search through one or more of its claims, not through its own title or topic.",
+    "matchingClaims": "Matching claims",
     "viaNarrative": "Via its narrative: mentions {list}",
     "viaNarrativeHint": "This claim doesn't mention the entity itself: it belongs to a narrative that does. Entities are found on narratives, not on single claims.",
     "viaNarrativeShort": "Via its narrative",

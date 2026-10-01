@@ -176,12 +176,12 @@ Example: with Topic = Climate and Channel = X, a narrative whose own topic is
 Climate matches if it has at least one claim from channel X, even when that claim
 has no topic.
 
-### The "Claims" tab
+### The "Matching claims" tab
 
 A result on the Videos or Narratives tab can match on its own fields or through its
 claims. The two cases are shown differently: a result found through its claims
-carries a small folder tab on its card's top-right corner reading **Claims**, which
-explains on hover that it contains matching claims.
+carries a small folder tab on its card's top-left corner reading **Matching claims**,
+which explains on hover that it matched through its claims.
 
 - **Narratives**: if topic, keywords and entities were all satisfied by the narrative
   itself, there is no tab. If any of them needed a claim, the narrative gets it.

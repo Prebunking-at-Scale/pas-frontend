@@ -769,6 +769,7 @@
     "keywordsHint": "Drücken Sie nach jedem Schlüsselwort Enter. Leerzeichen bleiben erhalten: „Klimawandel“ oder „climate change“ ist ein Schlüsselwort.",
     "containsMatchingClaims": "Enthält passende Behauptungen",
     "containsMatchingClaimsHint": "Dieses Ergebnis passt über eine oder mehrere seiner Behauptungen zu Ihrer Suche, nicht über seinen eigenen Titel oder sein Thema.",
+    "matchingClaims": "Passende Behauptungen",
     "viaNarrative": "Über ihr Narrativ: nennt {list}",
     "viaNarrativeHint": "Diese Behauptung nennt die Entität nicht selbst: Sie gehört zu einem Narrativ, das sie nennt. Entitäten werden bei Narrativen erkannt, nicht bei einzelnen Behauptungen.",
     "viaNarrativeShort": "Über ihr Narrativ",
