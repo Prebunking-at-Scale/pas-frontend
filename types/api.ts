@@ -207,6 +207,8 @@ export interface Claim {
   topics?: Topic[];
   /** language and score always; topics as the claim finder assigned them (topic ids, not used: a claim's topics are `topics`). */
   metadata?: { language?: string; score?: number; topics?: string[]; [key: string]: unknown };
+  /** The video's upload date, on a narrative's claims (which come without `video`). */
+  uploaded_at?: string | null;
   created_at?: string;
   updated_at?: string;
   // Legacy fields for compatibility

@@ -96,11 +96,12 @@
           </div>
 
           <!-- Date -->
-          <div v-if="claim.created_at" class="flex items-center gap-1">
+          <!-- A claim's date is its video's upload date; when processed is the fallback -->
+          <div v-if="date" class="flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span class="text-xs">{{ formatDate(claim.created_at, $i18n.locale.value) }}</span>
+            <span class="text-xs">{{ formatDate(date, $i18n.locale.value) }}</span>
           </div>
         </div>
       </div>
@@ -116,6 +117,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
+import { claimDate } from '~/utils/claimDate';
 import { Unlink } from 'lucide-vue-next';
 import { getLanguageName } from '~/utils/languageMapping';
 
@@ -138,6 +140,7 @@ const emit = defineEmits<{
 const router = useRouter();
 const { $i18n } = useNuxtApp();
 
+const date = computed(() => claimDate(props.claim));
 const firstNarrative = computed(() => props.claim.narratives?.[0] ?? null);
 const otherNarratives = computed(() => Math.max(0, (props.claim.narratives?.length ?? 0) - 1));
 const narrativeTitles = computed(() => (props.claim.narratives ?? []).map(n => n.title).join(' · '));
