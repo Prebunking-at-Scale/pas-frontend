@@ -244,6 +244,9 @@ export const apiService = {
     start_date?: string;
     end_date?: string;
     sort?: string;
+    /** Bounds on the narrative's own creation date (n.created_at). */
+    createdStart?: Date;
+    createdEnd?: Date;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -285,6 +288,14 @@ export const apiService = {
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {
         query.sort = params.sort;
+      }
+      // Bounds on the narrative's creation date (n.created_at): core-api's
+      // created_start/created_end, since start_date/end_date are about the claims.
+      if (params?.createdStart) {
+        query.created_start = params.createdStart.toISOString();
+      }
+      if (params?.createdEnd) {
+        query.created_end = params.createdEnd.toISOString();
       }
 
       const response = await apiFetch('/api/narratives', {

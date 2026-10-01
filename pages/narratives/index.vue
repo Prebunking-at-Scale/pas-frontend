@@ -53,6 +53,11 @@
             class="w-full md:w-auto md:shrink-0"
             v-model="filters.spread_pattern"
           />
+
+          <TimeframeFilter
+            class="w-full md:w-44 md:shrink-0"
+            v-model="filters.created"
+          />
         </div>
       </FilterCard>
 
@@ -136,6 +141,8 @@ import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
 import type { DateRange } from '~/types/filters';
 import { normalizeSpreadPatterns } from '~/utils/spreadPatterns';
 import { startOfDayISO, endOfDayISO } from '~/utils/date';
+import TimeframeFilter from '~/components/filters/TimeframeFilter.vue';
+import { Timeframe, isTimeframe, timeframeInterval } from '~/utils/timeframes';
 
 definePageMeta({
   layout: 'default',
@@ -166,7 +173,8 @@ const filters = ref({
   text: [] as string[],
   language: 'all',
   spread_pattern: [] as NarrativeSpreadPattern[],
-  date_range: emptyDateRange()
+  date_range: emptyDateRange(),
+  created: Timeframe.ALL_TIME as Timeframe
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -176,7 +184,8 @@ const appliedFilters = ref({
   text: [] as string[],
   language: 'all',
   spread_pattern: [] as NarrativeSpreadPattern[],
-  date_range: emptyDateRange()
+  date_range: emptyDateRange(),
+  created: Timeframe.ALL_TIME as Timeframe
 });
 
 const currentTopicName = ref('');
@@ -188,7 +197,8 @@ const hasActiveFilters = computed(() => {
     appliedFilters.value.text.length > 0 ||
     appliedFilters.value.spread_pattern.length > 0 ||
     !!appliedFilters.value.date_range.start ||
-    !!appliedFilters.value.date_range.end;
+    !!appliedFilters.value.date_range.end ||
+    appliedFilters.value.created !== Timeframe.ALL_TIME;
 });
 
 
@@ -232,6 +242,13 @@ const loadNarratives = async () => {
       params.end_date = endDate;
     }
 
+    // Resolved on every load so "last 24 hours" means the 24 hours before this fetch.
+    const createdRange = timeframeInterval(appliedFilters.value.created);
+    if (createdRange) {
+      params.createdStart = createdRange.start;
+      params.createdEnd = createdRange.end;
+    }
+
     const result = await apiService.getNarratives(params);
 
     narratives.value = result.data;
@@ -258,7 +275,8 @@ const resetFilters = () => {
     text: [],
     language: 'all',
     spread_pattern: [],
-    date_range: emptyDateRange()
+    date_range: emptyDateRange(),
+    created: Timeframe.ALL_TIME
   };
   appliedFilters.value = {
     topic_id: null,
@@ -266,7 +284,8 @@ const resetFilters = () => {
     text: [],
     language: 'all',
     spread_pattern: [],
-    date_range: emptyDateRange()
+    date_range: emptyDateRange(),
+    created: Timeframe.ALL_TIME
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -362,6 +381,13 @@ onMounted(async () => {
       const patterns = normalizeSpreadPatterns(raw.filter((value): value is string => typeof value === 'string'));
       filters.value.spread_pattern = patterns;
       appliedFilters.value.spread_pattern = patterns;
+    }
+
+    // Creation window, e.g. handed over by the dashboard's timeframe selector.
+    const createdParam = route.query.created;
+    if (isTimeframe(createdParam)) {
+      filters.value.created = createdParam;
+      appliedFilters.value.created = createdParam;
     }
   }
   

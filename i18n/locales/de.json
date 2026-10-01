@@ -192,15 +192,11 @@
     "viralNarratives": "Virale Narrative",
     "prevalentNarratives": "Verbreitete Narrative",
     "displayDataFrom": "Daten anzeigen von",
-    "selectTimeframe": "Zeitraum auswählen",
-    "last24Hours": "Letzte 24 Stunden",
-    "lastWeek": "Letzte Woche",
-    "lastMonth": "Letzter Monat",
-    "allTime": "Alle Zeiten",
     "narratives": "Narrative",
     "claims": "Behauptungen",
     "narrativesCount": "Anzahl der Narrative",
-    "claimsCount": "Anzahl der Behauptungen"
+    "claimsCount": "Anzahl der Behauptungen",
+    "noSpreadNarratives": "Keine in diesem Zeitraum erstellte Narrative hat bisher ein Verbreitungsmuster. Versuche einen längeren Zeitraum."
   },
   "channels": {
     "title": "Kanäle",
@@ -631,7 +627,8 @@
     "language": "Sprache",
     "allLanguages": "Alle Sprachen",
     "keywords": "Schlüsselwörter",
-    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen"
+    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen",
+    "created": "Erstellt"
   },
   "footer": {
     "about": {
@@ -817,5 +814,12 @@
       "values_required": "Wählen Sie zuerst etwas aus.",
       "save_failed": "Die Auswahl konnte nicht gespeichert werden. Bitte erneut versuchen."
     }
+  },
+  "timeframes": {
+    "select": "Zeitraum auswählen",
+    "last24Hours": "Letzte 24 Stunden",
+    "lastWeek": "Letzte Woche",
+    "lastMonth": "Letzter Monat",
+    "allTime": "Alle Zeiten"
   }
 }
