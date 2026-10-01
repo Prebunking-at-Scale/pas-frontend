@@ -16,6 +16,9 @@ export interface SavedSelection {
   created_at: string | null
 }
 
+/** The organisation's channel default: shown under a translated name rather than core-api's "Channels". */
+export const DEFAULT_CHANNELS_ID = 'default-channels'
+
 export const SAVED_SELECTION_NAME_MAX = 60
 
 export type SavedSelectionError = 'invalid_kind' | 'name_required' | 'name_too_long' | 'name_taken' | 'values_required'

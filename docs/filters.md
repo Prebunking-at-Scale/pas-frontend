@@ -74,8 +74,9 @@ under a name and loaded again in one click.
 - A selection someone saves is **theirs alone**: nobody else in the organisation sees
   it.
 - The organisation's **defaults** are shared by everyone in it, and built from its
-  feeds: `<short_name>-channels` (its channel feeds) and one keyword selection per
-  topic, `<short_name>-<Topic>` (e.g. `maldita-Migration`). Defaults are listed first
+  feeds: **Our channels** (its channel feeds) and one keyword selection per topic,
+  named after the topic (e.g. `Migration`). Each organisation only sees its own, so the
+  names don't include it (decided 2026-10-01). Defaults are listed first
   and can't be deleted here: they change with the feeds. Selections people save can.
 - Loading a channel selection keeps channels outside the selected platforms; the
   filter counts them, and they simply match nothing while that platform filter is on.

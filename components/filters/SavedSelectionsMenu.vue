@@ -30,7 +30,7 @@
             @click="emit('load', [...selection.values])"
           >
             <Check class="h-4 w-4 shrink-0" :class="isCurrent(selection.values) ? 'opacity-100' : 'opacity-0'" />
-            <span class="truncate">{{ selection.name }}</span>
+            <span class="truncate">{{ displayName(selection) }}</span>
             <Building2
               v-if="selection.is_default"
               class="h-3.5 w-3.5 shrink-0 text-gray-400"
@@ -97,9 +97,9 @@ import { Bookmark, BookmarkPlus, Building2, Check, Trash2 } from 'lucide-vue-nex
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
-import { SAVED_SELECTION_NAME_MAX } from '~/utils/savedSelections'
+import { DEFAULT_CHANNELS_ID, SAVED_SELECTION_NAME_MAX } from '~/utils/savedSelections'
 import { keywordKey } from '~/utils/keywords'
-import type { SavedSelectionError, SavedSelectionKind } from '~/utils/savedSelections'
+import type { SavedSelection, SavedSelectionError, SavedSelectionKind } from '~/utils/savedSelections'
 
 interface Props {
   kind: SavedSelectionKind
@@ -134,6 +134,10 @@ const isCurrent = (values: string[]) => {
 }
 
 const { t } = useI18n()
+
+// Defaults are named after what they hold (a topic's name); the channel one is ours.
+const displayName = (selection: SavedSelection) =>
+  selection.id === DEFAULT_CHANNELS_ID ? t('savedSelections.ourChannels') : selection.name
 
 /** "List #1", or the first number that isn't taken. */
 const suggestedName = () => {

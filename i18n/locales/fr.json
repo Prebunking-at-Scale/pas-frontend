@@ -837,6 +837,7 @@
     "namePlaceholder": "Nom de la sélection",
     "nothingToSave": "Sélectionnez d’abord quelque chose",
     "organizationDefault": "Sélection par défaut de l’organisation",
+    "ourChannels": "Nos chaînes",
     "delete": "Supprimer « {name} »",
     "defaultName": "Liste n° {number}",
     "count": {

@@ -853,6 +853,7 @@
     "namePlaceholder": "Name this selection",
     "nothingToSave": "Select something first",
     "organizationDefault": "Organization default",
+    "ourChannels": "Our channels",
     "delete": "Delete “{name}”",
     "defaultName": "List #{number}",
     "count": {

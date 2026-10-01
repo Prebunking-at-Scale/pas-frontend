@@ -23,7 +23,7 @@ backend-feasibility review.
 | **A claim's topics are its `claim_topics`**, the topics the narratives service's classifier predicts. Not the claim finder's `metadata.topics`, and never the topics of the claim's narrative. | Changed on 2026-10-01 (it was `metadata.topics`): topic classification should follow the narratives module. The cost: only claims scoring 2.5 or more have `claim_topics` (4–9% of claims), so a topic filter on claims finds those (see [Topics on claims](#topics-on-claims)). |
 | **The Claims tab shows every claim.** The only organisation-based narrowing is **Ours**, which fills the channel filter with the organisation's channel feeds. | Content is global in core-api; "Ours" is a channel choice, not a scope. |
 | **Saved selections a person creates are theirs alone**, within their organisation. The organisation's defaults (from its feeds) are shared by everyone in it. | Personal working lists shouldn't clutter colleagues' menus. A person belongs to one organisation. |
-| **Default selections are named after the organisation's `short_name`**: `<short_name>-channels`, `<short_name>-<Topic>`. | Short and already unique per organisation. |
+| **Default selections are named after what they hold**: *Our channels* (translated in the frontend; core-api calls it `Channels`) and the topic's name for each keyword feed. Changed on 2026-10-01 from `<short_name>-channels` / `<short_name>-<Topic>`. | Each organisation only sees its own, so the organisation's name added nothing. |
 | **Upload-date filtering comes from `feat/date-filters-uploaded-at`**, merged before this work (its migration is 23). | It already implements the date rule and its index. |
 | **Keyword matching ignores case, accents and hyphens**, backed by trigram indexes (migrations 24 and 25). | The rule in filters.md, at the size of production. |
 | **Tab counts are exact up to 10,000**, then shown as "10,000+". | Exact counts over 4 million claims with broad filters take seconds. |
@@ -266,8 +266,8 @@ results (834 pages of 12).
 Items are `{id, kind, name, values, is_default, created_at}`.
 
 **Defaults** are built on each request from the organisation's non-archived feeds:
-`<short_name>-channels` (its `channel_feeds`) and one `<short_name>-<Topic>` per
-`keyword_feeds` row. Their id is derived from the feed (e.g. `default-channels`,
+`Channels` (its `channel_feeds`; shown as *Our channels*) and one per `keyword_feeds`
+row, named after its topic. Their id is derived from the feed (e.g. `default-channels`,
 `default-topic-<topic_id>`), so they can't be deleted here; they change when the feeds
 change. There are no default entity selections.
 
