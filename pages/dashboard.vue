@@ -181,13 +181,10 @@ const goToNarrative = (id: string) => {
   router.push(`/narratives/${id}`);
 };
 
-// Carries the timeframe along so the list shows the same narratives the "view all" count promised.
+// The list's only date filter is on upload dates, so the dashboard's creation window
+// doesn't travel with the link: the list shows every narrative with the pattern.
 const goToSpreadPattern = (pattern: NarrativeSpreadPattern) => {
-  const query: Record<string, string> = { spread_pattern: pattern };
-  if (selectedTimeframe.value !== Timeframe.ALL_TIME) {
-    query.created = selectedTimeframe.value;
-  }
-  router.push({ path: '/narratives', query });
+  router.push({ path: '/narratives', query: { spread_pattern: pattern } });
 };
 
 const goToTopic = (id: string) => {

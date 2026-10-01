@@ -640,8 +640,7 @@
     "language": "Language",
     "allLanguages": "All languages",
     "keywords": "Keywords",
-    "keywordsPlaceholder": "Press Enter to add keyword",
-    "created": "Created"
+    "keywordsPlaceholder": "Press Enter to add keyword"
   },
   "footer": {
     "about": {

@@ -1,6 +1,6 @@
 /**
- * Timeframes travel through localStorage and the `?created=` query param, so the guard
- * has to reject anything a stale bookmark or a hand-edited URL might carry. The windows
+ * Timeframes travel through localStorage, so the guard
+ * has to reject anything a stale or hand-edited value might carry. The windows
  * are resolved against `now`, which lets these pin exact bounds.
  */
 import { describe, it, expect } from 'vitest';

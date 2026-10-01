@@ -637,8 +637,7 @@
     "language": "Idioma",
     "allLanguages": "Todos los idiomas",
     "keywords": "Palabras clave",
-    "keywordsPlaceholder": "Presiona Enter para agregar palabra clave",
-    "created": "Creadas"
+    "keywordsPlaceholder": "Presiona Enter para agregar palabra clave"
   },
   "footer": {
     "about": {

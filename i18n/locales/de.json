@@ -627,8 +627,7 @@
     "language": "Sprache",
     "allLanguages": "Alle Sprachen",
     "keywords": "Schlüsselwörter",
-    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen",
-    "created": "Erstellt"
+    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen"
   },
   "footer": {
     "about": {
