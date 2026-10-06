@@ -21,7 +21,7 @@
           <div class="flex gap-2 flex-none">
             <Button @click="openAlertDialog" variant="outline">
               <Bell class="mr-2 h-4 w-4" />
-              {{ $t('alerts.create_alert') }}
+              {{ $t('alertRules.createForNarrative') }}
             </Button>
             <Button @click="openNarrativeFeedbackDialog" variant="outline">
               <MessageCircleMore class="mr-2 h-4 w-4" />
@@ -338,13 +338,6 @@
     </div>
 
     <!-- Dialogs Section -->
-    <AlertFormDialog
-      v-if="narrative"
-      v-model:open="showAlertDialog"
-      :mode="'create'"
-      :narrative-id="narrative.id"
-      @save="handleAlertSave"
-    />
     <NarrativeTitleDialog
       :open="editDialogOpen"
       :narrative="narrative"
@@ -367,12 +360,10 @@
 import { apiService } from '~/services/api';
 import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
 import { AnalysisIndicatorType } from "~/types/api";
-import type { Alert } from '~/types/alert';
 import VideoCard from '~/components/VideoCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import NarrativeEvolutionChart from '~/components/NarrativeEvolutionChart.vue';
 import EntityCard from '~/components/EntityCard.vue';
-import AlertFormDialog from '~/components/AlertFormDialog.vue';
 import ConfirmDeleteDialog from '~/components/ConfirmDeleteDialog.vue';
 import ConfirmUnlinkDialog from '~/components/ConfirmUnlinkDialog.vue';
 import MergeNarrativesDialog from '~/components/MergeNarrativesDialog.vue';
@@ -402,7 +393,6 @@ const loading = ref(true);
 const error = ref<string | null>(null);
 const selectedTimeTab = ref('1w');
 const contentType = ref('first');
-const showAlertDialog = ref(false);
 const editDialogOpen = ref(false);
 const contextExpanded = ref(true);
 const narrativeFeedbackScore = ref<number | null>(null);
@@ -552,8 +542,9 @@ const goToVideo = (videoId: string, startTimeSeconds?: number) => {
   router.push({ path: `/videos/${videoId}`, query });
 };
 
+// A new alert with one condition following this narrative (docs/alerts.md)
 const openAlertDialog = () => {
-  showAlertDialog.value = true;
+  router.push({ path: '/alerts/new', query: { narrative: narrative.value!.id } });
 };
 
 const openUpdateTitleDialog = () => {
@@ -574,14 +565,6 @@ const openUnlinkDialog = (claim: Claim) => {
 const openDeleteDialog = () => {
   if (!narrative.value) return;
   dialogsStore.openDeleteDialog(narrative.value);
-};
-
-const handleAlertSave = (alert: Alert) => {
-  toast.add({
-    title: t('common.success'),
-    description: t('alerts.create_success')
-  });
-  showAlertDialog.value = false;
 };
 
 const handleUpdate = (updatedNarrative: Narrative) => {

@@ -189,8 +189,21 @@ export const useSearchFilterOptions = () => {
     label: t(`search.platforms.${platform}`),
   })))
 
+  /**
+   * A filter value's name, for summaries ("Topic: Migration"): topics and languages by
+   * their names, entities once resolved (resolveEntities), the rest as they are.
+   */
+  const labelFor = (key: string, value: string): string => {
+    if (key === 'topic_id') return topics.value.find(topic => topic.id === value)?.topic ?? value
+    if (key === 'entity_id') return entities.value[value]?.name ?? value
+    if (key === 'language') return getLanguageName(value, locale.value as 'en' | 'es' | 'fr' | 'de')
+    if (key === 'platform') return t(`search.platforms.${value}`)
+    return value
+  }
+
   return {
     load,
+    labelFor,
     topicOptions,
     languageOptions,
     platformOptions,

@@ -496,51 +496,6 @@
     "viewVideo": "View Video",
     "disclaimer": "Claims are extracted and contextualized with AI but are not quotes. To read the full transcription, click on the Transcription button in each video."
   },
-  "alerts": {
-    "title": "Alerts",
-    "create_new": "Create new alert",
-    "create_alert": "Create alert",
-    "edit_alert": "Edit alert",
-    "name": "Name",
-    "name_placeholder": "Enter alert name",
-    "description": "Description",
-    "condition": "Condition",
-    "status": "Status",
-    "no_alerts": "No alerts configured yet",
-    "scope": {
-      "label": "Scope",
-      "placeholder": "Select scope",
-      "general": "General",
-      "specific": "Specific"
-    },
-    "type": {
-      "label": "Alert Type",
-      "placeholder": "Select alert type",
-      "narrative_views": "Narrative Views",
-      "narrative_claims_count": "Narrative Claims Count",
-      "narrative_videos_count": "Narrative Videos Count",
-      "narrative_with_topic": "Narrative with Topic",
-      "keyword": "Keyword"
-    },
-    "threshold": "Threshold",
-    "threshold_placeholder": "Enter threshold value",
-    "topic": "Topic",
-    "topic_placeholder": "Select topic",
-    "keyword": "Keyword",
-    "keyword_placeholder": "Enter keyword",
-    "narrative": "Narrative",
-    "narrative_placeholder": "Select narrative",
-    "enabled": "Enabled",
-    "delete_confirmation_title": "Delete Alert",
-    "delete_confirmation_message": "Are you sure you want to delete the alert \"{name}\"? This action cannot be undone.",
-    "fetch_error": "Failed to fetch alerts",
-    "create_success": "Alert created successfully",
-    "create_error": "Failed to create alert",
-    "update_success": "Alert updated successfully",
-    "update_error": "Failed to update alert",
-    "delete_success": "Alert deleted successfully",
-    "delete_error": "Failed to delete alert"
-  },
   "timeline": {
     "firstSeen": "First seen",
     "lastSeen": "Last seen",
@@ -875,5 +830,157 @@
     "lastWeek": "Last week",
     "lastMonth": "Last month",
     "allTime": "All time"
+  },
+  "alertRules": {
+    "title": "Alerts",
+    "intro": "An alert reports new narratives or claims that match one of its conditions, once a day by email.",
+    "newAlert": "New alert",
+    "editAlert": "Edit alert",
+    "previewDigest": "Preview daily digest",
+    "noAlerts": "No alerts yet",
+    "backToList": "All alerts",
+    "fromSearchNotice": "Prefilled from your search",
+    "create": "Create alert",
+    "save": "Save changes",
+    "or": "or",
+    "anyNewInNarrative": "With no filters, every new claim in that narrative triggers this alert.",
+    "caseTitle": "Condition {number}",
+    "addCase": "Add a condition",
+    "removeCase": "Remove",
+    "types": {
+      "new_narrative": {
+        "name": "New narrative",
+        "description": "A narrative starts matching the filters."
+      },
+      "new_claim": {
+        "name": "New claim",
+        "description": "A new claim matches the filters."
+      },
+      "new_claim_in_narrative": {
+        "name": "New claim in a narrative",
+        "description": "A new claim in the chosen narrative matches the filters."
+      }
+    },
+    "steps": {
+      "type": "What does this condition watch?",
+      "cases": "Conditions",
+      "delivery": "Name and delivery",
+      "casesIntro": "An alert can have several conditions, and each one says what it watches. Anything that matches any condition is reported."
+    },
+    "fields": {
+      "type": "Alert type",
+      "narrative": "Narrative",
+      "narrativePlaceholder": "Choose a narrative",
+      "narrativeSearch": "Search narratives by title…",
+      "name": "Name",
+      "namePlaceholder": "e.g. Migration narratives in Spanish",
+      "deliveryHint": "Sent to you every day at 08:00 (Madrid time), only when it finds something new.",
+      "enabled": "Enabled",
+      "belongsTo": "Belongs to this narrative (optional)",
+      "belongsToPlaceholder": "Any narrative",
+      "belongsToClear": "Remove the narrative",
+      "belongsToHint": "When set, the claim must belong to this narrative.",
+      "narrativeTypeToSearch": "Type at least 2 characters to search"
+    },
+    "summary": {
+      "score": "Score {min}–{max}"
+    },
+    "openInSearch": "Open in search",
+    "viewNarrative": "View narrative",
+    "needsFilter": "Add at least one filter to this condition.",
+    "needsNarrative": "Choose the narrative this condition follows.",
+    "list": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "delete": "Delete alert",
+      "deleteTitle": "Delete alert",
+      "deleteMessage": "Delete the alert \"{name}\"? This can't be undone.",
+      "lastMatch": "Last match: {date}",
+      "neverMatched": "No matches yet",
+      "belongsTo": "In the narrative: {title}",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "digest": {
+      "title": "Daily digest preview",
+      "intro": "What your next e-mail would contain so far: everything your enabled alerts have matched since they last reported.",
+      "empty": "No enabled alert matches anything today, so no email would be sent.",
+      "from": "From:",
+      "subject": "Subject:",
+      "subjectLine": "{count} alert triggered | {count} alerts triggered",
+      "showing": "showing {count}",
+      "matchedCases": "matched condition {list} | matched conditions {list}",
+      "seeAll": "See all in the app",
+      "alertTriggered": "Alert triggered: {name}",
+      "inNarrative": "In “{title}”",
+      "condition": "condition {number}",
+      "anyNewClaim": "any new claim",
+      "seeAllCount": "See all ({count})",
+      "sections": {
+        "narratives": "New narratives",
+        "inNarratives": "New claims in selected narratives",
+        "claims": "New claims"
+      },
+      "footer": "You receive this email because you created these alerts or were added to them. Manage your alerts in the app.",
+      "foundMatches": "1 new match | {count} new matches",
+      "kind": {
+        "new_narrative": "New narrative",
+        "new_claim": "New claim",
+        "new_claim_in_narrative": "New claim in the narrative"
+      }
+    },
+    "addFromSearch": {
+      "card": "Add to alerts",
+      "cardHint": {
+        "narratives": "Get an email when new narratives match this search",
+        "claims": "Get an email when new claims match this search"
+      },
+      "title": "Add this search to your alerts",
+      "description": {
+        "new_narrative": "New narratives matching this search will be reported by email.",
+        "new_claim": "New claims matching this search will be reported by email."
+      },
+      "thisSearch": "This search",
+      "dateDropped": "The date range is left out: alerts are about what is new.",
+      "existing": "Add to an existing alert",
+      "existingHint": "No alert can take this search yet | 1 alert can take this search as a new condition | {count} alerts can take this search as a new condition",
+      "new": "Create a new alert",
+      "newHint": "A new alert with this search as its only condition.",
+      "chooseAlert": "Choose an alert",
+      "caseCount": "1 condition | {count} conditions",
+      "newDetails": "It starts enabled and is sent to you.",
+      "fullEditor": "Set it up in the alert editor instead",
+      "confirmAdd": "Add to alert",
+      "alreadyThere": "“{name}” already has this search as a condition.",
+      "added": "Added to “{name}” as condition {number}.",
+      "created": "Created the alert “{name}”.",
+      "openAlert": "Open the alert",
+      "close": "Done",
+      "noAlerts": "You have no alerts yet."
+    },
+    "errors": {
+      "name_required": "Give the alert a name.",
+      "narrative_required": "Choose the narrative this alert is about.",
+      "narrative_not_allowed": "This type of alert isn't about one narrative.",
+      "filter_not_allowed": "A condition uses a filter this type of alert doesn't allow.",
+      "save_failed": "The alert couldn't be saved. Try again.",
+      "conditions_required": "Add at least one condition.",
+      "too_many_conditions": "An alert can have at most 20 conditions.",
+      "invalid_type": "A condition has a type that does not exist.",
+      "empty_condition": "A condition about new narratives or new claims needs at least one filter.",
+      "invalid_filter": "A filter has a value that is not valid.",
+      "name_too_long": "That name is too long (120 characters at most)."
+    },
+    "typesV2": {
+      "new_narrative": {
+        "description": "A narrative starts matching the filters."
+      },
+      "new_claim": {
+        "description": "A new claim matches the filters, optionally only within one narrative."
+      }
+    },
+    "fromNarrativeNotice": "Following this narrative",
+    "createForNarrative": "Create alert",
+    "loadFailed": "Your alerts couldn't be loaded. Try again."
   }
 }

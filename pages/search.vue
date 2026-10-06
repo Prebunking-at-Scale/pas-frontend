@@ -156,13 +156,19 @@
 
     <p v-else-if="failed" class="py-12 text-center text-red-700">{{ $t('search.error') }}</p>
 
-    <p v-else-if="results.length === 0" class="py-12 text-center text-gray-500">
+    <div v-else-if="results.length === 0" class="py-12 text-center text-gray-500">
       {{ $t('search.noResults') }}
-    </p>
+      <!-- An alert can still catch what matches later -->
+      <div v-if="canAddToAlerts" class="mx-auto mt-6 max-w-sm">
+        <AddToAlertsCard :tab="applied.tab" @click="showAddToAlerts = true" />
+      </div>
+    </div>
 
     <template v-else>
       <p v-if="totalCapped" class="mb-3 text-sm text-gray-600">{{ $t('search.narrowToSeeMore') }}</p>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-7 pt-3">
+        <!-- The search as an alert condition (docs/alerts.md) -->
+        <AddToAlertsCard v-if="canAddToAlerts" :tab="applied.tab" @click="showAddToAlerts = true" />
         <div v-for="(result, index) in results" :key="result.id ?? index" class="relative flex flex-col gap-2">
           <MatchSourceBadge
             v-if="result.match_source === 'claims'"
@@ -230,6 +236,13 @@
         <PaginationLast />
       </PaginationContent>
     </Pagination>
+  
+    <AddSearchToAlertDialog
+      v-if="applied.tab !== 'videos'"
+      v-model:open="showAddToAlerts"
+      :tab="applied.tab"
+      :params="searchApiParams(applied)"
+    />
   </div>
 </template>
 
@@ -251,6 +264,9 @@ import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue';
 import MatchSourceBadge from '~/components/MatchSourceBadge.vue';
 import NarrativeCard from '~/components/NarrativeCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
+import AddToAlertsCard from '~/components/alerts/AddToAlertsCard.vue';
+import AddSearchToAlertDialog from '~/components/alerts/AddSearchToAlertDialog.vue';
+import { conditionFromSearch, hasNoFilters } from '~/utils/alertRules';
 import VideoCard from '~/components/VideoCard.vue';
 import { searchService } from '~/services/search';
 import type { SearchCounts, WithMatchSource } from '~/services/search';
@@ -262,6 +278,7 @@ import {
   countMoreFilters,
   emptySearchState,
   hasSearchFilters,
+  searchApiParams,
   searchPageFromQuery,
   searchRequestParams,
   searchStateFromQuery,
@@ -288,6 +305,12 @@ const draft = ref<SearchState>(searchStateFromQuery(route.query));
 const keywordsFilter = ref<InstanceType<typeof KeywordTagsFilter>>();
 
 const hasActiveFilters = computed(() => hasSearchFilters(applied.value));
+
+// "Add to alerts" turns the search into an alert condition. There are no alerts about
+// videos, and a condition needs a filter an alert can use (the date isn't one).
+const showAddToAlerts = ref(false);
+const canAddToAlerts = computed(() => applied.value.tab !== 'videos'
+  && !hasNoFilters(conditionFromSearch(applied.value.tab, searchApiParams(applied.value)).filters));
 
 // Topic, language and keywords are always shown; the rest sit behind "More filters".
 // The panel starts open when a search already uses one of them, so no active filter
