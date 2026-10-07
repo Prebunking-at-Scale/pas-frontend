@@ -69,6 +69,12 @@ watch(() => filterState.search, () => {
   filterItems()
 })
 
+// Options searched on the server arrive after the text changed: filter them too, or
+// they stay hidden until the next keystroke.
+watch(() => allItems.value.size, () => {
+  filterItems()
+})
+
 provideCommandContext({
   allItems,
   allGroups,
