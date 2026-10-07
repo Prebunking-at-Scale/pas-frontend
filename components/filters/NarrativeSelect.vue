@@ -39,16 +39,16 @@
 </template>
 
 <script setup lang="ts">
-// One narrative out of tens of thousands, searched in core-api as you type (the same
-// title search as Research): the narrative a "Belongs to this narrative" condition
-// follows. The chosen one's title is fetched when only its id is known.
+// One narrative out of tens of thousands, searched in core-api by its title only as you
+// type: the narrative a "Belongs to this narrative" condition follows. The chosen one's
+// title is fetched when only its id is known.
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { Button } from '~/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { apiService } from '~/services/api'
-import { searchService } from '~/services/search'
+import { alertsService } from '~/services/alerts'
 
 const props = withDefaults(defineProps<{ modelValue: string | null; placeholder: string; id?: string }>(), { id: undefined })
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
@@ -69,8 +69,7 @@ const onInput = (text: string) => {
   }
   timer = setTimeout(async () => {
     try {
-      const page = await searchService.search('narratives', { keyword: [text.trim()], limit: 20, offset: 0 })
-      results.value = page.data.map(n => ({ id: n.id, title: n.title }))
+      results.value = await alertsService.narrativesByTitle(text.trim())
       titles.value = { ...titles.value, ...Object.fromEntries(results.value.map(n => [n.id, n.title])) }
     } catch (error) {
       console.error('Failed to search narratives:', error)

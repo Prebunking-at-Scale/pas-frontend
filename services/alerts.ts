@@ -42,6 +42,12 @@ export const alertsService = {
     await apiFetch(`/api/alerts/${id}`, { method: 'DELETE' })
   },
 
+  /** Narratives whose title contains the text (2 characters or more), for "Belongs to this narrative". */
+  async narrativesByTitle(text: string): Promise<{ id: string; title: string }[]> {
+    const { apiFetch } = useApi()
+    return (await apiFetch<{ data: { id: string; title: string }[] }>('/api/alerts/narratives', { query: { text, limit: 20 } })).data
+  },
+
   async digestPreview(): Promise<DigestEntry[]> {
     const { apiFetch } = useApi()
     return (await apiFetch<{ data: DigestEntry[] }>('/api/alerts/digest-preview')).data
