@@ -38,7 +38,6 @@ describe('searchStateToQuery', () => {
       keyword: ['carbon tax', '5g'],
       platform: ['tiktok'],
       date_from: '2026-08-01',
-      score: [2, 4.5],
     };
     expect(searchStateFromQuery(searchStateToQuery(state) as never)).toEqual(state);
   });
@@ -68,11 +67,11 @@ describe('keyword mode', () => {
 });
 
 describe('searchApiParams', () => {
-  const state = { ...emptySearchState(), spread_pattern: ['viral'], score: [1, 5] };
+  const state = { ...emptySearchState(), spread_pattern: ['viral'] };
 
   it('sends tab-specific filters only on their own tab', () => {
     expect(searchApiParams({ ...state, tab: 'narratives' })).toEqual({ spread_pattern: ['viral'] });
-    expect(searchApiParams({ ...state, tab: 'claims' })).toEqual({ min_score: 1 });
+    expect(searchApiParams({ ...state, tab: 'claims' })).toEqual({});
     expect(searchApiParams({ ...state, tab: 'videos' })).toEqual({});
   });
 
