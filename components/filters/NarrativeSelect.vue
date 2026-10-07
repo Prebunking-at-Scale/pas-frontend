@@ -16,11 +16,23 @@
     </PopoverTrigger>
     <PopoverContent class="w-(--reka-popover-trigger-width) min-w-80 p-0" align="start">
       <Command>
-        <CommandInput :placeholder="$t('alertRules.fields.narrativeSearch')" @input="onInput(($event.target as HTMLInputElement).value)" />
+        <!-- A plain input, not CommandInput: core-api decides what matches (titles and
+             claims), so the list mustn't filter the results again in the browser -->
+        <div class="flex h-12 items-center gap-2 border-b px-3">
+          <Search class="size-4 shrink-0 opacity-50" />
+          <input
+            :value="query"
+            :placeholder="$t('alertRules.fields.narrativeSearch')"
+            class="placeholder:text-muted-foreground flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-hidden"
+            autofocus
+            @input="onInput(($event.target as HTMLInputElement).value)"
+            @keydown.stop
+          >
+        </div>
         <CommandList>
-          <CommandEmpty>
-            {{ query.trim().length < MIN_CHARS ? $t('alertRules.fields.narrativeTypeToSearch') : $t('search.noOptions') }}
-          </CommandEmpty>
+          <p v-if="results.length === 0" class="py-6 text-center text-sm text-gray-500">
+            {{ query.trim().length < MIN_CHARS ? $t('alertRules.fields.narrativeTypeToSearch') : searching ? '…' : $t('search.noOptions') }}
+          </p>
           <!-- The text in the title first; then narratives with it only in their claims -->
           <CommandGroup
             v-for="group in groups"
@@ -49,10 +61,10 @@
 // narrative a "Belongs to this narrative" condition follows. Narratives with the text in
 // their title come first; those with it only in one of their claims are listed apart and
 // marked. The chosen one's title is fetched when only its id is known.
-import { Check, ChevronsUpDown, MessageSquareQuote } from 'lucide-vue-next'
+import { Check, ChevronsUpDown, MessageSquareQuote, Search } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { Button } from '~/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
+import { Command, CommandGroup, CommandItem, CommandList } from '~/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { apiService } from '~/services/api'
 import { alertsService } from '~/services/alerts'
@@ -65,6 +77,7 @@ const MIN_CHARS = 2
 const open = ref(false)
 const query = ref('')
 const results = ref<NarrativeOption[]>([])
+const searching = ref(false)
 const groups = computed(() => (['title', 'claims'] as const)
   .map(matched_in => ({ matched_in, items: results.value.filter(n => n.matched_in === matched_in) }))
   .filter(group => group.items.length > 0))
@@ -76,14 +89,21 @@ const onInput = (text: string) => {
   clearTimeout(timer)
   if (text.trim().length < MIN_CHARS) {
     results.value = []
+    searching.value = false
     return
   }
+  searching.value = true
   timer = setTimeout(async () => {
     try {
-      results.value = await alertsService.narrativesMatching(text.trim())
+      const found = await alertsService.narrativesMatching(text.trim())
+      // Only the answer to what's typed now: an older, slower answer is dropped
+      if (text !== query.value) return
+      results.value = found
       titles.value = { ...titles.value, ...Object.fromEntries(results.value.map(n => [n.id, n.title])) }
     } catch (error) {
       console.error('Failed to search narratives:', error)
+    } finally {
+      if (text === query.value) searching.value = false
     }
   }, 250)
 }
