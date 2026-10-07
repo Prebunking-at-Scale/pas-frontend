@@ -874,7 +874,7 @@
       "narrativeSearch": "Search narratives by title…",
       "name": "Name",
       "namePlaceholder": "e.g. Migration narratives in Spanish",
-      "deliveryHint": "Sent to you every day at 08:00 (Madrid time), only when it finds something new.",
+      "deliveryHint": "Sent to you every 24h, only when it finds something new.",
       "enabled": "Enabled",
       "belongsTo": "Belongs to this narrative (optional)",
       "belongsToPlaceholder": "Any narrative",

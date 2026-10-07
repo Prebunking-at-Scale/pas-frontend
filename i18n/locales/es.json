@@ -871,7 +871,7 @@
       "narrativeSearch": "Busca narrativas por título…",
       "name": "Nombre",
       "namePlaceholder": "p. ej. Narrativas sobre migración en español",
-      "deliveryHint": "Te llega cada día a las 08:00 (hora de Madrid), solo si encuentra algo nuevo.",
+      "deliveryHint": "Te llega cada 24 h, solo si encuentra algo nuevo.",
       "enabled": "Activada",
       "belongsTo": "Pertenece a esta narrativa (opcional)",
       "belongsToPlaceholder": "Cualquier narrativa",

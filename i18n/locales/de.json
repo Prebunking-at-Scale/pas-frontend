@@ -819,7 +819,7 @@
       "narrativeSearch": "Narrative nach Titel suchen…",
       "name": "Name",
       "namePlaceholder": "z. B. Migrationsnarrative auf Spanisch",
-      "deliveryHint": "Geht täglich um 08:00 Uhr (Madrider Zeit) an Sie, nur wenn es etwas Neues gibt.",
+      "deliveryHint": "Geht alle 24 Stunden an Sie, nur wenn es etwas Neues gibt.",
       "enabled": "Aktiv",
       "belongsTo": "Gehört zu diesem Narrativ (optional)",
       "belongsToPlaceholder": "Beliebiges Narrativ",

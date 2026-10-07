@@ -851,7 +851,7 @@
       "narrativeSearch": "Rechercher un récit par titre…",
       "name": "Nom",
       "namePlaceholder": "ex. Récits sur la migration en espagnol",
-      "deliveryHint": "Envoyée chaque jour à 08:00 (heure de Madrid), seulement s’il y a du nouveau.",
+      "deliveryHint": "Envoyée toutes les 24 h, seulement s’il y a du nouveau.",
       "enabled": "Activée",
       "belongsTo": "Appartient à ce récit (facultatif)",
       "belongsToPlaceholder": "N’importe quel récit",
