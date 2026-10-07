@@ -54,6 +54,8 @@ export interface DigestItem {
   title: string
   /** The (1-based) conditions it met. */
   conditions: number[]
+  /** Where it opens: a narrative's page, or a claim's video at the moment it is said. */
+  link: string | null
 }
 
 export interface DigestSection {

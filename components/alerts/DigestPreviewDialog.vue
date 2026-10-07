@@ -36,7 +36,7 @@
               <h4 class="font-semibold text-gray-800">{{ $t('alertRules.digest.sections.narratives') }}</h4>
               <ul class="mt-1 space-y-1">
                 <li v-for="item in entry.narratives.items" :key="item.id" class="leading-snug">
-                  • <strong class="text-gray-900">{{ item.title }}</strong>
+                  • <NuxtLink v-if="item.link" :to="item.link" target="_blank" class="underline decoration-gray-400 hover:decoration-gray-900"><strong class="text-gray-900">{{ item.title }}</strong></NuxtLink><strong v-else class="text-gray-900">{{ item.title }}</strong>
                   <span class="text-gray-500"> ({{ conditionsText(entry, item.conditions) }})</span>
                 </li>
               </ul>
@@ -50,7 +50,7 @@
                 <p class="text-gray-700">{{ $t('alertRules.digest.inNarrative', { title: group.narrative_title }) }}</p>
                 <ul class="mt-0.5 space-y-1 pl-3">
                   <li v-for="item in group.items" :key="item.id" class="leading-snug">
-                    • <strong class="text-gray-900">{{ item.title }}</strong>
+                    • <NuxtLink v-if="item.link" :to="item.link" target="_blank" class="underline decoration-gray-400 hover:decoration-gray-900"><strong class="text-gray-900">{{ item.title }}</strong></NuxtLink><strong v-else class="text-gray-900">{{ item.title }}</strong>
                     <span class="text-gray-500"> ({{ conditionsText(entry, item.conditions) }})</span>
                   </li>
                 </ul>
@@ -63,7 +63,7 @@
               <h4 class="font-semibold text-gray-800">{{ $t('alertRules.digest.sections.claims') }}</h4>
               <ul class="mt-1 space-y-1">
                 <li v-for="item in entry.claims.items" :key="item.id" class="leading-snug">
-                  • <strong class="text-gray-900">{{ item.title }}</strong>
+                  • <NuxtLink v-if="item.link" :to="item.link" target="_blank" class="underline decoration-gray-400 hover:decoration-gray-900"><strong class="text-gray-900">{{ item.title }}</strong></NuxtLink><strong v-else class="text-gray-900">{{ item.title }}</strong>
                   <span class="text-gray-500"> ({{ conditionsText(entry, item.conditions) }})</span>
                 </li>
               </ul>
