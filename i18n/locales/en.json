@@ -929,6 +929,14 @@
         "new_claim_in_narrative": "New claim in the narrative"
       }
     },
+    "addFromNarrative": {
+      "title": "Follow this narrative in your alerts",
+      "description": "New claims in this narrative will be reported by email.",
+      "thisNarrative": "This narrative",
+      "existingHint": "No alert can follow this narrative yet | 1 alert can follow this narrative as a new condition | {count} alerts can follow this narrative as a new condition",
+      "newHint": "A new alert that follows this narrative.",
+      "alreadyThere": "“{name}” already follows this narrative."
+    },
     "addFromSearch": {
       "card": "Add to alerts",
       "cardHint": {

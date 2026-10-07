@@ -2,16 +2,17 @@
   <Dialog :open="open" @update:open="emit('update:open', $event)">
     <DialogContent class="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>{{ $t('alertRules.addFromSearch.title') }}</DialogTitle>
+        <DialogTitle>{{ $t(texts.title) }}</DialogTitle>
         <DialogDescription>
-          {{ $t(`alertRules.addFromSearch.description.${prefill.type}`) }}
+          {{ narrative ? $t('alertRules.addFromNarrative.description') : $t(`alertRules.addFromSearch.description.${prefill.type}`) }}
         </DialogDescription>
       </DialogHeader>
 
-      <!-- The search, as the case it becomes -->
+      <!-- The search or the narrative, as the condition it becomes -->
       <div class="rounded-md bg-stone-50 p-3 text-sm">
-        <p class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $t('alertRules.addFromSearch.thisSearch') }}</p>
-        <AlertConditionSummary :type="prefill.type" :filters="prefill.filters" />
+        <p class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $t(texts.this) }}</p>
+        <p v-if="narrative" class="font-medium text-gray-900">{{ narrative.title }}</p>
+        <AlertConditionSummary v-else :type="prefill.type" :filters="prefill.filters" />
         <p v-if="droppedDate" class="mt-1.5 text-xs text-gray-500">{{ $t('alertRules.addFromSearch.dateDropped') }}</p>
       </div>
 
@@ -40,8 +41,8 @@
             <span class="block font-medium text-gray-900">{{ $t(`alertRules.addFromSearch.${option}`) }}</span>
             <span class="block text-sm text-gray-600">
               {{ option === 'existing'
-                ? $t('alertRules.addFromSearch.existingHint', { count: compatible.length }, compatible.length)
-                : $t('alertRules.addFromSearch.newHint') }}
+                ? $t(texts.existingHint, { count: compatible.length }, compatible.length)
+                : $t(texts.newHint) }}
             </span>
           </span>
         </button>
@@ -88,7 +89,7 @@
         />
         <p class="text-xs text-gray-500">
           {{ $t('alertRules.addFromSearch.newDetails') }}
-          <NuxtLink :to="{ path: '/alerts/new', query: searchQuery }" class="text-emerald-800 underline">
+          <NuxtLink :to="{ path: '/alerts/new', query: editorQuery }" class="text-emerald-800 underline">
             {{ $t('alertRules.addFromSearch.fullEditor') }}
           </NuxtLink>
         </p>
@@ -116,10 +117,11 @@
 </template>
 
 <script setup lang="ts">
-// "Add to alerts" from the search results: the current search becomes a case (a new
-// narrative case from the Narratives tab, a new claim case from the Claims tab) of an
-// existing alert or of a new one (docs/alerts.md). Cases carry their own type, so any
-// alert can take it.
+// "Add to alerts" (docs/alerts.md): a Research search, or a narrative, becomes a
+// condition of one of your alerts or of a new one. From Research, a New narrative
+// condition (Narratives tab) or a New claim one (Claims tab); from a narrative's page,
+// "New claim + belongs to this narrative". Conditions carry their own type, so any alert
+// can take one.
 import { BellPlus, CheckCircle2, ListPlus, Loader2 } from 'lucide-vue-next'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -134,18 +136,20 @@ import {
 } from '~/components/ui/dialog'
 import AlertConditionSummary from '~/components/alerts/AlertConditionSummary.vue'
 import { alertsService } from '~/services/alerts'
-import { conditionFromSearch, isSameCondition } from '~/utils/alertRules'
+import { conditionFollowing, conditionFromSearch, isSameCondition } from '~/utils/alertRules'
 import type { Alert } from '~/utils/alertRules'
 
 interface Props {
   open: boolean
-  /** The search tab: narratives or claims. */
-  tab: string
-  /** The search's API params (searchApiParams). */
-  params: Record<string, unknown>
+  /** From Research: the tab (narratives or claims)… */
+  tab?: string
+  /** …and the search's API params (searchApiParams). */
+  params?: Record<string, unknown>
+  /** From a narrative's page: the narrative to follow. */
+  narrative?: { id: string; title: string }
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { tab: 'narratives', params: () => ({}), narrative: undefined })
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
 const { t } = useI18n()
@@ -160,9 +164,26 @@ const saving = ref(false)
 const error = ref('')
 const done = ref<{ alertId: string; message: string } | null>(null)
 
-const prefill = computed(() => conditionFromSearch(props.tab, props.params))
-const droppedDate = computed(() => props.params.date_from !== undefined || props.params.date_to !== undefined)
-const searchQuery = computed(() => ({ tab: props.tab, ...props.params }) as Record<string, string | string[]>)
+const prefill = computed(() => props.narrative
+  ? conditionFollowing(props.narrative.id)
+  : conditionFromSearch(props.tab, props.params))
+const droppedDate = computed(() => !props.narrative && (props.params.date_from !== undefined || props.params.date_to !== undefined))
+// The full editor, prefilled the same way
+const editorQuery = computed(() => (props.narrative
+  ? { narrative: props.narrative.id }
+  : { tab: props.tab, ...props.params }) as Record<string, string | string[]>)
+
+// The texts that differ between a search and a narrative
+const texts = computed(() => {
+  const from = props.narrative ? 'alertRules.addFromNarrative' : 'alertRules.addFromSearch'
+  return {
+    title: `${from}.title`,
+    this: props.narrative ? `${from}.thisNarrative` : `${from}.thisSearch`,
+    existingHint: `${from}.existingHint`,
+    newHint: `${from}.newHint`,
+    alreadyThere: `${from}.alreadyThere`,
+  }
+})
 
 // Every alert can take the search: the case brings its own type.
 const compatible = computed(() => alerts.value)
@@ -192,7 +213,7 @@ const addToExisting = async () => {
   const alert = compatible.value.find(a => a.id === selectedId.value)
   if (!alert) return
   if (alert.conditions.some(c => isSameCondition(c, prefill.value))) {
-    error.value = t('alertRules.addFromSearch.alreadyThere', { name: alert.name })
+    error.value = t(texts.value.alreadyThere, { name: alert.name })
     return
   }
   const conditions = [...alert.conditions, prefill.value]

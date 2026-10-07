@@ -906,6 +906,14 @@
         "new_claim_in_narrative": "Nouvelle affirmation dans le récit"
       }
     },
+    "addFromNarrative": {
+      "title": "Suivre ce récit dans vos alertes",
+      "description": "Les nouvelles affirmations de ce récit vous seront signalées par e-mail.",
+      "thisNarrative": "Ce récit",
+      "existingHint": "Aucune alerte ne peut encore suivre ce récit | 1 alerte peut suivre ce récit comme nouvelle condition | {count} alertes peuvent suivre ce récit comme nouvelle condition",
+      "newHint": "Une nouvelle alerte qui suit ce récit.",
+      "alreadyThere": "« {name} » suit déjà ce récit."
+    },
     "addFromSearch": {
       "card": "Ajouter aux alertes",
       "cardHint": {

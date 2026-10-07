@@ -237,7 +237,7 @@
       </PaginationContent>
     </Pagination>
   
-    <AddSearchToAlertDialog
+    <AddToAlertDialog
       v-if="applied.tab !== 'videos'"
       v-model:open="showAddToAlerts"
       :tab="applied.tab"
@@ -265,7 +265,7 @@ import MatchSourceBadge from '~/components/MatchSourceBadge.vue';
 import NarrativeCard from '~/components/NarrativeCard.vue';
 import ClaimCard from '~/components/ClaimCard.vue';
 import AddToAlertsCard from '~/components/alerts/AddToAlertsCard.vue';
-import AddSearchToAlertDialog from '~/components/alerts/AddSearchToAlertDialog.vue';
+import AddToAlertDialog from '~/components/alerts/AddToAlertDialog.vue';
 import { conditionFromSearch, hasNoFilters } from '~/utils/alertRules';
 import VideoCard from '~/components/VideoCard.vue';
 import { searchService } from '~/services/search';

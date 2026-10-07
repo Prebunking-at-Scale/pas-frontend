@@ -926,6 +926,14 @@
         "new_claim_in_narrative": "Nueva afirmación en la narrativa"
       }
     },
+    "addFromNarrative": {
+      "title": "Seguir esta narrativa en tus alertas",
+      "description": "Te avisaremos por correo de las afirmaciones nuevas de esta narrativa.",
+      "thisNarrative": "Esta narrativa",
+      "existingHint": "Ninguna alerta puede seguir esta narrativa todavía | 1 alerta puede seguir esta narrativa como condición nueva | {count} alertas pueden seguir esta narrativa como condición nueva",
+      "newHint": "Una alerta nueva que sigue esta narrativa.",
+      "alreadyThere": "“{name}” ya sigue esta narrativa."
+    },
     "addFromSearch": {
       "card": "Añadir a alertas",
       "cardHint": {

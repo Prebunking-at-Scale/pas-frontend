@@ -874,6 +874,14 @@
         "new_claim_in_narrative": "Neue Behauptung im Narrativ"
       }
     },
+    "addFromNarrative": {
+      "title": "Diesem Narrativ in Ihren Alarmen folgen",
+      "description": "Neue Behauptungen in diesem Narrativ werden per E-Mail gemeldet.",
+      "thisNarrative": "Dieses Narrativ",
+      "existingHint": "Noch kein Alarm kann diesem Narrativ folgen | 1 Alarm kann diesem Narrativ als neue Bedingung folgen | {count} Alarme können diesem Narrativ als neue Bedingung folgen",
+      "newHint": "Ein neuer Alarm, der diesem Narrativ folgt.",
+      "alreadyThere": "„{name}“ folgt diesem Narrativ bereits."
+    },
     "addFromSearch": {
       "card": "Zu Alarmen hinzufügen",
       "cardHint": {

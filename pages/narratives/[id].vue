@@ -338,6 +338,11 @@
     </div>
 
     <!-- Dialogs Section -->
+    <AddToAlertDialog
+      v-if="narrative"
+      v-model:open="showAlertDialog"
+      :narrative="{ id: narrative.id, title: narrative.title }"
+    />
     <NarrativeTitleDialog
       :open="editDialogOpen"
       :narrative="narrative"
@@ -357,6 +362,7 @@
 </template>
 
 <script setup lang="ts">
+import AddToAlertDialog from '~/components/alerts/AddToAlertDialog.vue';
 import { apiService } from '~/services/api';
 import type { Claim, Narrative, NarrativeDetail, NarrativeStatsResponse, NarrativeFeedbackSummary, Video } from '~/types/api';
 import { AnalysisIndicatorType } from "~/types/api";
@@ -542,9 +548,10 @@ const goToVideo = (videoId: string, startTimeSeconds?: number) => {
   router.push({ path: `/videos/${videoId}`, query });
 };
 
-// A new alert with one condition following this narrative (docs/alerts.md)
+// Follow this narrative in an existing alert or a new one (docs/alerts.md)
+const showAlertDialog = ref(false);
 const openAlertDialog = () => {
-  router.push({ path: '/alerts/new', query: { narrative: narrative.value!.id } });
+  showAlertDialog.value = true;
 };
 
 const openUpdateTitleDialog = () => {
