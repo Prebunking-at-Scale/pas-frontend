@@ -23,6 +23,7 @@ backend-feasibility review.
 | **A claim's topics are its `claim_topics`**, the topics the narratives service's classifier predicts. Not the claim finder's `metadata.topics`, and never the topics of the claim's narrative. | Changed on 2026-10-01 (it was `metadata.topics`): topic classification should follow the narratives module. The cost: only claims scoring 2.5 or more have `claim_topics` (4–9% of claims), so a topic filter on claims finds those (see [Topics on claims](#topics-on-claims)). |
 | **A claim never matches its narrative's topic**, even when the classifier tagged it differently (confirmed 2026-10-01). | In production only 3 of 14 sampled claims in European Union narratives were tagged European Union; that is accepted: the Narratives tab finds the narrative, the Claims tab what the classifier said. |
 | **A claim's language is only its own** (`metadata.language`); claims without one (older ones, about 15% in a sample) don't match a language filter and show no language (decided 2026-10-01). | Not falling back to the video's language. |
+| **Claims are never filtered by their priority score** (2026-10-07), neither in Research nor in alerts. | The score filter was removed. |
 | **The Claims tab shows every claim.** The only organisation-based narrowing is **Ours**, which fills the channel filter with the organisation's channel feeds. | Content is global in core-api; "Ours" is a channel choice, not a scope. |
 | **Saved selections a person creates are theirs alone**, within their organisation. The organisation's defaults (from its feeds) are shared by everyone in it. | Personal working lists shouldn't clutter colleagues' menus. A person belongs to one organisation. |
 | **Two lists of the same kind can't share a name** for a person, ignoring case, the organisation's defaults included; nothing beyond that (the translated *Our channels* isn't reserved) (2026-10-01). | Enough to avoid confusing duplicates. |
@@ -40,7 +41,7 @@ backend-feasibility review.
   - `GET /api/videos` (`core/videos/repo.py:224-278`): `platform`, `channel` (substring
     matches), `text` (title or description), `language` (the **video's** language).
   - `GET /api/claims` (`core/videos/claims/repo.py:256-332`): `topic_id` (through
-    `claim_topics`), `text`, `language` (the **claim's**), `min_score`, `max_score`.
+    `claim_topics`), `text`, `language` (the **claim's**).
   - `GET /api/narratives` (`core/narratives/repo.py:347-617`): `topic_id`, `entity_id`,
     `text` (title or description), `language` (any linked claim's), dates, and a
     repeatable `spread_pattern`.
@@ -209,7 +210,6 @@ the filters into SQL, so every tab and the counts apply the same rules.
 | `platform` | repeated text | OR, exact |
 | `channel` | repeated text | OR, exact, ignoring case |
 | `start_date`, `end_date` | date | the video's `uploaded_at`, both inclusive (as in the date branch) |
-| `min_score`, `max_score` | number | claims only |
 | `spread_pattern` | repeated enum | narratives only |
 | `limit`, `offset` | int | `limit` 1–100, default 12 |
 
@@ -221,7 +221,7 @@ language on `c.metadata->>'language'`, and platform, channel and dates on the cl
 
 | Tab | Matches when | `match_source` |
 |---|---|---|
-| Claims | the claim meets every *C*, its score is in range, and (with entities) one of its narratives has one of the entities | `narrative`, with `via_entities: [{id, name}]`, when entities matched only through the narrative; `direct` otherwise |
+| Claims | the claim meets every *C* and (with entities) one of its narratives has one of the entities | `narrative`, with `via_entities: [{id, name}]`, when entities matched only through the narrative; `direct` otherwise |
 | Videos | the video meets platform, channel and dates, and it has one claim meeting every remaining *C* and the entity condition through that claim's narrative; a keyword may match the video title instead | `claims` when a keyword matched only through a claim |
 | Narratives | there is **one** claim *c* of the narrative such that every filter holds on the narrative or on *c*: topic on `narrative_topics` or *C*; keyword on the title or *C*, but only on *C* when a language, platform, channel or date filter is set; entities on `narrative_entities`; language, platform, channel, dates on *c* only; spread pattern on the narrative | `claims` when topic, keyword or entity needed the claim |
 

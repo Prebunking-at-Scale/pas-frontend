@@ -234,7 +234,6 @@ accept the same set of parameters:
 | `platform` | repeated | OR |
 | `channel` | repeated | OR; the channel list endpoint accepts `platform` to narrow its options |
 | `date_from`, `date_to` | date | video upload date |
-| `min_score`, `max_score` | number | claims only |
 | `spread_pattern` | repeated | narratives only |
 
 Responses need:

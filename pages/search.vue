@@ -106,15 +106,6 @@
           />
 
           <!-- Tab-specific filters -->
-          <RangeSlider
-            v-if="draft.tab === 'claims'"
-            v-model="draft.score"
-            class="md:col-span-2"
-            :label="$t('claims.range')"
-            :min="SCORE_RANGE[0]"
-            :max="SCORE_RANGE[1]"
-            :step="0.1"
-          />
           <SpreadPatternFilter
             v-if="draft.tab === 'narratives'"
             :model-value="draft.spread_pattern as NarrativeSpreadPattern[]"
@@ -246,7 +237,6 @@ import FilterToggle from '~/components/filters/FilterToggle.vue';
 import MultiSelectFilter from '~/components/filters/MultiSelectFilter.vue';
 import KeywordTagsFilter from '~/components/filters/KeywordTagsFilter.vue';
 import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
-import RangeSlider from '~/components/filters/RangeSlider.vue';
 import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue';
 import MatchSourceBadge from '~/components/MatchSourceBadge.vue';
 import NarrativeCard from '~/components/NarrativeCard.vue';
@@ -256,7 +246,6 @@ import { searchService } from '~/services/search';
 import type { SearchCounts, WithMatchSource } from '~/services/search';
 import { CHANNEL_SEARCH_MIN, ENTITY_SEARCH_MIN } from '~/composables/useSearchFilterOptions';
 import {
-  SCORE_RANGE,
   SEARCH_QUERY_KEYS,
   SEARCH_TABS,
   countMoreFilters,
