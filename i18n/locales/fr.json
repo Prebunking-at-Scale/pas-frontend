@@ -857,7 +857,11 @@
       "belongsToPlaceholder": "N’importe quel récit",
       "belongsToClear": "Retirer le récit",
       "belongsToHint": "Si un récit est choisi, l’affirmation doit lui appartenir.",
-      "narrativeTypeToSearch": "Tapez au moins 2 caractères pour rechercher"
+      "narrativeTypeToSearch": "Tapez au moins 2 caractères pour rechercher",
+      "narrativeMatchedIn": {
+        "title": "Dans le titre",
+        "claims": "Seulement dans ses affirmations"
+      }
     },
     "openInSearch": "Ouvrir dans la recherche",
     "viewNarrative": "Voir le récit",

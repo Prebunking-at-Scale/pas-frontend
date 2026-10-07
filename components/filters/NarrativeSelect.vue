@@ -21,15 +21,21 @@
           <CommandEmpty>
             {{ query.trim().length < MIN_CHARS ? $t('alertRules.fields.narrativeTypeToSearch') : $t('search.noOptions') }}
           </CommandEmpty>
-          <CommandGroup>
+          <!-- The text in the title first; then narratives with it only in their claims -->
+          <CommandGroup
+            v-for="group in groups"
+            :key="group.matched_in"
+            :heading="$t(`alertRules.fields.narrativeMatchedIn.${group.matched_in}`)"
+          >
             <CommandItem
-              v-for="narrative in results"
+              v-for="narrative in group.items"
               :key="narrative.id"
               :value="narrative.title"
               @select.prevent="pick(narrative.id)"
             >
               <Check :class="cn('h-4 w-4 shrink-0', modelValue === narrative.id ? 'opacity-100' : 'opacity-0')" />
-              <span class="min-w-0 flex-1 truncate">{{ narrative.title }}</span>
+              <MessageSquareQuote v-if="group.matched_in === 'claims'" class="h-3.5 w-3.5 shrink-0 text-gray-400" />
+              <span :class="cn('min-w-0 flex-1 truncate', group.matched_in === 'claims' && 'text-gray-600')">{{ narrative.title }}</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
@@ -39,16 +45,18 @@
 </template>
 
 <script setup lang="ts">
-// One narrative out of tens of thousands, searched in core-api by its title only as you
-// type: the narrative a "Belongs to this narrative" condition follows. The chosen one's
-// title is fetched when only its id is known.
-import { Check, ChevronsUpDown } from 'lucide-vue-next'
+// One narrative out of tens of thousands, searched in core-api as you type: the
+// narrative a "Belongs to this narrative" condition follows. Narratives with the text in
+// their title come first; those with it only in one of their claims are listed apart and
+// marked. The chosen one's title is fetched when only its id is known.
+import { Check, ChevronsUpDown, MessageSquareQuote } from 'lucide-vue-next'
 import { cn } from '~/lib/utils'
 import { Button } from '~/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { apiService } from '~/services/api'
 import { alertsService } from '~/services/alerts'
+import type { NarrativeOption } from '~/services/alerts'
 
 const props = withDefaults(defineProps<{ modelValue: string | null; placeholder: string; id?: string }>(), { id: undefined })
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
@@ -56,7 +64,10 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const MIN_CHARS = 2
 const open = ref(false)
 const query = ref('')
-const results = ref<{ id: string; title: string }[]>([])
+const results = ref<NarrativeOption[]>([])
+const groups = computed(() => (['title', 'claims'] as const)
+  .map(matched_in => ({ matched_in, items: results.value.filter(n => n.matched_in === matched_in) }))
+  .filter(group => group.items.length > 0))
 const titles = useState<Record<string, string>>('alerts:narrativeTitles', () => ({}))
 
 let timer: ReturnType<typeof setTimeout> | undefined
@@ -69,7 +80,7 @@ const onInput = (text: string) => {
   }
   timer = setTimeout(async () => {
     try {
-      results.value = await alertsService.narrativesByTitle(text.trim())
+      results.value = await alertsService.narrativesMatching(text.trim())
       titles.value = { ...titles.value, ...Object.fromEntries(results.value.map(n => [n.id, n.title])) }
     } catch (error) {
       console.error('Failed to search narratives:', error)

@@ -877,7 +877,11 @@
       "belongsToPlaceholder": "Cualquier narrativa",
       "belongsToClear": "Quitar la narrativa",
       "belongsToHint": "Si la eliges, la afirmación debe pertenecer a esta narrativa.",
-      "narrativeTypeToSearch": "Escribe al menos 2 caracteres para buscar"
+      "narrativeTypeToSearch": "Escribe al menos 2 caracteres para buscar",
+      "narrativeMatchedIn": {
+        "title": "En el título",
+        "claims": "Solo en sus afirmaciones"
+      }
     },
     "openInSearch": "Abrir en la búsqueda",
     "viewNarrative": "Ver narrativa",

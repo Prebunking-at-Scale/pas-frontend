@@ -2,6 +2,13 @@
 // preview of your next e-mail.
 import type { Alert, AlertError, AlertInput, DigestEntry } from '~/utils/alertRules'
 
+export interface NarrativeOption {
+  id: string
+  title: string
+  /** Where the text was found: the title, or only one of its claims. */
+  matched_in: 'title' | 'claims'
+}
+
 /** The validation codes of a 422 from the API, or save_failed for anything else. */
 export const alertErrorsOf = (error: unknown): AlertError[] => {
   const response = (error as { response?: { status?: number; _data?: { extra?: { errors?: AlertError[] } } } })?.response
@@ -42,10 +49,13 @@ export const alertsService = {
     await apiFetch(`/api/alerts/${id}`, { method: 'DELETE' })
   },
 
-  /** Narratives whose title contains the text (2 characters or more), for "Belongs to this narrative". */
-  async narrativesByTitle(text: string): Promise<{ id: string; title: string }[]> {
+  /**
+   * Narratives to follow ("Belongs to this narrative"), for 2 characters or more: those
+   * with the text in their title first, then those with it only in one of their claims.
+   */
+  async narrativesMatching(text: string): Promise<NarrativeOption[]> {
     const { apiFetch } = useApi()
-    return (await apiFetch<{ data: { id: string; title: string }[] }>('/api/alerts/narratives', { query: { text, limit: 20 } })).data
+    return (await apiFetch<{ data: NarrativeOption[] }>('/api/alerts/narratives', { query: { text, limit: 20 } })).data
   },
 
   async digestPreview(): Promise<DigestEntry[]> {

@@ -825,7 +825,11 @@
       "belongsToPlaceholder": "Beliebiges Narrativ",
       "belongsToClear": "Narrativ entfernen",
       "belongsToHint": "Wenn gesetzt, muss die Behauptung zu diesem Narrativ gehören.",
-      "narrativeTypeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen"
+      "narrativeTypeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen",
+      "narrativeMatchedIn": {
+        "title": "Im Titel",
+        "claims": "Nur in seinen Behauptungen"
+      }
     },
     "openInSearch": "In der Suche öffnen",
     "viewNarrative": "Narrativ ansehen",
