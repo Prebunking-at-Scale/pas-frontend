@@ -15,11 +15,11 @@ export const EDITOR_TYPES: ConditionType[] = ['new_narrative', 'new_claim']
 export const shownType = (type: ConditionType): ConditionType =>
   type === 'new_claim_in_narrative' ? 'new_claim' : type
 
+// Claims are never filtered by their priority score.
 export type ConditionListFilter = 'topic_id' | 'keyword' | 'language' | 'platform' | 'channel' | 'entity_id' | 'spread_pattern'
-export type ConditionNumberFilter = 'min_score' | 'max_score'
-export type ConditionFilter = ConditionListFilter | ConditionNumberFilter
+export type ConditionFilter = ConditionListFilter
 
-export type ConditionFilters = Partial<Record<ConditionListFilter, string[]> & Record<ConditionNumberFilter, number>> & {
+export type ConditionFilters = Partial<Record<ConditionListFilter, string[]>> & {
   /** Keywords must all be in the same text; absent means any of them (docs/filters.md). */
   keyword_mode?: 'all'
 }
@@ -69,8 +69,7 @@ export interface DigestEntry {
   claims: DigestSection
 }
 
-const LIST_FILTERS: ConditionListFilter[] = ['topic_id', 'keyword', 'language', 'platform', 'channel', 'entity_id', 'spread_pattern']
-const CLAIM_FILTERS: ConditionFilter[] = ['topic_id', 'keyword', 'language', 'platform', 'channel', 'min_score', 'max_score']
+const CLAIM_FILTERS: ConditionFilter[] = ['topic_id', 'keyword', 'language', 'platform', 'channel']
 
 /** Which filters each type of condition may use (docs/alerts.md). */
 export const CONDITION_FILTERS: Record<ConditionType, ConditionFilter[]> = {
@@ -85,19 +84,12 @@ export const conditionElement = (type: ConditionType): 'narratives' | 'claims' =
 
 export const followsNarrative = (type: ConditionType) => type === 'new_claim_in_narrative'
 
-const isListFilter = (key: ConditionFilter): key is ConditionListFilter => (LIST_FILTERS as string[]).includes(key)
-
 /** Keeps only the filters the type allows, and drops empty ones. */
 export const sanitizeFilters = (type: ConditionType, filters: ConditionFilters): ConditionFilters => {
   const clean: ConditionFilters = {}
   for (const key of CONDITION_FILTERS[type]) {
-    const value = filters[key]
-    if (isListFilter(key)) {
-      const list = (value as string[] | undefined)?.filter(Boolean) ?? []
-      if (list.length > 0) (clean as Record<string, string[]>)[key] = list
-    } else if (typeof value === 'number' && !Number.isNaN(value)) {
-      (clean as Record<string, number>)[key] = value
-    }
+    const list = filters[key]?.filter(Boolean) ?? []
+    if (list.length > 0) clean[key] = list
   }
   // The keyword mode only means something next to keywords.
   if (clean.keyword && filters.keyword_mode === 'all') clean.keyword_mode = 'all'
@@ -186,11 +178,7 @@ export const conditionFromSearch = (tab: string, params: Record<string, unknown>
   for (const key of CONDITION_FILTERS[type]) {
     const value = params[key]
     if (value === undefined) continue
-    if (isListFilter(key)) {
-      (filters as Record<string, string[]>)[key] = (Array.isArray(value) ? value : [value]).map(String)
-    } else {
-      (filters as Record<string, number>)[key] = Number(value)
-    }
+    filters[key] = (Array.isArray(value) ? value : [value]).map(String)
   }
   if (params.keyword_mode === 'all') filters.keyword_mode = 'all'
   return { type, narrative_id: null, filters: sanitizeFilters(type, filters) }

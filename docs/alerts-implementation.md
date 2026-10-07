@@ -18,7 +18,7 @@ Taken with the product owner on 5 and 6 October 2026.
 | **An alert is its creator's only.** Nobody else in the organisation sees or edits it. | Today's API only lists your own alerts but lets anyone in the organisation read, edit or delete one by id; the new API checks the owner everywhere. |
 | **The email goes only to the alert's creator.** No extra recipients. | Changed on 6 October 2026 (it was "members of the organisation"). |
 | **One email a day at 08:00 Europe/Madrid**, in English. | Same time zone for every organisation for now. |
-| **Conditions** (not "cases"): New narrative, or New claim with an optional "Belongs to this narrative". Conditions are combined with OR; filters as in Research. | Spread pattern only on New narrative; score only on New claim; claim topics from `claim_topics`; keywords as in Research (title or any claim). |
+| **Conditions** (not "cases"): New narrative, or New claim with an optional "Belongs to this narrative". Conditions are combined with OR; filters as in Research. | Spread pattern only on New narrative; claims are never filtered by their score (2026-10-07); claim topics from `claim_topics`; keywords as in Research (title or any claim). |
 | **No backlog**: creating an alert, changing its conditions or re-enabling it starts counting from that moment. | Renaming it doesn't. |
 | **Each element is reported once per alert**, whatever condition it meets later. | |
 | **A claim counts for "Belongs to this narrative" when it joins that narrative** after the starting point, even if the claim itself is older. For the other conditions, an element counts when it is created after the starting point. | Needs the date a claim joined a narrative (see migration 26). |

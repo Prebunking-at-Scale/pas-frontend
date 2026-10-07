@@ -1,5 +1,5 @@
 // A condition in words: "Topic: Migration", "Keywords (all): vivienda, alquiler",
-// "Score 2–5"… Shared by the alert list and the digest email, so both describe a
+// "Language: Spanish"… Shared by the alert list and the digest email, so both describe a
 // condition the same way.
 import { sanitizeFilters } from '~/utils/alertRules'
 import type { ConditionFilters, ConditionType } from '~/utils/alertRules'
@@ -27,9 +27,6 @@ export const useConditionSummary = () => {
       const names = values.map(v => key === 'spread_pattern' ? t(`narratives.spreadPatterns.${v}`) : labelFor(key, v))
       const mode = key === 'keyword' && kept.keyword_mode === 'all' ? ` (${t('search.keywordMode.all')})` : ''
       out.push(`${t(label)}${mode}: ${names.join(', ')}`)
-    }
-    if (kept.min_score !== undefined || kept.max_score !== undefined) {
-      out.push(t('alertRules.summary.score', { min: kept.min_score ?? 0, max: kept.max_score ?? 5 }))
     }
     return out
   }

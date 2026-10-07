@@ -53,7 +53,6 @@ for types 2 and 3.
 | Channel | ✓ (of its claims' videos) | ✓ | ✓ |
 | Entities | ✓ | ✓ (through its narrative, see [below](#claims-not-yet-in-a-narrative)) | |
 | Spread pattern | ✓ | | |
-| Claim score | | ✓ | ✓ |
 | Date | | | |
 
 - Each type uses the filters of the matching search tab: Narratives for type 1, Claims

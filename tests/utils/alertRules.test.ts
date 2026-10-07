@@ -48,7 +48,7 @@ describe('validateAlert', () => {
   })
 
   it("rejects filters the type doesn't allow", () => {
-    expect(validateAlert(alert({ conditions: [{ type: 'new_narrative', narrative_id: null, filters: { min_score: 3, topic_id: ['t'] } }] })))
+    expect(validateAlert(alert({ conditions: [{ type: 'new_narrative', narrative_id: null, filters: { min_score: 3, topic_id: ['t'] } as never }] })))
       .toContain('filter_not_allowed')
   })
 })
@@ -61,8 +61,9 @@ describe('conditions', () => {
 
   it('keeps only the filters a type allows, and the keyword mode only with keywords', () => {
     expect(sanitizeFilters('new_narrative', { topic_id: ['t'], min_score: 2, keyword_mode: 'all' })).toEqual({ topic_id: ['t'] })
-    expect(sanitizeFilters('new_claim', { keyword: ['a'], keyword_mode: 'all', min_score: 2 }))
-      .toEqual({ keyword: ['a'], keyword_mode: 'all', min_score: 2 })
+    // Claims are never filtered by their score
+    expect(sanitizeFilters('new_claim', { keyword: ['a'], keyword_mode: 'all', min_score: 2 } as never))
+      .toEqual({ keyword: ['a'], keyword_mode: 'all' })
   })
 
   it('drops the narrative when a condition stops following one', () => {
@@ -77,8 +78,8 @@ describe('conditions', () => {
   })
 
   it('opens Research for a condition over everything, and nothing for one following a narrative', () => {
-    expect(conditionSearchQuery('new_claim', { language: ['es'], min_score: 3 }))
-      .toEqual({ tab: 'claims', language: ['es'], min_score: '3' })
+    expect(conditionSearchQuery('new_claim', { language: ['es'] }))
+      .toEqual({ tab: 'claims', language: ['es'] })
     expect(conditionSearchQuery('new_claim_in_narrative', {})).toBeNull()
   })
 })
@@ -92,11 +93,11 @@ describe('conditionFromSearch', () => {
     })
   })
 
-  it('turns the Claims tab into a New claim condition, score and keyword mode included', () => {
+  it('turns the Claims tab into a New claim condition, with the keyword mode and no score', () => {
     expect(conditionFromSearch('claims', { language: 'es', min_score: '2.5', keyword: 'x', keyword_mode: 'all' })).toEqual({
       type: 'new_claim',
       narrative_id: null,
-      filters: { language: ['es'], min_score: 2.5, keyword: ['x'], keyword_mode: 'all' },
+      filters: { language: ['es'], keyword: ['x'], keyword_mode: 'all' },
     })
   })
 })

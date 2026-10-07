@@ -827,9 +827,6 @@
       "belongsToHint": "Wenn gesetzt, muss die Behauptung zu diesem Narrativ gehören.",
       "narrativeTypeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen"
     },
-    "summary": {
-      "score": "Bewertung {min}–{max}"
-    },
     "openInSearch": "In der Suche öffnen",
     "viewNarrative": "Narrativ ansehen",
     "needsFilter": "Fügen Sie dieser Bedingung mindestens einen Filter hinzu.",

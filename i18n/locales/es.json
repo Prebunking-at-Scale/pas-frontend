@@ -879,9 +879,6 @@
       "belongsToHint": "Si la eliges, la afirmación debe pertenecer a esta narrativa.",
       "narrativeTypeToSearch": "Escribe al menos 2 caracteres para buscar"
     },
-    "summary": {
-      "score": "Puntuación {min}–{max}"
-    },
     "openInSearch": "Abrir en la búsqueda",
     "viewNarrative": "Ver narrativa",
     "needsFilter": "Añade al menos un filtro a esta condición.",

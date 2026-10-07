@@ -859,9 +859,6 @@
       "belongsToHint": "Si un récit est choisi, l’affirmation doit lui appartenir.",
       "narrativeTypeToSearch": "Tapez au moins 2 caractères pour rechercher"
     },
-    "summary": {
-      "score": "Score {min}–{max}"
-    },
     "openInSearch": "Ouvrir dans la recherche",
     "viewNarrative": "Voir le récit",
     "needsFilter": "Ajoutez au moins un filtre à cette condition.",

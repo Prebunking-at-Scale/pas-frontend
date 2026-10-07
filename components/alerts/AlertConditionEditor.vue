@@ -131,15 +131,6 @@
             />
           </template>
         </MultiSelectFilter>
-      <RangeSlider
-        v-if="allows('min_score')"
-        :model-value="[modelValue.min_score ?? SCORE_RANGE[0], modelValue.max_score ?? SCORE_RANGE[1]]"
-        :label="$t('claims.range')"
-        :min="SCORE_RANGE[0]"
-        :max="SCORE_RANGE[1]"
-        :step="0.1"
-        @update:model-value="setScore"
-      />
       <SpreadPatternFilter
         v-if="allows('spread_pattern')"
         :model-value="list('spread_pattern') as NarrativeSpreadPattern[]"
@@ -172,7 +163,6 @@ import FilterToggle from '~/components/filters/FilterToggle.vue'
 import MultiSelectFilter from '~/components/filters/MultiSelectFilter.vue'
 import KeywordTagsFilter from '~/components/filters/KeywordTagsFilter.vue'
 import NarrativeSelect from '~/components/filters/NarrativeSelect.vue'
-import RangeSlider from '~/components/filters/RangeSlider.vue'
 import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue'
 import AlertTypePicker from '~/components/alerts/AlertTypePicker.vue'
 import type { NarrativeSpreadPattern } from '~/types/api'
@@ -185,7 +175,6 @@ import {
   shownType,
 } from '~/utils/alertRules'
 import type { ConditionFilter, ConditionFilters, ConditionListFilter, ConditionType } from '~/utils/alertRules'
-import { SCORE_RANGE } from '~/utils/searchQuery'
 import { CHANNEL_SEARCH_MIN, ENTITY_SEARCH_MIN } from '~/composables/useSearchFilterOptions'
 
 interface Props {
@@ -271,17 +260,6 @@ const setPlatforms = (platforms: string[]) => {
   else remove.push('platform')
   if (channels.length > 0) patch.channel = channels
   else remove.push('channel')
-  update(patch, remove)
-}
-
-// The full score range means "no score filter", as in Research.
-const setScore = (range: number[]) => {
-  const patch: ConditionFilters = {}
-  const remove: (keyof ConditionFilters)[] = []
-  if (range[0] !== SCORE_RANGE[0]) patch.min_score = range[0]
-  else remove.push('min_score')
-  if (range[1] !== SCORE_RANGE[1]) patch.max_score = range[1]
-  else remove.push('max_score')
   update(patch, remove)
 }
 
