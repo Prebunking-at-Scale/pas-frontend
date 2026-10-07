@@ -874,9 +874,7 @@
       "deleteMessage": "Supprimer l’alerte « {name} » ? Cette action est irréversible.",
       "lastMatch": "Dernière correspondance : {date}",
       "neverMatched": "Aucune correspondance pour l’instant",
-      "belongsTo": "Dans le récit : {title}",
-      "moveUp": "Monter",
-      "moveDown": "Descendre"
+      "belongsTo": "Dans le récit : {title}"
     },
     "digest": {
       "title": "Aperçu du récapitulatif quotidien",

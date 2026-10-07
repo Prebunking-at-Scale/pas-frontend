@@ -37,7 +37,6 @@ export interface Alert {
   id: string
   name: string
   enabled: boolean
-  position: number
   conditions: AlertCondition[]
   created_at: string
   last_match_at: string | null

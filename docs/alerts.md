@@ -92,7 +92,7 @@ Decided 2026-10-06. The parts of an alert are called **conditions** (they were "
 - One email per day per recipient, in English, at 08:00 Europe/Madrid, covering the
   previous 24 hours. No email on a day without matches.
 - Subject: the number of alerts triggered ("3 alerts triggered").
-- Only the alerts that were triggered, in the order of the alerts panel. Each one starts
+- Only the alerts that were triggered, newest first as in the alerts panel (fixed). Each one starts
   with **Alert triggered: {name}** and then lists the elements, not the conditions one by
   one (an element can meet several conditions):
   1. **New narratives**

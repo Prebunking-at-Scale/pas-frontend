@@ -1,5 +1,5 @@
-// Client for core-api's alerts (docs/alerts-implementation.md): your own alerts, their
-// order in the panel, and a preview of your next e-mail.
+// Client for core-api's alerts (docs/alerts-implementation.md): your own alerts and a
+// preview of your next e-mail.
 import type { Alert, AlertError, AlertInput, DigestEntry } from '~/utils/alertRules'
 
 /** The validation codes of a 422 from the API, or save_failed for anything else. */
@@ -40,11 +40,6 @@ export const alertsService = {
   async remove(id: string): Promise<void> {
     const { apiFetch } = useApi()
     await apiFetch(`/api/alerts/${id}`, { method: 'DELETE' })
-  },
-
-  async reorder(ids: string[]): Promise<Alert[]> {
-    const { apiFetch } = useApi()
-    return (await apiFetch<{ data: Alert[] }>('/api/alerts/order', { method: 'PUT', body: { ids } })).data
   },
 
   async digestPreview(): Promise<DigestEntry[]> {

@@ -23,7 +23,7 @@ Taken with the product owner on 5 and 6 October 2026.
 | **Each element is reported once per alert**, whatever condition it meets later. | |
 | **A claim counts for "Belongs to this narrative" when it joins that narrative** after the starting point, even if the claim itself is older. For the other conditions, an element counts when it is created after the starting point. | Needs the date a claim joined a narrative (see migration 26). |
 | **A followed narrative that is merged** is followed in the narrative it was merged into. **If it is deleted**, its condition simply never matches again. | No notice, the alert isn't disabled. |
-| **The email** lists, per triggered alert ("Alert triggered: {name}"), new narratives, then new claims in selected narratives (grouped by narrative), then new claims; each element once, title in bold, the conditions it met in brackets as a filter summary; 5 per section, then "See all (N)" to the alert's page. Subject: the number of alerts triggered. Alerts in the order of the alerts panel. | [alerts.md, "Daily digest"](alerts.md#daily-digest). |
+| **The email** lists, per triggered alert ("Alert triggered: {name}"), new narratives, then new claims in selected narratives (grouped by narrative), then new claims; each element once, title in bold, the conditions it met in brackets as a filter summary; 5 per section, then "See all (N)" to the alert's page. Subject: the number of alerts triggered. Alerts newest first, as in the alerts panel; the order can't be changed (decided 2026-10-07). | [alerts.md, "Daily digest"](alerts.md#daily-digest). |
 | **Existing alerts**: the 31 topic and keyword alerts become alerts with one New narrative condition (topic, or keyword matched as in Research); the 14 threshold alerts are dropped without notice. | Production on 5 October: 50 alerts. |
 | **The new editor replaces `/alerts`**; a narrative's "Create alert" opens it with "New claim + belongs to this narrative"; Research gets "+ Add to alerts". | |
 | **Old tables are kept** (`alerts`, `alerts_triggered`, `alert_executions`) until the new alerts work in production, then dropped by a later migration. | |
@@ -41,12 +41,11 @@ CREATE TABLE alert_rules (
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name text NOT NULL CHECK (length(trim(name)) BETWEEN 1 AND 120),
     enabled boolean NOT NULL DEFAULT true,
-    position integer NOT NULL,                  -- order in the alerts panel and the email
     counting_since timestamptz NOT NULL DEFAULT now(),  -- the starting point
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
-CREATE INDEX ON alert_rules (user_id, organisation_id, position);
+CREATE INDEX ON alert_rules (user_id, organisation_id, created_at DESC);  -- newest first
 
 CREATE TABLE alert_rule_conditions (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -90,7 +89,7 @@ In one transaction, for each row of `alerts`:
   `enabled`, and one `new_narrative` condition `{"topic_id": [topic]}`.
 - `keyword` → the same, with `{"keyword": [keyword]}`.
 - Threshold types: not copied.
-- `counting_since` = the migration time; `position` by `created_at`.
+- `counting_since` = the migration time; `created_at` kept.
 
 The old tables are left as they are.
 
@@ -129,7 +128,7 @@ target, and deletes the source. The frontend's merge dialog calls it instead of
 - A new CLI command `send-alert-digest` and a CronJob at `0 8 * * *` with
   `timeZone: Europe/Madrid`, replacing `core-api-process-alerts` (its manifests are in
   `deployment/`).
-- Per user, one email to the creator with all their triggered alerts, in panel order.
+- Per user, one email to the creator with all their triggered alerts, newest first.
   Users or organisations that are deactivated get nothing.
 - The report rows of an alert are written only once its email has been sent, in the same transaction; if sending fails, nothing is recorded and the
   matches go out the next day. (Today's job marks matches as sent even when the email
@@ -145,12 +144,11 @@ alert belongs to the signed-in user.
 
 | Route | |
 |---|---|
-| `GET /api/alerts` | your alerts, in panel order, with conditions and `last_match_at` |
+| `GET /api/alerts` | your alerts, newest first, with conditions and `last_match_at` |
 | `POST /api/alerts` | create: `{name, enabled, conditions[{type, narrative_id, filters}]}` |
 | `GET /api/alerts/{id}` | one alert |
 | `PUT /api/alerts/{id}` | replace; resets `counting_since` if conditions changed or it was re-enabled |
 | `DELETE /api/alerts/{id}` | 204 |
-| `PUT /api/alerts/order` | `{ids}`: the panel order |
 | `GET /api/alerts/digest-preview` | what the next email would contain for you, from the matches so far |
 
 Validation mirrors `validateAlertRule` in `utils/alertRules.ts` and answers 422 with its

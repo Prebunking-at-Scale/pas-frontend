@@ -894,9 +894,7 @@
       "deleteMessage": "¿Eliminar la alerta \"{name}\"? No se puede deshacer.",
       "lastMatch": "Última coincidencia: {date}",
       "neverMatched": "Sin coincidencias todavía",
-      "belongsTo": "En la narrativa: {title}",
-      "moveUp": "Subir",
-      "moveDown": "Bajar"
+      "belongsTo": "En la narrativa: {title}"
     },
     "digest": {
       "title": "Vista previa del resumen diario",

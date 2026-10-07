@@ -842,9 +842,7 @@
       "deleteMessage": "Den Alarm „{name}“ löschen? Das kann nicht rückgängig gemacht werden.",
       "lastMatch": "Letzter Treffer: {date}",
       "neverMatched": "Noch keine Treffer",
-      "belongsTo": "Im Narrativ: {title}",
-      "moveUp": "Nach oben",
-      "moveDown": "Nach unten"
+      "belongsTo": "Im Narrativ: {title}"
     },
     "digest": {
       "title": "Vorschau der täglichen Zusammenfassung",

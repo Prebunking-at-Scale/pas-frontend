@@ -24,36 +24,13 @@
 
     <div v-else class="space-y-3">
       <div
-        v-for="(alert, index) in alerts"
+        v-for="alert in alerts"
         :key="alert.id"
         class="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm"
         :class="{ 'opacity-60': !alert.enabled }"
       >
         <div class="flex flex-wrap items-start justify-between gap-3">
-          <div class="flex min-w-0 items-start gap-2">
-            <!-- The order here is the order of the e-mail -->
-            <div class="flex flex-col">
-              <Button
-                variant="ghost"
-                size="icon"
-                class="h-6 w-6 cursor-pointer"
-                :disabled="index === 0"
-                :aria-label="$t('alertRules.list.moveUp')"
-                @click="move(index, -1)"
-              >
-                <ChevronUp class="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="h-6 w-6 cursor-pointer"
-                :disabled="index === alerts.length - 1"
-                :aria-label="$t('alertRules.list.moveDown')"
-                @click="move(index, 1)"
-              >
-                <ChevronDown class="h-4 w-4" />
-              </Button>
-            </div>
+          <div class="min-w-0">
             <NuxtLink :to="`/alerts/${alert.id}`" class="min-w-0">
               <h2 class="text-lg font-semibold text-gray-900 hover:underline">{{ alert.name }}</h2>
             </NuxtLink>
@@ -127,9 +104,9 @@
 </template>
 
 <script setup lang="ts">
-// Your alerts (docs/alerts.md): each with its conditions, combined with OR, in the
-// order they come in the daily e-mail. Only yours: nobody else sees them.
-import { ChevronDown, ChevronUp, Mail, Pencil, Plus, Trash2 } from 'lucide-vue-next'
+// Your alerts (docs/alerts.md): each with its conditions, combined with OR, newest
+// first, the order of the daily e-mail too. Only yours: nobody else sees them.
+import { Mail, Pencil, Plus, Trash2 } from 'lucide-vue-next'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { Switch } from '~/components/ui/switch'
 import {
@@ -193,18 +170,6 @@ const toggle = async (alert: Alert, enabled: boolean) => {
     Object.assign(alert, await alertsService.update(alert.id, { ...alert, enabled }))
   } catch (error) {
     console.error('Failed to update alert:', error)
-  }
-}
-
-const move = async (index: number, by: -1 | 1) => {
-  const order = [...alerts.value]
-  const [moved] = order.splice(index, 1)
-  order.splice(index + by, 0, moved!)
-  alerts.value = order
-  try {
-    alerts.value = await alertsService.reorder(order.map(a => a.id))
-  } catch (error) {
-    console.error('Failed to reorder alerts:', error)
   }
 }
 

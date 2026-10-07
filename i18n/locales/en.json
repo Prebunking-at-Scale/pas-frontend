@@ -897,9 +897,7 @@
       "deleteMessage": "Delete the alert \"{name}\"? This can't be undone.",
       "lastMatch": "Last match: {date}",
       "neverMatched": "No matches yet",
-      "belongsTo": "In the narrative: {title}",
-      "moveUp": "Move up",
-      "moveDown": "Move down"
+      "belongsTo": "In the narrative: {title}"
     },
     "digest": {
       "title": "Daily digest preview",
