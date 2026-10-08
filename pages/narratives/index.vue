@@ -32,21 +32,26 @@
           />
 
           <LanguageFilter
-            class="w-full"
+            class="w-full md:w-48"
             v-model="filters.language"
             :label="$t('videos.language')"
             :placeholder="$t('videos.selectLanguage')"
             type="select"
           />
 
+          <DateRangeFilter
+            class="w-full md:w-80"
+            v-model="filters.date_range"
+            id="narratives-date-range"
+          />
+
+          <!-- Takes over the w-full the language filter used to carry, keeping the row's
+               widths unchanged without pushing the date range to the far edge. -->
+          <div class="hidden md:block md:w-full" aria-hidden="true"></div>
+
           <SpreadPatternFilter
             class="w-full md:w-auto md:shrink-0"
             v-model="filters.spread_pattern"
-          />
-
-          <TimeframeFilter
-            class="w-full md:w-44 md:shrink-0"
-            v-model="filters.created"
           />
         </div>
       </FilterCard>
@@ -127,9 +132,10 @@ import EntityFilter from '~/components/filters/EntityFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import SpreadPatternFilter from '~/components/filters/SpreadPatternFilter.vue';
-import TimeframeFilter from '~/components/filters/TimeframeFilter.vue';
+import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
+import type { DateRange } from '~/types/filters';
 import { normalizeSpreadPatterns } from '~/utils/spreadPatterns';
-import { Timeframe, isTimeframe, timeframeInterval } from '~/utils/timeframes';
+import { startOfDayISO, endOfDayISO } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -152,13 +158,15 @@ const totalNarratives = ref(0);
 const itemsPerPage = 20;
 
 // Filters - separate UI state from applied state
+const emptyDateRange = (): DateRange => ({ start: null, end: null });
+
 const filters = ref({
   topic_id: null as string | null,
   entity_id: null as string | null,
   text: [] as string[],
   language: 'all',
   spread_pattern: [] as NarrativeSpreadPattern[],
-  created: Timeframe.ALL_TIME as Timeframe
+  date_range: emptyDateRange()
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -168,7 +176,7 @@ const appliedFilters = ref({
   text: [] as string[],
   language: 'all',
   spread_pattern: [] as NarrativeSpreadPattern[],
-  created: Timeframe.ALL_TIME as Timeframe
+  date_range: emptyDateRange()
 });
 
 const currentTopicName = ref('');
@@ -179,7 +187,8 @@ const hasActiveFilters = computed(() => {
     (appliedFilters.value.entity_id !== null && appliedFilters.value.entity_id !== 'all') ||
     appliedFilters.value.text.length > 0 ||
     appliedFilters.value.spread_pattern.length > 0 ||
-    appliedFilters.value.created !== Timeframe.ALL_TIME;
+    !!appliedFilters.value.date_range.start ||
+    !!appliedFilters.value.date_range.end;
 });
 
 
@@ -212,11 +221,15 @@ const loadNarratives = async () => {
       params.spread_pattern = appliedFilters.value.spread_pattern;
     }
 
-    // Resolved on every load so "last 24 hours" means the 24 hours before this fetch.
-    const createdRange = timeframeInterval(appliedFilters.value.created);
-    if (createdRange) {
-      params.startDate = createdRange.start;
-      params.endDate = createdRange.end;
+    // Either end stands alone: a start date on its own reads as "from then on".
+    const startDate = startOfDayISO(appliedFilters.value.date_range.start);
+    if (startDate) {
+      params.start_date = startDate;
+    }
+
+    const endDate = endOfDayISO(appliedFilters.value.date_range.end);
+    if (endDate) {
+      params.end_date = endDate;
     }
 
     const result = await apiService.getNarratives(params);
@@ -245,7 +258,7 @@ const resetFilters = () => {
     text: [],
     language: 'all',
     spread_pattern: [],
-    created: Timeframe.ALL_TIME
+    date_range: emptyDateRange()
   };
   appliedFilters.value = {
     topic_id: null,
@@ -253,7 +266,7 @@ const resetFilters = () => {
     text: [],
     language: 'all',
     spread_pattern: [],
-    created: Timeframe.ALL_TIME
+    date_range: emptyDateRange()
   };
   currentTopicName.value = '';
   currentPage.value = 1;
@@ -349,13 +362,6 @@ onMounted(async () => {
       const patterns = normalizeSpreadPatterns(raw.filter((value): value is string => typeof value === 'string'));
       filters.value.spread_pattern = patterns;
       appliedFilters.value.spread_pattern = patterns;
-    }
-
-    // Creation window, e.g. handed over by the dashboard's timeframe selector.
-    const createdParam = route.query.created;
-    if (isTimeframe(createdParam)) {
-      filters.value.created = createdParam;
-      appliedFilters.value.created = createdParam;
     }
   }
   

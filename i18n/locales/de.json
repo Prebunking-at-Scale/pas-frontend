@@ -46,6 +46,7 @@
     "daysAgo": "vor {count} T."
   },
   "nav": {
+    "search": "Recherche",
     "overview": "Übersicht",
     "dashboard": "Dashboard",
     "narratives": "Narrative",
@@ -254,7 +255,6 @@
     "filters": "Filter",
     "channel": "Kanal",
     "language": "Sprache",
-    "dateRange": "Zeitraum",
     "keywords": "Schlüsselwörter",
     "keywordsPlaceholder": "Schlüsselwort eingeben und Enter drücken",
     "text": "Text",
@@ -275,8 +275,6 @@
     },
     "clearFilters": "Filter zurücksetzen",
     "applyFilters": "Filter anwenden",
-    "selectStartDate": "Startdatum auswählen",
-    "selectEndDate": "Enddatum auswählen",
     "first": "Erste",
     "last": "Letzte",
     "active": "Aktiv",
@@ -592,6 +590,21 @@
     "viewAll": "Alle anzeigen"
   },
   "filters": {
+    "channelScope": {
+      "label": "Welche Kanäle",
+      "own": "Unsere",
+      "all": "Alle",
+      "ownHeading": "Unsere Kanäle",
+      "otherHeading": "Andere Kanäle"
+    },
+    "removeValue": "{value} entfernen",
+    "allEntities": "Alle Entitäten",
+    "entity": "Entität",
+    "noEntityFound": "Keine Entität gefunden",
+    "searchEntity": "Entitäten suchen...",
+    "selectEntity": "Entität auswählen",
+    "searchChannel": "Kanal suchen…",
+    "typeToSearch": "Mindestens {count} Zeichen eingeben, um zu suchen",
     "clearAll": "Alle Filter löschen",
     "clear": "Löschen",
     "apply": "Anwenden",
@@ -601,6 +614,10 @@
     "min": "Min",
     "max": "Max",
     "invalidRange": "Der Mindestwert muss kleiner oder gleich dem Höchstwert sein",
+    "invalidDateRange": "Das Startdatum muss vor oder gleich dem Enddatum liegen",
+    "dateRange": "Zeitraum",
+    "selectStartDate": "Startdatum auswählen",
+    "selectEndDate": "Enddatum auswählen",
     "searchPlaceholder": "Suchen...",
     "platform": "Plattform",
     "allPlatforms": "Alle Plattformen",
@@ -610,8 +627,7 @@
     "language": "Sprache",
     "allLanguages": "Alle Sprachen",
     "keywords": "Schlüsselwörter",
-    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen",
-    "created": "Erstellt"
+    "keywordsPlaceholder": "Enter drücken um Schlüsselwort hinzuzufügen"
   },
   "footer": {
     "about": {
@@ -733,6 +749,70 @@
     },
     "noLanguageFound": "Keine Sprache gefunden",
     "viewCountryCodes": "Ländercode-Liste anzeigen"
+  },
+  "search": {
+    "title": "Recherche",
+    "filters": "Filter",
+    "moreFilters": "Weitere Filter",
+    "fewerFilters": "Weniger Filter",
+    "entities": "Entitäten",
+    "date": "Upload-Datum",
+    "noResults": "Keine Ergebnisse für diese Filter",
+    "noOptions": "Keine Optionen gefunden",
+    "selectedCount": "{first} +{count}",
+    "removeKeyword": "Schlüsselwort {keyword} entfernen",
+    "clearKeywords": "Alle Schlüsselwörter entfernen",
+    "containsMatchingClaims": "Enthält passende Behauptungen",
+    "containsMatchingClaimsHint": "Dieses Ergebnis passt über eine oder mehrere seiner Behauptungen zu Ihrer Suche, nicht über seinen eigenen Titel oder sein Thema.",
+    "matchingClaims": "Passende Behauptungen",
+    "viaNarrative": "Über ihr Narrativ: nennt {list}",
+    "viaNarrativeHint": "Diese Behauptung nennt die Entität nicht selbst: Sie gehört zu einem Narrativ, das sie nennt. Entitäten werden bei Narrativen erkannt, nicht bei einzelnen Behauptungen.",
+    "viaNarrativeShort": "Über ihr Narrativ",
+    "tabs": {
+      "narratives": "Narrative",
+      "claims": "Behauptungen",
+      "videos": "Videos"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "keywordMode": {
+      "label": "Verknüpfung der Schlüsselwörter",
+      "any": "Eines",
+      "all": "Alle",
+      "anyHint": "Ergebnisse mit mindestens einem der Schlüsselwörter",
+      "allHint": "Ergebnisse mit allen Schlüsselwörtern, in derselben Behauptung oder demselben Titel"
+    },
+    "countCapped": "{count}+",
+    "error": "Die Suche konnte nicht abgeschlossen werden. Bitte erneut versuchen.",
+    "narrowToSeeMore": "Die ersten 10.000 Ergebnisse werden angezeigt: Filter hinzufügen, um den Rest zu sehen."
+  },
+  "savedSelections": {
+    "title": "Gespeicherte Auswahlen",
+    "empty": "Noch keine gespeicherten Auswahlen",
+    "save": "Diese Auswahl speichern",
+    "confirm": "Speichern",
+    "namePlaceholder": "Name der Auswahl",
+    "nothingToSave": "Wählen Sie zuerst etwas aus",
+    "organizationDefault": "Standard der Organisation",
+    "ourChannels": "Unsere Kanäle",
+    "delete": "„{name}“ löschen",
+    "defaultName": "Liste #{number}",
+    "count": {
+      "keyword": "1 Schlüsselwort | {count} Schlüsselwörter",
+      "entity_id": "1 Entität | {count} Entitäten",
+      "channel": "1 Kanal | {count} Kanäle"
+    },
+    "errors": {
+      "invalid_kind": "Dieser Filter kann keine Auswahlen speichern.",
+      "name_required": "Geben Sie der Auswahl einen Namen.",
+      "name_too_long": "Dieser Name ist zu lang.",
+      "name_taken": "Es gibt bereits eine Auswahl mit diesem Namen.",
+      "values_required": "Wählen Sie zuerst etwas aus.",
+      "save_failed": "Die Auswahl konnte nicht gespeichert werden. Bitte erneut versuchen."
+    }
   },
   "timeframes": {
     "select": "Zeitraum auswählen",
