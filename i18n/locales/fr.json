@@ -887,7 +887,7 @@
       "showing": "{count} affichées",
       "matchedCases": "remplit la condition {list} | remplit les conditions {list}",
       "seeAll": "Tout voir dans l’application",
-      "alertTriggered": "Alerte déclenchée : {name}",
+      "alertTriggered": "Alerte : {name}",
       "inNarrative": "Dans « {title} »",
       "condition": "condition {number}",
       "anyNewClaim": "toute nouvelle affirmation",

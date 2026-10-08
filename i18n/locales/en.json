@@ -910,7 +910,7 @@
       "showing": "showing {count}",
       "matchedCases": "matched condition {list} | matched conditions {list}",
       "seeAll": "See all in the app",
-      "alertTriggered": "Alert triggered: {name}",
+      "alertTriggered": "Alert: {name}",
       "inNarrative": "In “{title}”",
       "condition": "condition {number}",
       "anyNewClaim": "any new claim",

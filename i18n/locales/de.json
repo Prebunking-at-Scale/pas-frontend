@@ -855,7 +855,7 @@
       "showing": "{count} angezeigt",
       "matchedCases": "passt zu Bedingung {list} | passt zu den Bedingungen {list}",
       "seeAll": "Alle in der App ansehen",
-      "alertTriggered": "Alarm ausgelöst: {name}",
+      "alertTriggered": "Alarm: {name}",
       "inNarrative": "In „{title}“",
       "condition": "Bedingung {number}",
       "anyNewClaim": "jede neue Behauptung",

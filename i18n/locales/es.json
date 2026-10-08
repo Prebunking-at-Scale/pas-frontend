@@ -907,7 +907,7 @@
       "showing": "se muestran {count}",
       "matchedCases": "cumple la condición {list} | cumple las condiciones {list}",
       "seeAll": "Ver todo en la aplicación",
-      "alertTriggered": "Alerta activada: {name}",
+      "alertTriggered": "Alerta: {name}",
       "inNarrative": "En «{title}»",
       "condition": "condición {number}",
       "anyNewClaim": "cualquier afirmación nueva",
