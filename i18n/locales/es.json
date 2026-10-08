@@ -493,51 +493,6 @@
     "topics": "Temas",
     "viewVideo": "Ver vídeo"
   },
-  "alerts": {
-    "title": "Alertas",
-    "create_new": "Crear nueva alerta",
-    "create_alert": "Crear alerta",
-    "edit_alert": "Editar alerta",
-    "name": "Nombre",
-    "name_placeholder": "Ingrese el nombre de la alerta",
-    "description": "Descripción",
-    "condition": "Condición",
-    "status": "Estado",
-    "no_alerts": "No hay alertas configuradas todavía",
-    "scope": {
-      "label": "Alcance",
-      "placeholder": "Seleccionar alcance",
-      "general": "General",
-      "specific": "Específico"
-    },
-    "type": {
-      "label": "Tipo de alerta",
-      "placeholder": "Seleccionar tipo de alerta",
-      "narrative_views": "Vistas de narrativa",
-      "narrative_claims_count": "Recuento de afirmaciones de narrativa",
-      "narrative_videos_count": "Recuento de videos de narrativa",
-      "narrative_with_topic": "Narrativa con tema",
-      "keyword": "Palabra clave"
-    },
-    "threshold": "Umbral",
-    "threshold_placeholder": "Ingrese el valor del umbral",
-    "topic": "Tema",
-    "topic_placeholder": "Seleccionar tema",
-    "keyword": "Palabra clave",
-    "keyword_placeholder": "Ingrese la palabra clave",
-    "narrative": "Narrativa",
-    "narrative_placeholder": "Seleccionar narrativa",
-    "enabled": "Habilitada",
-    "delete_confirmation_title": "Eliminar alerta",
-    "delete_confirmation_message": "¿Está seguro de que desea eliminar la alerta \"{name}\"? Esta acción no se puede deshacer.",
-    "fetch_error": "No se pudieron obtener las alertas",
-    "create_success": "Alerta creada con éxito",
-    "create_error": "No se pudo crear la alerta",
-    "update_success": "Alerta actualizada con éxito",
-    "update_error": "No se pudo actualizar la alerta",
-    "delete_success": "Alerta eliminada con éxito",
-    "delete_error": "No se pudo eliminar la alerta"
-  },
   "timeline": {
     "firstSeen": "Visto por primera vez",
     "lastSeen": "Visto por última vez",
@@ -872,5 +827,164 @@
     "lastWeek": "Última semana",
     "lastMonth": "Último mes",
     "allTime": "Todo el tiempo"
+  },
+  "alertRules": {
+    "title": "Alertas",
+    "intro": "Una alerta avisa de narrativas o afirmaciones nuevas que coinciden con alguna de sus condiciones, una vez al día por correo.",
+    "newAlert": "Nueva alerta",
+    "editAlert": "Editar alerta",
+    "previewDigest": "Ver el resumen diario",
+    "noAlerts": "Todavía no hay alertas",
+    "backToList": "Todas las alertas",
+    "fromSearchNotice": "Rellenada a partir de tu búsqueda",
+    "create": "Crear alerta",
+    "save": "Guardar cambios",
+    "or": "o",
+    "anyNewInNarrative": "Sin filtros, cualquier afirmación nueva de esa narrativa activa esta alerta.",
+    "caseTitle": "Condición {number}",
+    "addCase": "Añadir una condición",
+    "removeCase": "Quitar",
+    "types": {
+      "new_narrative": {
+        "name": "Nueva narrativa",
+        "description": "Una narrativa empieza a coincidir con los filtros."
+      },
+      "new_claim": {
+        "name": "Nueva afirmación",
+        "description": "Una afirmación nueva coincide con los filtros."
+      },
+      "new_claim_in_narrative": {
+        "name": "Nueva afirmación en una narrativa",
+        "description": "Una afirmación nueva de la narrativa elegida coincide con los filtros."
+      }
+    },
+    "steps": {
+      "type": "¿Qué vigila esta condición?",
+      "cases": "Condiciones",
+      "delivery": "Nombre y envío",
+      "casesIntro": "Una alerta puede tener varias condiciones, y cada una dice qué vigila. Se avisa de todo lo que cumpla alguna condición."
+    },
+    "fields": {
+      "type": "Tipo de alerta",
+      "narrative": "Narrativa",
+      "narrativePlaceholder": "Elige una narrativa",
+      "narrativeSearch": "Busca narrativas por título…",
+      "name": "Nombre",
+      "namePlaceholder": "p. ej. Narrativas sobre migración en español",
+      "deliveryHint": "Sent to you every 24h, only when it finds something new.",
+      "enabled": "Activada",
+      "belongsTo": "Pertenece a esta narrativa (opcional)",
+      "belongsToPlaceholder": "Cualquier narrativa",
+      "belongsToClear": "Quitar la narrativa",
+      "belongsToHint": "Si la eliges, la afirmación debe pertenecer a esta narrativa.",
+      "narrativeTypeToSearch": "Escribe al menos 2 caracteres para buscar",
+      "narrativeMatchedIn": {
+        "title": "En el título",
+        "claims": "Solo en sus afirmaciones"
+      }
+    },
+    "openInSearch": "Abrir en la búsqueda",
+    "viewNarrative": "Ver narrativa",
+    "needsFilter": "Añade al menos un filtro a esta condición.",
+    "needsNarrative": "Elige la narrativa que sigue esta condición.",
+    "list": {
+      "enabled": "Activada",
+      "disabled": "Desactivada",
+      "delete": "Eliminar alerta",
+      "deleteTitle": "Eliminar alerta",
+      "deleteMessage": "¿Eliminar la alerta \"{name}\"? No se puede deshacer.",
+      "lastMatch": "Última coincidencia: {date}",
+      "neverMatched": "Sin coincidencias todavía",
+      "belongsTo": "En la narrativa: {title}"
+    },
+    "digest": {
+      "title": "Vista previa del resumen diario",
+      "intro": "Lo que llevaría tu próximo correo hasta ahora: todo lo que tus alertas activas han encontrado desde su último aviso.",
+      "empty": "Ninguna alerta activa coincide hoy con nada, así que no se enviaría ningún correo.",
+      "from": "De:",
+      "subject": "Asunto:",
+      "subjectLine": "{count} alerta activada | {count} alertas activadas",
+      "showing": "se muestran {count}",
+      "matchedCases": "cumple la condición {list} | cumple las condiciones {list}",
+      "seeAll": "Ver todo en la aplicación",
+      "alertTriggered": "Alerta: {name}",
+      "inNarrative": "En «{title}»",
+      "condition": "condición {number}",
+      "anyNewClaim": "cualquier afirmación nueva",
+      "seeAllCount": "Ver todo ({count})",
+      "sections": {
+        "narratives": "Narrativas nuevas",
+        "inNarratives": "Afirmaciones nuevas en narrativas seleccionadas",
+        "claims": "Afirmaciones nuevas"
+      },
+      "footer": "Recibes este correo porque creaste estas alertas o te añadieron a ellas. Gestiona tus alertas en la aplicación.",
+      "foundMatches": "1 coincidencia nueva | {count} coincidencias nuevas",
+      "kind": {
+        "new_narrative": "Nueva narrativa",
+        "new_claim": "Nueva afirmación",
+        "new_claim_in_narrative": "Nueva afirmación en la narrativa"
+      }
+    },
+    "addFromNarrative": {
+      "title": "Seguir esta narrativa en tus alertas",
+      "description": "Te avisaremos por correo de las afirmaciones nuevas de esta narrativa.",
+      "thisNarrative": "Esta narrativa",
+      "existingHint": "Ninguna alerta puede seguir esta narrativa todavía | 1 alerta puede seguir esta narrativa como condición nueva | {count} alertas pueden seguir esta narrativa como condición nueva",
+      "newHint": "Una alerta nueva que sigue esta narrativa.",
+      "alreadyThere": "“{name}” ya sigue esta narrativa."
+    },
+    "addFromSearch": {
+      "card": "Añadir a alertas",
+      "cardHint": {
+        "narratives": "Recibe un correo cuando haya narrativas nuevas que coincidan con esta búsqueda",
+        "claims": "Recibe un correo cuando haya afirmaciones nuevas que coincidan con esta búsqueda"
+      },
+      "title": "Añadir esta búsqueda a tus alertas",
+      "description": {
+        "new_narrative": "Las narrativas nuevas que coincidan con esta búsqueda se notificarán por correo.",
+        "new_claim": "Las afirmaciones nuevas que coincidan con esta búsqueda se notificarán por correo."
+      },
+      "thisSearch": "Esta búsqueda",
+      "dateDropped": "El rango de fechas no se incluye: las alertas tratan de lo nuevo.",
+      "existing": "Añadir a una alerta existente",
+      "existingHint": "Ninguna alerta puede recibir esta búsqueda todavía | 1 alerta puede recibir esta búsqueda como condición nueva | {count} alertas pueden recibir esta búsqueda como condición nueva",
+      "new": "Crear una alerta nueva",
+      "newHint": "Una alerta nueva con esta búsqueda como única condición.",
+      "chooseAlert": "Elige una alerta",
+      "caseCount": "1 condición | {count} condiciones",
+      "newDetails": "Empieza activada y se te envía a ti.",
+      "fullEditor": "Configurarla en el editor de alertas",
+      "confirmAdd": "Añadir a la alerta",
+      "alreadyThere": "“{name}” ya tiene esta búsqueda como condición.",
+      "added": "Añadida a “{name}” como condición {number}.",
+      "created": "Se ha creado la alerta “{name}”.",
+      "openAlert": "Abrir la alerta",
+      "close": "Hecho",
+      "noAlerts": "Todavía no tienes alertas."
+    },
+    "errors": {
+      "name_required": "Ponle un nombre a la alerta.",
+      "narrative_required": "Elige la narrativa de esta alerta.",
+      "narrative_not_allowed": "Este tipo de alerta no es sobre una narrativa.",
+      "filter_not_allowed": "Una condición usa un filtro que este tipo de alerta no permite.",
+      "save_failed": "No se pudo guardar la alerta. Inténtalo de nuevo.",
+      "conditions_required": "Añade al menos una condición.",
+      "too_many_conditions": "Una alerta puede tener como máximo 20 condiciones.",
+      "invalid_type": "Una condición tiene un tipo que no existe.",
+      "empty_condition": "Una condición sobre narrativas nuevas o afirmaciones nuevas necesita al menos un filtro.",
+      "invalid_filter": "Un filtro tiene un valor que no es válido.",
+      "name_too_long": "El nombre es demasiado largo (120 caracteres como máximo)."
+    },
+    "typesV2": {
+      "new_narrative": {
+        "description": "Una narrativa empieza a coincidir con los filtros."
+      },
+      "new_claim": {
+        "description": "Una afirmación nueva coincide con los filtros, si quieres solo dentro de una narrativa."
+      }
+    },
+    "fromNarrativeNotice": "Siguiendo esta narrativa",
+    "createForNarrative": "Crear alerta",
+    "loadFailed": "No se han podido cargar tus alertas. Inténtalo de nuevo."
   }
 }

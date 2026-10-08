@@ -501,51 +501,6 @@
     "topics": "Sujets",
     "viewVideo": "Voir la vidéo"
   },
-  "alerts": {
-    "title": "Alertes",
-    "create_new": "Créer une nouvelle alerte",
-    "create_alert": "Créer une alerte",
-    "edit_alert": "Modifier l'alerte",
-    "name": "Nom",
-    "name_placeholder": "Entrer le nom de l'alerte",
-    "description": "Description",
-    "condition": "Condition",
-    "status": "Statut",
-    "no_alerts": "Aucune alerte configurée pour le moment",
-    "scope": {
-      "label": "Portée",
-      "placeholder": "Sélectionner la portée",
-      "general": "Générale",
-      "specific": "Spécifique"
-    },
-    "type": {
-      "label": "Type d'alerte",
-      "placeholder": "Sélectionner le type d'alerte",
-      "narrative_views": "Vues de récit",
-      "narrative_claims_count": "Nombre de revendications de récit",
-      "narrative_videos_count": "Nombre de vidéos de récit",
-      "narrative_with_topic": "Récit avec sujet",
-      "keyword": "Mot-clé"
-    },
-    "threshold": "Seuil",
-    "threshold_placeholder": "Entrer la valeur du seuil",
-    "topic": "Sujet",
-    "topic_placeholder": "Sélectionner le sujet",
-    "keyword": "Mot-clé",
-    "keyword_placeholder": "Entrer le mot-clé",
-    "narrative": "Récit",
-    "narrative_placeholder": "Sélectionner le récit",
-    "enabled": "Activée",
-    "delete_confirmation_title": "Supprimer l'alerte",
-    "delete_confirmation_message": "Êtes-vous sûr de vouloir supprimer l'alerte \"{name}\" ? Cette action ne peut pas être annulée.",
-    "fetch_error": "Impossible de récupérer les alertes",
-    "create_success": "Alerte créée avec succès",
-    "create_error": "Impossible de créer l'alerte",
-    "update_success": "Alerte mise à jour avec succès",
-    "update_error": "Impossible de mettre à jour l'alerte",
-    "delete_success": "Alerte supprimée avec succès",
-    "delete_error": "Impossible de supprimer l'alerte"
-  },
   "profile": {
     "title": "Paramètres du profil",
     "personalInfo": "Informations personnelles",
@@ -852,5 +807,164 @@
       "values_required": "Sélectionnez d’abord quelque chose.",
       "save_failed": "La sélection n’a pas pu être enregistrée. Réessayez."
     }
+  },
+  "alertRules": {
+    "title": "Alertes",
+    "intro": "Une alerte signale les nouveaux récits ou affirmations qui correspondent à l’une de ses conditions, une fois par jour par e-mail.",
+    "newAlert": "Nouvelle alerte",
+    "editAlert": "Modifier l’alerte",
+    "previewDigest": "Aperçu du récapitulatif quotidien",
+    "noAlerts": "Aucune alerte pour l’instant",
+    "backToList": "Toutes les alertes",
+    "fromSearchNotice": "Préremplie à partir de votre recherche",
+    "create": "Créer l’alerte",
+    "save": "Enregistrer",
+    "or": "ou",
+    "anyNewInNarrative": "Sans filtres, chaque nouvelle affirmation de ce récit déclenche cette alerte.",
+    "caseTitle": "Condition {number}",
+    "addCase": "Ajouter une condition",
+    "removeCase": "Retirer",
+    "types": {
+      "new_narrative": {
+        "name": "Nouveau récit",
+        "description": "Un récit commence à correspondre aux filtres."
+      },
+      "new_claim": {
+        "name": "Nouvelle affirmation",
+        "description": "Une nouvelle affirmation correspond aux filtres."
+      },
+      "new_claim_in_narrative": {
+        "name": "Nouvelle affirmation dans un récit",
+        "description": "Une nouvelle affirmation du récit choisi correspond aux filtres."
+      }
+    },
+    "steps": {
+      "type": "Que surveille cette condition ?",
+      "cases": "Conditions",
+      "delivery": "Nom et envoi",
+      "casesIntro": "Une alerte peut avoir plusieurs conditions, et chacune dit ce qu’elle surveille. Tout ce qui remplit une condition est signalé."
+    },
+    "fields": {
+      "type": "Type d’alerte",
+      "narrative": "Récit",
+      "narrativePlaceholder": "Choisir un récit",
+      "narrativeSearch": "Rechercher un récit par titre…",
+      "name": "Nom",
+      "namePlaceholder": "ex. Récits sur la migration en espagnol",
+      "deliveryHint": "Sent to you every 24h, only when it finds something new.",
+      "enabled": "Activée",
+      "belongsTo": "Appartient à ce récit (facultatif)",
+      "belongsToPlaceholder": "N’importe quel récit",
+      "belongsToClear": "Retirer le récit",
+      "belongsToHint": "Si un récit est choisi, l’affirmation doit lui appartenir.",
+      "narrativeTypeToSearch": "Tapez au moins 2 caractères pour rechercher",
+      "narrativeMatchedIn": {
+        "title": "Dans le titre",
+        "claims": "Seulement dans ses affirmations"
+      }
+    },
+    "openInSearch": "Ouvrir dans la recherche",
+    "viewNarrative": "Voir le récit",
+    "needsFilter": "Ajoutez au moins un filtre à cette condition.",
+    "needsNarrative": "Choisissez le récit suivi par cette condition.",
+    "list": {
+      "enabled": "Activée",
+      "disabled": "Désactivée",
+      "delete": "Supprimer l’alerte",
+      "deleteTitle": "Supprimer l’alerte",
+      "deleteMessage": "Supprimer l’alerte « {name} » ? Cette action est irréversible.",
+      "lastMatch": "Dernière correspondance : {date}",
+      "neverMatched": "Aucune correspondance pour l’instant",
+      "belongsTo": "Dans le récit : {title}"
+    },
+    "digest": {
+      "title": "Aperçu du récapitulatif quotidien",
+      "intro": "Ce que contiendrait votre prochain e-mail pour l’instant : tout ce que vos alertes actives ont trouvé depuis leur dernier envoi.",
+      "empty": "Aucune alerte active ne trouve quoi que ce soit aujourd’hui : aucun e-mail ne serait envoyé.",
+      "from": "De :",
+      "subject": "Objet :",
+      "subjectLine": "{count} alerte déclenchée | {count} alertes déclenchées",
+      "showing": "{count} affichées",
+      "matchedCases": "remplit la condition {list} | remplit les conditions {list}",
+      "seeAll": "Tout voir dans l’application",
+      "alertTriggered": "Alerte : {name}",
+      "inNarrative": "Dans « {title} »",
+      "condition": "condition {number}",
+      "anyNewClaim": "toute nouvelle affirmation",
+      "seeAllCount": "Tout voir ({count})",
+      "sections": {
+        "narratives": "Nouveaux récits",
+        "inNarratives": "Nouvelles affirmations dans les récits sélectionnés",
+        "claims": "Nouvelles affirmations"
+      },
+      "footer": "Vous recevez cet e-mail car vous avez créé ces alertes ou y avez été ajouté. Gérez vos alertes dans l’application.",
+      "foundMatches": "1 nouvelle correspondance | {count} nouvelles correspondances",
+      "kind": {
+        "new_narrative": "Nouveau récit",
+        "new_claim": "Nouvelle affirmation",
+        "new_claim_in_narrative": "Nouvelle affirmation dans le récit"
+      }
+    },
+    "addFromNarrative": {
+      "title": "Suivre ce récit dans vos alertes",
+      "description": "Les nouvelles affirmations de ce récit vous seront signalées par e-mail.",
+      "thisNarrative": "Ce récit",
+      "existingHint": "Aucune alerte ne peut encore suivre ce récit | 1 alerte peut suivre ce récit comme nouvelle condition | {count} alertes peuvent suivre ce récit comme nouvelle condition",
+      "newHint": "Une nouvelle alerte qui suit ce récit.",
+      "alreadyThere": "« {name} » suit déjà ce récit."
+    },
+    "addFromSearch": {
+      "card": "Ajouter aux alertes",
+      "cardHint": {
+        "narratives": "Recevez un e-mail quand de nouveaux récits correspondent à cette recherche",
+        "claims": "Recevez un e-mail quand de nouvelles affirmations correspondent à cette recherche"
+      },
+      "title": "Ajouter cette recherche à vos alertes",
+      "description": {
+        "new_narrative": "Les nouveaux récits correspondant à cette recherche seront signalés par e-mail.",
+        "new_claim": "Les nouvelles affirmations correspondant à cette recherche seront signalées par e-mail."
+      },
+      "thisSearch": "Cette recherche",
+      "dateDropped": "La période n’est pas reprise : les alertes portent sur ce qui est nouveau.",
+      "existing": "Ajouter à une alerte existante",
+      "existingHint": "Aucune alerte ne peut encore recevoir cette recherche | 1 alerte peut recevoir cette recherche comme nouvelle condition | {count} alertes peuvent recevoir cette recherche comme nouvelle condition",
+      "new": "Créer une nouvelle alerte",
+      "newHint": "Une nouvelle alerte avec cette recherche comme seule condition.",
+      "chooseAlert": "Choisir une alerte",
+      "caseCount": "1 condition | {count} conditions",
+      "newDetails": "Elle est activée d’emblée et vous est envoyée.",
+      "fullEditor": "La configurer plutôt dans l’éditeur d’alertes",
+      "confirmAdd": "Ajouter à l’alerte",
+      "alreadyThere": "« {name} » a déjà cette recherche comme condition.",
+      "added": "Ajoutée à « {name} » comme condition {number}.",
+      "created": "L’alerte « {name} » a été créée.",
+      "openAlert": "Ouvrir l’alerte",
+      "close": "Terminé",
+      "noAlerts": "Vous n’avez pas encore d’alertes."
+    },
+    "errors": {
+      "name_required": "Donnez un nom à l’alerte.",
+      "narrative_required": "Choisissez le récit de cette alerte.",
+      "narrative_not_allowed": "Ce type d’alerte ne porte pas sur un récit.",
+      "filter_not_allowed": "Une condition utilise un filtre que ce type d’alerte ne permet pas.",
+      "save_failed": "L’alerte n’a pas pu être enregistrée. Réessayez.",
+      "conditions_required": "Ajoutez au moins une condition.",
+      "too_many_conditions": "Une alerte peut avoir au plus 20 conditions.",
+      "invalid_type": "Une condition a un type qui n’existe pas.",
+      "empty_condition": "Une condition portant sur de nouveaux récits ou de nouvelles affirmations demande au moins un filtre.",
+      "invalid_filter": "Un filtre a une valeur non valide.",
+      "name_too_long": "Le nom est trop long (120 caractères au maximum)."
+    },
+    "typesV2": {
+      "new_narrative": {
+        "description": "Un récit commence à correspondre aux filtres."
+      },
+      "new_claim": {
+        "description": "Une nouvelle affirmation correspond aux filtres, si besoin uniquement dans un récit."
+      }
+    },
+    "fromNarrativeNotice": "Suit ce récit",
+    "createForNarrative": "Créer une alerte",
+    "loadFailed": "Vos alertes n’ont pas pu être chargées. Réessayez."
   }
 }
