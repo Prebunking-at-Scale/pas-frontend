@@ -1,8 +1,9 @@
 <template>
 <Card 
-  class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
+  class="relative hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
   @click="openVideo"
 >
+  <CardLink v-if="videoLink" :to="videoLink" :label="claim.claim || claim.text || ''" />
   <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
     <!-- Claim Header -->
     <div class="flex mb-4 gap-2">
@@ -15,14 +16,14 @@
           <p
             v-if="claim.video"
             @click="goToVideo"
-            class="text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
+            class="relative z-10 text-gray-600 text-xs mt-2 ml-4 cursor-pointer hover:underline hover:text-gray-900 flex items-center gap-2"
           >
             <span>↳ {{ claim.video.title }}</span>
           </p>
         </div>
       </div>
       <!-- Actions -->
-      <div class="flex flex-none gap-2">
+      <div class="relative z-10 flex flex-none gap-2">
         <!--Unlink Action-->
         <UTooltip :text="$t('common.unlink')">
           <Button
@@ -61,7 +62,7 @@
                 :key="topic.id"
                 :to="`/topics/${topic.id}`"
                 @click="(e: Event) => e.stopPropagation()"
-                class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer">
+                class="relative z-10 px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer">
                 {{ topic.topic }}
               </NuxtLink>
             </div>
@@ -101,6 +102,7 @@ import type { Claim } from '~/types/api';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card';
 import PlatformBadge from '~/components/PlatformBadge.vue';
+import CardLink from '~/components/CardLink.vue';
 import { formatDate } from '~/utils/date';
 import { Unlink } from 'lucide-vue-next';
 import { getLanguageName } from '~/utils/languageMapping';
@@ -123,6 +125,14 @@ const emit = defineEmits<{
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();
+
+// Where the card leads: the claim's video, at the moment the claim is said
+const videoLink = computed(() => {
+  const videoId = props.claim.video_id || props.claim.source_video_id;
+  if (!videoId) return null;
+  const start = props.claim.start_time_s;
+  return start != null ? `/videos/${videoId}?t=${Math.floor(start)}` : `/videos/${videoId}`;
+});
 
 const openVideo = () => {
   const videoId = props.claim.video_id || props.claim.source_video_id;

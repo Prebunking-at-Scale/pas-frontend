@@ -1,7 +1,8 @@
 <template>
-  <div @click="$emit('click', video.id)" class="cursor-pointer bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden hover:bg-stone-100 flex flex-col h-full">
-      <!-- YouTube Embed -->
-      <div v-if="youtubeVideoId" class="aspect-video bg-stone-200 rounded overflow-hidden flex-shrink-0">
+  <div @click="$emit('click', video.id)" class="relative cursor-pointer bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden hover:bg-stone-100 flex flex-col h-full">
+      <CardLink :to="`/videos/${video.id}`" :label="video.title || ''" />
+      <!-- YouTube Embed: above the card's link, so the player keeps working -->
+      <div v-if="youtubeVideoId" class="relative z-10 aspect-video bg-stone-200 rounded overflow-hidden flex-shrink-0">
         <iframe
           :src="`https://www.youtube.com/embed/${youtubeVideoId}`"
           frameborder="0"
@@ -68,6 +69,7 @@
 </template>
 
 <script setup lang="ts">
+import CardLink from '~/components/CardLink.vue';
 import type { Video } from '~/types/api';
 import PlatformBadge from '~/components/PlatformBadge.vue';
 import { formatDate } from '~/utils/date';
