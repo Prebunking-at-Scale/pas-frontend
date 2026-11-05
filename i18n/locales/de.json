@@ -462,51 +462,6 @@
     "topics": "Themen",
     "viewVideo": "Video anzeigen"
   },
-  "alerts": {
-    "title": "Benachrichtigungen",
-    "create_new": "Neue Benachrichtigung erstellen",
-    "create_alert": "Benachrichtigung erstellen",
-    "edit_alert": "Benachrichtigung bearbeiten",
-    "name": "Name",
-    "name_placeholder": "Benachrichtigungsname eingeben",
-    "description": "Beschreibung",
-    "condition": "Bedingung",
-    "status": "Status",
-    "no_alerts": "Noch keine Benachrichtigungen konfiguriert",
-    "scope": {
-      "label": "Bereich",
-      "placeholder": "Bereich auswählen",
-      "general": "Allgemein",
-      "specific": "Spezifisch"
-    },
-    "type": {
-      "label": "Benachrichtigungstyp",
-      "placeholder": "Benachrichtigungstyp auswählen",
-      "narrative_views": "Narrativ-Aufrufe",
-      "narrative_claims_count": "Narrativ-Behauptungsanzahl",
-      "narrative_videos_count": "Narrativ-Videoanzahl",
-      "narrative_with_topic": "Narrativ mit Thema",
-      "keyword": "Stichwort"
-    },
-    "threshold": "Schwellenwert",
-    "threshold_placeholder": "Schwellenwert eingeben",
-    "topic": "Thema",
-    "topic_placeholder": "Thema auswählen",
-    "keyword": "Stichwort",
-    "keyword_placeholder": "Stichwort eingeben",
-    "narrative": "Narrativ",
-    "narrative_placeholder": "Narrativ auswählen",
-    "enabled": "Aktiviert",
-    "delete_confirmation_title": "Benachrichtigung löschen",
-    "delete_confirmation_message": "Möchten Sie die Benachrichtigung \"{name}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "fetch_error": "Benachrichtigungen konnten nicht abgerufen werden",
-    "create_success": "Benachrichtigung erfolgreich erstellt",
-    "create_error": "Benachrichtigung konnte nicht erstellt werden",
-    "update_success": "Benachrichtigung erfolgreich aktualisiert",
-    "update_error": "Benachrichtigung konnte nicht aktualisiert werden",
-    "delete_success": "Benachrichtigung erfolgreich gelöscht",
-    "delete_error": "Benachrichtigung konnte nicht gelöscht werden"
-  },
   "profile": {
     "title": "Profileinstellungen",
     "personalInfo": "Persönliche Informationen",
@@ -820,5 +775,164 @@
     "lastWeek": "Letzte Woche",
     "lastMonth": "Letzter Monat",
     "allTime": "Alle Zeiten"
+  },
+  "alertRules": {
+    "title": "Alarme",
+    "intro": "Ein Alarm meldet neue Narrative oder Behauptungen, die zu einer seiner Bedingungen passen, einmal täglich per E-Mail.",
+    "newAlert": "Neuer Alarm",
+    "editAlert": "Alarm bearbeiten",
+    "previewDigest": "Tägliche Zusammenfassung ansehen",
+    "noAlerts": "Noch keine Alarme",
+    "backToList": "Alle Alarme",
+    "fromSearchNotice": "Aus Ihrer Suche übernommen",
+    "create": "Alarm erstellen",
+    "save": "Änderungen speichern",
+    "or": "oder",
+    "anyNewInNarrative": "Ohne Filter löst jede neue Behauptung dieses Narrativs diesen Alarm aus.",
+    "caseTitle": "Bedingung {number}",
+    "addCase": "Bedingung hinzufügen",
+    "removeCase": "Entfernen",
+    "types": {
+      "new_narrative": {
+        "name": "Neues Narrativ",
+        "description": "Ein Narrativ passt zum ersten Mal zu den Filtern."
+      },
+      "new_claim": {
+        "name": "Neue Behauptung",
+        "description": "Eine neue Behauptung passt zu den Filtern."
+      },
+      "new_claim_in_narrative": {
+        "name": "Neue Behauptung in einem Narrativ",
+        "description": "Eine neue Behauptung im gewählten Narrativ passt zu den Filtern."
+      }
+    },
+    "steps": {
+      "type": "Was beobachtet diese Bedingung?",
+      "cases": "Bedingungen",
+      "delivery": "Name und Versand",
+      "casesIntro": "Ein Alarm kann mehrere Bedingungen haben, und jede legt fest, was sie beobachtet. Alles, was zu einer Bedingung passt, wird gemeldet."
+    },
+    "fields": {
+      "type": "Alarmtyp",
+      "narrative": "Narrativ",
+      "narrativePlaceholder": "Narrativ wählen",
+      "narrativeSearch": "Narrative nach Titel suchen…",
+      "name": "Name",
+      "namePlaceholder": "z. B. Migrationsnarrative auf Spanisch",
+      "deliveryHint": "Sent to you every 24h, only when it finds something new.",
+      "enabled": "Aktiv",
+      "belongsTo": "Gehört zu diesem Narrativ (optional)",
+      "belongsToPlaceholder": "Beliebiges Narrativ",
+      "belongsToClear": "Narrativ entfernen",
+      "belongsToHint": "Wenn gesetzt, muss die Behauptung zu diesem Narrativ gehören.",
+      "narrativeTypeToSearch": "Geben Sie mindestens 2 Zeichen ein, um zu suchen",
+      "narrativeMatchedIn": {
+        "title": "Im Titel",
+        "claims": "Nur in seinen Behauptungen"
+      }
+    },
+    "openInSearch": "In der Suche öffnen",
+    "viewNarrative": "Narrativ ansehen",
+    "needsFilter": "Fügen Sie dieser Bedingung mindestens einen Filter hinzu.",
+    "needsNarrative": "Wählen Sie das Narrativ, dem diese Bedingung folgt.",
+    "list": {
+      "enabled": "Aktiv",
+      "disabled": "Inaktiv",
+      "delete": "Alarm löschen",
+      "deleteTitle": "Alarm löschen",
+      "deleteMessage": "Den Alarm „{name}“ löschen? Das kann nicht rückgängig gemacht werden.",
+      "lastMatch": "Letzter Treffer: {date}",
+      "neverMatched": "Noch keine Treffer",
+      "belongsTo": "Im Narrativ: {title}"
+    },
+    "digest": {
+      "title": "Vorschau der täglichen Zusammenfassung",
+      "intro": "Was Ihre nächste E-Mail bisher enthalten würde: alles, was Ihre aktiven Alarme seit ihrer letzten Meldung gefunden haben.",
+      "empty": "Kein aktiver Alarm findet heute etwas, daher würde keine E-Mail gesendet.",
+      "from": "Von:",
+      "subject": "Betreff:",
+      "subjectLine": "{count} Alarm ausgelöst | {count} Alarme ausgelöst",
+      "showing": "{count} angezeigt",
+      "matchedCases": "passt zu Bedingung {list} | passt zu den Bedingungen {list}",
+      "seeAll": "Alle in der App ansehen",
+      "alertTriggered": "Alarm: {name}",
+      "inNarrative": "In „{title}“",
+      "condition": "Bedingung {number}",
+      "anyNewClaim": "jede neue Behauptung",
+      "seeAllCount": "Alle anzeigen ({count})",
+      "sections": {
+        "narratives": "Neue Narrative",
+        "inNarratives": "Neue Behauptungen in ausgewählten Narrativen",
+        "claims": "Neue Behauptungen"
+      },
+      "footer": "Sie erhalten diese E-Mail, weil Sie diese Alarme erstellt haben oder hinzugefügt wurden. Verwalten Sie Ihre Alarme in der App.",
+      "foundMatches": "1 neuer Treffer | {count} neue Treffer",
+      "kind": {
+        "new_narrative": "Neues Narrativ",
+        "new_claim": "Neue Behauptung",
+        "new_claim_in_narrative": "Neue Behauptung im Narrativ"
+      }
+    },
+    "addFromNarrative": {
+      "title": "Diesem Narrativ in Ihren Alarmen folgen",
+      "description": "Neue Behauptungen in diesem Narrativ werden per E-Mail gemeldet.",
+      "thisNarrative": "Dieses Narrativ",
+      "existingHint": "Noch kein Alarm kann diesem Narrativ folgen | 1 Alarm kann diesem Narrativ als neue Bedingung folgen | {count} Alarme können diesem Narrativ als neue Bedingung folgen",
+      "newHint": "Ein neuer Alarm, der diesem Narrativ folgt.",
+      "alreadyThere": "„{name}“ folgt diesem Narrativ bereits."
+    },
+    "addFromSearch": {
+      "card": "Zu Alarmen hinzufügen",
+      "cardHint": {
+        "narratives": "Per E-Mail benachrichtigt werden, wenn neue Narrative zu dieser Suche passen",
+        "claims": "Per E-Mail benachrichtigt werden, wenn neue Behauptungen zu dieser Suche passen"
+      },
+      "title": "Diese Suche zu Ihren Alarmen hinzufügen",
+      "description": {
+        "new_narrative": "Neue Narrative, die zu dieser Suche passen, werden per E-Mail gemeldet.",
+        "new_claim": "Neue Behauptungen, die zu dieser Suche passen, werden per E-Mail gemeldet."
+      },
+      "thisSearch": "Diese Suche",
+      "dateDropped": "Der Zeitraum wird nicht übernommen: Alarme betreffen nur Neues.",
+      "existing": "Zu einem bestehenden Alarm hinzufügen",
+      "existingHint": "Noch kein Alarm kann diese Suche aufnehmen | 1 Alarm kann diese Suche als neue Bedingung aufnehmen | {count} Alarme können diese Suche als neue Bedingung aufnehmen",
+      "new": "Neuen Alarm erstellen",
+      "newHint": "Ein neuer Alarm mit dieser Suche als einziger Bedingung.",
+      "chooseAlert": "Alarm wählen",
+      "caseCount": "1 Bedingung | {count} Bedingungen",
+      "newDetails": "Er ist sofort aktiv und wird an Sie gesendet.",
+      "fullEditor": "Stattdessen im Alarm-Editor einrichten",
+      "confirmAdd": "Zum Alarm hinzufügen",
+      "alreadyThere": "„{name}“ hat diese Suche bereits als Bedingung.",
+      "added": "Zu „{name}“ als Bedingung {number} hinzugefügt.",
+      "created": "Der Alarm „{name}“ wurde erstellt.",
+      "openAlert": "Alarm öffnen",
+      "close": "Fertig",
+      "noAlerts": "Sie haben noch keine Alarme."
+    },
+    "errors": {
+      "name_required": "Geben Sie dem Alarm einen Namen.",
+      "narrative_required": "Wählen Sie das Narrativ dieses Alarms.",
+      "narrative_not_allowed": "Dieser Alarmtyp bezieht sich nicht auf ein Narrativ.",
+      "filter_not_allowed": "Eine Bedingung nutzt einen Filter, den dieser Alarmtyp nicht erlaubt.",
+      "save_failed": "Der Alarm konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      "conditions_required": "Fügen Sie mindestens eine Bedingung hinzu.",
+      "too_many_conditions": "Ein Alarm kann höchstens 20 Bedingungen haben.",
+      "invalid_type": "Eine Bedingung hat einen Typ, den es nicht gibt.",
+      "empty_condition": "Eine Bedingung über neue Narrative oder neue Behauptungen braucht mindestens einen Filter.",
+      "invalid_filter": "Ein Filter hat einen ungültigen Wert.",
+      "name_too_long": "Der Name ist zu lang (höchstens 120 Zeichen)."
+    },
+    "typesV2": {
+      "new_narrative": {
+        "description": "Ein Narrativ passt zum ersten Mal zu den Filtern."
+      },
+      "new_claim": {
+        "description": "Eine neue Behauptung passt zu den Filtern, auf Wunsch nur in einem Narrativ."
+      }
+    },
+    "fromNarrativeNotice": "Folgt diesem Narrativ",
+    "createForNarrative": "Alarm erstellen",
+    "loadFailed": "Ihre Alarme konnten nicht geladen werden. Versuchen Sie es erneut."
   }
 }
