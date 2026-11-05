@@ -199,10 +199,16 @@ export interface Claim {
   id: string;
   video_id: string;
   video: Video;
+  /** The narratives the claim belongs to; a claim can be in several. */
+  narratives?: { id: string; title: string }[];
   claim: string;
   start_time_s: number;
   embedding?: number[];
   topics?: Topic[];
+  /** language and score always; topics as the claim finder assigned them (topic ids, not used: a claim's topics are `topics`). */
+  metadata?: { language?: string; score?: number; topics?: string[]; [key: string]: unknown };
+  /** The video's upload date, on a narrative's claims (which come without `video`). */
+  uploaded_at?: string | null;
   created_at?: string;
   updated_at?: string;
   // Legacy fields for compatibility
@@ -396,6 +402,13 @@ export interface NarrativeStatsDataPoint {
   cumulative_comments: number;
   video_count: number;
   cumulative_video_count: number;
+  // `views` split by where it came from. A video appearing brought its whole view
+  // count on a day we know exactly — a step. Videos already in the narrative gained
+  // views somewhere inside the gap since we last looked — a ramp. Optional: a
+  // backend from before the split does not send them, and the chart falls back to
+  // drawing the day as one slope.
+  views_from_new_videos?: number;
+  views_from_existing?: number;
 }
 
 // Stats totals

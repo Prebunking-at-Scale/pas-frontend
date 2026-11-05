@@ -2,7 +2,7 @@
   <span 
     class="inline-flex items-center justify-center text-xs"
   >
-    <font-awesome :icon="platformIcon" class="text-sm" :class="platformClass" />
+    <font-awesome :icon="platformIcon" :class="[size === 'xs' ? 'text-[11px]' : 'text-sm', platformClass]" />
   </span>
 </template>
 
@@ -12,9 +12,11 @@ import { computed } from 'vue';
 
 interface Props {
   platform: 'youtube' | 'tiktok' | 'instagram';
+  /** xs: for chips and dense lists. */
+  size?: 'sm' | 'xs';
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { size: 'sm' });
 
 const platformIcon = computed(() => {
   switch (props.platform) {

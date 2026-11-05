@@ -47,6 +47,7 @@
     "deleting": "Suppression..."
   },
   "nav": {
+    "search": "Recherche",
     "overview": "Vue d'ensemble",
     "dashboard": "Tableau de bord",
     "narratives": "Récits",
@@ -292,7 +293,6 @@
     "filters": "Filtres",
     "channel": "Canal",
     "language": "Langue",
-    "dateRange": "Période",
     "keywords": "Mots-clés",
     "keywordsPlaceholder": "Entrez un mot-clé et appuyez sur Entrée",
     "text": "Texte",
@@ -313,8 +313,6 @@
     },
     "clearFilters": "Effacer les filtres",
     "applyFilters": "Appliquer les filtres",
-    "selectStartDate": "Sélectionner la date de début",
-    "selectEndDate": "Sélectionner la date de fin",
     "first": "Premier",
     "last": "Dernier",
     "active": "Actif",
@@ -631,16 +629,34 @@
     "viewAll": "Voir tout"
   },
   "filters": {
+    "channelScope": {
+      "label": "Quelles chaînes",
+      "own": "Les nôtres",
+      "all": "Toutes",
+      "ownHeading": "Nos chaînes",
+      "otherHeading": "Autres chaînes"
+    },
+    "removeValue": "Retirer {value}",
+    "allEntities": "Toutes les entités",
+    "entity": "Entité",
+    "noEntityFound": "Aucune entité trouvée",
+    "searchEntity": "Rechercher des entités...",
+    "selectEntity": "Sélectionner une entité",
+    "searchChannel": "Rechercher une chaîne…",
+    "typeToSearch": "Saisissez au moins {count} caractères pour rechercher",
     "clearAll": "Effacer tous les filtres",
     "clear": "Effacer",
     "apply": "Appliquer",
-    "created": "Créés",
     "topic": "Sujet",
     "allTopics": "Tous les sujets",
     "search": "Rechercher",
     "min": "Min",
     "max": "Max",
     "invalidRange": "La valeur minimale doit être inférieure ou égale à la valeur maximale",
+    "invalidDateRange": "La date de début doit être antérieure ou égale à la date de fin",
+    "dateRange": "Période",
+    "selectStartDate": "Sélectionner la date de début",
+    "selectEndDate": "Sélectionner la date de fin",
     "searchPlaceholder": "Rechercher...",
     "platform": "Plateforme",
     "allPlatforms": "Toutes les plateformes",
@@ -772,5 +788,69 @@
     },
     "noLanguageFound": "Aucune langue trouvée",
     "viewCountryCodes": "Voir la liste des codes pays"
+  },
+  "search": {
+    "title": "Recherche",
+    "filters": "Filtres",
+    "moreFilters": "Plus de filtres",
+    "fewerFilters": "Moins de filtres",
+    "entities": "Entités",
+    "date": "Date de mise en ligne",
+    "noResults": "Aucun résultat ne correspond à ces filtres",
+    "noOptions": "Aucune option trouvée",
+    "selectedCount": "{first} +{count}",
+    "removeKeyword": "Retirer le mot-clé {keyword}",
+    "clearKeywords": "Retirer tous les mots-clés",
+    "containsMatchingClaims": "Contient des affirmations correspondantes",
+    "containsMatchingClaimsHint": "Ce résultat correspond à votre recherche par une ou plusieurs de ses affirmations, et non par son propre titre ou thème.",
+    "matchingClaims": "Affirmations correspondantes",
+    "viaNarrative": "Par son récit : mentionne {list}",
+    "viaNarrativeHint": "Cette affirmation ne mentionne pas l’entité elle-même : elle appartient à un récit qui la mentionne. Les entités sont repérées sur les récits, pas sur chaque affirmation.",
+    "viaNarrativeShort": "Par son récit",
+    "tabs": {
+      "narratives": "Récits",
+      "claims": "Affirmations",
+      "videos": "Vidéos"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "keywordMode": {
+      "label": "Combinaison des mots-clés",
+      "any": "Au moins un",
+      "all": "Tous",
+      "anyHint": "Résultats contenant au moins un des mots-clés",
+      "allHint": "Résultats contenant tous les mots-clés, dans la même affirmation ou le même titre"
+    },
+    "countCapped": "{count}+",
+    "error": "La recherche n’a pas pu aboutir. Réessayez.",
+    "narrowToSeeMore": "Les 10 000 premiers résultats sont affichés : ajoutez des filtres pour voir la suite."
+  },
+  "savedSelections": {
+    "title": "Sélections enregistrées",
+    "empty": "Aucune sélection enregistrée pour l’instant",
+    "save": "Enregistrer cette sélection",
+    "confirm": "Enregistrer",
+    "namePlaceholder": "Nom de la sélection",
+    "nothingToSave": "Sélectionnez d’abord quelque chose",
+    "organizationDefault": "Sélection par défaut de l’organisation",
+    "ourChannels": "Nos chaînes",
+    "delete": "Supprimer « {name} »",
+    "defaultName": "Liste n° {number}",
+    "count": {
+      "keyword": "1 mot-clé | {count} mots-clés",
+      "entity_id": "1 entité | {count} entités",
+      "channel": "1 chaîne | {count} chaînes"
+    },
+    "errors": {
+      "invalid_kind": "Ce filtre ne peut pas enregistrer de sélections.",
+      "name_required": "Donnez un nom à la sélection.",
+      "name_too_long": "Ce nom est trop long.",
+      "name_taken": "Une sélection porte déjà ce nom.",
+      "values_required": "Sélectionnez d’abord quelque chose.",
+      "save_failed": "La sélection n’a pas pu être enregistrée. Réessayez."
+    }
   }
 }

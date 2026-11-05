@@ -46,6 +46,7 @@
     "daysAgo": "{count}d ago"
   },
   "nav": {
+    "search": "Research",
     "overview": "Overview",
     "dashboard": "Dashboard",
     "narratives": "Narratives",
@@ -285,7 +286,6 @@
     "filters": "Filters",
     "channel": "Channel",
     "language": "Language",
-    "dateRange": "Date Range",
     "keywords": "Keywords",
     "keywordsPlaceholder": "Enter keyword and press enter",
     "text": "Text",
@@ -308,8 +308,6 @@
     },
     "clearFilters": "Clear filters",
     "applyFilters": "Apply filters",
-    "selectStartDate": "Select start date",
-    "selectEndDate": "Select end date",
     "first": "First",
     "last": "Last",
     "active": "Active",
@@ -605,6 +603,16 @@
     "viewAll": "View all"
   },
   "filters": {
+    "channelScope": {
+      "label": "Which channels",
+      "own": "Ours",
+      "all": "All",
+      "ownHeading": "Our channels",
+      "otherHeading": "Other channels"
+    },
+    "removeValue": "Remove {value}",
+    "searchChannel": "Search channel…",
+    "typeToSearch": "Type at least {count} characters to search",
     "clearAll": "Clear all filters",
     "clear": "Clear",
     "apply": "Apply",
@@ -619,6 +627,10 @@
     "min": "Min",
     "max": "Max",
     "invalidRange": "Minimum value must be less than or equal to maximum value",
+    "invalidDateRange": "Start date must be earlier than or equal to end date",
+    "dateRange": "Date Range",
+    "selectStartDate": "Select start date",
+    "selectEndDate": "Select end date",
     "searchPlaceholder": "Search...",
     "platform": "Platform",
     "allPlatforms": "All platforms",
@@ -628,8 +640,7 @@
     "language": "Language",
     "allLanguages": "All languages",
     "keywords": "Keywords",
-    "keywordsPlaceholder": "Press Enter to add keyword",
-    "created": "Created"
+    "keywordsPlaceholder": "Press Enter to add keyword"
   },
   "footer": {
     "about": {
@@ -793,6 +804,70 @@
     },
     "noLanguageFound": "No language found",
     "viewCountryCodes": "View country codes list"
+  },
+  "search": {
+    "title": "Research",
+    "filters": "Filters",
+    "moreFilters": "More filters",
+    "fewerFilters": "Fewer filters",
+    "entities": "Entities",
+    "date": "Upload date",
+    "noResults": "No results match these filters",
+    "noOptions": "No options found",
+    "selectedCount": "{first} +{count}",
+    "removeKeyword": "Remove keyword {keyword}",
+    "clearKeywords": "Clear all keywords",
+    "containsMatchingClaims": "Contains matching claims",
+    "containsMatchingClaimsHint": "This result matches your search through one or more of its claims, not through its own title or topic.",
+    "matchingClaims": "Matching claims",
+    "viaNarrative": "Via its narrative: mentions {list}",
+    "viaNarrativeHint": "This claim doesn't mention the entity itself: it belongs to a narrative that does. Entities are found on narratives, not on single claims.",
+    "viaNarrativeShort": "Via its narrative",
+    "tabs": {
+      "narratives": "Narratives",
+      "claims": "Claims",
+      "videos": "Videos"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "keywordMode": {
+      "label": "How keywords combine",
+      "any": "Any",
+      "all": "All",
+      "anyHint": "Results with at least one of the keywords",
+      "allHint": "Results with every keyword, in the same claim or title"
+    },
+    "countCapped": "{count}+",
+    "error": "The search couldn’t be completed. Try again.",
+    "narrowToSeeMore": "Showing the first 10,000 results: add filters to see the rest."
+  },
+  "savedSelections": {
+    "title": "Saved selections",
+    "empty": "No saved selections yet",
+    "save": "Save this selection",
+    "confirm": "Save",
+    "namePlaceholder": "Name this selection",
+    "nothingToSave": "Select something first",
+    "organizationDefault": "Organization default",
+    "ourChannels": "Our channels",
+    "delete": "Delete “{name}”",
+    "defaultName": "List #{number}",
+    "count": {
+      "keyword": "1 keyword | {count} keywords",
+      "entity_id": "1 entity | {count} entities",
+      "channel": "1 channel | {count} channels"
+    },
+    "errors": {
+      "invalid_kind": "This filter can't save selections.",
+      "name_required": "Give the selection a name.",
+      "name_too_long": "That name is too long.",
+      "name_taken": "There's already a selection with that name.",
+      "values_required": "Select something first.",
+      "save_failed": "The selection couldn't be saved. Try again."
+    }
   },
   "timeframes": {
     "select": "Select timeframe",

@@ -240,9 +240,13 @@ export const apiService = {
     text?: string;
     language?: string;
     spread_pattern?: NarrativeSpreadPattern[];
+    /** ISO date-times bounding the dates of a narrative's claims. */
+    start_date?: string;
+    end_date?: string;
     sort?: string;
-    startDate?: Date;
-    endDate?: Date;
+    /** Bounds on the narrative's own creation date (n.created_at). */
+    createdStart?: Date;
+    createdEnd?: Date;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -273,16 +277,25 @@ export const apiService = {
       if (params?.spread_pattern && params.spread_pattern.length > 0) {
         query.spread_pattern = params.spread_pattern;
       }
+      // Bounds the claims, not the narrative record: one created long ago still matches
+      // while it keeps picking up content inside the window.
+      if (params?.start_date) {
+        query.start_date = params.start_date;
+      }
+      if (params?.end_date) {
+        query.end_date = params.end_date;
+      }
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {
         query.sort = params.sort;
       }
-      // Bounds on the narrative's creation date (n.created_at)
-      if (params?.startDate) {
-        query.start_date = params.startDate.toISOString();
+      // Bounds on the narrative's creation date (n.created_at): core-api's
+      // created_start/created_end, since start_date/end_date are about the claims.
+      if (params?.createdStart) {
+        query.created_start = params.createdStart.toISOString();
       }
-      if (params?.endDate) {
-        query.end_date = params.endDate.toISOString();
+      if (params?.createdEnd) {
+        query.created_end = params.createdEnd.toISOString();
       }
 
       const response = await apiFetch('/api/narratives', {

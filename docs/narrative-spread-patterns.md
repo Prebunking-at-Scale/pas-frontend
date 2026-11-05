@@ -138,10 +138,11 @@ frontend would mean re-deriving the classifier. So "last week" reads as "of the
 narratives that appeared this week, which are viral / surging / trending /
 consolidated today". Short windows can leave every section empty, since only ~9% of
 narratives are labelled at all, and the dashboard says so rather than showing a blank
-band. "View all" hands the window to the narratives list as `?created=<timeframe>`,
-which pre-sets that page's *Created* filter, so the list shows the same narratives
-the count promised. Windows are resolved against the fetch time, never stored as dates,
-so a bookmarked `?created=last24Hours` always means the 24 hours before loading.
+band. The window is resolved against the fetch time and sent as `created_start` /
+`created_end` (core-api's bounds on `n.created_at`; `start_date`/`end_date` are about
+upload dates). "View all" opens the narratives list filtered by the pattern only: the
+list's one date filter, *Date Range*, is on when the narratives' videos were uploaded,
+not on creation, so its count can be larger than the dashboard's (decided 2026-10-01).
 
 ## API contract
 
