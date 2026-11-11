@@ -351,9 +351,15 @@ export interface KeywordFeed {
   keywords: string[];
 }
 
+export interface FeedLimits {
+  max_channel_feeds: number;
+  max_keywords: number;
+}
+
 export interface MediaFeedsResponse {
   channel_feeds: ChannelFeed[];
   keyword_feeds: KeywordFeed[];
+  limits?: FeedLimits;
 }
 
 export interface CreateChannelFeedRequest {

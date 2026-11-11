@@ -199,6 +199,8 @@
     "noSpreadNarratives": "Keine in diesem Zeitraum erstellte Narrative hat bisher ein Verbreitungsmuster. Versuche einen längeren Zeitraum."
   },
   "channels": {
+    "limitUsage": "{count} von {limit} genutzt",
+    "limitReached": "Limit erreicht. Archivieren Sie einige, bevor Sie weitere hinzufügen.",
     "title": "Kanäle",
     "channelFeeds": "Kanäle",
     "keywordFeeds": "Stichwörter",

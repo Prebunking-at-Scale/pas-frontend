@@ -230,6 +230,8 @@
     "noSpreadNarratives": "No narrative created in this timeframe has a spread pattern yet. Try a longer timeframe."
   },
   "channels": {
+    "limitUsage": "{count} of {limit} used",
+    "limitReached": "Limit reached. Archive some before adding more.",
     "title": "Channels",
     "channelFeeds": "Channels",
     "keywordFeeds": "Keywords",

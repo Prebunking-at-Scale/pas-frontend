@@ -237,6 +237,8 @@
     "allTime": "Tout le temps"
   },
   "channels": {
+    "limitUsage": "{count} sur {limit} utilisés",
+    "limitReached": "Limite atteinte. Archivez-en avant d'en ajouter d'autres.",
     "title": "Chaînes",
     "channelFeeds": "Chaînes",
     "keywordFeeds": "Mots-clés",
