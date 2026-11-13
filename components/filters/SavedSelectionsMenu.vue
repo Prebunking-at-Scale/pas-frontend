@@ -33,9 +33,9 @@
           class="border-t first:border-t-0"
           :data-testid="`saved-selections-${group.key}`"
         >
-          <p class="flex items-center gap-1.5 px-2 pb-0.5 pt-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+          <p class="flex items-center gap-1.5 px-2 pb-0.5 pt-2 text-xs text-gray-500">
             <component :is="group.icon" class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            {{ $t(`savedSelections.groups.${group.key}`) }}
+            <span>{{ $t(`savedSelections.groups.${group.key}`) }}</span>
             <TooltipProvider v-if="group.key === 'organization'" :delay-duration="150">
               <Tooltip>
                 <TooltipTrigger as-child>
@@ -47,7 +47,7 @@
                     <Info class="h-3.5 w-3.5" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent class="max-w-xs normal-case tracking-normal font-normal">
+                <TooltipContent class="max-w-xs font-normal">
                   {{ $t('savedSelections.organizationHint') }}
                 </TooltipContent>
               </Tooltip>

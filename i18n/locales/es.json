@@ -823,7 +823,7 @@
       "organization": "De tu organización",
       "own": "Tuyas"
     },
-    "organizationHint": "Los canales de tu organización y una lista de palabras clave por tema, sacados de sus fuentes. Las ve todo el mundo en la organización; para cambiarlas, edita las fuentes.",
+    "organizationHint": "Los canales de tu organización y una lista de palabras clave por tema, sacados de sus fuentes. Las ve todo el mundo en la organización.",
     "ownEmpty": "Guarda la selección actual para reutilizarla."
   },
   "timeframes": {

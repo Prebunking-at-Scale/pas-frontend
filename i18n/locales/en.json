@@ -826,7 +826,7 @@
       "organization": "From your organization",
       "own": "Yours"
     },
-    "organizationHint": "Your organization's channels, and a keyword list per topic, from its media feeds. Everyone in the organization sees them; to change them, edit the feeds.",
+    "organizationHint": "Your organization's channels, and a keyword list per topic, from its media feeds. Everyone in the organization sees them.",
     "ownEmpty": "Save the current selection to reuse it."
   },
   "timeframes": {
