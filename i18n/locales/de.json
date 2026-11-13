@@ -771,7 +771,7 @@
       "organization": "Von deiner Organisation",
       "own": "Deine"
     },
-    "organizationHint": "Die Kanäle deiner Organisation und eine Stichwortliste pro Thema, aus ihren Quellen. Alle in der Organisation sehen sie; um sie zu ändern, bearbeite die Quellen.",
+    "organizationHint": "Die Kanäle deiner Organisation und eine Stichwortliste pro Thema, aus ihren Quellen. Alle in der Organisation sehen sie.",
     "ownEmpty": "Speichere die aktuelle Auswahl, um sie wiederzuverwenden."
   },
   "timeframes": {
