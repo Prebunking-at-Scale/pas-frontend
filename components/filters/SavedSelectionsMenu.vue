@@ -21,36 +21,69 @@
 
       <p v-if="selections.length === 0" class="px-2 py-1.5 text-xs text-gray-500">{{ $t('savedSelections.empty') }}</p>
 
-      <ul v-else class="max-h-56 overflow-y-auto">
-        <li v-for="selection in selections" :key="selection.id" class="group flex items-center gap-1">
-          <button
-            type="button"
-            class="flex min-w-0 flex-1 items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent cursor-pointer"
-            :title="selection.values.join(', ')"
-            @click="emit('load', [...selection.values])"
-          >
-            <Check class="h-4 w-4 shrink-0" :class="isCurrent(selection.values) ? 'opacity-100' : 'opacity-0'" />
-            <span class="truncate">{{ displayName(selection) }}</span>
-            <Building2
-              v-if="selection.is_default"
-              class="h-3.5 w-3.5 shrink-0 text-gray-400"
-              :aria-label="$t('savedSelections.organizationDefault')"
-            />
-            <span class="ml-auto shrink-0 text-xs text-gray-500">
-              {{ $t(`savedSelections.count.${kind}`, { count: selection.values.length }, selection.values.length) }}
-            </span>
-          </button>
-          <button
-            v-if="!selection.is_default"
-            type="button"
-            class="rounded-sm p-1 text-gray-400 opacity-0 hover:text-red-700 focus:opacity-100 group-hover:opacity-100 cursor-pointer"
-            :aria-label="$t('savedSelections.delete', { name: selection.name })"
-            @click="remove(selection.id)"
-          >
-            <Trash2 class="h-3.5 w-3.5" />
-          </button>
-        </li>
-      </ul>
+      <!-- Two groups: the organization's lists (from its feeds, shared, can't be deleted
+           here) and the person's own. A group with nothing in it isn't shown, except "Yours",
+           which then says how to add one. -->
+      <div v-else class="max-h-72 overflow-y-auto">
+        <section
+          v-for="group in visibleGroups"
+          :key="group.key"
+          role="group"
+          :aria-label="$t(`savedSelections.groups.${group.key}`)"
+          class="border-t first:border-t-0"
+          :data-testid="`saved-selections-${group.key}`"
+        >
+          <p class="flex items-center gap-1.5 px-2 pb-0.5 pt-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+            <component :is="group.icon" class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            {{ $t(`savedSelections.groups.${group.key}`) }}
+            <TooltipProvider v-if="group.key === 'organization'" :delay-duration="150">
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <button
+                    type="button"
+                    class="rounded-full text-gray-400 hover:text-gray-600 cursor-help"
+                    :aria-label="$t('savedSelections.organizationHint')"
+                  >
+                    <Info class="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent class="max-w-xs normal-case tracking-normal font-normal">
+                  {{ $t('savedSelections.organizationHint') }}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
+
+          <p v-if="group.items.length === 0" class="px-2 pb-1.5 text-xs text-gray-500">
+            {{ $t('savedSelections.ownEmpty') }}
+          </p>
+          <ul v-else>
+            <li v-for="selection in group.items" :key="selection.id" class="group flex items-center gap-1">
+              <button
+                type="button"
+                class="flex min-w-0 flex-1 items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent cursor-pointer"
+                :title="selection.values.join(', ')"
+                @click="emit('load', [...selection.values])"
+              >
+                <Check class="h-4 w-4 shrink-0" :class="isCurrent(selection.values) ? 'opacity-100' : 'opacity-0'" />
+                <span class="truncate">{{ displayName(selection) }}</span>
+                <span class="ml-auto shrink-0 text-xs text-gray-500">
+                  {{ $t(`savedSelections.count.${kind}`, { count: selection.values.length }, selection.values.length) }}
+                </span>
+              </button>
+              <button
+                v-if="!selection.is_default"
+                type="button"
+                class="rounded-sm p-1 text-gray-400 opacity-0 hover:text-red-700 focus:opacity-100 group-hover:opacity-100 cursor-pointer"
+                :aria-label="$t('savedSelections.delete', { name: selection.name })"
+                @click="remove(selection.id)"
+              >
+                <Trash2 class="h-3.5 w-3.5" />
+              </button>
+            </li>
+          </ul>
+        </section>
+      </div>
 
       <!-- Saving the current selection, at the bottom: a name is suggested -->
       <form v-if="naming" class="space-y-1.5 border-t px-1 pb-1 pt-2" @submit.prevent="submit">
@@ -93,11 +126,12 @@
 // bookmark at the end of the filter's box: load one in a click, or save what's in the
 // filter under a name. It floats over the filters below, and opening it doesn't touch
 // the filter itself (its options list, or the channels' Ours/All switch).
-import { Bookmark, BookmarkPlus, Building2, Check, Trash2 } from 'lucide-vue-next'
+import { Bookmark, BookmarkPlus, Building2, Check, Info, Trash2, User } from 'lucide-vue-next'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
-import { DEFAULT_CHANNELS_ID, SAVED_SELECTION_NAME_MAX } from '~/utils/savedSelections'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
+import { DEFAULT_CHANNELS_ID, SAVED_SELECTION_NAME_MAX, groupSavedSelections } from '~/utils/savedSelections'
 import { keywordKey } from '~/utils/keywords'
 import type { SavedSelection, SavedSelectionError, SavedSelectionKind } from '~/utils/savedSelections'
 
@@ -111,6 +145,15 @@ const props = defineProps<Props>()
 const emit = defineEmits<{ load: [values: string[]] }>()
 
 const { selections, load, save, remove } = useSavedSelections(props.kind)
+
+// The organization's group only when it has lists; "Yours" always, to say how to add one.
+const visibleGroups = computed(() => {
+  const { organization, own } = groupSavedSelections(selections.value)
+  return [
+    { key: 'organization' as const, icon: Building2, items: organization },
+    { key: 'own' as const, icon: User, items: own },
+  ].filter(group => group.key === 'own' || group.items.length > 0)
+})
 
 const open = ref(false)
 const naming = ref(false)

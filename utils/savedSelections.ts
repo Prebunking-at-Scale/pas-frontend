@@ -40,3 +40,12 @@ export const validateSavedSelection = (
 /** Defaults first, then the rest by name. */
 export const sortSavedSelections = (selections: SavedSelection[]) =>
   [...selections].sort((a, b) => Number(b.is_default) - Number(a.is_default) || a.name.localeCompare(b.name))
+
+/** The menu's two groups: the organization's (from its feeds) and the person's own, each by name. */
+export const groupSavedSelections = (selections: SavedSelection[]) => {
+  const sorted = sortSavedSelections(selections)
+  return {
+    organization: sorted.filter(s => s.is_default),
+    own: sorted.filter(s => !s.is_default),
+  }
+}

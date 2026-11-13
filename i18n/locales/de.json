@@ -751,7 +751,6 @@
     "confirm": "Speichern",
     "namePlaceholder": "Name der Auswahl",
     "nothingToSave": "Wählen Sie zuerst etwas aus",
-    "organizationDefault": "Standard der Organisation",
     "ourChannels": "Unsere Kanäle",
     "delete": "„{name}“ löschen",
     "defaultName": "Liste #{number}",
@@ -767,7 +766,13 @@
       "name_taken": "Es gibt bereits eine Auswahl mit diesem Namen.",
       "values_required": "Wählen Sie zuerst etwas aus.",
       "save_failed": "Die Auswahl konnte nicht gespeichert werden. Bitte erneut versuchen."
-    }
+    },
+    "groups": {
+      "organization": "Von deiner Organisation",
+      "own": "Deine"
+    },
+    "organizationHint": "Die Kanäle deiner Organisation und eine Stichwortliste pro Thema, aus ihren Quellen. Alle in der Organisation sehen sie; um sie zu ändern, bearbeite die Quellen.",
+    "ownEmpty": "Speichere die aktuelle Auswahl, um sie wiederzuverwenden."
   },
   "timeframes": {
     "select": "Zeitraum auswählen",

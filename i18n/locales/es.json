@@ -803,7 +803,6 @@
     "confirm": "Guardar",
     "namePlaceholder": "Nombre de la selección",
     "nothingToSave": "Selecciona algo primero",
-    "organizationDefault": "Predeterminada de la organización",
     "ourChannels": "Nuestros canales",
     "delete": "Eliminar “{name}”",
     "defaultName": "Lista #{number}",
@@ -819,7 +818,13 @@
       "name_taken": "Ya hay una selección con ese nombre.",
       "values_required": "Selecciona algo primero.",
       "save_failed": "No se pudo guardar la selección. Inténtalo de nuevo."
-    }
+    },
+    "groups": {
+      "organization": "De tu organización",
+      "own": "Tuyas"
+    },
+    "organizationHint": "Los canales de tu organización y una lista de palabras clave por tema, sacados de sus fuentes. Las ve todo el mundo en la organización; para cambiarlas, edita las fuentes.",
+    "ownEmpty": "Guarda la selección actual para reutilizarla."
   },
   "timeframes": {
     "select": "Seleccionar período de tiempo",

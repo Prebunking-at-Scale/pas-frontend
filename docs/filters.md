@@ -78,8 +78,13 @@ under a name and loaded again in one click.
 - The organisation's **defaults** are shared by everyone in it, and built from its
   feeds: **Our channels** (its channel feeds) and one keyword selection per topic,
   named after the topic (e.g. `Migration`). Each organisation only sees its own, so the
-  names don't include it (decided 2026-10-01). Defaults are listed first
-  and can't be deleted here: they change with the feeds. Selections people save can.
+  names don't include it (decided 2026-10-01). Defaults can't be deleted here: they
+  change with the feeds. Selections people save can.
+- The menu lists them in **two headed groups** (decided 2026-11-13), so it's clear
+  which lists are shared and which are private: **From your organization** (the
+  defaults, with an info tooltip saying they come from the feeds and everyone sees
+  them) and **Yours**. The organisation's group is hidden when it has no lists;
+  "Yours" always shows, with a hint on how to save one when it's empty.
 - Loading a channel selection keeps channels outside the selected platforms; the
   filter counts them, and they simply match nothing while that platform filter is on.
 

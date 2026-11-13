@@ -790,7 +790,6 @@
     "confirm": "Enregistrer",
     "namePlaceholder": "Nom de la sélection",
     "nothingToSave": "Sélectionnez d’abord quelque chose",
-    "organizationDefault": "Sélection par défaut de l’organisation",
     "ourChannels": "Nos chaînes",
     "delete": "Supprimer « {name} »",
     "defaultName": "Liste n° {number}",
@@ -806,7 +805,13 @@
       "name_taken": "Une sélection porte déjà ce nom.",
       "values_required": "Sélectionnez d’abord quelque chose.",
       "save_failed": "La sélection n’a pas pu être enregistrée. Réessayez."
-    }
+    },
+    "groups": {
+      "organization": "De votre organisation",
+      "own": "Les vôtres"
+    },
+    "organizationHint": "Les chaînes de votre organisation et une liste de mots-clés par thème, issues de ses sources. Tout le monde dans l’organisation les voit ; pour les modifier, modifiez les sources.",
+    "ownEmpty": "Enregistrez la sélection actuelle pour la réutiliser."
   },
   "alertRules": {
     "title": "Alertes",
