@@ -806,7 +806,6 @@
     "confirm": "Save",
     "namePlaceholder": "Name this selection",
     "nothingToSave": "Select something first",
-    "organizationDefault": "Organization default",
     "ourChannels": "Our channels",
     "delete": "Delete “{name}”",
     "defaultName": "List #{number}",
@@ -822,7 +821,13 @@
       "name_taken": "There's already a selection with that name.",
       "values_required": "Select something first.",
       "save_failed": "The selection couldn't be saved. Try again."
-    }
+    },
+    "groups": {
+      "organization": "From your organization",
+      "own": "Yours"
+    },
+    "organizationHint": "Your organization's channels, and a keyword list per topic, from its media feeds. Everyone in the organization sees them; to change them, edit the feeds.",
+    "ownEmpty": "Save the current selection to reuse it."
   },
   "timeframes": {
     "select": "Select timeframe",
