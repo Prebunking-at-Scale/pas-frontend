@@ -272,6 +272,7 @@
     "keywordFeedCreateSuccess": "Canal de mots-clés créé avec succès",
     "keywordFeedCreateError": "Échec de la création du canal de mots-clés",
     "noTopicsAvailable": "Aucun sujet disponible",
+    "allTopicsHaveFeeds": "Chaque sujet a déjà un canal de mots-clés. Modifiez un canal existant pour changer ses mots-clés.",
     "actions": "Actions",
     "editKeywordFeedTitle": "Modifier le canal de mots-clés",
     "keywordFeedUpdateSuccess": "Canal de mots-clés mis à jour avec succès",

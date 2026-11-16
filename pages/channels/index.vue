@@ -215,6 +215,7 @@
       <KeywordFeedDialog
         v-model:open="showKeywordDialog"
         :feed="editingFeed"
+        :used-topic-ids="keywordFeeds.map(feed => feed.topic_id)"
         @saved="loadMediaFeeds"
       />
 

@@ -265,6 +265,7 @@
     "keywordFeedCreateSuccess": "Keyword channel created successfully",
     "keywordFeedCreateError": "Failed to create keyword channel",
     "noTopicsAvailable": "No topics available",
+    "allTopicsHaveFeeds": "Every topic already has a keyword feed. Edit an existing feed to change its keywords.",
     "actions": "Actions",
     "editKeywordFeedTitle": "Edit keyword channel",
     "keywordFeedUpdateSuccess": "Keyword channel updated successfully",

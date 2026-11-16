@@ -265,6 +265,7 @@
     "keywordFeedCreateSuccess": "Canal de palabras clave creado correctamente",
     "keywordFeedCreateError": "Error al crear el canal de palabras clave",
     "noTopicsAvailable": "No hay temas disponibles",
+    "allTopicsHaveFeeds": "Todos los temas ya tienen un canal de palabras clave. Edita un canal existente para cambiar sus palabras clave.",
     "actions": "Acciones",
     "editKeywordFeedTitle": "Editar canal de palabras clave",
     "keywordFeedUpdateSuccess": "Canal de palabras clave actualizado correctamente",

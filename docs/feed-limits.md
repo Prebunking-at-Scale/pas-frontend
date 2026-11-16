@@ -6,4 +6,6 @@ The channels page shows "N of LIMIT used" under each section heading and disable
 
 The API is the source of truth. If a create or edit goes over the limit (for example, adding several keywords to an existing feed), it returns a 400 and the dialog shows the API's message.
 
+An organisation can have one active keyword feed per topic, so the add dialog only lists topics without one.
+
 `limits` is optional in `MediaFeedsResponse` so the page still works against a core-api deployed before the limits existed. In that case no usage is shown.

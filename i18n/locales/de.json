@@ -234,6 +234,7 @@
     "keywordFeedCreateSuccess": "Stichwort-Kanal erfolgreich erstellt",
     "keywordFeedCreateError": "Stichwort-Kanal konnte nicht erstellt werden",
     "noTopicsAvailable": "Keine Themen verfügbar",
+    "allTopicsHaveFeeds": "Jedes Thema hat bereits einen Stichwort-Kanal. Bearbeiten Sie einen bestehenden Kanal, um seine Stichwörter zu ändern.",
     "actions": "Aktionen",
     "editKeywordFeedTitle": "Stichwort-Kanal bearbeiten",
     "keywordFeedUpdateSuccess": "Stichwort-Kanal erfolgreich aktualisiert",
