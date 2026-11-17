@@ -231,7 +231,7 @@
   },
   "channels": {
     "limitUsage": "{count} de {limit} en uso",
-    "limitReached": "Límite alcanzado. Archiva algunos antes de añadir más.",
+    "limitReached": "Límite alcanzado. Archiva algunos o contáctanos para aumentarlo.",
     "title": "Canales",
     "channelFeeds": "Canales",
     "keywordFeeds": "Palabras clave",

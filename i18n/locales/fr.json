@@ -238,7 +238,7 @@
   },
   "channels": {
     "limitUsage": "{count} sur {limit} utilisés",
-    "limitReached": "Limite atteinte. Archivez-en avant d'en ajouter d'autres.",
+    "limitReached": "Limite atteinte. Archivez-en quelques-uns ou contactez-nous pour l'augmenter.",
     "title": "Chaînes",
     "channelFeeds": "Chaînes",
     "keywordFeeds": "Mots-clés",

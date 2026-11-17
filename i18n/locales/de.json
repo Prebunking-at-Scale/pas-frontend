@@ -200,7 +200,7 @@
   },
   "channels": {
     "limitUsage": "{count} von {limit} genutzt",
-    "limitReached": "Limit erreicht. Archivieren Sie einige, bevor Sie weitere hinzufügen.",
+    "limitReached": "Limit erreicht. Archivieren Sie einige oder kontaktieren Sie uns, um das Limit zu erhöhen.",
     "title": "Kanäle",
     "channelFeeds": "Kanäle",
     "keywordFeeds": "Stichwörter",
