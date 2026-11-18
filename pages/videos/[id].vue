@@ -340,6 +340,13 @@ const videoEmbedUrl = computed(() => {
   return null;
 });
 
+// Arriving from a claim: open the YouTube player paused at the claim's second, not on
+// its cover (docs/video-start-paused.md).
+const youtubeStartSeconds = computed(() =>
+  videoEmbedUrl.value?.startsWith('https://www.youtube.com/embed/') ? requestedStartSeconds.value : null
+);
+useYouTubePausedStart(videoPlayer, youtubeStartSeconds);
+
 // Methods
 const loadVideoData = async () => {
   try {

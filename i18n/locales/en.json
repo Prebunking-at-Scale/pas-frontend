@@ -3,6 +3,7 @@
     "title": "Prebunking at Scale"
   },
   "common": {
+    "opensInNewTab": "opens in a new tab",
     "yes": "Yes",
     "no": "No",
     "back": "Back",
