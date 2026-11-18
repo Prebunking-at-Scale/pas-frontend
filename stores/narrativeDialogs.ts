@@ -150,27 +150,9 @@ export const useNarrativeDialogsStore = defineStore('narrativeDialogs', {
           console.error('No actual narrative to merge from.')
           return
         }
-        const actualClaims = this.mergeDialog.actualNarrative.claims || []
-        const actualTopics = this.mergeDialog.actualNarrative.topics || []
-  
-        const targetClaims = selectedNarrative.claims || []
-        const targetTopics = selectedNarrative.topics || []
-  
-        // Merge claims and topics, avoiding duplicates by ID
-        const actualClaimIds = actualClaims.map(c => c.id)
-        const targetClaimIds = targetClaims.map(c => c.id)
-        const mergedClaims = Array.from(new Set([...actualClaimIds, ...targetClaimIds]))
-        
-        const actualTopicIds = actualTopics.map(t => t.id)
-        const targetTopicIds = targetTopics.map(t => t.id)
-        const mergedTopics = Array.from(new Set([...actualTopicIds, ...targetTopicIds]))
-  
-        await apiService.updateNarrative(selectedNarrative.id, {
-          claim_ids: mergedClaims,
-          topic_ids: mergedTopics
-        })
-  
-        await apiService.deleteNarrative(this.mergeDialog.actualNarrative!.id)
+        // core-api moves every claim, topic and entity, and alerts that followed this
+        // narrative follow the target (POST /api/narratives/{id}/merge)
+        await apiService.mergeNarrative(this.mergeDialog.actualNarrative.id, selectedNarrative.id)
   
         toast.add({
           color: 'success',

@@ -71,3 +71,26 @@ describe('formatZScore', () => {
     expect(formatZScore(-2, 1)).toBe('-2.0');
   });
 });
+
+describe('zScores against a separate population', () => {
+  it('scores every value against the population it is given', () => {
+    // The chart inserts vertices to draw a step; they are drawing instructions, not
+    // observations, so they must not move the mean the scores are measured from.
+    const measured = [0, 10];             // mean 5
+    const withVertex = [0, 0, 10];        // a lead vertex duplicating the first point
+    const scored = zScores(withVertex, measured);
+    expect(scored[0]).toBeCloseTo(-1);
+    expect(scored[1]).toBeCloseTo(-1);    // the vertex sits where its real twin does
+    expect(scored[2]).toBeCloseTo(1);
+    // Scored against itself the mean would drop to 3.33 and the first point to -0.7.
+    expect(zScores(withVertex)[0]).not.toBeCloseTo(-1);
+  });
+
+  it('falls back to the values themselves when no population is given', () => {
+    expect(zScores([0, 10])).toEqual(zScores([0, 10], [0, 10]));
+  });
+
+  it('is flat when the population never moves', () => {
+    expect(zScores([5, 5, 5], [5, 5])).toEqual([0, 0, 0]);
+  });
+});

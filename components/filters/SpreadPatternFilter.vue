@@ -1,6 +1,8 @@
 <template>
   <div class="space-y-2">
-    <Label>{{ label || $t('narratives.spreadPattern') }}</Label>
+    <div class="flex h-6 items-center">
+      <Label>{{ label || $t('narratives.spreadPattern') }}</Label>
+    </div>
     <TooltipProvider :delay-duration="150">
       <div class="flex flex-wrap md:flex-nowrap gap-2">
         <Tooltip v-for="pattern in PATTERNS" :key="pattern">

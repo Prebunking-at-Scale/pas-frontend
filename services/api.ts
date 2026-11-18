@@ -1,5 +1,5 @@
 // API Service with mock data
-import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Alert, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeSpreadPattern } from '~/types/api';
+import { type Video, type VideoFilters, type CursorResponse, type JSONResponse, type Narrative, type NarrativeSummary, type NarrativeDetail, type NarrativeStatsResponse, type Actor, type Entity, type Topic, type User, type Claim, type TopicWithStats, type PaginatedResponse, type VideoDetailResponse, type NarrativePatch, type NarrativeFeedback, type NarrativeFeedbackSummary, type ClaimFeedback, type LanguageListResponse, type MediaFeedsResponse, type ChannelFeed, type KeywordFeed, type CreateChannelFeedRequest, type CreateChannelFeedFromUrlRequest, type CreateKeywordFeedRequest, type UpdateKeywordFeedRequest, type NarrativeAnalysisIndicatorsResponse, NarrativeSpreadPattern } from '~/types/api';
 import { useApi } from '~/composables/useApi';
 
 // API calls now go through our frontend proxy to hide the API key
@@ -240,9 +240,13 @@ export const apiService = {
     text?: string;
     language?: string;
     spread_pattern?: NarrativeSpreadPattern[];
+    /** ISO date-times bounding the dates of a narrative's claims. */
+    start_date?: string;
+    end_date?: string;
     sort?: string;
-    startDate?: Date;
-    endDate?: Date;
+    /** Bounds on the narrative's own creation date (n.created_at). */
+    createdStart?: Date;
+    createdEnd?: Date;
   }): Promise<PaginatedResponse<NarrativeSummary>> {
     const limit = params?.limit || 20;
     const offset = params?.offset || 0;
@@ -273,16 +277,25 @@ export const apiService = {
       if (params?.spread_pattern && params.spread_pattern.length > 0) {
         query.spread_pattern = params.spread_pattern;
       }
+      // Bounds the claims, not the narrative record: one created long ago still matches
+      // while it keeps picking up content inside the window.
+      if (params?.start_date) {
+        query.start_date = params.start_date;
+      }
+      if (params?.end_date) {
+        query.end_date = params.end_date;
+      }
       // sort=composite ranks by latest composite virality score (top first)
       if (params?.sort) {
         query.sort = params.sort;
       }
-      // Bounds on the narrative's creation date (n.created_at)
-      if (params?.startDate) {
-        query.start_date = params.startDate.toISOString();
+      // Bounds on the narrative's creation date (n.created_at): core-api's
+      // created_start/created_end, since start_date/end_date are about the claims.
+      if (params?.createdStart) {
+        query.created_start = params.createdStart.toISOString();
       }
-      if (params?.endDate) {
-        query.end_date = params.endDate.toISOString();
+      if (params?.createdEnd) {
+        query.created_end = params.createdEnd.toISOString();
       }
 
       const response = await apiFetch('/api/narratives', {
@@ -444,103 +457,10 @@ export const apiService = {
     }
   },
 
-  // Alerts endpoints - using authenticated fetch
-  async getAlerts(params?: {
-    enabled_only?: boolean;
-    limit?: number;
-    offset?: number;
-  }): Promise<{ items: Alert[]; total: number; limit: number; offset: number }> {
-    try {
-      // Import useApi inside the function to get proper context
-      const { apiFetch } = useApi();
-      
-      const query: any = {
-        limit: params?.limit || 100,
-        offset: params?.offset || 0
-      };
-      
-      if (params?.enabled_only) {
-        query.enabled_only = true;
-      }
-      
-      const response = await apiFetch('/api/alerts', {
-        method: 'GET',
-        query
-      }) as { data: Alert[]; total: number; page: number; size: number };
-      
-      // Transform the API response to match our expected format
-      return {
-        items: response.data || [],
-        total: response.total || 0,
-        limit: response.size || (params?.limit || 100),
-        offset: params?.offset || 0
-      };
-    } catch (error) {
-      console.error('Failed to fetch alerts:', error);
-      // Return empty response on error
-      return {
-        items: [],
-        total: 0,
-        limit: params?.limit || 100,
-        offset: params?.offset || 0
-      };
-    }
-  },
-
-  async getAlert(alertId: string): Promise<Alert> {
-    try {
-      const { apiFetch } = useApi();
-      const response = await apiFetch(`/api/alerts/${alertId}`, {
-        method: 'GET'
-      });
-      
-      return response as Alert;
-    } catch (error) {
-      console.error('Failed to fetch alert:', error);
-      throw error;
-    }
-  },
-
-  async createAlert(alert: Omit<Alert, 'id' | 'created_at' | 'updated_at' | 'organisation_id' | 'user_id'>): Promise<Alert> {
-    try {
-      const { apiFetch } = useApi();
-      const response = await apiFetch('/api/alerts', {
-        method: 'POST',
-        body: alert
-      });
-      
-      return response as Alert;
-    } catch (error) {
-      console.error('Failed to create alert:', error);
-      throw error;
-    }
-  },
-
-  async updateAlert(alertId: string, updates: Partial<Alert>): Promise<Alert> {
-    try {
-      const { apiFetch } = useApi();
-      const response = await apiFetch(`/api/alerts/${alertId}`, {
-        method: 'PATCH',
-        body: updates
-      });
-      
-      return response as Alert;
-    } catch (error) {
-      console.error('Failed to update alert:', error);
-      throw error;
-    }
-  },
-
-  async deleteAlert(alertId: string): Promise<void> {
-    try {
-      const { apiFetch } = useApi();
-      await apiFetch(`/api/alerts/${alertId}`, {
-        method: 'DELETE'
-      });
-    } catch (error) {
-      console.error('Failed to delete alert:', error);
-      throw error;
-    }
+  /** Merges a narrative into another and deletes it; alerts that followed it follow the target. */
+  async mergeNarrative(narrativeId: string, intoId: string): Promise<void> {
+    const { apiFetch } = useApi();
+    await apiFetch(`/api/narratives/${narrativeId}/merge`, { method: 'POST', body: { into: intoId } });
   },
 
   // Entity endpoints

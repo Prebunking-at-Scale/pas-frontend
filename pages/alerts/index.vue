@@ -1,120 +1,114 @@
 <template>
-  <div class="container mx-auto py-6">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold">{{ $t('alerts.title') }}</h1>
-      <Button @click="openCreateDialog">
-        <Plus class="mr-2 h-4 w-4" />
-        {{ $t('alerts.create_new') }}
-      </Button>
-    </div>
-
-    <div class="space-y-4">
-      <Card v-for="alert in alerts" :key="alert.id">
-        <CardHeader>
-          <div class="flex justify-between items-start">
-            <div class="mt-6 text-lg">
-              <CardTitle>{{ alert.name }}</CardTitle>
-              <CardDescription class="mt-4">
-                <Badge :variant="alert.scope === 'general' ? 'default' : 'secondary'" class="mr-2">
-                  {{ $t(`alerts.scope.${alert.scope}`) }}
-                </Badge>
-                <Badge variant="outline">
-                  {{ $t(`alerts.type.${alert.alert_type}`) }}
-                  <span v-if="alert.threshold" class="ml-1">
-                    ({{ alert.threshold }})
-                  </span>
-                </Badge>
-              </CardDescription>
-            </div>
-            <div class="flex items-center space-x-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <Button variant="ghost" size="icon">
-                    <MoreVertical class="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem @click="openEditDialog(alert)">
-                    <Edit class="mr-2 h-4 w-4" />
-                    {{ $t('common.edit') }}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem @click="confirmDelete(alert)" class="text-red-600">
-                    <Trash class="mr-2 h-4 w-4" />
-                    {{ $t('common.delete') }}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div class="grid grid-cols-2 gap-2 text-sm">
-            <div v-if="alert.keyword">
-              <span class="text-muted-foreground">{{ $t('alerts.keyword') }}:</span>
-              <span class="ml-2 font-medium">{{ alert.keyword }}</span>
-            </div>
-            <div v-if="alert.topic_id">
-              <span class="text-muted-foreground">{{ $t('alerts.topic') }}:</span>
-              <span class="ml-2 font-medium">{{ getTopicName(alert.topic_id) }}</span>
-            </div>
-            <div v-if="alert.narrative_id">
-              <span class="text-muted-foreground">{{ $t('alerts.narrative') }}:</span>
-              <NuxtLink :to="`/narratives/${alert.narrative_id}`" class="ml-2 font-medium text-primary hover:underline">
-                {{ getNarrativeName(alert.narrative_id) }}
-              </NuxtLink>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div v-if="alerts.length === 0" class="text-center py-12">
-        <AlertCircle class="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <p class="text-muted-foreground">{{ $t('alerts.no_alerts') }}</p>
+  <div>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <p class="max-w-2xl text-sm text-gray-600">{{ $t('alertRules.intro') }}</p>
+      <div class="flex gap-2">
+        <Button variant="outline" class="cursor-pointer" :disabled="alerts.length === 0" @click="showDigest = true">
+          <Mail class="h-4 w-4" />
+          {{ $t('alertRules.previewDigest') }}
+        </Button>
+        <NuxtLink to="/alerts/new" :class="buttonVariants()">
+          <Plus class="h-4 w-4" />
+          {{ $t('alertRules.newAlert') }}
+        </NuxtLink>
       </div>
     </div>
 
-    <AlertDialog :open="showDeleteDialog" @update:open="showDeleteDialog = $event">
+    <div v-if="loading" class="py-8 text-center">
+      <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-green-600" />
+    </div>
+
+    <p v-else-if="failed" class="py-12 text-center text-red-700">{{ $t('alertRules.loadFailed') }}</p>
+
+    <p v-else-if="alerts.length === 0" class="py-12 text-center text-gray-500">{{ $t('alertRules.noAlerts') }}</p>
+
+    <div v-else class="space-y-3">
+      <div
+        v-for="alert in alerts"
+        :key="alert.id"
+        class="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm"
+        :class="{ 'opacity-60': !alert.enabled }"
+      >
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="min-w-0">
+            <NuxtLink :to="`/alerts/${alert.id}`" class="min-w-0">
+              <h2 class="text-lg font-semibold text-gray-900 hover:underline">{{ alert.name }}</h2>
+            </NuxtLink>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="flex items-center gap-2 text-sm text-gray-600">
+              <Switch :model-value="alert.enabled" @update:model-value="toggle(alert, $event)" />
+              {{ alert.enabled ? $t('alertRules.list.enabled') : $t('alertRules.list.disabled') }}
+            </label>
+            <NuxtLink
+              :to="`/alerts/${alert.id}`"
+              :class="buttonVariants({ variant: 'ghost', size: 'icon' })"
+              :aria-label="$t('alertRules.editAlert')"
+            >
+              <Pencil class="h-4 w-4" />
+            </NuxtLink>
+            <Button
+              variant="ghost"
+              size="icon"
+              class="cursor-pointer hover:text-red-700"
+              :aria-label="$t('alertRules.list.delete')"
+              @click="toDelete = alert"
+            >
+              <Trash2 class="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <!-- Conditions, combined with OR -->
+        <div class="mt-3 space-y-1.5">
+          <template v-for="(c, i) in alert.conditions" :key="c.id">
+            <p v-if="i > 0" class="text-xs font-semibold uppercase text-gray-400">{{ $t('alertRules.or') }}</p>
+            <div class="flex flex-wrap items-center gap-2 rounded-md bg-stone-50 p-1.5">
+              <AlertTypeBadge :type="c.type" />
+              <span v-if="c.narrative_id" class="text-sm text-gray-700">
+                {{ $t('alertRules.list.belongsTo', { title: titles[c.narrative_id] ?? '…' }) }}
+              </span>
+              <AlertConditionSummary :type="c.type" :filters="c.filters" />
+            </div>
+          </template>
+        </div>
+
+        <p class="mt-3 text-xs text-gray-500">
+          {{ alert.last_match_at
+            ? $t('alertRules.list.lastMatch', { date: formatDate(alert.last_match_at, locale) })
+            : $t('alertRules.list.neverMatched') }}
+        </p>
+      </div>
+    </div>
+
+    <DigestPreviewDialog v-model:open="showDigest" :alerts="alerts" />
+
+    <AlertDialog :open="toDelete !== null" @update:open="(open) => { if (!open) toDelete = null }">
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{{ $t('alerts.delete_confirmation_title') }}</AlertDialogTitle>
+          <AlertDialogTitle>{{ $t('alertRules.list.deleteTitle') }}</AlertDialogTitle>
           <AlertDialogDescription>
-            {{ $t('alerts.delete_confirmation_message', { name: selectedAlert?.name }) }}
+            {{ $t('alertRules.list.deleteMessage', { name: toDelete?.name }) }}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
-          <AlertDialogAction @click="deleteSelectedAlert" class="bg-destructive text-white hover:bg-destructive/80">
+          <AlertDialogAction class="bg-destructive text-white hover:bg-destructive/80" @click="remove">
             {{ $t('common.delete') }}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-
-    <AlertFormDialog
-      v-model:open="showFormDialog"
-      :alert="selectedAlert"
-      :mode="formMode"
-      @save="handleSave"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Plus, MoreVertical, Edit, Trash, AlertCircle } from 'lucide-vue-next'
-import type { Alert } from '~/types/alert'
-import { apiService } from '~/services/api'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+// Your alerts (docs/alerts.md): each with its conditions, combined with OR, newest
+// first, the order of the daily e-mail too. Only yours: nobody else sees them.
+import { Mail, Pencil, Plus, Trash2 } from 'lucide-vue-next'
+import { Button, buttonVariants } from '~/components/ui/button'
+import { Switch } from '~/components/ui/switch'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -123,154 +117,82 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog'
-import AlertFormDialog from '~/components/AlertFormDialog.vue'
+  AlertDialogTitle,
+} from '~/components/ui/alert-dialog'
+import AlertTypeBadge from '~/components/alerts/AlertTypeBadge.vue'
+import AlertConditionSummary from '~/components/alerts/AlertConditionSummary.vue'
+import DigestPreviewDialog from '~/components/alerts/DigestPreviewDialog.vue'
+import { alertsService } from '~/services/alerts'
+import { apiService } from '~/services/api'
+import { formatDate } from '~/utils/date'
+import type { Alert } from '~/utils/alertRules'
 
-const { t } = useI18n()
-const { fetchAlerts, deleteAlert } = useAlerts()
-const toast = useToast()
+definePageMeta({ middleware: 'auth' })
+
+const { t, locale } = useI18n()
+const { setPageHeader, clearPageHeader } = usePageHeader()
+const { load: loadOptions, resolveEntities } = useSearchFilterOptions()
 
 const alerts = ref<Alert[]>([])
-const showDeleteDialog = ref(false)
-const showFormDialog = ref(false)
-const selectedAlert = ref<Alert | null>(null)
-const formMode = ref<'create' | 'edit'>('create')
-const narrativesMap = ref<Map<string, any>>(new Map())
-const topicsMap = ref<Map<string, any>>(new Map())
+const loading = ref(true)
+const failed = ref(false)
+const showDigest = ref(false)
+const toDelete = ref<Alert | null>(null)
 
-const loadAlerts = async () => {
-  try {
-    const response = await fetchAlerts()
-    alerts.value = response.items
-    
-    // Load narratives for alerts that have narrative_id
-    await loadNarrativesForAlerts()
-    
-    // Load topics for alerts that have topic_id
-    await loadTopicsForAlerts()
-  } catch (error) {
-    toast.add({
-      title: t('common.error'),
-      description: t('alerts.fetch_error'),
-      color: 'error'
-    })
-  }
-}
-
-const loadNarrativesForAlerts = async () => {
-  const narrativeIds = [...new Set(alerts.value
-    .filter(a => a.narrative_id)
-    .map(a => a.narrative_id!))]
-  
-  for (const id of narrativeIds) {
-    if (!narrativesMap.value.has(id)) {
-      try {
-        const narrative = await apiService.getNarrative(id)
-        narrativesMap.value.set(id, narrative)
-      } catch (error) {
-        console.error(`Failed to load narrative ${id}:`, error)
-      }
-    }
-  }
-}
-
-const loadTopicsForAlerts = async () => {
-  const topicIds = [...new Set(alerts.value
-    .filter(a => a.topic_id)
-    .map(a => a.topic_id!))]
-  
-  if (topicIds.length > 0) {
+// Titles of the narratives conditions follow, shared with the narrative picker
+const titles = useState<Record<string, string>>('alerts:narrativeTitles', () => ({}))
+const loadTitles = async () => {
+  const ids = [...new Set(alerts.value.flatMap(a => a.conditions.map(c => c.narrative_id)).filter(Boolean))] as string[]
+  await Promise.allSettled(ids.filter(id => !titles.value[id]).map(async (id) => {
     try {
-      const response = await apiService.getTopicsWithStats({ limit: 100 })
-      response.data.forEach(topic => {
-        if (topicIds.includes(topic.id)) {
-          topicsMap.value.set(topic.id, topic)
-        }
-      })
-    } catch (error) {
-      console.error('Failed to load topics:', error)
+      titles.value = { ...titles.value, [id]: (await apiService.getNarrative(id)).title }
+    } catch {
+      titles.value = { ...titles.value, [id]: id }
     }
-  }
+  }))
 }
 
-const openCreateDialog = () => {
-  selectedAlert.value = null
-  formMode.value = 'create'
-  showFormDialog.value = true
-}
-
-const openEditDialog = (alert: Alert) => {
-  selectedAlert.value = alert
-  formMode.value = 'edit'
-  showFormDialog.value = true
-}
-
-const confirmDelete = (alert: Alert) => {
-  selectedAlert.value = alert
-  showDeleteDialog.value = true
-}
-
-const deleteSelectedAlert = async () => {
-  if (!selectedAlert.value) return
-
+const load = async () => {
   try {
-    await deleteAlert(selectedAlert.value.id)
-    alerts.value = alerts.value.filter(a => a.id !== selectedAlert.value!.id)
-    toast.add({
-      title: t('common.success'),
-      description: t('alerts.delete_success')
-    })
+    alerts.value = await alertsService.list()
+    resolveEntities(alerts.value.flatMap(a => a.conditions.flatMap(c => c.filters.entity_id ?? [])))
+    loadTitles()
   } catch (error) {
-    toast.add({
-      title: t('common.error'),
-      description: t('alerts.delete_error'),
-      color: 'error'
-    })
+    console.error('Failed to load alerts:', error)
+    failed.value = true
   } finally {
-    showDeleteDialog.value = false
-    selectedAlert.value = null
+    loading.value = false
   }
 }
 
-
-const handleSave = async (alert: Alert) => {
-  if (formMode.value === 'create') {
-    alerts.value.unshift(alert)
-  } else {
-    const index = alerts.value.findIndex(a => a.id === alert.id)
-    if (index !== -1) {
-      alerts.value[index] = alert
-    }
-  }
-  showFormDialog.value = false
-  
-  // Load narrative/topic data for the new/updated alert if needed
-  if (alert.narrative_id && !narrativesMap.value.has(alert.narrative_id)) {
-    try {
-      const narrative = await apiService.getNarrative(alert.narrative_id)
-      narrativesMap.value.set(alert.narrative_id, narrative)
-    } catch (error) {
-      console.error(`Failed to load narrative ${alert.narrative_id}:`, error)
-    }
-  }
-  
-  if (alert.topic_id && !topicsMap.value.has(alert.topic_id)) {
-    await loadTopicsForAlerts()
+const toggle = async (alert: Alert, enabled: boolean) => {
+  try {
+    Object.assign(alert, await alertsService.update(alert.id, { ...alert, enabled }))
+  } catch (error) {
+    console.error('Failed to update alert:', error)
   }
 }
 
-const getTopicName = (topicId: string) => {
-  const topic = topicsMap.value.get(topicId)
-  return topic ? topic.topic : topicId
-}
-
-const getNarrativeName = (narrativeId: string) => {
-  const narrative = narrativesMap.value.get(narrativeId)
-  return narrative ? (narrative.title || narrative.description || narrativeId) : narrativeId
+const remove = async () => {
+  if (!toDelete.value) return
+  const id = toDelete.value.id
+  try {
+    await alertsService.remove(id)
+    alerts.value = alerts.value.filter(a => a.id !== id)
+  } catch (error) {
+    console.error('Failed to delete alert:', error)
+  } finally {
+    toDelete.value = null
+  }
 }
 
 onMounted(() => {
-  loadAlerts()
+  setPageHeader({ title: t('alertRules.title') })
+  loadOptions()
+  load()
+})
+
+onBeforeUnmount(() => {
+  clearPageHeader()
 })
 </script>
