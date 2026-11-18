@@ -9,6 +9,7 @@ vi.hoisted(async () => {
   Object.assign(globalThis, {
     computed: vue.computed,
     useRouter: () => ({ resolve: (to: string) => ({ href: to }) }),
+    useI18n: () => ({ t: (key: string) => key }),
   })
 })
 
@@ -35,23 +36,25 @@ const click = async (target: Element, init: MouseEventInit = {}) => {
 }
 
 describe('CardLink', () => {
-  it('is a real link to the card’s page, named after it', () => {
+  it('is a real link to the card’s page, named after it and saying it opens a new tab', () => {
     const link = mountInCard(vi.fn()).get('a')
     expect(link.attributes('href')).toBe('/narratives/n1')
-    expect(link.attributes('aria-label')).toBe('A narrative')
+    expect(link.attributes('aria-label')).toBe('A narrative (common.opensInNewTab)')
   })
 
-  it('leaves a plain click to the card’s own handler', async () => {
-    const onCardClick = vi.fn()
-    const event = await click(mountInCard(onCardClick).get('a').element)
-    expect(event.defaultPrevented).toBe(true)
-    expect(onCardClick).toHaveBeenCalledOnce()
+  it('opens in a new tab, without access back to this page', () => {
+    const link = mountInCard(vi.fn()).get('a')
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toBe('noopener')
   })
 
-  it.each(['ctrlKey', 'metaKey', 'shiftKey'] as const)('leaves a %s click to the browser (new tab)', async (key) => {
-    const onCardClick = vi.fn()
-    const event = await click(mountInCard(onCardClick).get('a').element, { [key]: true })
-    expect(event.defaultPrevented).toBe(false)
-    expect(onCardClick).not.toHaveBeenCalled()
-  })
+  it.each([{}, { ctrlKey: true }, { metaKey: true }, { shiftKey: true }])(
+    'leaves a click (%o) to the browser and keeps it from the card’s handler',
+    async (init) => {
+      const onCardClick = vi.fn()
+      const event = await click(mountInCard(onCardClick).get('a').element, init)
+      expect(event.defaultPrevented).toBe(false)
+      expect(onCardClick).not.toHaveBeenCalled()
+    },
+  )
 })

@@ -17,13 +17,19 @@ the whole card (the card is `relative`, the link `absolute inset-0`).
 
 ## How clicks behave
 
-- **Plain click:** unchanged. The link cancels its own navigation and the card's click
-  handler runs as before, so lists that remember their page and filters before leaving
-  (narratives, claims) keep doing so.
-- **Ctrl/Cmd, Shift or Alt-click:** left to the browser (new tab or window); the card's
-  handler doesn't run.
-- **Middle click and right-click → Open in new tab:** handled by the browser, from the
-  link's `href`.
+Every card opens its page **in a new tab** (`target="_blank"`, `rel="noopener"`), so the
+list you came from stays where it was, with its page and filters.
+
+- **Plain click, middle click, Ctrl/Cmd-click:** new tab (the browser decides whether it
+  is focused or opened in the background, as for any link).
+- **Shift-click:** new window. **Right-click:** the browser's link menu.
+- The link stops the click, so the card's own click handler (and the pages listening to
+  it) doesn't also navigate the current tab.
+- The link's accessible name adds "opens in a new tab" (`common.opensInNewTab`, in all
+  four languages), so screen readers announce it.
+
+History: the first version (PR #68) kept a plain click in the same tab and only gave the
+browser modified clicks; the user asked for a new tab on a plain click too.
 
 Controls inside a card (topic chips, the video line, the narrative line, action buttons,
 the rating, the video player) sit above the link (`relative z-10`) so they keep working
