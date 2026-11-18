@@ -1,9 +1,10 @@
 <template>
 
 <Card 
-  class="hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
+  class="relative hover:shadow-lg transition-shadow p-0 m-0 cursor-pointer"
   @click="$emit('click')"
 >
+    <CardLink :to="`/narratives/${narrative.id}`" :label="narrative.title" />
     <CardContent class="p-4 flex justify-between flex-col gap-8 h-full">
       <!-- Claim Text -->
       <div class="mb-4">
@@ -55,7 +56,7 @@
               v-for="topic in narrative.topics"
               :key="topic.id"
               :to="`/topics/${topic.id}`"
-              class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer"
+              class="relative z-10 px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition-colors cursor-pointer"
               @click.stop>
               {{ topic.topic }}
             </NuxtLink>
@@ -65,7 +66,7 @@
         <!-- Rating (bottom-right corner) -->
         <NarrativeRating
           v-if="isSummary"
-          class="ml-auto"
+          class="relative z-10 ml-auto"
           :average-score="rating.averageScore"
           :score-count="rating.scoreCount"
         />
@@ -80,6 +81,7 @@
 import type { Narrative, NarrativeSummary, NarrativeSpreadPattern } from '~/types/api';
 import { calculateNarrativeStats, formatNumber } from '~/utils/narrativeStats';
 import SpreadPatternBadge from '~/components/SpreadPatternBadge.vue';
+import CardLink from '~/components/CardLink.vue';
 import { normalizeSpreadPattern } from '~/utils/spreadPatterns';
 
 interface Props {
