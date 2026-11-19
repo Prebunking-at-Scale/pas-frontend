@@ -37,6 +37,12 @@
         :placeholder="$t('videos.selectLanguage')"
         type="select"
       />
+
+      <DateRangeFilter
+        class="w-full md:w-80"
+        v-model="filters.date_range"
+        id="claims-date-range"
+      />
     </FilterCard>
 
     <!-- Disclaimer -->
@@ -125,6 +131,9 @@ import TopicFilter from '~/components/filters/TopicFilter.vue';
 import KeywordsFilter from '~/components/filters/KeywordsFilter.vue';
 import LanguageFilter from '~/components/filters/LanguageFilter.vue';
 import RangeSlider from '~/components/filters/RangeSlider.vue';
+import DateRangeFilter from '~/components/filters/DateRangeFilter.vue';
+import type { DateRange } from '~/types/filters';
+import { startOfDayISO, endOfDayISO } from '~/utils/date';
 
 definePageMeta({
   layout: 'default',
@@ -156,12 +165,15 @@ const claims = ref<PaginatedResponse<Claim>>({
 });
 const loading = ref(true);
 
+const emptyDateRange = (): DateRange => ({ start: null, end: null });
+
 // Filters - separate UI state from applied state
 const filters = ref({
   topic_id: null as string | null,
   text: [] as string[],
   range: defaultRange(),
-  language: 'all'
+  language: 'all',
+  date_range: emptyDateRange()
 });
 
 // Applied filters - these are the filters actually being used for data fetching
@@ -169,7 +181,8 @@ const appliedFilters = ref({
   topic_id: null as string | null,
   text: [] as string[],
   range: defaultRange(),
-  language: 'all'
+  language: 'all',
+  date_range: emptyDateRange()
 });
 
 // Current topic is based on APPLIED filters, not UI filters
@@ -182,7 +195,9 @@ const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
          appliedFilters.value.text.length > 0 ||
-         (appliedFilters.value.range[0] !== SCORE_DEFAULT_MIN || appliedFilters.value.range[1] !== SCORE_MAX);
+         (appliedFilters.value.range[0] !== SCORE_DEFAULT_MIN || appliedFilters.value.range[1] !== SCORE_MAX) ||
+         !!appliedFilters.value.date_range.start ||
+         !!appliedFilters.value.date_range.end;
 });
 
 const updatePageHeader = () => {
@@ -269,7 +284,18 @@ const loadClaims = async () => {
     if (appliedFilters.value.range[1] !== SCORE_MAX) {
       params.max_score = appliedFilters.value.range[1];
     }
-    
+
+    // Either end stands alone: a start date on its own reads as "from then on".
+    const startDate = startOfDayISO(appliedFilters.value.date_range.start);
+    if (startDate) {
+      params.start_date = startDate;
+    }
+
+    const endDate = endOfDayISO(appliedFilters.value.date_range.end);
+    if (endDate) {
+      params.end_date = endDate;
+    }
+
     const response = await apiService.getClaims(params);
     claims.value = response;
   } catch (error) {
@@ -297,13 +323,15 @@ const clearFilters = () => {
     topic_id: null,
     text: [],
     range: defaultRange(),
-    language: 'all'
+    language: 'all',
+    date_range: emptyDateRange()
   };
   appliedFilters.value = {
     topic_id: null,
     text: [],
     range: defaultRange(),
-    language: 'all'
+    language: 'all',
+    date_range: emptyDateRange()
   };
   claims.value.page = 1;
   loadClaims();
