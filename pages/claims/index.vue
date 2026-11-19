@@ -30,19 +30,22 @@
         :step="0.1"
       />
 
-      <LanguageFilter
-        class="w-full"
-        v-model="filters.language"
-        :label="$t('videos.language')"
-        :placeholder="$t('videos.selectLanguage')"
-        type="select"
-      />
+      <!-- Its own row, with the date range beside the language as on the narratives page -->
+      <div class="flex w-full flex-wrap gap-4">
+        <LanguageFilter
+          class="w-full md:w-48"
+          v-model="filters.language"
+          :label="$t('videos.language')"
+          :placeholder="$t('videos.selectLanguage')"
+          type="select"
+        />
 
-      <DateRangeFilter
-        class="w-full md:w-80"
-        v-model="filters.date_range"
-        id="claims-date-range"
-      />
+        <DateRangeFilter
+          class="w-full md:w-80"
+          v-model="filters.date_range"
+          id="claims-date-range"
+        />
+      </div>
     </FilterCard>
 
     <!-- Disclaimer -->
