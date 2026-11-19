@@ -41,7 +41,7 @@
         <UTooltip :text="$t('common.unlink')">
           <Button
             v-if="props.showUnlinkAction && props.dialogOpenAction"
-            @click="dialogOpenAction?.(claim)"
+            @click.stop="dialogOpenAction?.(claim)"
             size="icon"
             variant="destructive"
           >
