@@ -6,7 +6,7 @@
       <Input
         :id="startId"
         type="date"
-        class="w-40 scheme-light"
+        class="flex-1 max-w-44 scheme-light"
         :model-value="modelValue.start ?? ''"
         :max="modelValue.end ?? undefined"
         :aria-label="$t('filters.selectStartDate')"
@@ -19,7 +19,7 @@
       <Input
         :id="endId"
         type="date"
-        class="w-40 scheme-light"
+        class="flex-1 max-w-44 scheme-light"
         :model-value="modelValue.end ?? ''"
         :min="modelValue.start ?? undefined"
         :aria-label="$t('filters.selectEndDate')"
