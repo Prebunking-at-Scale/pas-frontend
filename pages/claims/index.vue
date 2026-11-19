@@ -25,8 +25,8 @@
         class="flex-1"
         v-model="filters.range"
         :label="$t('claims.range')"
-        :min="0"
-        :max="5"
+        :min="SCORE_MIN"
+        :max="SCORE_MAX"
         :step="0.1"
       />
 
@@ -140,6 +140,13 @@ definePageMeta({
   middleware: 'auth'
 });
 
+// Priority score range: the slider spans the full scale, but claims are
+// filtered from SCORE_DEFAULT_MIN upwards by default.
+const SCORE_MIN = 0;
+const SCORE_MAX = 5;
+const SCORE_DEFAULT_MIN = 2.5;
+const defaultRange = (): number[] => [SCORE_DEFAULT_MIN, SCORE_MAX];
+
 const route = useRoute();
 const router = useRouter();
 const { $i18n } = useNuxtApp();
@@ -164,7 +171,7 @@ const emptyDateRange = (): DateRange => ({ start: null, end: null });
 const filters = ref({
   topic_id: null as string | null,
   text: [] as string[],
-  range: [0, 5] as number[],
+  range: defaultRange(),
   language: 'all',
   date_range: emptyDateRange()
 });
@@ -173,7 +180,7 @@ const filters = ref({
 const appliedFilters = ref({
   topic_id: null as string | null,
   text: [] as string[],
-  range: [0, 5] as number[],
+  range: defaultRange(),
   language: 'all',
   date_range: emptyDateRange()
 });
@@ -188,7 +195,7 @@ const hasActiveFilters = computed(() => {
   // Only show "Clear all filters" when there are APPLIED filters (not default values)
   return (appliedFilters.value.topic_id !== null && appliedFilters.value.topic_id !== 'all') ||
          appliedFilters.value.text.length > 0 ||
-         (appliedFilters.value.range[0] !== 0 || appliedFilters.value.range[1] !== 5) ||
+         (appliedFilters.value.range[0] !== SCORE_DEFAULT_MIN || appliedFilters.value.range[1] !== SCORE_MAX) ||
          !!appliedFilters.value.date_range.start ||
          !!appliedFilters.value.date_range.end;
 });
@@ -270,11 +277,11 @@ const loadClaims = async () => {
       params.language = appliedFilters.value.language;
     }
     
-    // Add range parameters if not default
-    if (appliedFilters.value.range[0] !== 0) {
+    // Add range parameters whenever they narrow the full score scale
+    if (appliedFilters.value.range[0] !== SCORE_MIN) {
       params.min_score = appliedFilters.value.range[0];
     }
-    if (appliedFilters.value.range[1] !== 5) {
+    if (appliedFilters.value.range[1] !== SCORE_MAX) {
       params.max_score = appliedFilters.value.range[1];
     }
 
@@ -315,14 +322,14 @@ const clearFilters = () => {
   filters.value = {
     topic_id: null,
     text: [],
-    range: [0, 5],
+    range: defaultRange(),
     language: 'all',
     date_range: emptyDateRange()
   };
   appliedFilters.value = {
     topic_id: null,
     text: [],
-    range: [0, 5],
+    range: defaultRange(),
     language: 'all',
     date_range: emptyDateRange()
   };

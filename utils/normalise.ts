@@ -34,10 +34,17 @@ export function stdDev(values: number[]): number {
  * the mean, which is exactly what it is. Returning NaN there (0/0) would blank the line
  * instead, and a missing line reads as missing data rather than as "this never changed".
  */
-export function zScores(values: number[]): number[] {
+export function zScores(values: number[], population?: number[]): number[] {
   if (values.length === 0) return [];
-  const mu = mean(values);
-  const sigma = stdDev(values);
+  // `population` lets the caller score points against a different set than the one
+  // being scored. The chart needs that: it inserts vertices to draw a step, and
+  // those are drawing instructions rather than observations. Scored against
+  // themselves they would pull the mean toward whichever moments happen to have a
+  // step, and "standard deviations from the mean" would be measured against a
+  // population that includes points nobody recorded.
+  const basis = population && population.length > 0 ? population : values;
+  const mu = mean(basis);
+  const sigma = stdDev(basis);
   if (sigma === 0) return values.map(() => 0);
   return values.map(v => (v - mu) / sigma);
 }

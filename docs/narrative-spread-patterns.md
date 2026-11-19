@@ -129,6 +129,21 @@ equivalent exists. A narrative still holding one is unbadged until the next pipe
 run, at most a day. Query parameters are normalised on read, so an old bookmark shows
 an unfiltered list rather than an empty one.
 
+**The dashboard timeframe picks the narratives, not the label.** The overview's
+"Display data from" selector scopes the four spread-pattern sections to narratives
+*created* inside the window (`start_date`/`end_date` on `GET /api/narratives`, which
+bound `n.created_at`). The label each one carries is still its current daily
+classification: there is no per-window pattern to ask for, and inventing one on the
+frontend would mean re-deriving the classifier. So "last week" reads as "of the
+narratives that appeared this week, which are viral / surging / trending /
+consolidated today". Short windows can leave every section empty, since only ~9% of
+narratives are labelled at all, and the dashboard says so rather than showing a blank
+band. The window is resolved against the fetch time and sent as `created_start` /
+`created_end` (core-api's bounds on `n.created_at`; `start_date`/`end_date` are about
+upload dates). "View all" opens the narratives list filtered by the pattern only: the
+list's one date filter, *Date Range*, is on when the narratives' videos were uploaded,
+not on creation, so its count can be larger than the dashboard's (decided 2026-10-01).
+
 ## API contract
 
 `GET /api/narratives/{id}/indicators`
@@ -168,6 +183,7 @@ table; both went stale the moment the pipeline changed.
 ## Related
 
 - `utils/spreadPatterns.ts` — regions, colours, order, normalisation
+- `utils/timeframes.ts` — the relative windows shared by the dashboard and the narratives list
 - `components/NarrativeSpreadQuadrant.vue` — the percentile plane
 - `components/NarrativeAnalysisIndicators.vue` — the detail panel
 - `narrative-spread-pattern-redesign.md` (repo root; originally core-api `docs/`) — why the axes

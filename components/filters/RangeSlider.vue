@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-3">
-    <div class="flex items-center justify-between">
+    <div class="flex h-6 items-center justify-between">
       <Label>{{ label || $t('filters.range') }}</Label>
       <span class="text-sm text-gray-600">
         {{ modelValue[0] }} - {{ modelValue[1] }}
