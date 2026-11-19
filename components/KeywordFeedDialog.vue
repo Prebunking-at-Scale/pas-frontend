@@ -35,11 +35,11 @@
               <div v-if="loadingTopics" class="py-2 px-3 text-sm text-gray-500">
                 {{ $t('common.loading') }}
               </div>
-              <div v-else-if="topics.length === 0" class="py-2 px-3 text-sm text-gray-500">
-                {{ $t('channels.noTopicsAvailable') }}
+              <div v-else-if="availableTopics.length === 0" class="py-2 px-3 text-sm text-gray-500">
+                {{ topics.length === 0 ? $t('channels.noTopicsAvailable') : $t('channels.allTopicsHaveFeeds') }}
               </div>
               <SelectItem
-                v-for="topic in topics"
+                v-for="topic in availableTopics"
                 :key="topic.id"
                 :value="topic.id"
               >
@@ -119,6 +119,8 @@ const { t } = useI18n();
 const props = defineProps<{
   open: boolean;
   feed?: KeywordFeed | null;
+  // An organisation can have one active keyword feed per topic.
+  usedTopicIds?: string[];
 }>();
 
 const emit = defineEmits<{
@@ -138,6 +140,10 @@ const loadingTopics = ref(false);
 const successMessage = ref('');
 const errorMessage = ref('');
 const topics = ref<TopicWithStats[]>([]);
+
+const availableTopics = computed(() =>
+  topics.value.filter(topic => !props.usedTopicIds?.includes(topic.id))
+);
 
 const form = ref({
   topic: ''

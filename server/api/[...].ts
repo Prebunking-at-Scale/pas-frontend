@@ -64,6 +64,11 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 500);
     }
     
+    // Pass the backend's error body through so callers can show its detail
+    if (error.data) {
+      return error.data;
+    }
+
     return {
       error: error.message || 'Internal server error',
       statusCode: error.statusCode || 500

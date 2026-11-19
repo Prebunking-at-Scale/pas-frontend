@@ -200,6 +200,8 @@
     "noSpreadNarratives": "Keine in diesem Zeitraum erstellte Narrative hat bisher ein Verbreitungsmuster. Versuche einen längeren Zeitraum."
   },
   "channels": {
+    "limitUsage": "{count} von {limit} genutzt",
+    "limitReached": "Limit erreicht. Archivieren Sie einige oder kontaktieren Sie uns, um das Limit zu erhöhen.",
     "title": "Kanäle",
     "channelFeeds": "Kanäle",
     "keywordFeeds": "Stichwörter",
@@ -233,6 +235,7 @@
     "keywordFeedCreateSuccess": "Stichwort-Kanal erfolgreich erstellt",
     "keywordFeedCreateError": "Stichwort-Kanal konnte nicht erstellt werden",
     "noTopicsAvailable": "Keine Themen verfügbar",
+    "allTopicsHaveFeeds": "Jedes Thema hat bereits einen Stichwort-Kanal. Bearbeiten Sie einen bestehenden Kanal, um seine Stichwörter zu ändern.",
     "actions": "Aktionen",
     "editKeywordFeedTitle": "Stichwort-Kanal bearbeiten",
     "keywordFeedUpdateSuccess": "Stichwort-Kanal erfolgreich aktualisiert",

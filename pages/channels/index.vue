@@ -13,8 +13,11 @@
       <Card class="bg-white overflow-hidden shadow rounded-lg">
         <CardHeader class="px-4 py-3 sm:p-4">
           <div class="flex justify-between items-center">
-            <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('channels.channelFeeds') }}</CardTitle>
-            <Button class="cursor-pointer" @click="showAddChannelDialog = true">
+            <div>
+              <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('channels.channelFeeds') }}</CardTitle>
+              <FeedLimitUsage v-if="limits" :count="channelCount" :limit="limits.max_channel_feeds" />
+            </div>
+            <Button class="cursor-pointer" :disabled="channelLimitReached" @click="showAddChannelDialog = true">
               <Plus class="mr-2 h-4 w-4" />
               {{ $t('channels.addChannelFeed') }}
             </Button>
@@ -105,8 +108,11 @@
       <Card class="bg-white overflow-hidden shadow rounded-lg">
         <CardHeader class="px-4 py-3 sm:p-4">
           <div class="flex justify-between items-center">
-            <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('channels.keywordFeeds') }}</CardTitle>
-            <Button class="cursor-pointer" @click="openAddKeywordDialog">
+            <div>
+              <CardTitle class="text-lg leading-6 font-medium text-gray-900">{{ $t('channels.keywordFeeds') }}</CardTitle>
+              <FeedLimitUsage v-if="limits" :count="keywordCount" :limit="limits.max_keywords" />
+            </div>
+            <Button class="cursor-pointer" :disabled="keywordLimitReached" @click="openAddKeywordDialog">
               <Plus class="mr-2 h-4 w-4" />
               {{ $t('channels.addKeywordFeed') }}
             </Button>
@@ -209,6 +215,7 @@
       <KeywordFeedDialog
         v-model:open="showKeywordDialog"
         :feed="editingFeed"
+        :used-topic-ids="keywordFeeds.map(feed => feed.topic_id)"
         @saved="loadMediaFeeds"
       />
 
@@ -259,7 +266,7 @@
 
 <script setup lang="ts">
 import { Plus, MoreVertical, Pencil, Archive } from 'lucide-vue-next';
-import type { ChannelFeed, KeywordFeed } from '~/types/api';
+import type { ChannelFeed, FeedLimits, KeywordFeed } from '~/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import {
@@ -292,6 +299,7 @@ const toast = useToast();
 
 const channelFeeds = ref<ChannelFeed[]>([]);
 const keywordFeeds = ref<KeywordFeed[]>([]);
+const limits = ref<FeedLimits | null>(null);
 const loading = ref(true);
 const showAddChannelDialog = ref(false);
 const showKeywordDialog = ref(false);
@@ -311,12 +319,24 @@ const loadMediaFeeds = async () => {
     const response = await fetchMediaFeeds();
     channelFeeds.value = response.channel_feeds || [];
     keywordFeeds.value = response.keyword_feeds || [];
+    limits.value = response.limits ?? null;
   } catch (error) {
     console.error('Failed to load media feeds:', error);
   } finally {
     loading.value = false;
   }
 };
+
+const channelCount = computed(() => channelFeeds.value.length);
+const keywordCount = computed(() =>
+  keywordFeeds.value.reduce((total, feed) => total + feed.keywords.length, 0)
+);
+const channelLimitReached = computed(() =>
+  limits.value !== null && channelCount.value >= limits.value.max_channel_feeds
+);
+const keywordLimitReached = computed(() =>
+  limits.value !== null && keywordCount.value >= limits.value.max_keywords
+);
 
 const openAddKeywordDialog = () => {
   editingFeed.value = null;

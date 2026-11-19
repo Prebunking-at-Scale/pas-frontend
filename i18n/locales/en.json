@@ -231,6 +231,8 @@
     "noSpreadNarratives": "No narrative created in this timeframe has a spread pattern yet. Try a longer timeframe."
   },
   "channels": {
+    "limitUsage": "{count} of {limit} used",
+    "limitReached": "Limit reached. Archive some, or contact us to increase it.",
     "title": "Channels",
     "channelFeeds": "Channels",
     "keywordFeeds": "Keywords",
@@ -264,6 +266,7 @@
     "keywordFeedCreateSuccess": "Keyword channel created successfully",
     "keywordFeedCreateError": "Failed to create keyword channel",
     "noTopicsAvailable": "No topics available",
+    "allTopicsHaveFeeds": "Every topic already has a keyword feed. Edit an existing feed to change its keywords.",
     "actions": "Actions",
     "editKeywordFeedTitle": "Edit keyword channel",
     "keywordFeedUpdateSuccess": "Keyword channel updated successfully",

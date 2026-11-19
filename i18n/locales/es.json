@@ -231,6 +231,8 @@
     "noSpreadNarratives": "Ninguna narrativa creada en este período tiene todavía un patrón de difusión. Prueba con un período más largo."
   },
   "channels": {
+    "limitUsage": "{count} de {limit} en uso",
+    "limitReached": "Límite alcanzado. Archiva algunos o contáctanos para aumentarlo.",
     "title": "Canales",
     "channelFeeds": "Canales",
     "keywordFeeds": "Palabras clave",
@@ -264,6 +266,7 @@
     "keywordFeedCreateSuccess": "Canal de palabras clave creado correctamente",
     "keywordFeedCreateError": "Error al crear el canal de palabras clave",
     "noTopicsAvailable": "No hay temas disponibles",
+    "allTopicsHaveFeeds": "Todos los temas ya tienen un canal de palabras clave. Edita un canal existente para cambiar sus palabras clave.",
     "actions": "Acciones",
     "editKeywordFeedTitle": "Editar canal de palabras clave",
     "keywordFeedUpdateSuccess": "Canal de palabras clave actualizado correctamente",
