@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toRefs } from 'vue';
 import type { CreateOrganisationRequest, OrganisationInviteRequest, Organization } from '~/types/api';
+import { organizationLanguageOptions as languageOptions } from '~/utils/organizationLanguages';
 
 const props = defineProps<{
   open: boolean;
@@ -78,36 +79,6 @@ const selectedLanguageLabel = computed(() => {
   const selected = languageOptions.find(lang => lang.value === orgForm.value.language);
   return selected ? selected.label : '';
 });
-
-// Language options - European languages + Turkish
-const languageOptions = [
-  { value: 'bg', label: 'Български (Bulgarian)' },
-  { value: 'hr', label: 'Hrvatski (Croatian)' },
-  { value: 'cs', label: 'Čeština (Czech)' },
-  { value: 'da', label: 'Dansk (Danish)' },
-  { value: 'nl', label: 'Nederlands (Dutch)' },
-  { value: 'en', label: 'English' },
-  { value: 'et', label: 'Eesti (Estonian)' },
-  { value: 'fi', label: 'Suomi (Finnish)' },
-  { value: 'fr', label: 'Français (French)' },
-  { value: 'de', label: 'Deutsch (German)' },
-  { value: 'el', label: 'Ελληνικά (Greek)' },
-  { value: 'hu', label: 'Magyar (Hungarian)' },
-  { value: 'ga', label: 'Gaeilge (Irish)' },
-  { value: 'it', label: 'Italiano (Italian)' },
-  { value: 'lv', label: 'Latviešu (Latvian)' },
-  { value: 'lt', label: 'Lietuvių (Lithuanian)' },
-  { value: 'mt', label: 'Malti (Maltese)' },
-  { value: 'pl', label: 'Polski (Polish)' },
-  { value: 'pt', label: 'Português (Portuguese)' },
-  { value: 'ro', label: 'Română (Romanian)' },
-  { value: 'sk', label: 'Slovenčina (Slovak)' },
-  { value: 'sl', label: 'Slovenščina (Slovenian)' },
-  { value: 'es', label: 'Español (Spanish)' },
-  { value: 'sv', label: 'Svenska (Swedish)' },
-  { value: 'tr', label: 'Türkçe (Turkish)' },
-  { value: 'sr', label: 'Srpski (Serbian)' }
-];
 
 // Auto-generate short name from display name
 const generateShortName = (displayName: string): string => {

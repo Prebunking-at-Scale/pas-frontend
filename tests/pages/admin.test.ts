@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
+import { ref } from 'vue'
 import AdminPage from '~/pages/admin.vue'
 import { 
   mockUser,
@@ -44,7 +45,7 @@ globalThis.useApi = () => ({
 
 globalThis.navigateTo = mockNavigateTo
 globalThis.onMounted = vi.fn((cb: Function) => cb())
-globalThis.ref = (val: any) => ({ value: val })
+globalThis.ref = ref
 globalThis.definePageMeta = vi.fn()
 
 vi.mock('#imports', () => ({
@@ -81,6 +82,15 @@ vi.mock('~/components/ui/input', () => ({
     name: 'Input',
     template: '<input v-bind="$attrs" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
     props: ['modelValue'],
+    emits: ['update:modelValue']
+  }
+}))
+
+vi.mock('~/components/OrganizationLanguageSelect.vue', () => ({
+  default: {
+    name: 'OrganizationLanguageSelect',
+    template: '<select :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option value="en">en</option><option value="es">es</option></select>',
+    props: ['modelValue', 'id', 'disabled'],
     emits: ['update:modelValue']
   }
 }))
@@ -172,7 +182,7 @@ describe('Admin Page (Real Component)', () => {
           data: {
             is_organisation_admin: true,
             user: { ...mockUser, id: 'user-1' },
-            organisation: mockOrganization
+            organisation: { ...mockOrganization } // a copy: the form edits it
           }
         })
         .mockResolvedValueOnce({ // users data
@@ -192,7 +202,7 @@ describe('Admin Page (Real Component)', () => {
         data: {
           is_organisation_admin: false,
           user: { ...mockUser, id: 'user-2' },
-          organisation: mockOrganization
+          organisation: { ...mockOrganization } // a copy: the form edits it
         }
       })
 
@@ -210,7 +220,7 @@ describe('Admin Page (Real Component)', () => {
           data: {
             is_organisation_admin: true,
             user: { ...mockUser, id: 'user-1' },
-            organisation: mockOrganization
+            organisation: { ...mockOrganization } // a copy: the form edits it
           }
         })
         .mockResolvedValueOnce({ // users data
@@ -240,9 +250,37 @@ describe('Admin Page (Real Component)', () => {
       expect(mockApiFetch).toHaveBeenCalledWith('/api/auth/organisation', {
         method: 'PATCH',
         body: {
-          display_name: 'New Organization Name'
+          display_name: 'New Organization Name',
+          language: 'en'
         }
       })
+    })
+
+    it('updates organization language', async () => {
+      mockApiFetch.mockResolvedValueOnce({ // PATCH response
+        data: {
+          ...mockOrganization,
+          language: 'es'
+        }
+      })
+
+      const wrapper = await createWrapper()
+
+      const orgForm = wrapper.findAll('form')[0]
+      expect((orgForm.find('select').element as HTMLSelectElement).value).toBe('en')
+
+      await orgForm.find('select').setValue('es')
+      await orgForm.trigger('submit')
+      await flushPromises()
+
+      expect(mockApiFetch).toHaveBeenCalledWith('/api/auth/organisation', {
+        method: 'PATCH',
+        body: {
+          display_name: 'Test Organization',
+          language: 'es'
+        }
+      })
+      expect(wrapper.text()).toContain('admin.organizationUpdated')
     })
   })
 
@@ -253,7 +291,7 @@ describe('Admin Page (Real Component)', () => {
           data: {
             is_organisation_admin: true,
             user: { ...mockUser, id: 'user-1' },
-            organisation: mockOrganization
+            organisation: { ...mockOrganization } // a copy: the form edits it
           }
         })
         .mockResolvedValueOnce({ // users data
@@ -284,7 +322,7 @@ describe('Admin Page (Real Component)', () => {
           data: {
             is_organisation_admin: true,
             user: { ...mockUser, id: 'user-1' },
-            organisation: mockOrganization
+            organisation: { ...mockOrganization } // a copy: the form edits it
           }
         })
         .mockResolvedValueOnce({ // users data
@@ -310,10 +348,12 @@ describe('Admin Page (Real Component)', () => {
       expect(table.exists()).toBe(true)
       
       const headers = table.findAll('th')
-      expect(headers.length).toBe(3) // Display Name, Email, Actions
+      expect(headers.length).toBe(5) // Display Name, Email, Role, Status, Actions
       expect(headers[0].text()).toContain('admin.displayName')
       expect(headers[1].text()).toContain('admin.email')
-      expect(headers[2].text()).toContain('admin.actions')
+      expect(headers[2].text()).toContain('admin.role')
+      expect(headers[3].text()).toContain('admin.status')
+      expect(headers[4].text()).toContain('admin.actions')
     })
   })
 })

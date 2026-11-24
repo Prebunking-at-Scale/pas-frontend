@@ -36,14 +36,24 @@
               </div>
             </div>
 
-            <div class="space-y-2">
-              <Label for="organizationName">{{ $t('admin.organizationName') }}</Label>
-              <Input 
-                id="organizationName"
-                v-model="organization.display_name"
-                type="text" 
-                :disabled="loadingOrg"
-              />
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="space-y-2">
+                <Label for="organizationName">{{ $t('admin.organizationName') }}</Label>
+                <Input
+                  id="organizationName"
+                  v-model="organization.display_name"
+                  type="text"
+                  :disabled="loadingOrg"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label for="organizationLanguage">{{ $t('admin.language') }}</Label>
+                <OrganizationLanguageSelect
+                  id="organizationLanguage"
+                  v-model="organization.language"
+                  :disabled="loadingOrg"
+                />
+              </div>
             </div>
             <div class="flex justify-end">
               <Button type="submit" :disabled="loadingOrg" class="cursor-pointer">
@@ -244,6 +254,7 @@ import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog';
+import OrganizationLanguageSelect from '~/components/OrganizationLanguageSelect.vue';
 
 definePageMeta({
   layout: 'default',
@@ -336,7 +347,8 @@ const updateOrganization = async () => {
     const response = await apiFetch('/api/auth/organisation', {
       method: 'PATCH',
       body: {
-        display_name: organization.value.display_name
+        display_name: organization.value.display_name,
+        language: organization.value.language
       }
     });
     
