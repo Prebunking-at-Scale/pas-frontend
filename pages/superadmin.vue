@@ -2,6 +2,7 @@
 import { faPlus, faBuilding, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import type { Organization } from '~/types/api';
 import CreateOrganizationDialog from '~/components/CreateOrganizationDialog.vue';
+import OrganizationLanguageSelect from '~/components/OrganizationLanguageSelect.vue';
 
 const { t } = useI18n();
 const { apiFetch } = useApi();
@@ -21,6 +22,10 @@ const loadingAction = ref<string | null>(null);
 const showCreateDialog = ref(false);
 const successMessage = ref('');
 const errorMessage = ref('');
+// The language picked for each organisation, before it is saved
+const languageDrafts = ref<Record<string, string>>({});
+const savingLanguage = ref<string | null>(null);
+const languageFeedback = ref<{ orgId: string; ok: boolean; message: string } | null>(null);
 
 // Fetch organizations
 const fetchOrganizations = async () => {
@@ -62,7 +67,48 @@ const toggleOrganization = async (orgId: string) => {
     expandedOrgs.value.delete(orgId);
   } else {
     expandedOrgs.value.add(orgId);
+    const org = organizations.value.find(o => o.id === orgId);
+    if (org) {
+      languageDrafts.value[orgId] = org.language;
+    }
     await fetchOrganizationUsers(orgId);
+  }
+};
+
+// Update an organisation's language. organisation_id makes core-api act on that
+// organisation instead of the one the super admin is logged in to.
+const updateLanguage = async (org: Organization) => {
+  const language = languageDrafts.value[org.id];
+  if (!language || language === org.language) {
+    return;
+  }
+
+  savingLanguage.value = org.id;
+  languageFeedback.value = null;
+  try {
+    const response = await apiFetch<{ data: Organization }>('/api/auth/organisation', {
+      method: 'PATCH',
+      query: { organisation_id: org.id },
+      body: { language }
+    });
+
+    const updated = response.data;
+    const index = organizations.value.findIndex(o => o.id === org.id);
+    if (index !== -1) {
+      organizations.value[index] = updated;
+    }
+    languageDrafts.value[org.id] = updated.language;
+    languageFeedback.value = { orgId: org.id, ok: true, message: t('superadmin.languageUpdated') };
+  } catch (error) {
+    console.error(`Failed to update language for organization ${org.id}:`, error);
+    const failure = error as { data?: { detail?: string }; message?: string };
+    languageFeedback.value = {
+      orgId: org.id,
+      ok: false,
+      message: failure.data?.detail || failure.message || t('superadmin.languageUpdateError')
+    };
+  } finally {
+    savingLanguage.value = null;
   }
 };
 
@@ -203,6 +249,33 @@ onMounted(() => {
 
             <!-- Users List (Expanded) -->
             <div v-if="expandedOrgs.has(org.id)" class="border-t bg-gray-50">
+              <form
+                class="p-4 border-b flex flex-wrap items-end gap-3"
+                @submit.prevent="updateLanguage(org)"
+              >
+                <div class="space-y-2 w-64">
+                  <Label :for="`language-${org.id}`">{{ t('superadmin.language') }}</Label>
+                  <OrganizationLanguageSelect
+                    :id="`language-${org.id}`"
+                    v-model="languageDrafts[org.id]"
+                    :disabled="savingLanguage === org.id"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  class="cursor-pointer"
+                  :disabled="savingLanguage === org.id || languageDrafts[org.id] === org.language"
+                >
+                  {{ savingLanguage === org.id ? t('common.saving') : t('common.save') }}
+                </Button>
+                <p
+                  v-if="languageFeedback?.orgId === org.id"
+                  role="status"
+                  :class="['text-sm py-2', languageFeedback.ok ? 'text-green-800' : 'text-red-800']"
+                >
+                  {{ languageFeedback.message }}
+                </p>
+              </form>
               <div v-if="loadingUsers[org.id]" class="text-center py-4">
                 <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
               </div>
